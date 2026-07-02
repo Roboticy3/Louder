@@ -1,0 +1,71 @@
+[gd_scene format=3 uid="uid://d1xnbir365a7q"]
+
+[ext_resource type="PackedScene" uid="uid://skobcwr5ug03" path="res://entities/hub.tscn" id="1_wlowb"]
+[ext_resource type="Script" uid="uid://cwc5u75bjft3r" path="res://scripts/connection_logic.gd" id="2_mnjbr"]
+[ext_resource type="Script" uid="uid://duq3wlk3nv8s4" path="res://scripts/hub_resource.gd" id="2_nhmxv"]
+[ext_resource type="Script" uid="uid://cb5oairoh5jue" path="res://scripts/selection_logic.gd" id="3_2wuvf"]
+[ext_resource type="Script" uid="uid://c3iywyrk7o8yw" path="res://scripts/create_logic.gd" id="4_2vd5y"]
+[ext_resource type="PackedScene" uid="uid://dvnsgw3jjxr0h" path="res://entities/serialization.tscn" id="4_8h6d1"]
+[ext_resource type="Script" uid="uid://vgv2nlv4m715" path="res://scripts/delete_logic.gd" id="4_d3wec"]
+[ext_resource type="Script" uid="uid://o0sx5q87o113" path="res://scripts/walker_logic.gd" id="5_o1q8q"]
+
+[sub_resource type="Resource" id="Resource_o1q8q"]
+script = ExtResource("2_nhmxv")
+start_enabled = true
+metadata/_custom_type_script = "uid://duq3wlk3nv8s4"
+
+[node name="Editor" type="CanvasLayer" unique_id=1835673697]
+
+[node name="ConnectionLogic" type="Node" parent="." unique_id=501378103 node_paths=PackedStringArray("editor")]
+script = ExtResource("2_mnjbr")
+editor = NodePath("../Control/GridContainer/GraphEdit")
+
+[node name="SelectionLogic" type="Node" parent="." unique_id=985025703 node_paths=PackedStringArray("editor")]
+script = ExtResource("3_2wuvf")
+editor = NodePath("../Control/GridContainer/GraphEdit")
+
+[node name="WalkerLogic" type="Node" parent="." unique_id=1353188201]
+script = ExtResource("5_o1q8q")
+
+[node name="DeleteLogic" type="Node" parent="." unique_id=302191628 node_paths=PackedStringArray("editor")]
+script = ExtResource("4_d3wec")
+editor = NodePath("../Control/GridContainer/GraphEdit")
+
+[node name="CreateLogic" type="Node" parent="." unique_id=1700872222 node_paths=PackedStringArray("editor")]
+script = ExtResource("4_2vd5y")
+editor = NodePath("../Control/GridContainer/GraphEdit")
+
+[node name="Control" type="Control" parent="." unique_id=2092511738]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GridContainer" type="GridContainer" parent="Control" unique_id=1756259022]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Proj" parent="Control/GridContainer" unique_id=853677447 node_paths=PackedStringArray("editor") instance=ExtResource("4_8h6d1")]
+layout_mode = 2
+editor = NodePath("../GraphEdit")
+
+[node name="GraphEdit" type="GraphEdit" parent="Control/GridContainer" unique_id=2143194040]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Hub" parent="Control/GridContainer/GraphEdit" unique_id=1992437552 instance=ExtResource("1_wlowb")]
+layout_mode = 0
+offset_left = -1.0
+offset_top = 139.0
+offset_right = 309.0
+offset_bottom = 485.0
+position_offset = Vector2(-1, 139)
+selected = true
+hub_resource = SubResource("Resource_o1q8q")

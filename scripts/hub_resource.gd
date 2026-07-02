@@ -1,0 +1,28 @@
+class_name HubResource extends Resource
+
+@export var speaker: String
+@export var text_content: String
+@export var dc_enabled: bool
+@export var dc_skill: String
+@export var dc_level: int
+@export var start_enabled: bool
+@export var choices: PackedStringArray
+
+func _to_string() -> String:
+	return """HubResource(
+		speaker: {}
+		text_content: {}
+		dc_enabled: {}
+		dc_skill: {}
+		dc_level: {}
+		start_enabled: {}
+		choice count: {}
+	)""".format([
+		speaker,
+		text_content,
+		dc_enabled,
+		dc_skill,
+		dc_level,
+		start_enabled,
+		choices.size()
+	], "{}")

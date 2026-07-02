@@ -1,0 +1,187 @@
+[gd_scene format=3 uid="uid://skobcwr5ug03"]
+
+[ext_resource type="Script" uid="uid://njuhx76nyuqd" path="res://scripts/hub_text_content.gd" id="1_l10or"]
+[ext_resource type="Script" uid="uid://dg0iod8djj6io" path="res://scripts/hub.gd" id="1_ysrp0"]
+[ext_resource type="Script" uid="uid://rkxsedbd4v0u" path="res://scripts/choices_section_logic.gd" id="2_hjueh"]
+[ext_resource type="Script" uid="uid://ctb32vrbjkrsg" path="res://scripts/arrow_keys_spin_box.gd" id="2_w7r13"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dy6nf"]
+bg_color = Color(0.5835363, 0.19874194, 0.23468313, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.42903122, 0.42903128, 0.42903104, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f0jtb"]
+bg_color = Color(0.58431375, 0.2, 0.23529412, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.65882355, 0.65882355, 0.65882355, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2sc04"]
+bg_color = Color(0.42745098, 0.42745098, 0.42745098, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="Hub" type="GraphNode" unique_id=1992437552 node_paths=PackedStringArray("speaker", "text_content", "dc_check", "dc_skill_option", "dc_level_spin", "start_check", "choices_logic")]
+custom_minimum_size = Vector2(310, 0)
+offset_left = 95.0
+offset_top = 148.0
+offset_right = 405.0
+offset_bottom = 474.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 1
+theme_override_styles/titlebar = SubResource("StyleBoxFlat_dy6nf")
+theme_override_styles/titlebar_selected = SubResource("StyleBoxFlat_f0jtb")
+position_offset = Vector2(55, 108)
+title = "Hub"
+slot/0/left_enabled = false
+slot/0/left_type = 0
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = false
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
+slot/1/left_enabled = false
+slot/1/left_type = 0
+slot/1/left_color = Color(1, 1, 1, 1)
+slot/1/left_icon = null
+slot/1/right_enabled = false
+slot/1/right_type = 0
+slot/1/right_color = Color(1, 1, 1, 1)
+slot/1/right_icon = null
+slot/1/draw_stylebox = true
+slot/2/left_enabled = true
+slot/2/left_type = 1
+slot/2/left_color = Color(1, 1, 1, 1)
+slot/2/left_icon = null
+slot/2/right_enabled = true
+slot/2/right_type = 1
+slot/2/right_color = Color(1, 1, 1, 1)
+slot/2/right_icon = null
+slot/2/draw_stylebox = true
+slot/3/left_enabled = false
+slot/3/left_type = 0
+slot/3/left_color = Color(1, 1, 1, 1)
+slot/3/left_icon = null
+slot/3/right_enabled = false
+slot/3/right_type = 0
+slot/3/right_color = Color(1, 1, 1, 1)
+slot/3/right_icon = null
+slot/3/draw_stylebox = true
+slot/4/left_enabled = false
+slot/4/left_type = 0
+slot/4/left_color = Color(1, 1, 1, 1)
+slot/4/left_icon = null
+slot/4/right_enabled = false
+slot/4/right_type = 0
+slot/4/right_color = Color(1, 1, 1, 1)
+slot/4/right_icon = null
+slot/4/draw_stylebox = true
+script = ExtResource("1_ysrp0")
+speaker = NodePath("Speaker")
+text_content = NodePath("TextContent")
+dc_check = NodePath("OtherSection/VBoxContainer/HBoxContainer/CheckBox")
+dc_skill_option = NodePath("OtherSection/VBoxContainer/HBoxContainer/OptionButton")
+dc_level_spin = NodePath("OtherSection/VBoxContainer/HBoxContainer/SpinBox")
+start_check = NodePath("ChoicesSection/CheckBox")
+choices_logic = NodePath("ChoicesSection/ChoicesSectionLogic")
+
+[node name="TextContentSection" type="Label" parent="." unique_id=1351469422]
+layout_mode = 2
+text = "Text Content"
+
+[node name="Speaker" type="LineEdit" parent="." unique_id=2057245581]
+layout_mode = 2
+placeholder_text = "Speaker"
+
+[node name="TextContent" type="TextEdit" parent="." unique_id=1116323924]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+placeholder_text = "Text Content"
+script = ExtResource("1_l10or")
+
+[node name="OtherSection" type="FoldableContainer" parent="." unique_id=675481074]
+layout_mode = 2
+title = "Properties"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="OtherSection" unique_id=72269939]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="OtherSection/VBoxContainer" unique_id=1263849597]
+layout_mode = 2
+
+[node name="DiceCheck" type="Label" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=882231788]
+layout_mode = 2
+text = "DC"
+
+[node name="CheckBox" type="CheckBox" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=1754789357]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
+
+[node name="Control" type="Control" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=888836942]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptionButton" type="OptionButton" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=1262667447]
+layout_mode = 2
+item_count = 1
+popup/item_0/text = "Skill"
+popup/item_0/id = 0
+popup/item_0/disabled = true
+
+[node name="SpinBox" type="SpinBox" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=872709569]
+layout_mode = 2
+prefix = "Level:"
+script = ExtResource("2_w7r13")
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="OtherSection/VBoxContainer" unique_id=257721582]
+layout_mode = 2
+
+[node name="ChoicesSection" type="HBoxContainer" parent="." unique_id=215591025]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="ChoicesSection" unique_id=798382419]
+layout_mode = 2
+text = "Start"
+
+[node name="CheckBox" type="CheckBox" parent="ChoicesSection" unique_id=628973272]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
+
+[node name="Control" type="Control" parent="ChoicesSection" unique_id=321633302]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label2" type="Label" parent="ChoicesSection" unique_id=1647028317]
+layout_mode = 2
+text = "Choices"
+
+[node name="SpinBox" type="SpinBox" parent="ChoicesSection" unique_id=272973745]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+script = ExtResource("2_w7r13")
+
+[node name="ChoicesSectionLogic" type="Node" parent="ChoicesSection" unique_id=889900628 node_paths=PackedStringArray("hub", "spin_box", "start_check")]
+script = ExtResource("2_hjueh")
+hub = NodePath("../..")
+spin_box = NodePath("../SpinBox")
+start_check = NodePath("../CheckBox")
+child_index = 5
