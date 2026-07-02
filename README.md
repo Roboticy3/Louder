@@ -1,9 +1,10 @@
 Multiplayer Dialog Experiment in Godot.
 
-# Roadmap:
+# MVP:
  - [x] basic interface
  - [x] serialization
  - [ ] simulation
+ - [ ] documentation
  - [ ] portability
  - [ ] multiplayer
 
