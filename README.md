@@ -1,11 +1,11 @@
 Multiplayer Dialog Experiment in Godot.
 
 # Roadmap:
- [x] basic interface
- [x] serialization
- [ ] simulation
- [ ] portability
- [ ] multiplayer
+ - [x] basic interface
+ - [x] serialization
+ - [ ] simulation
+ - [ ] portability
+ - [ ] multiplayer
 
 # Goal:
 Current interactive fiction tools like twine and yarn rely on a single-point
