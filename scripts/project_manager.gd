@@ -37,6 +37,7 @@ func save_project_to_file(path:String) -> bool:
 	for child in editor.get_children():
 		if child is CustomGraphHub:
 			conversation.hubs.append(child.export())
+			
 
 	conversation.connections = editor.connections
 
@@ -66,14 +67,21 @@ func load_project_from_file(path:String, make_current:=true) -> bool:
 		current_project_path = path
 		current_project_changed.emit()
 
-	for hub_name in conversation.hubs:
+	for hub_resource in conversation.hubs:
 		var hub := HUB_SCENE.instantiate()
-		hub.hub_resource = conversation.hubs[hub_name]
 		editor.add_child(hub)
+		hub.hub_resource = hub_resource
 		hub.owner = editor.owner
 
 	for edge in conversation.connections:
-		editor.connect_node(edge.from, edge.from_port, edge.to, edge.to_port)
+		#{
+			#from_node: StringName,
+			#from_port: int,
+			#to_node: StringName,
+			#to_port: int,
+			#keep_alive: bool
+		#}
+		editor.connect_node(edge["from_node"], edge["from_port"], edge["to_node"], edge["to_port"], edge["keep_alive"])
 
 	print("loaded conversation from ", path, " with ", conversation.hubs.size(), " hubs and ", conversation.connections.size(), " edges!")
 

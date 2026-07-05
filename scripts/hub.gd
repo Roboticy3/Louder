@@ -30,6 +30,8 @@ func export() -> HubResource:
 	for c in choices_logic.choices:
 		res.choices.append(c.text)
 
+	res.metadata["position"] = position
+
 	return res
 
 func import(res: HubResource) -> void:
@@ -50,6 +52,10 @@ func import(res: HubResource) -> void:
 	choices_logic.set_choice_count(res.choices.size())
 	for i in res.choices.size():
 		choices_logic.choices[i].text = res.choices[i]
+	
+	var p = res.metadata.get("position")
+	position = p if p else Vector2.ZERO
+	
 
 func _ready() -> void:
 	choices_logic.choices_changed.connect(_on_choices_changed)
