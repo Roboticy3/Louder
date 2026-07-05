@@ -45,16 +45,15 @@ func remove_choice(index:int):
 	choices.remove_at(index)
 
 func update_default_choices():
-	if choices.is_empty():
-		hub.set_slot(
-			spoke_child_index,
-			!start_check.button_pressed, 
-			0 if start_check.button_pressed else 1, 
-			Color.WHITE,
-			true,
-			1,
-			Color.WHITE
-		)
+	hub.set_slot(
+		spoke_child_index,
+		!start_check.button_pressed, 
+		0 if start_check.button_pressed else 1, 
+		Color.WHITE,
+		choices.is_empty(),
+		0 if !choices.is_empty() else 1,
+		Color.WHITE
+	)
 
 func set_choice_count(to:float):
 	var desired := int(to)

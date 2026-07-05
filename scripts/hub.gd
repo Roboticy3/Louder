@@ -54,7 +54,10 @@ func import(res: HubResource) -> void:
 func _ready() -> void:
 	choices_logic.choices_changed.connect(_on_choices_changed)
 	_on_choices_changed()
-	
+
+func _on_slot_updated(_slot):
+	_on_choices_changed()
+
 func _on_choices_changed():
 	if choices_logic.choices.is_empty():
 		title = "Spoke"
