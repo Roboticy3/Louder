@@ -1,4 +1,4 @@
 class_name ConversationResource extends Resource
 
-@export var hubs:Dictionary[String, HubResource]
-@export var connections:Array[HubEdgeResource]
+@export var hubs:Array[HubResource]
+@export var connections:Array[Dictionary]

@@ -10,7 +10,7 @@ func _ready() -> void:
 	editor.connection_to_empty.connect(_on_connection_to_empty)
 
 func _on_connection_request(from_node: String, from_port: int, to_node: String, to_port: int) -> void:
-	editor.connect_node(from_node, from_port, to_node, to_port)
+	editor.connect_node(from_node, from_port, to_node, to_port, false)
 
 func _on_disconnection_request(from_node: String, from_port: int, to_node: String, to_port: int) -> void:
 	editor.disconnect_node(from_node, from_port, to_node, to_port)
@@ -20,5 +20,5 @@ func _on_connection_to_empty(from_node: String, from_port: int, release_position
 	hub.position_offset = editor.get_canvas_transform().affine_inverse() * release_position + Vector2.UP * hub.size.y * 0.5
 	editor.add_child(hub)
 	hub.owner = editor.owner
-	editor.connect_node(from_node, from_port, hub.name, 0)
+	editor.connect_node(from_node, from_port, hub.name, 0, false)
 	editor.set_selected(hub)

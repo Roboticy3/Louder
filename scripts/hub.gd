@@ -19,6 +19,7 @@ func export() -> HubResource:
 	res.speaker = speaker.text
 	res.text_content = text_content.text
 	res.dc_enabled = dc_check.button_pressed
+	res.position_offset = position_offset
 
 	var idx := dc_skill_option.selected
 	res.dc_skill = dc_skill_option.get_item_text(idx) if idx >= 0 else ""
@@ -54,7 +55,10 @@ func import(res: HubResource) -> void:
 func _ready() -> void:
 	choices_logic.choices_changed.connect(_on_choices_changed)
 	_on_choices_changed()
-	
+
+func _on_slot_updated(_slot):
+	_on_choices_changed()
+
 func _on_choices_changed():
 	if choices_logic.choices.is_empty():
 		title = "Spoke"
