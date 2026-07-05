@@ -34,12 +34,29 @@ func save_project_to_file(path:String) -> bool:
 	
 	var conversation := ConversationResource.new()
 
+	var hub_list: Array[Node] = []
 	for child in editor.get_children():
 		if child is CustomGraphHub:
 			conversation.hubs.append(child.export())
-			
+			hub_list.append(child)
 
-	conversation.connections = editor.connections
+	conversation.connections = []
+	for c in editor.connections:
+		var from_idx := -1
+		var to_idx := -1
+		for i in range(hub_list.size()):
+			if hub_list[i].name == c.from_node:
+				from_idx = i
+			if hub_list[i].name == c.to_node:
+				to_idx = i
+		if from_idx >= 0 and to_idx >= 0:
+			conversation.connections.append({
+				"from_hub": from_idx,
+				"from_port": c.from_port,
+				"to_hub": to_idx,
+				"to_port": c.to_port,
+				"keep_alive": c.get("keep_alive", false)
+			})
 
 	current_project_path = path
 	current_project_changed.emit()
@@ -67,21 +84,35 @@ func load_project_from_file(path:String, make_current:=true) -> bool:
 		current_project_path = path
 		current_project_changed.emit()
 
+	var hubs_created: Array[CustomGraphHub] = []
 	for hub_resource in conversation.hubs:
 		var hub := HUB_SCENE.instantiate()
+		hub.position_offset = hub_resource.position_offset
 		editor.add_child(hub)
 		hub.hub_resource = hub_resource
 		hub.owner = editor.owner
+		hubs_created.append(hub)
 
 	for edge in conversation.connections:
-		#{
-			#from_node: StringName,
-			#from_port: int,
-			#to_node: StringName,
-			#to_port: int,
-			#keep_alive: bool
-		#}
-		editor.connect_node(edge["from_node"], edge["from_port"], edge["to_node"], edge["to_port"], edge["keep_alive"])
+		if edge.has("from_hub"):
+			var from_idx := edge["from_hub"] as int
+			var to_idx := edge["to_hub"] as int
+			if from_idx >= 0 and from_idx < hubs_created.size() and to_idx >= 0 and to_idx < hubs_created.size():
+				editor.connect_node(
+					hubs_created[from_idx].name,
+					edge["from_port"],
+					hubs_created[to_idx].name,
+					edge["to_port"],
+					edge.get("keep_alive", false)
+				)
+		else:
+			editor.connect_node(
+				edge["from_node"],
+				edge["from_port"],
+				edge["to_node"],
+				edge["to_port"],
+				edge.get("keep_alive", false)
+			)
 
 	print("loaded conversation from ", path, " with ", conversation.hubs.size(), " hubs and ", conversation.connections.size(), " edges!")
 

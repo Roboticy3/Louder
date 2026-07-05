@@ -19,6 +19,7 @@ func export() -> HubResource:
 	res.speaker = speaker.text
 	res.text_content = text_content.text
 	res.dc_enabled = dc_check.button_pressed
+	res.position_offset = position_offset
 
 	var idx := dc_skill_option.selected
 	res.dc_skill = dc_skill_option.get_item_text(idx) if idx >= 0 else ""
@@ -29,8 +30,6 @@ func export() -> HubResource:
 
 	for c in choices_logic.choices:
 		res.choices.append(c.text)
-
-	res.metadata["position"] = position
 
 	return res
 
@@ -52,10 +51,6 @@ func import(res: HubResource) -> void:
 	choices_logic.set_choice_count(res.choices.size())
 	for i in res.choices.size():
 		choices_logic.choices[i].text = res.choices[i]
-	
-	var p = res.metadata.get("position")
-	position = p if p else Vector2.ZERO
-	
 
 func _ready() -> void:
 	choices_logic.choices_changed.connect(_on_choices_changed)

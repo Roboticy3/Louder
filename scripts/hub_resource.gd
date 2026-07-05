@@ -7,6 +7,7 @@ class_name HubResource extends Resource
 @export var dc_level: int
 @export var start_enabled: bool
 @export var choices: PackedStringArray
+@export var position_offset: Vector2
 @export var metadata:Dictionary[String, Variant]
 
 func _to_string() -> String:
