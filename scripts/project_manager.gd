@@ -42,21 +42,18 @@ func save_project_to_file(path:String) -> bool:
 
 	conversation.connections = []
 	for c in editor.connections:
-		var from_idx := -1
-		var to_idx := -1
-		for i in range(hub_list.size()):
-			if hub_list[i].name == c.from_node:
-				from_idx = i
-			if hub_list[i].name == c.to_node:
-				to_idx = i
-		if from_idx >= 0 and to_idx >= 0:
-			conversation.connections.append({
-				"from_hub": from_idx,
-				"from_port": c.from_port,
-				"to_hub": to_idx,
-				"to_port": c.to_port,
-				"keep_alive": c.get("keep_alive", false)
-			})
+		var connection := ConnectionResource.new()
+		#get choice text from the hub node using c["from_port"]
+		var from_hub = editor.get_node(NodePath(c["from_node"]))
+		if from_hub is CustomGraphHub:
+			connection.from_choice = from_hub.choices_logic.port_out_to_choice(c["from_port"])
+		else:
+			continue
+
+		connection.from_node = c["from_node"]
+		connection.to_node = c["to_node"]
+
+		conversation.connections.append(connection)
 
 	current_project_path = path
 	current_project_changed.emit()
@@ -93,26 +90,21 @@ func load_project_from_file(path:String, make_current:=true) -> bool:
 		hub.owner = editor.owner
 		hubs_created.append(hub)
 
-	for edge in conversation.connections:
-		if edge.has("from_hub"):
-			var from_idx := edge["from_hub"] as int
-			var to_idx := edge["to_hub"] as int
-			if from_idx >= 0 and from_idx < hubs_created.size() and to_idx >= 0 and to_idx < hubs_created.size():
-				editor.connect_node(
-					hubs_created[from_idx].name,
-					edge["from_port"],
-					hubs_created[to_idx].name,
-					edge["to_port"],
-					edge.get("keep_alive", false)
-				)
-		else:
-			editor.connect_node(
-				edge["from_node"],
-				edge["from_port"],
-				edge["to_node"],
-				edge["to_port"],
-				edge.get("keep_alive", false)
-			)
+	var new_connections:Array[Dictionary] = []
+	for connection in conversation.connections:
+		var from_hub := editor.get_node_or_null(NodePath(connection.from_node))
+		var to_hub := editor.get_node_or_null(NodePath(connection.to_node))
+		if (from_hub is CustomGraphHub) && (to_hub is CustomGraphHub):
+			var from_port:int = from_hub.choices_logic.choice_to_port_out(connection.from_choice)
+			var to_port:int = to_hub.choices_logic.port_in()
+			
+			new_connections.append({
+				"from_node": connection.from_node,
+				"from_port": from_port,
+				"to_node": connection.to_node,
+				"to_port": to_port
+			})
+	editor.connections = new_connections
 
 	print("loaded conversation from ", path, " with ", conversation.hubs.size(), " hubs and ", conversation.connections.size(), " edges!")
 

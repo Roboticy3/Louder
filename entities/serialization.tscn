@@ -25,10 +25,10 @@ text = "Load"
 
 [node name="SaveAs" type="FileDialog" parent="." unique_id=1990590450]
 access = 1
-filters = PackedStringArray("*.res")
+filters = PackedStringArray("*.res", "*.tres")
 
 [node name="Load" type="FileDialog" parent="." unique_id=1196589125]
 title = "Open a File"
 file_mode = 0
 access = 1
-filters = PackedStringArray("*.res")
+filters = PackedStringArray("*.res", "*.tres")

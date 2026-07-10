@@ -92,6 +92,21 @@ func set_choice_count(to:float):
 		await get_tree().process_frame
 		hub.reset_size()
 
+func choice_to_port_out(choice:String) -> int:
+	for i in choices.size():
+		var line_edit := choices[i]
+		if line_edit.text == choice:
+			return child_index + i
+	return -1
+
+func port_out_to_choice(port:int) -> String:
+	if port >= 0 && port < choices.size():
+		return choices[port].text
+	return ""
+
+func port_in() -> int:
+	return spoke_child_index
+
 func _ready() -> void:
 	spin_box.value_changed.connect(set_choice_count)
 	start_check.pressed.connect(update_default_choices)
