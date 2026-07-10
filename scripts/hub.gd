@@ -6,8 +6,8 @@ class_name CustomGraphHub extends GraphNode
 			import(new_hub_resource)
 		hub_resource = new_hub_resource
 
-@export var speaker:LineEdit
-@export var text_content:TextEdit
+@export var speaker:CodeEdit
+@export var text_content:CodeEdit
 @export var dc_check:CheckBox
 @export var dc_skill_option:OptionButton
 @export var dc_level_spin:SpinBox
