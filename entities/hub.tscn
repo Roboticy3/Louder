@@ -38,7 +38,7 @@ corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
 [node name="Hub" type="GraphNode" unique_id=1992437552 node_paths=PackedStringArray("speaker", "text_content", "dc_check", "dc_skill_option", "dc_level_spin", "start_check", "choices_logic")]
-custom_minimum_size = Vector2(310, 0)
+custom_minimum_size = Vector2(330, 0)
 offset_left = 95.0
 offset_top = 148.0
 offset_right = 405.0
@@ -157,20 +157,39 @@ layout_mode = 2
 prefix = "Level:"
 script = ExtResource("2_w7r13")
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="OtherSection/VBoxContainer" unique_id=257721582]
+[node name="GridContainer" type="GridContainer" parent="OtherSection/VBoxContainer" unique_id=703605903]
 layout_mode = 2
+columns = 2
 
-[node name="Label" type="Label" parent="OtherSection/VBoxContainer/HBoxContainer2" unique_id=747363944]
+[node name="Label" type="Label" parent="OtherSection/VBoxContainer/GridContainer" unique_id=747363944]
 layout_mode = 2
-text = "Action"
+size_flags_stretch_ratio = 6.32
+text = "Condition"
+clip_text = true
+text_overrun_behavior = 5
 
-[node name="TextEdit" type="CodeEdit" parent="OtherSection/VBoxContainer/HBoxContainer2" unique_id=921272737]
+[node name="TextEdit" type="CodeEdit" parent="OtherSection/VBoxContainer/GridContainer" unique_id=921272737]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/line_spacing = 0
-placeholder_text = "(enter expression here)"
+placeholder_text = "(enter expressions here)"
 wrap_mode = 1
 scroll_fit_content_height = true
+auto_brace_completion_enabled = true
+auto_brace_completion_highlight_matching = true
+
+[node name="Label2" type="Label" parent="OtherSection/VBoxContainer/GridContainer" unique_id=1702894720]
+layout_mode = 2
+text = "Action "
+
+[node name="TextEdit2" type="CodeEdit" parent="OtherSection/VBoxContainer/GridContainer" unique_id=1709159738]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/line_spacing = 0
+placeholder_text = "(enter expressions here)"
+wrap_mode = 1
+scroll_fit_content_height = true
+delimiter_strings = Array[String](["\" \"", "' '"])
 auto_brace_completion_enabled = true
 auto_brace_completion_highlight_matching = true
 
