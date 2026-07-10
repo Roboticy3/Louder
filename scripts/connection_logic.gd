@@ -1,6 +1,7 @@
 extends Node
 
 @export var editor:GraphEdit
+@export var pointer:PointerLogic
 
 const HUB_SCENE := preload("res://entities/hub.tscn")
 
@@ -18,9 +19,11 @@ func _on_disconnection_request(from_node: String, from_port: int, to_node: Strin
 
 func _on_connection_to_empty(from_node: String, from_port: int, release_position: Vector2) -> void:
 	var hub := HUB_SCENE.instantiate()
-	hub.position_offset = editor.get_canvas_transform().affine_inverse() * release_position + Vector2.UP * hub.size.y * 0.5
 	editor.add_child(hub)
 	hub.owner = editor.owner
+
+	hub.position_offset = pointer.get_graph_pointer_position() + Vector2.UP * hub.size.y * 0.5
+
 	editor.connect_node(from_node, from_port, hub.name, 0, false)
 	editor.set_selected(hub)
 

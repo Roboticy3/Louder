@@ -8,6 +8,9 @@
 [ext_resource type="PackedScene" uid="uid://dvnsgw3jjxr0h" path="res://entities/serialization.tscn" id="4_8h6d1"]
 [ext_resource type="Script" uid="uid://vgv2nlv4m715" path="res://scripts/delete_logic.gd" id="4_d3wec"]
 [ext_resource type="Script" uid="uid://o0sx5q87o113" path="res://scripts/walker_logic.gd" id="5_o1q8q"]
+[ext_resource type="Script" uid="uid://b3jvwrspygwuc" path="res://scripts/pointer_logic.gd" id="6_qdkfl"]
+[ext_resource type="Script" uid="uid://bboylqujoaqru" path="res://scripts/on_screen_debug.gd" id="9_n5ixm"]
+[ext_resource type="Script" uid="uid://dfhadrloniwdc" path="res://scripts/user_config.gd" id="10_07l17"]
 
 [sub_resource type="Resource" id="Resource_o1q8q"]
 script = ExtResource("2_nhmxv")
@@ -16,9 +19,10 @@ metadata/_custom_type_script = "uid://duq3wlk3nv8s4"
 
 [node name="Editor" type="CanvasLayer" unique_id=1835673697]
 
-[node name="ConnectionLogic" type="Node" parent="." unique_id=501378103 node_paths=PackedStringArray("editor")]
+[node name="ConnectionLogic" type="Node" parent="." unique_id=501378103 node_paths=PackedStringArray("editor", "pointer")]
 script = ExtResource("2_mnjbr")
 editor = NodePath("../Control/GridContainer/GraphEdit")
+pointer = NodePath("../PointerLogic")
 
 [node name="SelectionLogic" type="Node" parent="." unique_id=985025703 node_paths=PackedStringArray("editor")]
 script = ExtResource("3_2wuvf")
@@ -31,8 +35,14 @@ script = ExtResource("5_o1q8q")
 script = ExtResource("4_d3wec")
 editor = NodePath("../Control/GridContainer/GraphEdit")
 
-[node name="CreateLogic" type="Node" parent="." unique_id=1700872222 node_paths=PackedStringArray("editor")]
+[node name="CreateLogic" type="Node" parent="." unique_id=1700872222 node_paths=PackedStringArray("editor", "pointer", "debugger")]
 script = ExtResource("4_2vd5y")
+editor = NodePath("../Control/GridContainer/GraphEdit")
+pointer = NodePath("../PointerLogic")
+debugger = NodePath("../Control/RichTextLabel")
+
+[node name="PointerLogic" type="Node" parent="." unique_id=1525646304 node_paths=PackedStringArray("editor")]
+script = ExtResource("6_qdkfl")
 editor = NodePath("../Control/GridContainer/GraphEdit")
 
 [node name="Control" type="Control" parent="." unique_id=2092511738]
@@ -69,3 +79,17 @@ offset_bottom = 485.0
 position_offset = Vector2(-1, 139)
 selected = true
 hub_resource = SubResource("Resource_o1q8q")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Control" unique_id=409667951]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -138.0
+offset_right = 411.0
+grow_vertical = 0
+fit_content = true
+script = ExtResource("9_n5ixm")
+
+[node name="UserConfig" type="Node" parent="." unique_id=296610046]
+script = ExtResource("10_07l17")
