@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://njuhx76nyuqd" path="res://scripts/hub_text_content.gd" id="1_l10or"]
 [ext_resource type="Script" uid="uid://dg0iod8djj6io" path="res://scripts/hub.gd" id="1_ysrp0"]
-[ext_resource type="Script" uid="uid://cwmd4ebk03ye2" path="res://scripts/oneliner.gd" id="2_f0jtb"]
 [ext_resource type="Script" uid="uid://dabkdaqchjesv" path="res://scripts/choices_section_logic.gd" id="2_hjueh"]
 [ext_resource type="Script" uid="uid://ctb32vrbjkrsg" path="res://scripts/arrow_keys_spin_box.gd" id="2_w7r13"]
 
@@ -114,7 +113,8 @@ placeholder_text = "Speaker"
 scroll_fit_content_height = true
 scroll_fit_content_width = true
 auto_brace_completion_enabled = true
-script = ExtResource("2_f0jtb")
+script = ExtResource("1_l10or")
+oneliner = false
 
 [node name="TextContent" type="CodeEdit" parent="." unique_id=2056800610]
 custom_minimum_size = Vector2(0, 100)
@@ -177,6 +177,7 @@ wrap_mode = 1
 scroll_fit_content_height = true
 auto_brace_completion_enabled = true
 auto_brace_completion_highlight_matching = true
+script = ExtResource("1_l10or")
 
 [node name="Label2" type="Label" parent="OtherSection/VBoxContainer/GridContainer" unique_id=1702894720]
 layout_mode = 2
@@ -192,6 +193,7 @@ scroll_fit_content_height = true
 delimiter_strings = Array[String](["\" \"", "' '"])
 auto_brace_completion_enabled = true
 auto_brace_completion_highlight_matching = true
+script = ExtResource("1_l10or")
 
 [node name="ChoicesSection" type="HBoxContainer" parent="." unique_id=215591025]
 layout_mode = 2

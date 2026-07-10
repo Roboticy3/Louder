@@ -1,9 +1,15 @@
 extends TextEdit
 
+@export var oneliner := true
 
-# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
+	text_changed.connect(_on_text_changed)
+
+func _on_text_changed():
+	if oneliner:
+		var cleaned = text.replace("\n", "").replace("\r", "")
+		if cleaned != text:
+			text = cleaned
 
 func _gui_input(event: InputEvent) -> void:
 	if event.is_action("ui_focus_prev") and event.is_pressed():
