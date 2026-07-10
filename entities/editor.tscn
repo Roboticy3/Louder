@@ -19,10 +19,11 @@ metadata/_custom_type_script = "uid://duq3wlk3nv8s4"
 
 [node name="Editor" type="CanvasLayer" unique_id=1835673697]
 
-[node name="ConnectionLogic" type="Node" parent="." unique_id=501378103 node_paths=PackedStringArray("editor", "pointer")]
+[node name="ConnectionLogic" type="Node" parent="." unique_id=501378103 node_paths=PackedStringArray("editor", "pointer", "debugger")]
 script = ExtResource("2_mnjbr")
 editor = NodePath("../Control/GridContainer/GraphEdit")
 pointer = NodePath("../PointerLogic")
+debugger = NodePath("../Control/RichTextLabel")
 
 [node name="SelectionLogic" type="Node" parent="." unique_id=985025703 node_paths=PackedStringArray("editor")]
 script = ExtResource("3_2wuvf")

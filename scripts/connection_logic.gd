@@ -2,9 +2,10 @@ extends Node
 
 @export var editor:GraphEdit
 @export var pointer:PointerLogic
+@export var debugger:OnScreenDebugger
 
 const HUB_SCENE := preload("res://entities/hub.tscn")
-
+	
 func _ready() -> void:
 	editor.connection_request.connect(_on_connection_request)
 	editor.disconnection_request.connect(_on_disconnection_request)
@@ -64,3 +65,6 @@ func _on_connection_drag_started(from_node: String, from_port: int, is_output: b
 		
 		print(_drag_start_node, ":", _drag_start_port, " (output: ", _drag_start_output, ")")
 		return
+
+func merp():
+	pass
