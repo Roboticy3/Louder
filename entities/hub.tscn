@@ -36,7 +36,7 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[node name="Hub" type="GraphNode" unique_id=1992437552 node_paths=PackedStringArray("speaker", "text_content", "dc_check", "dc_skill_option", "dc_level_spin", "start_check", "choices_logic")]
+[node name="Hub" type="GraphNode" unique_id=1992437552 node_paths=PackedStringArray("speaker", "text_content", "dc_check", "dc_skill_option", "dc_level_spin", "expressions_editor", "start_check", "choices_logic")]
 custom_minimum_size = Vector2(330, 0)
 offset_left = 95.0
 offset_top = 148.0
@@ -100,6 +100,7 @@ text_content = NodePath("TextContent")
 dc_check = NodePath("OtherSection/VBoxContainer/HBoxContainer/CheckBox")
 dc_skill_option = NodePath("OtherSection/VBoxContainer/HBoxContainer/OptionButton")
 dc_level_spin = NodePath("OtherSection/VBoxContainer/HBoxContainer/SpinBox")
+expressions_editor = NodePath("OtherSection/VBoxContainer/GridContainer/TextEdit")
 start_check = NodePath("ChoicesSection/CheckBox")
 choices_logic = NodePath("ChoicesSection/ChoicesSectionLogic")
 
@@ -122,6 +123,7 @@ layout_mode = 2
 placeholder_text = "Text Content"
 auto_brace_completion_enabled = true
 script = ExtResource("1_l10or")
+oneliner = false
 
 [node name="OtherSection" type="FoldableContainer" parent="." unique_id=675481074]
 layout_mode = 2
@@ -157,9 +159,8 @@ layout_mode = 2
 prefix = "Level:"
 script = ExtResource("2_w7r13")
 
-[node name="GridContainer" type="GridContainer" parent="OtherSection/VBoxContainer" unique_id=703605903]
+[node name="GridContainer" type="HBoxContainer" parent="OtherSection/VBoxContainer" unique_id=543840975]
 layout_mode = 2
-columns = 2
 
 [node name="Label" type="Label" parent="OtherSection/VBoxContainer/GridContainer" unique_id=747363944]
 layout_mode = 2
@@ -178,22 +179,7 @@ scroll_fit_content_height = true
 auto_brace_completion_enabled = true
 auto_brace_completion_highlight_matching = true
 script = ExtResource("1_l10or")
-
-[node name="Label2" type="Label" parent="OtherSection/VBoxContainer/GridContainer" unique_id=1702894720]
-layout_mode = 2
-text = "Action "
-
-[node name="TextEdit2" type="CodeEdit" parent="OtherSection/VBoxContainer/GridContainer" unique_id=1709159738]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/line_spacing = 0
-placeholder_text = "(enter expressions here)"
-wrap_mode = 1
-scroll_fit_content_height = true
-delimiter_strings = Array[String](["\" \"", "' '"])
-auto_brace_completion_enabled = true
-auto_brace_completion_highlight_matching = true
-script = ExtResource("1_l10or")
+oneliner = false
 
 [node name="ChoicesSection" type="HBoxContainer" parent="." unique_id=215591025]
 layout_mode = 2

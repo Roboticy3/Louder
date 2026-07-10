@@ -11,6 +11,7 @@ class_name CustomGraphHub extends GraphNode
 @export var dc_check:CheckBox
 @export var dc_skill_option:OptionButton
 @export var dc_level_spin:SpinBox
+@export var expressions_editor:CodeEdit
 @export var start_check:CheckBox
 @export var choices_logic:ChoicesSectionLogic
 
@@ -23,6 +24,10 @@ func export() -> HubResource:
 
 	var idx := dc_skill_option.selected
 	res.dc_skill = dc_skill_option.get_item_text(idx) if idx >= 0 else ""
+
+	res.expressions = expressions_editor.text.split("\n")
+	for i in res.expressions.size():
+		res.expressions[i] = res.expressions[i].strip_escapes().strip_edges()
 
 	res.dc_level = int(dc_level_spin.value)
 
@@ -45,6 +50,8 @@ func import(res: HubResource) -> void:
 				break
 
 	dc_level_spin.value = res.dc_level
+	
+	expressions_editor.text = "\n".join(res.expressions)
 	
 	start_check.button_pressed = res.start_enabled
 

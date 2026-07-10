@@ -5,6 +5,7 @@ class_name HubResource extends Resource
 @export var dc_enabled: bool
 @export var dc_skill: String
 @export var dc_level: int
+@export var expressions: PackedStringArray
 @export var start_enabled: bool
 @export var choices: PackedStringArray
 @export var position_offset: Vector2
