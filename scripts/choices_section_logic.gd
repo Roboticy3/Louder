@@ -47,10 +47,12 @@ func remove_choice(index:int):
 			if c.has("from_node") and c.has("from_port") and c.has("to_node") and c.has("to_port"):
 				if c.from_node == hub_name and c.from_port == port_idx:
 					if graph_edit.is_node_connected(c.from_node, c.from_port, c.to_node, c.to_port):
-						graph_edit.disconnect_node(c.from_node, c.from_port, c.to_node, c.to_port)
+						#graph_edit.disconnect_node(c.from_node, c.from_port, c.to_node, c.to_port)
+						pass
 				elif c.to_node == hub_name and c.to_port == port_idx:
 					if graph_edit.is_node_connected(c.from_node, c.from_port, c.to_node, c.to_port):
-						graph_edit.disconnect_node(c.from_node, c.from_port, c.to_node, c.to_port)
+						#graph_edit.disconnect_node(c.from_node, c.from_port, c.to_node, c.to_port)
+						pass
 	
 	hub.set_slot(
 		slot_idx, 
@@ -93,10 +95,13 @@ func set_choice_count(to:float):
 		hub.reset_size()
 
 func choice_to_port_out(choice:String) -> int:
+	if choice.is_empty() and choices.is_empty():
+		return 0 #"default" or "continue"
+	
 	for i in choices.size():
 		var line_edit := choices[i]
 		if line_edit.text == choice:
-			return child_index + i
+			return i
 	return -1
 
 func port_out_to_choice(port:int) -> String:
@@ -105,7 +110,7 @@ func port_out_to_choice(port:int) -> String:
 	return ""
 
 func port_in() -> int:
-	return spoke_child_index
+	return 0
 
 func _ready() -> void:
 	spin_box.value_changed.connect(set_choice_count)

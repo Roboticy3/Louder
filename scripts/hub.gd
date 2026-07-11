@@ -60,19 +60,8 @@ func import(res: HubResource) -> void:
 		choices_logic.choices[i].text = res.choices[i]
 
 func _ready() -> void:
-	choices_logic.choices_changed.connect(_on_choices_changed)
-	_on_choices_changed()
+	update_title()
 
-func _on_slot_updated(_slot):
-	_on_choices_changed()
-
-func _on_choices_changed():
-	if choices_logic.choices.is_empty():
-		title = "Spoke"
-	else:
-		title = "Hub"
-	
-	if hub_resource:
-		title += " " + str(hub_resource.get_rid().get_id())
-	
+func update_title():
+	title = str(get_index())
 	name = title
