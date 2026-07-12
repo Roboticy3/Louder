@@ -10,7 +10,7 @@ var spawns_on_point := 0
 
 func _input(event: InputEvent) -> void:
 	
-	if event.is_action_pressed("ui_create"):
+	if event.is_action_pressed("graph_create"):
 		
 		
 		var hub := HUB_SCENE.instantiate()

@@ -1,6 +1,7 @@
 extends TextEdit
 
 @export var oneliner := true
+@export var inliner := false
 
 func _ready() -> void:
 	text_changed.connect(_on_text_changed)

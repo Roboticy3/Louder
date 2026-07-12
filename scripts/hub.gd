@@ -17,6 +17,7 @@ class_name CustomGraphHub extends GraphNode
 
 func export() -> HubResource:
 	var res := HubResource.new()
+	res.conversation_id = id
 	res.speaker = speaker.text
 	res.text_content = text_content.text
 	res.dc_enabled = dc_check.button_pressed
@@ -39,6 +40,9 @@ func export() -> HubResource:
 	return res
 
 func import(res: HubResource) -> void:
+	IdSystem.assign_id(self, res.conversation_id, id)
+	id = res.conversation_id
+	
 	speaker.text = res.speaker
 	text_content.text = res.text_content
 	dc_check.button_pressed = res.dc_enabled
@@ -59,9 +63,8 @@ func import(res: HubResource) -> void:
 	for i in res.choices.size():
 		choices_logic.choices[i].text = res.choices[i]
 
-func _ready() -> void:
-	update_title()
+var id := -1
+const ID_GROUP := &"CONVERSATION"
 
-func update_title():
-	title = str(get_index())
-	name = title
+func _ready() -> void:
+	id = IdSystem.assign_id(self)

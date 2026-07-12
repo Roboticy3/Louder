@@ -1,5 +1,6 @@
 class_name HubResource extends Resource
 
+@export var conversation_id: int
 @export var speaker: String
 @export var text_content: String
 @export var dc_enabled: bool
