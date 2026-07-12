@@ -105,7 +105,7 @@ func load_project_from_file(path:String, make_current:=true) -> bool:
 				"from_port": from_port,
 				"to_node": String(to_hub.name),
 				"to_port": to_port,
-				"keep_alive": true
+				"keep_alive": false
 			})
 	editor.connections = new_connections
 

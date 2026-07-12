@@ -2,6 +2,24 @@
 
 [ext_resource type="Script" uid="uid://sygelvpdkm86" path="res://scripts/project_manager.gd" id="1_lbbya"]
 
+[sub_resource type="InputEventAction" id="InputEventAction_lbbya"]
+action = &"graph_save"
+
+[sub_resource type="Shortcut" id="Shortcut_4r4kf"]
+events = [SubResource("InputEventAction_lbbya")]
+
+[sub_resource type="InputEventAction" id="InputEventAction_4r4kf"]
+action = &"graph_save_as"
+
+[sub_resource type="Shortcut" id="Shortcut_wwp3i"]
+events = [SubResource("InputEventAction_4r4kf")]
+
+[sub_resource type="InputEventAction" id="InputEventAction_ehuk8"]
+action = &"graph_load"
+
+[sub_resource type="Shortcut" id="Shortcut_m3du2"]
+events = [SubResource("InputEventAction_ehuk8")]
+
 [node name="ProjectManager" type="HBoxContainer" unique_id=853677447 node_paths=PackedStringArray("save_button", "save_as_button", "load_button", "save_as_dialog", "load_dialog")]
 size_flags_horizontal = 3
 script = ExtResource("1_lbbya")
@@ -13,14 +31,17 @@ load_dialog = NodePath("Load")
 
 [node name="Button" type="Button" parent="." unique_id=1037195479]
 layout_mode = 2
+shortcut = SubResource("Shortcut_4r4kf")
 text = "Save"
 
 [node name="Button3" type="Button" parent="." unique_id=340980994]
 layout_mode = 2
+shortcut = SubResource("Shortcut_wwp3i")
 text = "Save As"
 
 [node name="Button2" type="Button" parent="." unique_id=137266310]
 layout_mode = 2
+shortcut = SubResource("Shortcut_m3du2")
 text = "Load"
 
 [node name="SaveAs" type="FileDialog" parent="." unique_id=1990590450]

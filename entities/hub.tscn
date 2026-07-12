@@ -166,7 +166,6 @@ text_overrun_behavior = 5
 
 [node name="Expression" parent="OtherSection/VBoxContainer/GridContainer" unique_id=647734270 instance=ExtResource("3_f0jtb")]
 layout_mode = 2
-size_flags_horizontal = 3
 placeholder_text = "Expression"
 
 [node name="ChoicesSection" type="HBoxContainer" parent="." unique_id=215591025]

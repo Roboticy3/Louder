@@ -1,7 +1,7 @@
 class_name OnScreenDebugger extends RichTextLabel
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_debug"):
+	if event.is_action_pressed("graph_debug"):
 		visible = !visible
 
 @export var line_duration := 1.0

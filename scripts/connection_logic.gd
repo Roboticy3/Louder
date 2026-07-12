@@ -4,9 +4,12 @@ extends Node
 @export var pointer:PointerLogic
 @export var debugger:OnScreenDebugger
 
+@export var port_change_listener_group := &"port_change_listener"
+
 const HUB_SCENE := preload("res://entities/hub.tscn")
 	
 func _ready() -> void:
+	add_to_group(port_change_listener_group)
 	editor.connection_request.connect(_on_connection_request)
 	editor.disconnection_request.connect(_on_disconnection_request)
 	editor.connection_to_empty.connect(_on_connection_to_empty)
@@ -66,5 +69,18 @@ func _on_connection_drag_started(from_node: String, from_port: int, is_output: b
 		print(_drag_start_node, ":", _drag_start_port, " (output: ", _drag_start_output, ")")
 		return
 
-func merp():
-	pass
+func _on_port_changed(node_name:String, port:int) -> void:
+	var node:GraphNode = editor.get_node_or_null(node_name)
+	if node == null:
+		return
+	
+	var connections := editor.get_connection_list_from_node(node_name)
+	for c in connections:
+		if c["to_node"] == node_name:
+			var slot := node.get_input_port_slot(c["to_port"])
+			if !node.is_slot_enabled_left(slot):
+				editor.disconnect_node(c["from_node"], c["from_port"], c["to_node"], c["to_port"])
+		elif c["from_node"] == node_name:
+			var slot := node.get_output_port_slot(c["from_port"])
+			if !node.is_slot_enabled_right(slot):
+				editor.disconnect_node(c["from_node"], c["from_port"], c["to_node"], c["to_port"])
