@@ -15,6 +15,10 @@ run/main_scene="uid://d1xnbir365a7q"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://icon.svg"
 
+[autoload]
+
+IdSystem="*uid://emcgvjw2xenp"
+
 [input]
 
 alt_virtual={

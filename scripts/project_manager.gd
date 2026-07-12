@@ -45,13 +45,14 @@ func save_project_to_file(path:String) -> bool:
 		var connection := ConnectionResource.new()
 		#get choice text from the hub node using c["from_port"]
 		var from_hub = editor.get_node(NodePath(c["from_node"]))
-		if from_hub is CustomGraphHub:
+		var to_hub = editor.get_node(NodePath(c["to_node"]))
+		if from_hub is CustomGraphHub and to_hub is CustomGraphHub:
 			connection.from_choice = from_hub.choices_logic.port_out_to_choice(c["from_port"])
 		else:
 			continue
 
-		connection.from_node = c["from_node"]
-		connection.to_node = c["to_node"]
+		connection.from_id = from_hub.id
+		connection.to_id = to_hub.id
 
 		conversation.connections.append(connection)
 
@@ -83,26 +84,28 @@ func load_project_from_file(path:String, make_current:=true) -> bool:
 
 	var hubs_created: Array[CustomGraphHub] = []
 	for hub_resource in conversation.hubs:
-		var hub := HUB_SCENE.instantiate()
+		var hub:CustomGraphHub = HUB_SCENE.instantiate()
 		hub.position_offset = hub_resource.position_offset
-		editor.add_child(hub)
 		hub.hub_resource = hub_resource
-		hub.owner = editor.owner
+		
+		editor.add_child(hub)
+		
 		hubs_created.append(hub)
 
 	var new_connections:Array[Dictionary] = []
 	for connection in conversation.connections:
-		var from_hub := editor.get_node_or_null(NodePath(connection.from_node))
-		var to_hub := editor.get_node_or_null(NodePath(connection.to_node))
+		var from_hub := IdSystem.get_assigned(connection.from_id)
+		var to_hub := IdSystem.get_assigned(connection.to_id)
 		if (from_hub is CustomGraphHub) && (to_hub is CustomGraphHub):
 			var from_port:int = from_hub.choices_logic.choice_to_port_out(connection.from_choice)
 			var to_port:int = to_hub.choices_logic.port_in()
 			
 			new_connections.append({
-				"from_node": connection.from_node,
+				"from_node": String(from_hub.name),
 				"from_port": from_port,
-				"to_node": connection.to_node,
-				"to_port": to_port
+				"to_node": String(to_hub.name),
+				"to_port": to_port,
+				"keep_alive": true
 			})
 	editor.connections = new_connections
 

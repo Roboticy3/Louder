@@ -5,7 +5,7 @@ class_name ChoicesSectionLogic extends Node
 @export var child_index := 4
 @export var spoke_child_index := 2
 
-var choices:Array[LineEdit] = []
+var choices:Array[TextEdit] = []
 signal choices_changed()
 
 func add_choice_auto():
@@ -13,8 +13,9 @@ func add_choice_auto():
 	add_choice(string)
 
 func add_choice(text:String):
-	var le := LineEdit.new()
-	le.text = text
+	var le:Node = load("res://entities/text_content.tscn").instantiate()
+	le.set("text", text)
+	le.set("inliner", true)
 	hub.add_child(le)
 	hub.move_child(le, child_index + choices.size())
 	hub.set_slot(
