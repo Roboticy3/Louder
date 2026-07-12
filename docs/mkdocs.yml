@@ -3,3 +3,10 @@ theme:
   name: readthedocs
   features:
     - navigation.side
+nav:
+  - Home: index.md
+  - Editor: editor/index.md
+  - Engine:
+      - engine/index.md
+  - Examples:
+      - examples/index.md
