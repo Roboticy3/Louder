@@ -56,6 +56,9 @@ func save_project_to_file(path:String) -> bool:
 
 		conversation.connections.append(connection)
 
+	conversation.camera_position = editor.scroll_offset
+	conversation.camera_zoom = editor.zoom
+
 	current_project_path = path
 	current_project_changed.emit()
 
@@ -73,6 +76,8 @@ func load_project_from_file(path:String, make_current:=true) -> bool:
 			editor.remove_child(child)
 			child.queue_free()
 	editor.clear_connections()
+
+	await get_tree().process_frame # wait for the editor to process the removal of nodes
 
 	var conversation := ResourceLoader.load(path) as ConversationResource
 	if not conversation:
@@ -108,6 +113,9 @@ func load_project_from_file(path:String, make_current:=true) -> bool:
 				"keep_alive": false
 			})
 	editor.connections = new_connections
+
+	editor.scroll_offset = conversation.camera_position
+	editor.zoom = conversation.camera_zoom
 
 	print("loaded conversation from ", path, " with ", conversation.hubs.size(), " hubs and ", conversation.connections.size(), " edges!")
 
