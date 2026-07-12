@@ -1,1 +1,5 @@
 site_name: Louder Documentation
+theme:
+  name: readthedocs
+  features:
+    - navigation.side
