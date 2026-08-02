@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://dabkdaqchjesv" path="res://scripts/choices_section_logic.gd" id="2_hjueh"]
 [ext_resource type="Script" uid="uid://ctb32vrbjkrsg" path="res://scripts/arrow_keys_spin_box.gd" id="2_w7r13"]
 [ext_resource type="PackedScene" uid="uid://d2ffa88ufdvl6" path="res://entities/text_content.tscn" id="3_f0jtb"]
+[ext_resource type="Script" uid="uid://derdgutm4a213" path="res://scripts/start_check.gd" id="4_f0jtb"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dy6nf"]
 bg_color = Color(0.5835363, 0.19874194, 0.23468313, 1)
@@ -36,7 +37,7 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[node name="Hub" type="GraphNode" unique_id=1992437552 node_paths=PackedStringArray("speaker", "text_content", "dc_check", "dc_skill_option", "dc_level_spin", "expressions_editor", "start_check", "choices_logic")]
+[node name="Hub" type="GraphNode" unique_id=1992437552]
 custom_minimum_size = Vector2(330, 0)
 offset_left = 95.0
 offset_top = 148.0
@@ -95,20 +96,12 @@ slot/4/right_color = Color(1, 1, 1, 1)
 slot/4/right_icon = null
 slot/4/draw_stylebox = true
 script = ExtResource("1_ysrp0")
-speaker = NodePath("Speaker")
-text_content = NodePath("TextContent")
-dc_check = NodePath("OtherSection/VBoxContainer/HBoxContainer/CheckBox")
-dc_skill_option = NodePath("OtherSection/VBoxContainer/HBoxContainer/OptionButton")
-dc_level_spin = NodePath("OtherSection/VBoxContainer/HBoxContainer/SpinBox")
-expressions_editor = NodePath("OtherSection/VBoxContainer/GridContainer/Expression")
-start_check = NodePath("ChoicesSection/CheckBox")
-choices_logic = NodePath("ChoicesSection/ChoicesSectionLogic")
 
 [node name="TextContentSection" type="Label" parent="." unique_id=1351469422]
 layout_mode = 2
 text = "Text Content"
 
-[node name="Speaker" parent="." unique_id=42355890 instance=ExtResource("3_f0jtb")]
+[node name="Speaker" parent="." unique_id=42355890 groups=["hub_component"] instance=ExtResource("3_f0jtb")]
 layout_mode = 2
 size_flags_vertical = 0
 placeholder_text = "Speaker"
@@ -116,7 +109,7 @@ wrap_mode = 0
 oneliner = true
 inliner = true
 
-[node name="TextContent" parent="." unique_id=778728203 instance=ExtResource("3_f0jtb")]
+[node name="TextContent" parent="." unique_id=778728203 groups=["hub_component"] instance=ExtResource("3_f0jtb")]
 layout_mode = 2
 inliner = true
 
@@ -134,7 +127,7 @@ layout_mode = 2
 layout_mode = 2
 text = "DC"
 
-[node name="CheckBox" type="CheckBox" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=1754789357]
+[node name="CheckBox" type="CheckBox" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=1754789357 groups=["hub_component"]]
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
 
@@ -142,14 +135,14 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="OptionButton" type="OptionButton" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=1262667447]
+[node name="OptionButton" type="OptionButton" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=1262667447 groups=["hub_component"]]
 layout_mode = 2
 item_count = 1
 popup/item_0/text = "Skill"
 popup/item_0/id = 0
 popup/item_0/disabled = true
 
-[node name="SpinBox" type="SpinBox" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=872709569]
+[node name="SpinBox" type="SpinBox" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=872709569 groups=["hub_component"]]
 layout_mode = 2
 prefix = "Level:"
 script = ExtResource("2_w7r13")
@@ -164,7 +157,7 @@ text = "Condition"
 clip_text = true
 text_overrun_behavior = 5
 
-[node name="Expression" parent="OtherSection/VBoxContainer/GridContainer" unique_id=647734270 instance=ExtResource("3_f0jtb")]
+[node name="Expression" parent="OtherSection/VBoxContainer/GridContainer" unique_id=647734270 groups=["hub_component"] instance=ExtResource("3_f0jtb")]
 layout_mode = 2
 placeholder_text = "Expression"
 
@@ -175,9 +168,10 @@ layout_mode = 2
 layout_mode = 2
 text = "Start"
 
-[node name="CheckBox" type="CheckBox" parent="ChoicesSection" unique_id=628973272]
+[node name="CheckBox" type="CheckBox" parent="ChoicesSection" unique_id=628973272 groups=["hub_component"]]
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
+script = ExtResource("4_f0jtb")
 
 [node name="Control" type="Control" parent="ChoicesSection" unique_id=321633302]
 layout_mode = 2
@@ -193,7 +187,7 @@ size_flags_horizontal = 0
 size_flags_vertical = 0
 script = ExtResource("2_w7r13")
 
-[node name="ChoicesSectionLogic" type="Node" parent="ChoicesSection" unique_id=889900628 node_paths=PackedStringArray("hub", "spin_box", "start_check")]
+[node name="ChoicesSectionLogic" type="Node" parent="ChoicesSection" unique_id=889900628 node_paths=PackedStringArray("hub", "spin_box", "start_check") groups=["hub_component"]]
 script = ExtResource("2_hjueh")
 hub = NodePath("../..")
 spin_box = NodePath("../SpinBox")

@@ -1,67 +1,79 @@
 class_name CustomGraphHub extends GraphNode
 
-@export var hub_resource:HubResource :
-	set(new_hub_resource):
-		if new_hub_resource:
-			import(new_hub_resource)
-		hub_resource = new_hub_resource
+const COMPONENT_GROUP := &"hub_component"
 
-@export var speaker:CodeEdit
-@export var text_content:CodeEdit
-@export var dc_check:CheckBox
-@export var dc_skill_option:OptionButton
-@export var dc_level_spin:SpinBox
-@export var expressions_editor:CodeEdit
-@export var start_check:CheckBox
-@export var choices_logic:ChoicesSectionLogic
+@export var hub_data:Dictionary :
+	set(new_hub_data):
+		import(new_hub_data)
+		hub_data = new_hub_data
 
-func export() -> HubResource:
-	var res := HubResource.new()
-	res.conversation_id = id
-	res.speaker = speaker.text
-	res.text_content = text_content.text
-	res.dc_enabled = dc_check.button_pressed
-	res.position_offset = position_offset
+func export() -> Dictionary:
+	var data := {
+		"conversation_id": id,
+		"position_offset": position_offset,
+	}
+	for child in find_children("*", "", true, false):
+		if child.is_in_group(COMPONENT_GROUP):
+			data[get_path_to(child) as String] = _export_node(child)
+	return data
 
-	var idx := dc_skill_option.selected
-	res.dc_skill = dc_skill_option.get_item_text(idx) if idx >= 0 else ""
+func _export_node(node: Node) -> Variant:
+	if node is ChoicesSectionLogic:
+		var choices: PackedStringArray = []
+		for c in node.choices:
+			choices.append(c.text)
+		return choices
+	if node is CodeEdit:
+		return node.text
+	if node is OptionButton:
+		var idx:int = node.selected
+		return node.get_item_text(idx) if idx >= 0 else ""
+	if node is CheckBox:
+		return node.button_pressed
+	if node is SpinBox:
+		return node.value
+	if node is Button:
+		return node.text
+	return null
 
-	res.expressions = expressions_editor.text.split("\n")
-	for i in res.expressions.size():
-		res.expressions[i] = res.expressions[i].strip_escapes().strip_edges()
+func import(data: Dictionary) -> void:
+	IdSystem.assign_id(self, data.get("conversation_id", id), id)
+	id = data.get("conversation_id", id)
+	position_offset = data.get("position_offset", position_offset)
 
-	res.dc_level = int(dc_level_spin.value)
+	for path in data:
+		if path is String:
+			var node := get_node_or_null(NodePath(path))
+			if node:
+				_import_node(node, data[path])
 
-	res.start_enabled = start_check.button_pressed
+func _import_node(node: Node, value: Variant) -> void:
+	if node is ChoicesSectionLogic:
+		var choices: PackedStringArray = value
+		node.set_choice_count(choices.size())
+		for i in choices.size():
+			node.choices[i].text = choices[i]
+	elif node is CodeEdit:
+		node.text = value
+	elif node is OptionButton:
+		var skill := value as String
+		if not skill.is_empty():
+			for i in node.item_count:
+				if node.get_item_text(i) == skill:
+					node.selected = i
+					break
+	elif node is CheckBox:
+		node.button_pressed = value
+	elif node is SpinBox:
+		node.value = value
+	elif node is Button:
+		node.text = value
 
-	for c in choices_logic.choices:
-		res.choices.append(c.text)
+func get_choices_logic() -> ChoicesSectionLogic:
+	return get_node_or_null("ChoicesSection/ChoicesSectionLogic") as ChoicesSectionLogic
 
-	return res
-
-func import(res: HubResource) -> void:
-	IdSystem.assign_id(self, res.conversation_id, id)
-	id = res.conversation_id
-	
-	speaker.text = res.speaker
-	text_content.text = res.text_content
-	dc_check.button_pressed = res.dc_enabled
-
-	if not res.dc_skill.is_empty():
-		for i in dc_skill_option.item_count:
-			if dc_skill_option.get_item_text(i) == res.dc_skill:
-				dc_skill_option.selected = i
-				break
-
-	dc_level_spin.value = res.dc_level
-	
-	expressions_editor.text = "\n".join(res.expressions)
-	
-	start_check.button_pressed = res.start_enabled
-
-	choices_logic.set_choice_count(res.choices.size())
-	for i in res.choices.size():
-		choices_logic.choices[i].text = res.choices[i]
+func get_start_check() -> CheckBox:
+	return get_node_or_null("ChoicesSection/CheckBox") as CheckBox
 
 var id := -1
 const ID_GROUP := &"CONVERSATION"
