@@ -6,11 +6,11 @@
 [node name="LoadSaveHub" type="Node" unique_id=2020687085 node_paths=PackedStringArray("hub")]
 script = ExtResource("1_4kfiq")
 hub_data = {
-"speaker": "Test Test",
-"text_content": "1 2 3",
-"dc_enabled": true,
-"dc_skill": "Magic",
-"dc_level": 42
+NodePath("Speaker"): "Test Test",
+NodePath("TextContent"): "1 2 3",
+NodePath("OtherSection/VBoxContainer/HBoxContainer/CheckBox"): true,
+NodePath("OtherSection/VBoxContainer/HBoxContainer/OptionButton"): "Magic",
+NodePath("OtherSection/VBoxContainer/HBoxContainer/SpinBox"): 42
 }
 hub = NodePath("Hub")
 

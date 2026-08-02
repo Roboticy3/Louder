@@ -33,7 +33,8 @@ func _input(event: InputEvent) -> void:
 		if !auto_next_found:
 			for n in editor.get_children():
 				if n is CustomGraphHub:
-					if n.start_check.button_pressed:
+					var start_check:CheckBox = n.get_start_check()
+					if start_check and start_check.button_pressed:
 						editor.set_selected(n)
 						auto_next_found = true
 						break

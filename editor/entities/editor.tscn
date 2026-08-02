@@ -79,7 +79,7 @@ offset_bottom = 531.0
 position_offset = Vector2(-1, 139)
 selected = true
 hub_data = {
-"start_enabled": true
+NodePath("ChoicesSection/CheckBox"): true
 }
 
 [node name="RichTextLabel" type="RichTextLabel" parent="Control" unique_id=409667951]
