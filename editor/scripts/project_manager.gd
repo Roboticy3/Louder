@@ -88,10 +88,10 @@ func load_project_from_file(path:String, make_current:=true) -> bool:
 		current_project_changed.emit()
 
 	var hubs_created: Array[CustomGraphHub] = []
-	for hub_resource in conversation.hubs:
+	for hub_data in conversation.hubs:
 		var hub:CustomGraphHub = HUB_SCENE.instantiate()
-		hub.position_offset = hub_resource.position_offset
-		hub.hub_resource = hub_resource
+		hub.position_offset = hub_data.get("position_offset", Vector2.ZERO)
+		hub.hub_data = hub_data
 		
 		editor.add_child(hub)
 		

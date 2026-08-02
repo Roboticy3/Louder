@@ -2,7 +2,6 @@
 
 [ext_resource type="PackedScene" uid="uid://skobcwr5ug03" path="res://entities/hub.tscn" id="1_wlowb"]
 [ext_resource type="Script" uid="uid://cwc5u75bjft3r" path="res://scripts/connection_logic.gd" id="2_mnjbr"]
-[ext_resource type="Script" uid="uid://duq3wlk3nv8s4" path="res://scripts/hub_resource.gd" id="2_nhmxv"]
 [ext_resource type="Script" uid="uid://cb5oairoh5jue" path="res://scripts/selection_logic.gd" id="3_2wuvf"]
 [ext_resource type="Script" uid="uid://c3iywyrk7o8yw" path="res://scripts/create_logic.gd" id="4_2vd5y"]
 [ext_resource type="PackedScene" uid="uid://dvnsgw3jjxr0h" path="res://entities/serialization.tscn" id="4_8h6d1"]
@@ -11,11 +10,6 @@
 [ext_resource type="Script" uid="uid://b3jvwrspygwuc" path="res://scripts/pointer_logic.gd" id="6_qdkfl"]
 [ext_resource type="Script" uid="uid://bboylqujoaqru" path="res://scripts/on_screen_debug.gd" id="9_n5ixm"]
 [ext_resource type="Script" uid="uid://dfhadrloniwdc" path="res://scripts/user_config.gd" id="10_07l17"]
-
-[sub_resource type="Resource" id="Resource_o1q8q"]
-script = ExtResource("2_nhmxv")
-start_enabled = true
-metadata/_custom_type_script = "uid://duq3wlk3nv8s4"
 
 [node name="Editor" type="CanvasLayer" unique_id=1835673697]
 
@@ -84,7 +78,9 @@ offset_right = 329.0
 offset_bottom = 531.0
 position_offset = Vector2(-1, 139)
 selected = true
-hub_resource = SubResource("Resource_o1q8q")
+hub_data = {
+"start_enabled": true
+}
 
 [node name="RichTextLabel" type="RichTextLabel" parent="Control" unique_id=409667951]
 layout_mode = 1

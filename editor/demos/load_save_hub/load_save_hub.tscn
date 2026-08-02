@@ -1,21 +1,17 @@
 [gd_scene format=3 uid="uid://dyroedodkjva6"]
 
 [ext_resource type="Script" uid="uid://dipxm7arxw14a" path="res://demos/load_save_hub/load_save_hub.gd" id="1_4kfiq"]
-[ext_resource type="Script" uid="uid://duq3wlk3nv8s4" path="res://scripts/hub_resource.gd" id="2_1j2ew"]
 [ext_resource type="PackedScene" uid="uid://skobcwr5ug03" path="res://entities/hub.tscn" id="2_ctklt"]
-
-[sub_resource type="Resource" id="Resource_o2u3t"]
-script = ExtResource("2_1j2ew")
-speaker = "Test Test"
-text_content = "1 2 3"
-dc_enabled = true
-dc_skill = "Magic"
-dc_level = 42
-metadata/_custom_type_script = "uid://duq3wlk3nv8s4"
 
 [node name="LoadSaveHub" type="Node" unique_id=2020687085 node_paths=PackedStringArray("hub")]
 script = ExtResource("1_4kfiq")
-hub_resource = SubResource("Resource_o2u3t")
+hub_data = {
+"speaker": "Test Test",
+"text_content": "1 2 3",
+"dc_enabled": true,
+"dc_skill": "Magic",
+"dc_level": 42
+}
 hub = NodePath("Hub")
 
 [node name="Hub" parent="." unique_id=1992437552 instance=ExtResource("2_ctklt")]

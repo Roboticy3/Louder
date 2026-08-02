@@ -1,10 +1,9 @@
 class_name CustomGraphHub extends GraphNode
 
-@export var hub_resource:HubResource :
-	set(new_hub_resource):
-		if new_hub_resource:
-			import(new_hub_resource)
-		hub_resource = new_hub_resource
+@export var hub_data:Dictionary :
+	set(new_hub_data):
+		import(new_hub_data)
+		hub_data = new_hub_data
 
 @export var speaker:CodeEdit
 @export var text_content:CodeEdit
@@ -15,53 +14,59 @@ class_name CustomGraphHub extends GraphNode
 @export var start_check:CheckBox
 @export var choices_logic:ChoicesSectionLogic
 
-func export() -> HubResource:
-	var res := HubResource.new()
-	res.conversation_id = id
-	res.speaker = speaker.text
-	res.text_content = text_content.text
-	res.dc_enabled = dc_check.button_pressed
-	res.position_offset = position_offset
+func export() -> Dictionary:
+	var data := {
+		"conversation_id": id,
+		"speaker": speaker.text,
+		"text_content": text_content.text,
+		"dc_enabled": dc_check.button_pressed,
+		"position_offset": position_offset,
+	}
 
 	var idx := dc_skill_option.selected
-	res.dc_skill = dc_skill_option.get_item_text(idx) if idx >= 0 else ""
+	data["dc_skill"] = dc_skill_option.get_item_text(idx) if idx >= 0 else ""
 
-	res.expressions = expressions_editor.text.split("\n")
-	for i in res.expressions.size():
-		res.expressions[i] = res.expressions[i].strip_escapes().strip_edges()
+	var expressions := expressions_editor.text.split("\n")
+	for i in expressions.size():
+		expressions[i] = expressions[i].strip_escapes().strip_edges()
+	data["expressions"] = expressions
 
-	res.dc_level = int(dc_level_spin.value)
+	data["dc_level"] = int(dc_level_spin.value)
 
-	res.start_enabled = start_check.button_pressed
+	data["start_enabled"] = start_check.button_pressed
 
+	var choices: PackedStringArray = []
 	for c in choices_logic.choices:
-		res.choices.append(c.text)
+		choices.append(c.text)
+	data["choices"] = choices
 
-	return res
+	return data
 
-func import(res: HubResource) -> void:
-	IdSystem.assign_id(self, res.conversation_id, id)
-	id = res.conversation_id
+func import(data: Dictionary) -> void:
+	IdSystem.assign_id(self, data.get("conversation_id", id), id)
+	id = data.get("conversation_id", id)
 	
-	speaker.text = res.speaker
-	text_content.text = res.text_content
-	dc_check.button_pressed = res.dc_enabled
+	speaker.text = data.get("speaker", "")
+	text_content.text = data.get("text_content", "")
+	dc_check.button_pressed = data.get("dc_enabled", false)
 
-	if not res.dc_skill.is_empty():
+	var dc_skill := data.get("dc_skill", "") as String
+	if not dc_skill.is_empty():
 		for i in dc_skill_option.item_count:
-			if dc_skill_option.get_item_text(i) == res.dc_skill:
+			if dc_skill_option.get_item_text(i) == dc_skill:
 				dc_skill_option.selected = i
 				break
 
-	dc_level_spin.value = res.dc_level
+	dc_level_spin.value = data.get("dc_level", 0)
 	
-	expressions_editor.text = "\n".join(res.expressions)
+	expressions_editor.text = "\n".join(data.get("expressions", PackedStringArray()))
 	
-	start_check.button_pressed = res.start_enabled
+	start_check.button_pressed = data.get("start_enabled", false)
 
-	choices_logic.set_choice_count(res.choices.size())
-	for i in res.choices.size():
-		choices_logic.choices[i].text = res.choices[i]
+	var choices: PackedStringArray = data.get("choices", PackedStringArray())
+	choices_logic.set_choice_count(choices.size())
+	for i in choices.size():
+		choices_logic.choices[i].text = choices[i]
 
 var id := -1
 const ID_GROUP := &"CONVERSATION"
