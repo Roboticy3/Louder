@@ -14,7 +14,7 @@ func export() -> Dictionary:
 	}
 	for child in find_children("*", "", true, false):
 		if child.is_in_group(COMPONENT_GROUP):
-			data[get_path_to(child)] = _export_node(child)
+			data[get_path_to(child) as String] = _export_node(child)
 	return data
 
 func _export_node(node: Node) -> Variant:
@@ -41,11 +41,11 @@ func import(data: Dictionary) -> void:
 	id = data.get("conversation_id", id)
 	position_offset = data.get("position_offset", position_offset)
 
-	for node_path in data:
-		if node_path is NodePath:
-			var node := get_node_or_null(node_path)
+	for path in data:
+		if path is String:
+			var node := get_node_or_null(NodePath(path))
 			if node:
-				_import_node(node, data[node_path])
+				_import_node(node, data[path])
 
 func _import_node(node: Node, value: Variant) -> void:
 	if node is ChoicesSectionLogic:
@@ -68,6 +68,12 @@ func _import_node(node: Node, value: Variant) -> void:
 		node.value = value
 	elif node is Button:
 		node.text = value
+
+func get_choices_logic() -> ChoicesSectionLogic:
+	return get_node_or_null("ChoicesSection/ChoicesSectionLogic") as ChoicesSectionLogic
+
+func get_start_check() -> CheckBox:
+	return get_node_or_null("ChoicesSection/CheckBox") as CheckBox
 
 var id := -1
 const ID_GROUP := &"CONVERSATION"
