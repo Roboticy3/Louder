@@ -26,10 +26,7 @@ func export() -> Dictionary:
 	var idx := dc_skill_option.selected
 	data["dc_skill"] = dc_skill_option.get_item_text(idx) if idx >= 0 else ""
 
-	var expressions := expressions_editor.text.split("\n")
-	for i in expressions.size():
-		expressions[i] = expressions[i].strip_escapes().strip_edges()
-	data["expressions"] = expressions
+	data["expressions"] = expressions_editor.text
 
 	data["dc_level"] = int(dc_level_spin.value)
 
@@ -59,7 +56,7 @@ func import(data: Dictionary) -> void:
 
 	dc_level_spin.value = data.get("dc_level", 0)
 	
-	expressions_editor.text = "\n".join(data.get("expressions", PackedStringArray()))
+	expressions_editor.text = data.get("expressions", "")
 	
 	start_check.button_pressed = data.get("start_enabled", false)
 

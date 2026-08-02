@@ -108,7 +108,7 @@ choices_logic = NodePath("ChoicesSection/ChoicesSectionLogic")
 layout_mode = 2
 text = "Text Content"
 
-[node name="Speaker" parent="." unique_id=42355890 instance=ExtResource("3_f0jtb")]
+[node name="Speaker" parent="." unique_id=42355890 groups=["hub_component"] instance=ExtResource("3_f0jtb")]
 layout_mode = 2
 size_flags_vertical = 0
 placeholder_text = "Speaker"
@@ -116,7 +116,7 @@ wrap_mode = 0
 oneliner = true
 inliner = true
 
-[node name="TextContent" parent="." unique_id=778728203 instance=ExtResource("3_f0jtb")]
+[node name="TextContent" parent="." unique_id=778728203 groups=["hub_component"] instance=ExtResource("3_f0jtb")]
 layout_mode = 2
 inliner = true
 
@@ -134,7 +134,7 @@ layout_mode = 2
 layout_mode = 2
 text = "DC"
 
-[node name="CheckBox" type="CheckBox" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=1754789357]
+[node name="CheckBox" type="CheckBox" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=1754789357 groups=["hub_component"]]
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
 
@@ -142,14 +142,14 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="OptionButton" type="OptionButton" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=1262667447]
+[node name="OptionButton" type="OptionButton" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=1262667447 groups=["hub_component"]]
 layout_mode = 2
 item_count = 1
 popup/item_0/text = "Skill"
 popup/item_0/id = 0
 popup/item_0/disabled = true
 
-[node name="SpinBox" type="SpinBox" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=872709569]
+[node name="SpinBox" type="SpinBox" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=872709569 groups=["hub_component"]]
 layout_mode = 2
 prefix = "Level:"
 script = ExtResource("2_w7r13")
@@ -164,7 +164,7 @@ text = "Condition"
 clip_text = true
 text_overrun_behavior = 5
 
-[node name="Expression" parent="OtherSection/VBoxContainer/GridContainer" unique_id=647734270 instance=ExtResource("3_f0jtb")]
+[node name="Expression" parent="OtherSection/VBoxContainer/GridContainer" unique_id=647734270 groups=["hub_component"] instance=ExtResource("3_f0jtb")]
 layout_mode = 2
 placeholder_text = "Expression"
 
@@ -175,7 +175,7 @@ layout_mode = 2
 layout_mode = 2
 text = "Start"
 
-[node name="CheckBox" type="CheckBox" parent="ChoicesSection" unique_id=628973272]
+[node name="CheckBox" type="CheckBox" parent="ChoicesSection" unique_id=628973272 groups=["hub_component"]]
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
 
@@ -193,7 +193,7 @@ size_flags_horizontal = 0
 size_flags_vertical = 0
 script = ExtResource("2_w7r13")
 
-[node name="ChoicesSectionLogic" type="Node" parent="ChoicesSection" unique_id=889900628 node_paths=PackedStringArray("hub", "spin_box", "start_check")]
+[node name="ChoicesSectionLogic" type="Node" parent="ChoicesSection" unique_id=889900628 node_paths=PackedStringArray("hub", "spin_box", "start_check") groups=["hub_component"]]
 script = ExtResource("2_hjueh")
 hub = NodePath("../..")
 spin_box = NodePath("../SpinBox")
