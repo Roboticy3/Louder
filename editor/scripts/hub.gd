@@ -39,6 +39,7 @@ func _export_node(node: Node) -> Variant:
 func import(data: Dictionary) -> void:
 	IdSystem.assign_id(self, data.get("conversation_id", id), id)
 	id = data.get("conversation_id", id)
+	
 	position_offset = data.get("position_offset", position_offset)
 
 	for path in data:
