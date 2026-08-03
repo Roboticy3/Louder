@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://i5djwipicmob"]
+
+[ext_resource type="Script" uid="uid://inieasxjm4nb" path="res://proto_simulator/ps_conversation.gd" id="1_1074j"]
+[ext_resource type="Script" uid="uid://dw6fgoouagof0" path="res://proto_simulator/ps_loader.gd" id="2_cbtq0"]
+
+[node name="ProtoSimulatorWrapper" type="Node" unique_id=331396007]
+
+[node name="PSConversation" type="Node" parent="." unique_id=771286231]
+script = ExtResource("1_1074j")
+
+[node name="PSLoader" type="Node" parent="." unique_id=370026564 node_paths=PackedStringArray("simulator")]
+script = ExtResource("2_cbtq0")
+path = null
+simulator = NodePath("../PSConversation")
