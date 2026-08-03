@@ -14,6 +14,11 @@ signal current_project_changed()
 
 const HUB_SCENE := preload("res://entities/hub.tscn")
 
+const OBJECT_TYPE := "type"
+const TYPE_HUB := "hub"
+const TYPE_CONNECTION := "connection"
+const TYPE_CAMERA := "camera"
+
 func _ready():
 	save_button.pressed.connect(_on_save_pressed)
 	save_as_button.pressed.connect(save_as_dialog.show)
@@ -21,6 +26,9 @@ func _ready():
 	
 	save_as_dialog.file_selected.connect(save_project_to_file)
 	load_dialog.file_selected.connect(load_project_from_file)
+
+	save_as_dialog.filters = PackedStringArray(["*.json"])
+	load_dialog.filters = PackedStringArray(["*.json"])
 	
 func _on_save_pressed():
 	if has_current_project():
@@ -31,41 +39,40 @@ func _on_save_pressed():
 func save_project_to_file(path:String) -> bool:
 	if !path.is_absolute_path():
 		return false
-	
-	var conversation := ConversationResource.new()
 
-	var hub_list: Array[Node] = []
+	var objects:Array[Dictionary] = []
+
 	for child in editor.get_children():
 		if child is CustomGraphHub:
-			conversation.hubs.append(child.export())
-			hub_list.append(child)
+			objects.append(_export_hub(child))
 
-	conversation.connections = []
 	for c in editor.connections:
-		var connection := ConnectionResource.new()
-		#get choice text from the hub node using c["from_port"]
 		var from_hub = editor.get_node(NodePath(c["from_node"]))
 		var to_hub = editor.get_node(NodePath(c["to_node"]))
-		if from_hub is CustomGraphHub and to_hub is CustomGraphHub:
-			connection.from_choice = from_hub.get_choices_logic().port_out_to_choice(c["from_port"])
-		else:
+		if not (from_hub is CustomGraphHub and to_hub is CustomGraphHub):
 			continue
+		objects.append({
+			OBJECT_TYPE: TYPE_CONNECTION,
+			"from_id": str(from_hub.id),
+			"from_choice": from_hub.get_choices_logic().port_out_to_choice(c["from_port"]),
+			"to_id": str(to_hub.id),
+		})
 
-		connection.from_id = from_hub.id
-		connection.to_id = to_hub.id
-
-		conversation.connections.append(connection)
-
-	conversation.camera_position = editor.scroll_offset
-	conversation.camera_zoom = editor.zoom
+	var camera := {OBJECT_TYPE: TYPE_CAMERA, "zoom": str(editor.zoom)}
+	_split_vector(camera, "position", editor.scroll_offset)
+	objects.append(camera)
 
 	current_project_path = path
 	current_project_changed.emit()
 
-	var code := ResourceSaver.save(conversation, path) 
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	if not file:
+		return false
+	file.store_string(JSON.stringify(objects, "\t"))
+	file.close()
 
-	print("saved conversation to ", path, " with code ", error_string(code))
-	return code == OK
+	print("saved conversation to ", path, " with ", objects.size(), " objects")
+	return true
 
 func load_project_from_file(path:String, make_current:=true) -> bool:
 	if !path.is_absolute_path():
@@ -79,8 +86,12 @@ func load_project_from_file(path:String, make_current:=true) -> bool:
 
 	await get_tree().process_frame # wait for the editor to process the removal of nodes
 
-	var conversation := ResourceLoader.load(path) as ConversationResource
-	if not conversation:
+	var file := FileAccess.open(path, FileAccess.READ)
+	if not file:
+		return false
+	var parsed = JSON.parse_string(file.get_as_text())
+	file.close()
+	if not (parsed is Array):
 		return false
 
 	if make_current:
@@ -88,21 +99,31 @@ func load_project_from_file(path:String, make_current:=true) -> bool:
 		current_project_changed.emit()
 
 	var hubs_created: Array[CustomGraphHub] = []
-	for hub_data in conversation.hubs:
-		var hub:CustomGraphHub = HUB_SCENE.instantiate()
-		hub.position_offset = hub_data.get("position_offset", Vector2.ZERO)
-		hub.hub_data = hub_data
-		
-		editor.add_child(hub)
-		
-		hubs_created.append(hub)
+	var connections: Array[Dictionary] = []
+	var camera_position := Vector2.ZERO
+	var camera_zoom := 1.0
+
+	for object in parsed:
+		if not (object is Dictionary):
+			continue
+		match object.get(OBJECT_TYPE):
+			TYPE_HUB:
+				var hub:CustomGraphHub = HUB_SCENE.instantiate()
+				hub.hub_data = _import_hub_data(object, hub)
+				editor.add_child(hub)
+				hubs_created.append(hub)
+			TYPE_CONNECTION:
+				connections.append(object)
+			TYPE_CAMERA:
+				camera_position = _join_vector(object, "position")
+				camera_zoom = float(object.get("zoom", "1"))
 
 	var new_connections:Array[Dictionary] = []
-	for connection in conversation.connections:
-		var from_hub := IdSystem.get_assigned(connection.from_id)
-		var to_hub := IdSystem.get_assigned(connection.to_id)
+	for connection in connections:
+		var from_hub := IdSystem.get_assigned(int(connection.get("from_id", "-1")))
+		var to_hub := IdSystem.get_assigned(int(connection.get("to_id", "-1")))
 		if (from_hub is CustomGraphHub) && (to_hub is CustomGraphHub):
-			var from_port:int = from_hub.get_choices_logic().choice_to_port_out(connection.from_choice)
+			var from_port:int = from_hub.get_choices_logic().choice_to_port_out(connection.get("from_choice", ""))
 			var to_port:int = to_hub.get_choices_logic().port_in()
 			
 			new_connections.append({
@@ -114,12 +135,58 @@ func load_project_from_file(path:String, make_current:=true) -> bool:
 			})
 	editor.connections = new_connections
 
-	editor.scroll_offset = conversation.camera_position
-	editor.zoom = conversation.camera_zoom
+	editor.scroll_offset = camera_position
+	editor.zoom = camera_zoom
 
-	print("loaded conversation from ", path, " with ", conversation.hubs.size(), " hubs and ", conversation.connections.size(), " edges!")
+	print("loaded conversation from ", path, " with ", hubs_created.size(), " hubs and ", connections.size(), " edges!")
 
 	return true
+
+func _export_hub(hub: CustomGraphHub) -> Dictionary:
+	var data := {}
+	var exported := hub.export()
+	for key in exported:
+		var value = exported[key]
+		if value == null:
+			continue
+		match key:
+			"position_offset":
+				_split_vector(data, "position_offset", value)
+			"conversation_id":
+				data[key] = str(value)
+			_:
+				data[key] = value if (value is bool or value is PackedStringArray) else str(value)
+	data[OBJECT_TYPE] = TYPE_HUB
+	return data
+
+func _import_hub_data(data: Dictionary, hub: CustomGraphHub) -> Dictionary:
+	var restored := {"position_offset": _join_vector(data, "position_offset")}
+	for key in data:
+		match key:
+			"conversation_id":
+				restored[key] = int(data[key])
+			"position_offset:x", "position_offset:y":
+				continue
+			_:
+				var node := hub.get_node_or_null(NodePath(key))
+				var value = data[key]
+				if node is ChoicesSectionLogic:
+					restored[key] = PackedStringArray(value)
+				elif node is SpinBox:
+					restored[key] = float(value)
+				else:
+					restored[key] = value
+	return restored
+
+func _split_vector(data: Dictionary, prefix: String, value: Vector2) -> void:
+	data[prefix + ":x"] = str(value.x)
+	data[prefix + ":y"] = str(value.y)
+
+func _join_vector(data: Dictionary, prefix: String) -> Vector2:
+	return Vector2(
+		float(data.get(prefix + ":x", "0")),
+		float(data.get(prefix + ":y", "0"))
+	)
 
 func save_current_project() -> bool:
 	if has_current_project():

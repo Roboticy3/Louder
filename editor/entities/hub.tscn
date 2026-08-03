@@ -127,11 +127,11 @@ layout_mode = 2
 layout_mode = 2
 text = "DC"
 
-[node name="CheckBox" type="CheckBox" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=1754789357 groups=["hub_component"]]
+[node name="DcCheck" type="CheckBox" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=1754789357 groups=["hub_component"]]
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
 
-[node name="Control" type="Control" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=888836942]
+[node name="HBoxSpacer" type="Control" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=888836942]
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -142,7 +142,7 @@ popup/item_0/text = "Skill"
 popup/item_0/id = 0
 popup/item_0/disabled = true
 
-[node name="SpinBox" type="SpinBox" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=872709569 groups=["hub_component"]]
+[node name="LevelSpinBox" type="SpinBox" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=872709569 groups=["hub_component"]]
 layout_mode = 2
 prefix = "Level:"
 script = ExtResource("2_w7r13")
@@ -150,7 +150,7 @@ script = ExtResource("2_w7r13")
 [node name="GridContainer" type="HBoxContainer" parent="OtherSection/VBoxContainer" unique_id=543840975]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="OtherSection/VBoxContainer/GridContainer" unique_id=747363944]
+[node name="ConditionLabel" type="Label" parent="OtherSection/VBoxContainer/GridContainer" unique_id=747363944]
 layout_mode = 2
 size_flags_stretch_ratio = 6.32
 text = "Condition"
@@ -164,16 +164,16 @@ placeholder_text = "Expression"
 [node name="ChoicesSection" type="HBoxContainer" parent="." unique_id=215591025]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="ChoicesSection" unique_id=798382419]
+[node name="StartLabel" type="Label" parent="ChoicesSection" unique_id=798382419]
 layout_mode = 2
 text = "Start"
 
-[node name="CheckBox" type="CheckBox" parent="ChoicesSection" unique_id=628973272 groups=["hub_component"]]
+[node name="StartCheck" type="CheckBox" parent="ChoicesSection" unique_id=628973272 groups=["hub_component"]]
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
 script = ExtResource("4_f0jtb")
 
-[node name="Control" type="Control" parent="ChoicesSection" unique_id=321633302]
+[node name="ChoicesSpacer" type="Control" parent="ChoicesSection" unique_id=321633302]
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -181,7 +181,7 @@ size_flags_horizontal = 3
 layout_mode = 2
 text = "Choices"
 
-[node name="SpinBox" type="SpinBox" parent="ChoicesSection" unique_id=272973745]
+[node name="ChoicesSpinBox" type="SpinBox" parent="ChoicesSection" unique_id=272973745]
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
@@ -190,6 +190,6 @@ script = ExtResource("2_w7r13")
 [node name="ChoicesSectionLogic" type="Node" parent="ChoicesSection" unique_id=889900628 node_paths=PackedStringArray("hub", "spin_box", "start_check") groups=["hub_component"]]
 script = ExtResource("2_hjueh")
 hub = NodePath("../..")
-spin_box = NodePath("../SpinBox")
-start_check = NodePath("../CheckBox")
+spin_box = NodePath("../ChoicesSpinBox")
+start_check = NodePath("../StartCheck")
 child_index = 5

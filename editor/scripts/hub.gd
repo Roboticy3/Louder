@@ -12,10 +12,26 @@ func export() -> Dictionary:
 		"conversation_id": id,
 		"position_offset": position_offset,
 	}
+	var seen_names := {}
 	for child in find_children("*", "", true, false):
 		if child.is_in_group(COMPONENT_GROUP):
-			data[get_path_to(child) as String] = _export_node(child)
-	return data
+			if seen_names.has(child.name):
+				push_error("Hub \"%s\" has duplicate component name \"%s\"; aborting export" % [name, child.name])
+				return {}
+			seen_names[child.name] = true
+			data[child.name as String] = _export_node(child)
+	return _filter_to_non_default(data)
+
+func _filter_to_non_default(data: Dictionary) -> Dictionary:
+	var defaults: Dictionary = HubDefaults.default_data.get("hub", {})
+	var filtered := {}
+	for key in data:
+		if not defaults.has(key) or _compare_data(data, defaults, key):
+			filtered[key] = data[key]
+	return filtered
+
+func _compare_data(x:Dictionary, y:Dictionary, key):
+	return str(x[key]) != str(y[key])
 
 func _export_node(node: Node) -> Variant:
 	if node is ChoicesSectionLogic:
@@ -37,15 +53,17 @@ func _export_node(node: Node) -> Variant:
 	return null
 
 func import(data: Dictionary) -> void:
+	data = _filter_to_non_default(data)
 	IdSystem.assign_id(self, data.get("conversation_id", id), id)
 	id = data.get("conversation_id", id)
+	
 	position_offset = data.get("position_offset", position_offset)
 
-	for path in data:
-		if path is String:
-			var node := get_node_or_null(NodePath(path))
+	for key in data:
+		if key is String:
+			var node := find_child(key, true, false)
 			if node:
-				_import_node(node, data[path])
+				_import_node(node, data[key])
 
 func _import_node(node: Node, value: Variant) -> void:
 	if node is ChoicesSectionLogic:
@@ -63,9 +81,9 @@ func _import_node(node: Node, value: Variant) -> void:
 					node.selected = i
 					break
 	elif node is CheckBox:
-		node.button_pressed = value
+		node.button_pressed = bool(value)
 	elif node is SpinBox:
-		node.value = value
+		node.value = int(value)
 	elif node is Button:
 		node.text = value
 
@@ -73,7 +91,7 @@ func get_choices_logic() -> ChoicesSectionLogic:
 	return get_node_or_null("ChoicesSection/ChoicesSectionLogic") as ChoicesSectionLogic
 
 func get_start_check() -> CheckBox:
-	return get_node_or_null("ChoicesSection/CheckBox") as CheckBox
+	return get_node_or_null("ChoicesSection/StartCheck") as CheckBox
 
 var id := -1
 const ID_GROUP := &"CONVERSATION"
