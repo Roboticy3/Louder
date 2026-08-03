@@ -20,7 +20,18 @@ func export() -> Dictionary:
 				return {}
 			seen_names[child.name] = true
 			data[child.name as String] = _export_node(child)
-	return data
+	return _filter_to_non_default(data)
+
+func _filter_to_non_default(data: Dictionary) -> Dictionary:
+	var defaults: Dictionary = HubDefaults.default_data.get("hub", {})
+	var filtered := {}
+	for key in data:
+		if not defaults.has(key) or _compare_data(data, defaults, key):
+			filtered[key] = data[key]
+	return filtered
+
+func _compare_data(x:Dictionary, y:Dictionary, key):
+	return str(x[key]) != str(y[key])
 
 func _export_node(node: Node) -> Variant:
 	if node is ChoicesSectionLogic:
@@ -42,6 +53,7 @@ func _export_node(node: Node) -> Variant:
 	return null
 
 func import(data: Dictionary) -> void:
+	data = _filter_to_non_default(data)
 	IdSystem.assign_id(self, data.get("conversation_id", id), id)
 	id = data.get("conversation_id", id)
 	
