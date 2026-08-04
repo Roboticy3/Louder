@@ -2,11 +2,17 @@
 
 [ext_resource type="Script" uid="uid://inieasxjm4nb" path="res://proto_simulator/ps_conversation.gd" id="1_1074j"]
 [ext_resource type="Script" uid="uid://dw6fgoouagof0" path="res://proto_simulator/ps_loader.gd" id="2_cbtq0"]
+[ext_resource type="Script" uid="uid://dshl0su1su5xe" path="res://proto_simulator/ps_simulator.gd" id="3_psim"]
 
 [node name="ProtoSimulatorWrapper" type="Node" unique_id=331396007]
 
 [node name="PSConversation" type="Node" parent="." unique_id=771286231]
 script = ExtResource("1_1074j")
+
+[node name="PSSimulator" type="Node" parent="." unique_id=448811002 node_paths=PackedStringArray("conversation")]
+script = ExtResource("3_psim")
+conversation = NodePath("../PSConversation")
+start_position = "0"
 
 [node name="PSLoader" type="Node" parent="." unique_id=370026564 node_paths=PackedStringArray("simulator")]
 script = ExtResource("2_cbtq0")
