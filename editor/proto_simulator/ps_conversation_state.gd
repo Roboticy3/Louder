@@ -3,9 +3,8 @@ class_name PSConversationState extends Resource
 var history:PackedInt32Array
 @export var covered:Dictionary[int, bool]
 
-@export var variable_names:PackedStringArray
-var variable_names_map:Dictionary[StringName, bool]
-@export var variable_values:Array
+@export var variables:Dictionary[StringName, Variant]
+var scope:PSVariableScope = PSVariableScope.new(variables)
 
 func _on_traverse(to_position:int) -> bool:
 	var exists := to_position in covered
@@ -16,4 +15,4 @@ func _on_traverse(to_position:int) -> bool:
 	return exists
 
 func _to_string() -> String:
-	return "PSConversationState(\n\thistory: %s,\n\tvariable_names:%s\n\tvariable_values:%s\n)" % [str(history), str(variable_names), str(variable_values)]
+	return "PSConversationState(\n history: %s\n)" % [str(history)]

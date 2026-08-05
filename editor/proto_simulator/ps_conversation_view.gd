@@ -1,36 +1,28 @@
 extends Node
 
-@export var choices_container:Container
-@export var speaker_label:RichTextLabel
-@export var text_label:RichTextLabel
-@export var simulator:PSSimulator
+@export var simulator: PSSimulator
 
-func update():
-	update_text_label()
-	update_choices_container()
+var _components: Array[Node] = []
 
-func update_text_label():
-	speaker_label.text = simulator.get_current_property("Speaker")
-	text_label.text = simulator.get_current_property("TextContent")
+func _ready() -> void:
+	_collect_ui_components(self, _components)
+	for component in _components:
+		if component is PSChoicesContainer:
+			component.choice_pressed.connect(_on_choice_pressed)
+	update()
 
-func update_choices_container():
-	for child in choices_container.get_children():
-		child.queue_free()
+func _collect_ui_components(node: Node, components: Array[Node]) -> void:
+	for child in node.get_children():
+		if child.is_in_group("ui_component"):
+			components.append(child)
+		_collect_ui_components(child, components)
 
-	var choices := simulator.list_choices()
-	for i in choices.size():
-		var button := Button.new()
-		button.text = str(choices[i].get("from_choice", "Choice %d" % (i + 1)))
-		if button.text.is_empty():
-			button.text = "CONTINUE"
-		button.pressed.connect(_on_choice_pressed.bind(i))
-		choices_container.add_child(button)
-	
-	if choices.is_empty():
-		var button := Button.new()
-		button.text = "END"
-		choices_container.add_child(button)
-		pass
+func update() -> void:
+	for component in _components:
+		if component is RichTextLabel:
+			component.text = simulator.get_current_property(component.get_meta("property"))
+		elif component is PSChoicesContainer:
+			component.set_choices(simulator.list_choices())
 
 func _on_choice_pressed(index: int) -> void:
 	if simulator.traverse_index(index):
