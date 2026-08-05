@@ -97,10 +97,18 @@ func _evaluate_hub(h:Dictionary) -> void:
 	var expressions = str(h.get("Expressions"))
 	var expressions_arr = expressions.split("\n")
 	
+	#three group regex to manually parse assignments:
+	#(gap) (identifier) (gap) (equals) (expression)
+	var re := RegEx.create_from_string(r"\s*([a-zA-Z][a-zA-Z0-9_]*)\s*(=)\s*(.*)")
 	for expression in expressions_arr:
-		var error := e.parse(expression)
+		var matches := re.search(expression)
+		if matches.strings.size() < 4:
+			push_warning("Assignment ", expression, " is incomplete. Expected the form \"<identifier> = <expression>\"")
+			continue
+		
+		var error := e.parse(matches.strings[3])
 		if error != OK:
-			push_warning("Expression ", expression, " \"", e.get_error_text(), "\". Skipping..")
-		e.execute([], state.scope, )
-		print("Expression ", expression, " evaluated \"", e.get_error_text(), "\". Resulting scope: ", state.scope)
+			push_warning("Expression ", matches.strings[3], " \"", e.get_error_text(), "\". Skipping..")
+		state.scope[matches.strings[1]] = e.execute([], state.scope)
+		print("Expression ", matches.strings[3], " evaluated \"", e.get_error_text(), "\". Resulting scope: ", state.scope)
 	return
