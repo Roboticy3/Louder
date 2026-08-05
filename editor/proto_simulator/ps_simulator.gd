@@ -16,8 +16,21 @@ func set_position(id) -> void:
 func get_position() -> String:
 	return position
 
-func list_choices() -> Array:
-	return conversation.get_connections_from(position)
+func list_choices(evaluate_conditions:=true) -> Array:
+	var choices := conversation.get_connections_from(position)
+	if evaluate_conditions: choices = choices.filter(_evaluate_choice)
+	return choices
+
+func _evaluate_choice(c:Object) -> bool:
+	var to_id = c.get("to_id")
+	if !(to_id is int):
+		return false
+	var hub = conversation.hubs_by_id[to_id]
+	var conditions = hub.get("conditions")
+	if !(conditions is String):
+		return true
+	print(conditions)
+	return true
 
 func traverse(choice: String) -> bool:
 	for connection in conversation.get_connections_from(position):
