@@ -157,9 +157,24 @@ text = "Condition"
 clip_text = true
 text_overrun_behavior = 5
 
-[node name="Expression" parent="OtherSection/VBoxContainer/GridContainer" unique_id=647734270 groups=["hub_component"] instance=ExtResource("3_f0jtb")]
+[node name="Conditions" parent="OtherSection/VBoxContainer/GridContainer" unique_id=647734270 groups=["hub_component"] instance=ExtResource("3_f0jtb")]
 layout_mode = 2
-placeholder_text = "Expression"
+placeholder_text = "Conditions"
+
+[node name="GridContainer2" type="HBoxContainer" parent="OtherSection/VBoxContainer" unique_id=1125872985]
+layout_mode = 2
+
+[node name="ExpressionLabel" type="Label" parent="OtherSection/VBoxContainer/GridContainer2" unique_id=965497717]
+layout_mode = 2
+size_flags_stretch_ratio = 6.32
+text = "Condition"
+clip_text = true
+text_overrun_behavior = 5
+
+[node name="Expressions" parent="OtherSection/VBoxContainer/GridContainer2" unique_id=1321863141 groups=["hub_component"] instance=ExtResource("3_f0jtb")]
+layout_mode = 2
+placeholder_text = "Expressions"
+delimiter_strings = Array[String](["\" \"", "' '"])
 
 [node name="ChoicesSection" type="HBoxContainer" parent="." unique_id=215591025]
 layout_mode = 2

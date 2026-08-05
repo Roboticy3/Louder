@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://inieasxjm4nb" path="res://proto_simulator/ps_conversation.gd" id="1_1074j"]
 [ext_resource type="Script" uid="uid://dw6fgoouagof0" path="res://proto_simulator/ps_loader.gd" id="2_cbtq0"]
 [ext_resource type="Script" uid="uid://dshl0su1su5xe" path="res://proto_simulator/ps_simulator.gd" id="3_psim"]
+[ext_resource type="Script" uid="uid://c8mgp47kh56t1" path="res://proto_simulator/ps_conversation_view.gd" id="4_hwksk"]
 
 [node name="ProtoSimulatorWrapper" type="Node" unique_id=331396007]
 
@@ -12,9 +13,34 @@ script = ExtResource("1_1074j")
 [node name="PSSimulator" type="Node" parent="." unique_id=448811002 node_paths=PackedStringArray("conversation")]
 script = ExtResource("3_psim")
 conversation = NodePath("../PSConversation")
-start_position = "0"
 
 [node name="PSLoader" type="Node" parent="." unique_id=370026564 node_paths=PackedStringArray("simulator")]
 script = ExtResource("2_cbtq0")
-path = null
 simulator = NodePath("../PSConversation")
+path = null
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=199318734]
+
+[node name="Control" type="Control" parent="CanvasLayer" unique_id=1114013410 node_paths=PackedStringArray("choices_container", "simulator")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("4_hwksk")
+choices_container = NodePath("VBoxContainer")
+simulator = NodePath("../../PSSimulator")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Control" unique_id=1004689840]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -101.0
+offset_top = -227.0
+offset_right = 101.0
+grow_horizontal = 2
+grow_vertical = 0

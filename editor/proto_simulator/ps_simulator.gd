@@ -2,18 +2,15 @@ class_name PSSimulator extends Node
 
 @export var conversation: PSConversation
 
-@export var start_position: String = ""
+@export var start_position: int = 0
 
-var position: String = ""
-
-func _ready() -> void:
-	if not start_position.is_empty():
-		position = start_position
+@onready var position := 0
+@export var state:PSConversationState
 
 func set_position(id) -> void:
-	position = str(id)
+	position = int(id)
 
-func get_position() -> String:
+func get_position() -> int:
 	return position
 
 func list_choices(evaluate_conditions:=true) -> Array:
@@ -26,8 +23,9 @@ func _evaluate_choice(c:Object) -> bool:
 	if !(to_id is int):
 		return false
 	var hub = conversation.hubs_by_id[to_id]
-	var conditions = hub.get("conditions")
+	var conditions = hub.get("Conditions")
 	if !(conditions is String):
+		print("no conditions found")
 		return true
 	print(conditions)
 	return true
@@ -35,7 +33,8 @@ func _evaluate_choice(c:Object) -> bool:
 func traverse(choice: String) -> bool:
 	for connection in conversation.get_connections_from(position):
 		if str(connection.get("from_choice", "")) == choice:
-			position = str(connection.get("to_id", ""))
+			position = int(connection.get("to_id", ""))
+			state._on_traverse(position)
 			return true
 	return false
 
@@ -43,5 +42,14 @@ func traverse_index(i: int) -> bool:
 	var choices := conversation.get_connections_from(position)
 	if i < 0 or i >= choices.size():
 		return false
-	position = str(choices[i].get("to_id", ""))
+	position = int(choices[i].get("to_id", ""))
+	state._on_traverse(position)
 	return true
+
+func _evaluate_hub(h:Object) -> void:
+	var expressions = h.get("Expressions")
+	if !(expressions is String):
+		print("no expressions found")
+		return
+	print(expressions)
+	return
