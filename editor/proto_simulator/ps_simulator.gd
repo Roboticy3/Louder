@@ -46,11 +46,12 @@ func _evaluate_choice(c:Dictionary) -> bool:
 	var conditions_arr := conditions.split("\n")
 	var e := Expression.new()
 	for condition in conditions_arr:
+		
 		var error := e.parse(condition, state.variable_names)
 		if error != OK:
 			push_warning("Condition has bad syntax. Treating as false")
 			return false
-		var result = e.execute(state.variable_values, self)
+		var result = e.execute(state.variable_values)
 		if !result:
 			print("Condition ", condition, " evaluated to false.")
 			return false

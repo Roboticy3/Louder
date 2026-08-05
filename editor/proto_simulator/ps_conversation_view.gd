@@ -26,9 +26,10 @@ func update_choices_container():
 		button.pressed.connect(_on_choice_pressed.bind(i))
 		choices_container.add_child(button)
 	
-	if choices_container.get_child_count() == 0:
+	if choices.is_empty():
 		var button := Button.new()
 		button.text = "END"
+		choices_container.add_child(button)
 		pass
 
 func _on_choice_pressed(index: int) -> void:

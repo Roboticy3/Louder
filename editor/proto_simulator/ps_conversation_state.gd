@@ -2,7 +2,9 @@ class_name PSConversationState extends Resource
 
 var history:PackedInt32Array
 @export var covered:Dictionary[int, bool]
+
 @export var variable_names:PackedStringArray
+var variable_names_map:Dictionary[StringName, bool]
 @export var variable_values:Array
 
 func _on_traverse(to_position:int) -> bool:
