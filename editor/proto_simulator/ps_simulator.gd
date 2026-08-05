@@ -41,11 +41,19 @@ func list_choices(evaluate_conditions:=true) -> Array:
 func _evaluate_choice(c:Dictionary) -> bool:
 	var to_id = int(c.get("to_id"))
 	var hub = conversation.hubs_by_id[to_id]
-	var conditions = hub.get("Conditions")
-	if !(conditions is String):
-		print("no conditions found")
-		return true
-	print(conditions)
+	var conditions = str(hub.get("Conditions"))
+	
+	var conditions_arr := conditions.split("\n")
+	var e := Expression.new()
+	for condition in conditions_arr:
+		var error := e.parse(condition, state.variable_names)
+		if error != OK:
+			push_warning("Condition has bad syntax. Treating as false")
+			return false
+		var result = e.execute(state.variable_values, self)
+		if !result:
+			print("Condition ", condition, " evaluated to false.")
+			return false
 	return true
 
 func get_current_property(property:String):

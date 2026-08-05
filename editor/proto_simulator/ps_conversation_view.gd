@@ -25,6 +25,11 @@ func update_choices_container():
 			button.text = "CONTINUE"
 		button.pressed.connect(_on_choice_pressed.bind(i))
 		choices_container.add_child(button)
+	
+	if choices_container.get_child_count() == 0:
+		var button := Button.new()
+		button.text = "END"
+		pass
 
 func _on_choice_pressed(index: int) -> void:
 	if simulator.traverse_index(index):
