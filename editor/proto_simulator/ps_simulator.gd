@@ -7,7 +7,7 @@ class_name PSSimulator extends Node
 
 @onready var position := 0
 @export var state:PSConversationState
-
+var e := Expression.new()
 
 func _ready():
 	var c := PSConversation.new()
@@ -41,20 +41,21 @@ func list_choices(evaluate_conditions:=true) -> Array:
 func _evaluate_choice(c:Dictionary) -> bool:
 	var to_id = int(c.get("to_id"))
 	var hub = conversation.hubs_by_id[to_id]
-	var conditions = str(hub.get("Conditions"))
+	if !hub.get("Conditions"):
+		return true
+	
+	var conditions := str(hub.get("Conditions"))
 	
 	var conditions_arr := conditions.split("\n")
-	var e := Expression.new()
 	for condition in conditions_arr:
-		
 		var error := e.parse(condition)
 		if error != OK:
-			push_warning("Condition has bad syntax. Treating as false")
+			push_warning("Condition ", condition, " \"", e.get_error_text(), "\". Treating as false")
 			return false
 		var result = e.execute([], state.scope)
+		print("Condition ", condition, " evaluated to ", result, " \"", e.get_error_text(), "\"")
+		print("Condition ", condition, " evaluated. Resulting scope: ", state.scope)
 		if !result:
-			print("Condition ", condition, " evaluated to false.")
-			print("Resulting scope: ", state.scope)
 			return false
 	return true
 
@@ -65,6 +66,7 @@ func traverse(choice: String) -> bool:
 	for connection in conversation.get_connections_from(position):
 		if str(connection.get("from_choice", "")) == choice:
 			position = int(connection.get("to_id", ""))
+			_evaluate_hub(conversation.hubs_by_id[position])
 			state._on_traverse(position)
 			return true
 	push_error("Traversed to nonexistent choice: ", choice)
@@ -76,18 +78,29 @@ func traverse_index(i: int) -> bool:
 		push_error("Traversed to choice index out of bounds: ", i)
 		return false
 	position = int(choices[i].get("to_id", ""))
+	_evaluate_hub(conversation.hubs_by_id[position])
 	state._on_traverse(position)
 	return true
 
 func warp(new_position:=position) -> bool:
 	if new_position in conversation.hubs_by_id:
 		position = new_position
+		_evaluate_hub(conversation.hubs_by_id[position])
 		state._on_traverse(position)
 		return true
 	push_error("Warped to nonexistent location: ", new_position)
 	return false
 
 func _evaluate_hub(h:Dictionary) -> void:
+	if !h.get("Expressions"):
+		return
 	var expressions = str(h.get("Expressions"))
-	print(expressions)
+	var expressions_arr = expressions.split("\n")
+	
+	for expression in expressions_arr:
+		var error := e.parse(expression)
+		if error != OK:
+			push_warning("Expression ", expression, " \"", e.get_error_text(), "\". Skipping..")
+		e.execute([], state.scope, )
+		print("Expression ", expression, " evaluated \"", e.get_error_text(), "\". Resulting scope: ", state.scope)
 	return

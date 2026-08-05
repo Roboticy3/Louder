@@ -1,7 +1,7 @@
 class_name PSChoicesContainer
 extends VBoxContainer
 
-signal choice_pressed(index: int)
+signal choice_pressed(choice: String)
 
 func set_choices(choices: Array) -> void:
 	for child in get_children():
@@ -9,10 +9,11 @@ func set_choices(choices: Array) -> void:
 
 	for i in choices.size():
 		var button := Button.new()
-		button.text = str(choices[i].get("from_choice", ""))
+		var choice := str(choices[i].get("from_choice", ""))
+		button.text = choice
 		if button.text.is_empty():
 			button.text = "CONTINUE"
-		button.pressed.connect(_on_choice_pressed.bind(i))
+		button.pressed.connect(_on_choice_pressed.bind(choice))
 		add_child(button)
 
 	if choices.is_empty():
@@ -20,5 +21,5 @@ func set_choices(choices: Array) -> void:
 		button.text = "END"
 		add_child(button)
 
-func _on_choice_pressed(index: int) -> void:
-	choice_pressed.emit(index)
+func _on_choice_pressed(choice: String) -> void:
+	choice_pressed.emit(choice)

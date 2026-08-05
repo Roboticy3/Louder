@@ -18,12 +18,14 @@ func _collect_ui_components(node: Node, components: Array[Node]) -> void:
 		_collect_ui_components(child, components)
 
 func update() -> void:
+	if !simulator:
+		push_error("Updated PSConversationView ", self, " with no simulator.")
 	for component in _components:
 		if component is RichTextLabel:
-			component.text = simulator.get_current_property(component.get_meta("property"))
+			component.text = simulator.get_current_property(component.name)
 		elif component is PSChoicesContainer:
 			component.set_choices(simulator.list_choices())
 
-func _on_choice_pressed(index: int) -> void:
-	if simulator.traverse_index(index):
+func _on_choice_pressed(choice: String) -> void:
+	if simulator.traverse(choice):
 		update()
