@@ -1,9 +1,13 @@
 [gd_scene format=3 uid="uid://i5djwipicmob"]
 
 [ext_resource type="Script" uid="uid://inieasxjm4nb" path="res://proto_simulator/ps_conversation.gd" id="1_1074j"]
-[ext_resource type="Script" uid="uid://dw6fgoouagof0" path="res://proto_simulator/ps_loader.gd" id="2_cbtq0"]
+[ext_resource type="Script" uid="uid://cl7oyj03kq6mi" path="res://proto_simulator/ps_conversation_state.gd" id="3_63mts"]
 [ext_resource type="Script" uid="uid://dshl0su1su5xe" path="res://proto_simulator/ps_simulator.gd" id="3_psim"]
 [ext_resource type="Script" uid="uid://c8mgp47kh56t1" path="res://proto_simulator/ps_conversation_view.gd" id="4_hwksk"]
+
+[sub_resource type="Resource" id="Resource_63mts"]
+script = ExtResource("3_63mts")
+metadata/_custom_type_script = "uid://cl7oyj03kq6mi"
 
 [node name="ProtoSimulatorWrapper" type="Node" unique_id=331396007]
 
@@ -13,15 +17,11 @@ script = ExtResource("1_1074j")
 [node name="PSSimulator" type="Node" parent="." unique_id=448811002 node_paths=PackedStringArray("conversation")]
 script = ExtResource("3_psim")
 conversation = NodePath("../PSConversation")
-
-[node name="PSLoader" type="Node" parent="." unique_id=370026564 node_paths=PackedStringArray("simulator")]
-script = ExtResource("2_cbtq0")
-simulator = NodePath("../PSConversation")
-path = null
+state = SubResource("Resource_63mts")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=199318734]
 
-[node name="Control" type="Control" parent="CanvasLayer" unique_id=1114013410 node_paths=PackedStringArray("choices_container", "simulator")]
+[node name="Control" type="Control" parent="CanvasLayer" unique_id=1114013410 node_paths=PackedStringArray("choices_container", "speaker_label", "text_label", "simulator")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -29,18 +29,31 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("4_hwksk")
-choices_container = NodePath("VBoxContainer")
+choices_container = NodePath("GridContainer/VBoxContainer")
+speaker_label = NodePath("GridContainer/Label")
+text_label = NodePath("GridContainer/RichTextLabel")
 simulator = NodePath("../../PSSimulator")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Control" unique_id=1004689840]
+[node name="GridContainer" type="GridContainer" parent="CanvasLayer/Control" unique_id=266184963]
 layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
+anchors_preset = 15
+anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -101.0
-offset_top = -227.0
-offset_right = 101.0
+offset_top = 390.0
 grow_horizontal = 2
-grow_vertical = 0
+grow_vertical = 2
+
+[node name="Label" type="RichTextLabel" parent="CanvasLayer/Control/GridContainer" unique_id=1194124308]
+layout_mode = 2
+fit_content = true
+
+[node name="RichTextLabel" type="RichTextLabel" parent="CanvasLayer/Control/GridContainer" unique_id=786937413]
+layout_mode = 2
+fit_content = true
+horizontal_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Control/GridContainer" unique_id=1004689840]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[connection signal="ready" from="PSSimulator" to="CanvasLayer/Control" method="update"]

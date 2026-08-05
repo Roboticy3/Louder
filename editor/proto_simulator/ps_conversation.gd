@@ -7,8 +7,8 @@ const TYPE_CAMERA := "camera"
 
 @export var input_path: String = ""
 
-var hubs_by_id := {}
-var connections_by_from := {}
+var hubs_by_id:Dictionary[int, Dictionary] = {}
+var connections_by_from:Dictionary[int, Array] = {}
 var camera := {}
 
 func _ready() -> void:
@@ -42,9 +42,9 @@ func unroll(objects: Array) -> void:
 			continue
 		match object.get(OBJECT_TYPE):
 			TYPE_HUB:
-				hubs_by_id[str(object.get("conversation_id", ""))] = object
+				hubs_by_id[int(object.get("conversation_id", ""))] = object
 			TYPE_CONNECTION:
-				var from_id := str(object.get("from_id", ""))
+				var from_id := int(object.get("from_id", ""))
 				if not connections_by_from.has(from_id):
 					connections_by_from[from_id] = []
 				connections_by_from[from_id].append(object)
@@ -52,7 +52,7 @@ func unroll(objects: Array) -> void:
 				camera = object
 
 func get_hub(conversation_id) -> Dictionary:
-	return hubs_by_id.get(str(conversation_id), {})
+	return hubs_by_id.get(int(conversation_id), {})
 
 func get_connections_from(from_id) -> Array:
-	return connections_by_from.get(str(from_id), [])
+	return connections_by_from.get(int(from_id), [])
