@@ -101,7 +101,7 @@ script = ExtResource("1_ysrp0")
 layout_mode = 2
 text = "Text Content"
 
-[node name="Speaker" parent="." unique_id=42355890 groups=["hub_component"] instance=ExtResource("3_f0jtb")]
+[node name="Speaker" parent="." unique_id=42355890 groups=["autocomplete_speaker", "hub_component"] instance=ExtResource("3_f0jtb")]
 layout_mode = 2
 size_flags_vertical = 0
 placeholder_text = "Speaker"
@@ -157,7 +157,7 @@ text = "Condition"
 clip_text = true
 text_overrun_behavior = 5
 
-[node name="Conditions" parent="OtherSection/VBoxContainer/GridContainer" unique_id=647734270 groups=["hub_component"] instance=ExtResource("3_f0jtb")]
+[node name="Conditions" parent="OtherSection/VBoxContainer/GridContainer" unique_id=647734270 groups=["autocomplete_expression", "hub_component"] instance=ExtResource("3_f0jtb")]
 layout_mode = 2
 placeholder_text = "Conditions"
 
@@ -171,10 +171,9 @@ text = "Condition"
 clip_text = true
 text_overrun_behavior = 5
 
-[node name="Expressions" parent="OtherSection/VBoxContainer/GridContainer2" unique_id=1321863141 groups=["hub_component"] instance=ExtResource("3_f0jtb")]
+[node name="Expressions" parent="OtherSection/VBoxContainer/GridContainer2" unique_id=1321863141 groups=["autocomplete_expression", "hub_component"] instance=ExtResource("3_f0jtb")]
 layout_mode = 2
 placeholder_text = "Expressions"
-delimiter_strings = Array[String](["\" \"", "' '"])
 
 [node name="ChoicesSection" type="HBoxContainer" parent="." unique_id=215591025]
 layout_mode = 2

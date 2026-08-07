@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://d2ffa88ufdvl6"]
 
-[ext_resource type="Script" uid="uid://njuhx76nyuqd" path="res://scripts/hub_text_content.gd" id="1_4ufmg"]
+[ext_resource type="Script" uid="uid://njuhx76nyuqd" path="res://scripts/hub_text_edit.gd" id="1_4ufmg"]
 
 [node name="TextContent" type="CodeEdit" unique_id=42355890]
 size_flags_horizontal = 3

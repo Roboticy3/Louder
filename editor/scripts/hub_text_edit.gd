@@ -1,4 +1,4 @@
-extends TextEdit
+class_name CustomGraphNodeTextEdit extends CodeEdit
 
 @export var oneliner := true
 @export var inliner := false
@@ -26,4 +26,3 @@ func _gui_input(event: InputEvent) -> void:
 		if n:
 			n.grab_focus()
 			return
-		
