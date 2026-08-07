@@ -1,0 +1,5 @@
+[gd_scene format=3 uid="uid://buwp2pegwfmfg"]
+
+[node name="Window" type="Window" unique_id=2035585249 groups=["speaker_colors"]]
+oversampling_override = 1.0
+position = Vector2i(0, 36)

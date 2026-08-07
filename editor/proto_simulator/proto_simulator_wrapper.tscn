@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://i5djwipicmob"]
 
 [ext_resource type="Script" uid="uid://inieasxjm4nb" path="res://proto_simulator/ps_conversation.gd" id="1_1074j"]
+[ext_resource type="Script" uid="uid://i33mybwmma7p" path="res://proto_simulator/ps_load_conversation.gd" id="3_hwksk"]
 [ext_resource type="Script" uid="uid://dshl0su1su5xe" path="res://proto_simulator/ps_simulator.gd" id="3_psim"]
 [ext_resource type="PackedScene" uid="uid://dfuvngpcvkh4u" path="res://proto_simulator/proto_simulator_ui_mockup.tscn" id="4_hwksk"]
 
@@ -11,7 +12,13 @@ script = ExtResource("1_1074j")
 
 [node name="PSSimulator" type="Node" parent="." unique_id=448811002 node_paths=PackedStringArray("conversation")]
 script = ExtResource("3_psim")
+conversation_path = "user://dice_check_test.json"
 conversation = NodePath("../PSConversation")
+
+[node name="LoadConversation" type="Node" parent="." unique_id=1703789268 node_paths=PackedStringArray("simulator", "view")]
+script = ExtResource("3_hwksk")
+simulator = NodePath("../PSSimulator")
+view = NodePath("../CanvasLayer/Control")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=199318734]
 

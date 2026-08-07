@@ -28,8 +28,8 @@ func load_from_json(path: String) -> bool:
 		return false
 
 	unroll(parsed)
-	print(hubs_by_id)
-	print(connections_by_from)
+	#print(hubs_by_id)
+	#print(connections_by_from)
 	return true
 
 func unroll(objects: Array) -> void:
@@ -55,4 +55,5 @@ func get_hub(conversation_id) -> Dictionary:
 	return hubs_by_id.get(int(conversation_id), {})
 
 func get_connections_from(from_id) -> Array:
-	return connections_by_from.get(int(from_id), [])
+	var connections = connections_by_from.get(int(from_id), [])
+	return connections

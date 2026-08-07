@@ -33,28 +33,52 @@ func set_position(id) -> void:
 func get_position() -> int:
 	return position
 
-func list_choices(from_position:=position, evaluate_conditions:=true) -> Array:
+func list_choices(from_position:=position, evaluate_conditions:=true, unique_choices:=true) -> Array:
 	var choices := conversation.get_connections_from(from_position)
-	if evaluate_conditions: choices = choices.filter(_evaluate_choice)
+	if evaluate_conditions: choices = _evaluate_choices(choices)
+	if unique_choices:
+		var dict_unique_choices := {}
+		for c in choices:
+			var from_choice = c.get("from_choice", "")
+			if not dict_unique_choices.has(from_choice):
+				dict_unique_choices[from_choice] = c
+		return dict_unique_choices.values()
 	return choices
 
-func _evaluate_choice(c:Dictionary) -> bool:
+func _evaluate_choices(choices: Array) -> Array:
+	var valid_choices := []
+	for c in choices:
+		if _evaluate_choice_single(c):
+			valid_choices.append(c)
+	
+	#sort by length of conditions (descending) to prioritize more complex conditions first.
+	#this prioritizes more complex choices
+	valid_choices.sort_custom(func (a, b): return _count_conditions(a.get("Conditions", "")) > _count_conditions(b.get("Conditions", "")))
+
+	return valid_choices
+
+func _count_conditions(conditions:String) -> int:
+	if conditions.is_empty():
+		return 0
+	return conditions.count("\n") + 1
+
+func _evaluate_choice_single(c:Dictionary) -> bool:
 	var to_id = int(c.get("to_id"))
 	var hub = conversation.hubs_by_id[to_id]
 	if !hub.get("Conditions"):
 		return true
 	
 	var conditions := str(hub.get("Conditions"))
+	c["Conditions"] = conditions
 	
-	var conditions_arr := conditions.split("\n")
+	var conditions_arr := conditions.split("\n", false)
 	for condition in conditions_arr:
 		var error := e.parse(condition)
 		if error != OK:
-			push_warning("Condition ", condition, " \"", e.get_error_text(), "\". Treating as false")
+			push_error("Condition ", condition, " \"", e.get_error_text(), "\". Treating as false")
 			return false
 		var result = e.execute([], state.scope)
-		print("Condition ", condition, " evaluated to ", result, " \"", e.get_error_text(), "\"")
-		print("Condition ", condition, " evaluated. Resulting scope: ", state.scope)
+		print("Condition ", condition, " evaluated to ", result, ". Resulting scope: ", state.scope)
 		if !result:
 			return false
 	return true
@@ -107,7 +131,7 @@ func _evaluate_hub_expressions(h:Dictionary) -> void:
 	for expression in expressions_arr:
 		var matches := re.search(expression)
 		if matches.strings.size() < 4:
-			push_warning("Assignment ", expression, " is incomplete. Expected the form \"<identifier> = <expression>\"")
+			push_error("Assignment ", expression, " is incomplete. Expected the form \"<identifier> = <expression>\"")
 			continue
 		
 		var error := e.parse(matches.strings[3])
@@ -121,8 +145,10 @@ func _evaluate_dice_checks(h:Dictionary) -> void:
 	if h.get("conversation_id") == null:
 		push_error("Hub ", h, " has no conversation_id!")
 		return
-	var choices := list_choices(h.get("conversation_id"))
-	for c in choices:
+	
+	#get *all* connections from this hub, even if one port repeats.
+	var connections = conversation.get_connections_from(int(h.get("conversation_id")))
+	for c in connections:
 		if !(c is Dictionary):
 			continue
 		
@@ -130,19 +156,19 @@ func _evaluate_dice_checks(h:Dictionary) -> void:
 			push_error("Connection ", c, " from hub ", h.get("conversation_id"), " has no to_id!")
 			continue
 
-		var check_h = conversation.hubs_by_id.get(c.get("to_id"))
+		var check_h = conversation.hubs_by_id.get(int(c.get("to_id")))
 		if !(check_h is Dictionary):
 			push_error("Connection ", c, " from hub ", h.get("conversation_id"), " has invalid to_id!")
 			continue
 		
-		if c.get("DiceSkill") == null or c.get("DiceSkill") == "":
+		if check_h.get("DiceSkill") == null or c.get("DiceSkill") == "":
 			continue
 
 		print("Evaluating dice check for connection ", c, " from hub ", h.get("conversation_id"))
 
-		var dice_skill := str(c.get("DiceSkill", ""))
+		var dice_skill := str(check_h.get("DiceSkill", ""))
 		var skill_level := int(state.scope.get(dice_skill))
-		var dice_level := int(c.get("DiceLevel", 0))
+		var dice_level := int(check_h.get("DiceLevel", 0))
 		
 		var check_variable := "_%s_%s_dc" % [h.get("conversation_id"), c.get("to_id")]
 		_roll_into_outcome(check_variable, skill_level)
@@ -160,4 +186,4 @@ func _roll_into_outcome(outcome_variable:String, skill_level:int) -> void:
 	print("Rolled ", roll, " + ", skill_level, " = ", total, " for ", outcome_variable)
 
 func roll_dice() -> int:
-	return randi() % 6 + randi() % 6
+	return (randi() % 6) + (randi() % 6)

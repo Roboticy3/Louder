@@ -5,13 +5,14 @@
 [ext_resource type="Script" uid="uid://cb5oairoh5jue" path="res://scripts/selection_logic.gd" id="3_2wuvf"]
 [ext_resource type="Script" uid="uid://c3iywyrk7o8yw" path="res://scripts/create_logic.gd" id="4_2vd5y"]
 [ext_resource type="PackedScene" uid="uid://dvnsgw3jjxr0h" path="res://entities/menus/file_menu.tscn" id="4_8h6d1"]
-[ext_resource type="PackedScene" path="res://entities/menus/view_menu.tscn" id="5_vumenu"]
-[ext_resource type="PackedScene" path="res://entities/menus/speaker_colors_menu.tscn" id="6_scmenu"]
 [ext_resource type="Script" uid="uid://vgv2nlv4m715" path="res://scripts/delete_logic.gd" id="4_d3wec"]
 [ext_resource type="Script" uid="uid://o0sx5q87o113" path="res://scripts/walker_logic.gd" id="5_o1q8q"]
+[ext_resource type="PackedScene" uid="uid://5auivb6rkpb8" path="res://entities/menus/view_menu.tscn" id="5_vumenu"]
 [ext_resource type="Script" uid="uid://b3jvwrspygwuc" path="res://scripts/pointer_logic.gd" id="6_qdkfl"]
+[ext_resource type="PackedScene" path="res://entities/menus/speaker_colors_menu.tscn" id="6_scmenu"]
 [ext_resource type="Script" uid="uid://bboylqujoaqru" path="res://scripts/on_screen_debug.gd" id="9_n5ixm"]
 [ext_resource type="Script" uid="uid://dfhadrloniwdc" path="res://scripts/user_config.gd" id="10_07l17"]
+[ext_resource type="PackedScene" uid="uid://buwp2pegwfmfg" path="res://entities/speaker_colors.tscn" id="13_6vlff"]
 
 [node name="Editor" type="CanvasLayer" unique_id=1835673697]
 
@@ -73,7 +74,6 @@ editor = NodePath("../../GraphEdit")
 
 [node name="View" parent="Control/GridContainer/FileBar" unique_id=1679255408 instance=ExtResource("5_vumenu")]
 layout_mode = 2
-text = "View"
 
 [node name="GraphEdit" type="GraphEdit" parent="Control/GridContainer" unique_id=2143194040]
 layout_mode = 2
@@ -104,5 +104,6 @@ grow_vertical = 0
 fit_content = true
 script = ExtResource("9_n5ixm")
 
-[node name="SpeakerColorsMenu" parent="Control" instance=ExtResource("6_scmenu")]
-layout_mode = 1
+[node name="SpeakerColorsMenu" parent="Control" unique_id=255244167 instance=ExtResource("6_scmenu")]
+
+[node name="Window" parent="." unique_id=2035585249 instance=ExtResource("13_6vlff")]

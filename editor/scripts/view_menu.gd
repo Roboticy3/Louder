@@ -1,12 +1,12 @@
 extends MenuButton
 
 const SPEAKER_COLORS := 0
-const SPEAKER_COLORS_GROUP := &"speaker_colors_menu"
+const SPEAKER_COLORS_GROUP := &"speaker_colors"
 
 func _ready():
 	text = "View"
 	var popup := get_popup()
-	popup.add_check_item("Speaker Colors", SPEAKER_COLORS)
+	popup.add_item("Speaker Colors", SPEAKER_COLORS)
 	popup.id_pressed.connect(_on_id_pressed)
 
 func _on_id_pressed(id:int):
@@ -25,4 +25,3 @@ func _toggle_speaker_colors():
 	for node in nodes:
 		if node is CanvasItem:
 			node.visible = show
-	get_popup().set_item_checked(SPEAKER_COLORS, show)
