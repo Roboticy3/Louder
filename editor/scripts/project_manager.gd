@@ -1,13 +1,10 @@
-extends Node
+extends MenuButton
 
 @export var editor:GraphEdit
 
-@export var save_button:Button
-@export var save_as_button:Button
-@export var load_button:Button
-
-@export var save_as_dialog:FileDialog
-@export var load_dialog:FileDialog
+const SAVE := 0
+const SAVE_AS := 1
+const LOAD := 2
 
 var current_project_path:String
 signal current_project_changed()
@@ -19,17 +16,54 @@ const TYPE_HUB := "hub"
 const TYPE_CONNECTION := "connection"
 const TYPE_CAMERA := "camera"
 
+var save_as_dialog:FileDialog
+var load_dialog:FileDialog
+
 func _ready():
-	save_button.pressed.connect(_on_save_pressed)
-	save_as_button.pressed.connect(save_as_dialog.show)
-	load_button.pressed.connect(load_dialog.show)
-	
+	text = "File"
+	var popup := get_popup()
+	popup.add_item("Save", SAVE)
+	popup.add_item("Save As...", SAVE_AS)
+	popup.add_item("Load...", LOAD)
+	popup.id_pressed.connect(_on_id_pressed)
+	popup.set_item_shortcut(SAVE, _shortcut_for_action(&"graph_save"))
+	popup.set_item_shortcut(SAVE_AS, _shortcut_for_action(&"graph_save_as"))
+	popup.set_item_shortcut(LOAD, _shortcut_for_action(&"graph_load"))
+
+	save_as_dialog = _make_dialog("Save As")
 	save_as_dialog.file_selected.connect(save_project_to_file)
+
+	load_dialog = _make_dialog("Load", true)
 	load_dialog.file_selected.connect(load_project_from_file)
 
-	save_as_dialog.filters = PackedStringArray(["*.json"])
-	load_dialog.filters = PackedStringArray(["*.json"])
-	
+func _make_dialog(dialog_name:String, for_open:=false) -> FileDialog:
+	var dialog := FileDialog.new()
+	dialog.name = dialog_name
+	dialog.use_native_dialog = true
+	dialog.access = FileDialog.ACCESS_USERDATA
+	dialog.filters = PackedStringArray(["*.json"])
+	if for_open:
+		dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
+		dialog.title = "Open a File"
+	add_child(dialog)
+	return dialog
+
+func _shortcut_for_action(action:StringName) -> Shortcut:
+	var shortcut := Shortcut.new()
+	var event := InputEventAction.new()
+	event.action = action
+	shortcut.events = [event]
+	return shortcut
+
+func _on_id_pressed(id:int):
+	match id:
+		SAVE:
+			_on_save_pressed()
+		SAVE_AS:
+			save_as_dialog.show()
+		LOAD:
+			load_dialog.show()
+
 func _on_save_pressed():
 	if has_current_project():
 		save_current_project()

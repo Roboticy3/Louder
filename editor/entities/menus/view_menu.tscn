@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://5auivb6rkpb8"]
+
+[ext_resource type="Script" path="res://scripts/view_menu.gd" id="1_viewm"]
+
+[node name="View" type="MenuButton" unique_id=615417156]
+text = "View"
+script = ExtResource("1_viewm")

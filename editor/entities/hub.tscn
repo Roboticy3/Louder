@@ -126,26 +126,18 @@ layout_mode = 2
 [node name="HBoxContainer" type="HBoxContainer" parent="OtherSection/VBoxContainer" unique_id=1263849597]
 layout_mode = 2
 
-[node name="DiceCheck" type="Label" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=882231788]
+[node name="DiceCheckLabel" type="Label" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=882231788]
 layout_mode = 2
-text = "DC"
+text = "Dice Check:"
 
-[node name="DcCheck" type="CheckBox" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=1754789357 groups=["hub_component"]]
-layout_mode = 2
-theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
-
-[node name="HBoxSpacer" type="Control" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=888836942]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="DcSkill" type="CodeEdit" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=1819305514 groups=["autocomplete_speaker", "hub_component"]]
+[node name="DiceSkill" type="CodeEdit" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=1819305514 groups=["autocomplete_speaker", "hub_component"]]
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "Skill"
 scroll_fit_content_width = true
 script = ExtResource("4_54sja")
 
-[node name="LevelSpinBox" type="SpinBox" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=872709569 groups=["hub_component"]]
+[node name="DiceLevel" type="SpinBox" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=872709569 groups=["hub_component"]]
 layout_mode = 2
 alignment = 3
 prefix = "lvl:"

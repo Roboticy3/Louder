@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://dvnsgw3jjxr0h"]
+
+[ext_resource type="Script" uid="uid://sygelvpdkm86" path="res://scripts/project_manager.gd" id="1_lbbya"]
+
+[node name="File" type="MenuButton" unique_id=778514318]
+size_flags_horizontal = 3
+script = ExtResource("1_lbbya")

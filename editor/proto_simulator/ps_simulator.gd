@@ -33,8 +33,8 @@ func set_position(id) -> void:
 func get_position() -> int:
 	return position
 
-func list_choices(evaluate_conditions:=true) -> Array:
-	var choices := conversation.get_connections_from(position)
+func list_choices(from_position:=position, evaluate_conditions:=true) -> Array:
+	var choices := conversation.get_connections_from(from_position)
 	if evaluate_conditions: choices = choices.filter(_evaluate_choice)
 	return choices
 
@@ -92,6 +92,10 @@ func warp(new_position:=position) -> bool:
 	return false
 
 func _evaluate_hub(h:Dictionary) -> void:
+	_evaluate_hub_expressions(h)
+	_evaluate_dice_checks(h)
+
+func _evaluate_hub_expressions(h:Dictionary) -> void:
 	if !h.get("Expressions"):
 		return
 	var expressions = str(h.get("Expressions"))
@@ -112,3 +116,48 @@ func _evaluate_hub(h:Dictionary) -> void:
 		state.scope[matches.strings[1]] = e.execute([], state.scope)
 		print("Expression ", matches.strings[3], " evaluated \"", e.get_error_text(), "\". Resulting scope: ", state.scope)
 	return
+
+func _evaluate_dice_checks(h:Dictionary) -> void:
+	if h.get("conversation_id") == null:
+		push_error("Hub ", h, " has no conversation_id!")
+		return
+	var choices := list_choices(h.get("conversation_id"))
+	for c in choices:
+		if !(c is Dictionary):
+			continue
+		
+		if c.get("to_id") == null:
+			push_error("Connection ", c, " from hub ", h.get("conversation_id"), " has no to_id!")
+			continue
+
+		var check_h = conversation.hubs_by_id.get(c.get("to_id"))
+		if !(check_h is Dictionary):
+			push_error("Connection ", c, " from hub ", h.get("conversation_id"), " has invalid to_id!")
+			continue
+		
+		if c.get("DiceSkill") == null or c.get("DiceSkill") == "":
+			continue
+
+		print("Evaluating dice check for connection ", c, " from hub ", h.get("conversation_id"))
+
+		var dice_skill := str(c.get("DiceSkill", ""))
+		var skill_level := int(state.scope.get(dice_skill))
+		var dice_level := int(c.get("DiceLevel", 0))
+		
+		var check_variable := "_%s_%s_dc" % [h.get("conversation_id"), c.get("to_id")]
+		_roll_into_outcome(check_variable, skill_level)
+
+		#to enact the dice roll, add a condition. This means future calls to
+		#list_choices will filter out failed rolls.
+		var check_conditions := str(check_h.get("Conditions", ""))
+		check_conditions += "\n%s >= %s" % [check_variable, dice_level]
+		check_h["Conditions"] = check_conditions
+
+func _roll_into_outcome(outcome_variable:String, skill_level:int) -> void:
+	var roll := roll_dice()
+	var total := roll + skill_level
+	state.scope[outcome_variable] = total
+	print("Rolled ", roll, " + ", skill_level, " = ", total, " for ", outcome_variable)
+
+func roll_dice() -> int:
+	return randi() % 6 + randi() % 6
