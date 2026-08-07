@@ -3,7 +3,9 @@
 [ext_resource type="Script" uid="uid://dg0iod8djj6io" path="res://scripts/hub.gd" id="1_ysrp0"]
 [ext_resource type="Script" uid="uid://dabkdaqchjesv" path="res://scripts/choices_section_logic.gd" id="2_hjueh"]
 [ext_resource type="Script" uid="uid://ctb32vrbjkrsg" path="res://scripts/arrow_keys_spin_box.gd" id="2_w7r13"]
+[ext_resource type="Script" uid="uid://87y4efdm8bdm" path="res://scripts/hub_properties_folder.gd" id="3_2sc04"]
 [ext_resource type="PackedScene" uid="uid://d2ffa88ufdvl6" path="res://entities/text_content.tscn" id="3_f0jtb"]
+[ext_resource type="Script" uid="uid://njuhx76nyuqd" path="res://scripts/hub_text_edit.gd" id="4_54sja"]
 [ext_resource type="Script" uid="uid://derdgutm4a213" path="res://scripts/start_check.gd" id="4_f0jtb"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dy6nf"]
@@ -41,8 +43,8 @@ corner_radius_bottom_left = 8
 custom_minimum_size = Vector2(330, 0)
 offset_left = 95.0
 offset_top = 148.0
-offset_right = 405.0
-offset_bottom = 474.0
+offset_right = 425.0
+offset_bottom = 366.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
 mouse_filter = 1
@@ -116,6 +118,7 @@ inliner = true
 [node name="OtherSection" type="FoldableContainer" parent="." unique_id=675481074]
 layout_mode = 2
 title = "Properties"
+script = ExtResource("3_2sc04")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="OtherSection" unique_id=72269939]
 layout_mode = 2
@@ -135,16 +138,17 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="OptionButton" type="OptionButton" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=1262667447 groups=["hub_component"]]
+[node name="DcSkill" type="CodeEdit" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=1819305514 groups=["autocomplete_speaker", "hub_component"]]
 layout_mode = 2
-item_count = 1
-popup/item_0/text = "Skill"
-popup/item_0/id = 0
-popup/item_0/disabled = true
+size_flags_horizontal = 3
+placeholder_text = "Skill"
+scroll_fit_content_width = true
+script = ExtResource("4_54sja")
 
 [node name="LevelSpinBox" type="SpinBox" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=872709569 groups=["hub_component"]]
 layout_mode = 2
-prefix = "Level:"
+alignment = 3
+prefix = "lvl:"
 script = ExtResource("2_w7r13")
 
 [node name="GridContainer" type="HBoxContainer" parent="OtherSection/VBoxContainer" unique_id=543840975]
@@ -207,3 +211,6 @@ hub = NodePath("../..")
 spin_box = NodePath("../ChoicesSpinBox")
 start_check = NodePath("../StartCheck")
 child_index = 5
+
+[connection signal="folding_changed" from="OtherSection" to="." method="reset_size" flags=3 unbinds=1]
+[connection signal="choices_changed" from="ChoicesSection/ChoicesSectionLogic" to="." method="reset_size" flags=3]
