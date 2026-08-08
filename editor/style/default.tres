@@ -1,5 +1,7 @@
 [gd_resource type="Theme" format=3 uid="uid://bm3oxomghipcp"]
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_rhcs5"]
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_di7s0"]
 border_width_left = 4
 border_width_top = 4
@@ -11,8 +13,9 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_rhcs5"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_nsb74"]
 
 [resource]
+CheckBox/styles/focus = SubResource("StyleBoxEmpty_rhcs5")
 GraphNode/styles/titlebar = SubResource("StyleBoxFlat_di7s0")
-GraphNode/styles/titlebar_selected = SubResource("StyleBoxEmpty_rhcs5")
+GraphNode/styles/titlebar_selected = SubResource("StyleBoxEmpty_nsb74")

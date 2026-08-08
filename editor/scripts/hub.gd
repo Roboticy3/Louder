@@ -129,7 +129,7 @@ const ID_GROUP := &"CONVERSATION"
 func _ready() -> void:
 	id = IdSystem.assign_id(self)
 
-	auto_check.toggled.connect(update_title_stylebox)
-	start_check.toggled.connect(update_title_stylebox)
+	auto_check.pressed.connect(update_title_stylebox)
+	start_check.pressed.connect(update_title_stylebox)
 	choices_section_logic.choices_changed.connect(update_title_stylebox)
 	update_title_stylebox.call_deferred()
