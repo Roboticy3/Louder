@@ -20,6 +20,10 @@ config/icon="res://icon.svg"
 IdSystem="*uid://emcgvjw2xenp"
 HubDefaults="*uid://bttyhihvjbpso"
 
+[gui]
+
+theme/custom="uid://bm3oxomghipcp"
+
 [input]
 
 alt_virtual={

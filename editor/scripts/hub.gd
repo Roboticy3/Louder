@@ -6,6 +6,22 @@ const COMPONENT_GROUP := &"hub_component"
 	set(new_hub_data):
 		import(new_hub_data)
 		hub_data = new_hub_data
+@export var grabber:Control
+@export var choices_section_logic:ChoicesSectionLogic
+@export var start_check:CheckBox
+@export var auto_check:CheckBox
+
+func get_choices_logic() -> ChoicesSectionLogic:
+	return choices_section_logic
+
+func get_start_check() -> CheckBox:
+	return start_check
+
+func get_auto_check() -> CheckBox:
+	return auto_check
+
+func get_grabber() -> Control:
+	return grabber
 
 func export() -> Dictionary:
 	var data := {
@@ -21,6 +37,19 @@ func export() -> Dictionary:
 			seen_names[child.name] = true
 			data[child.name as String] = _export_node(child)
 	return _filter_to_non_default(data)
+
+func import(data: Dictionary) -> void:
+	data = _filter_to_non_default(data)
+	IdSystem.assign_id(self, data.get("conversation_id", id), id)
+	id = data.get("conversation_id", id)
+	
+	position_offset = data.get("position_offset", position_offset)
+
+	for key in data:
+		if key is String:
+			var node := find_child(key, true, false)
+			if node:
+				_import_node(node, data[key])
 
 func _filter_to_non_default(data: Dictionary) -> Dictionary:
 	var defaults: Dictionary = HubDefaults.default_data.get("hub", {})
@@ -52,19 +81,6 @@ func _export_node(node: Node) -> Variant:
 		return node.text
 	return null
 
-func import(data: Dictionary) -> void:
-	data = _filter_to_non_default(data)
-	IdSystem.assign_id(self, data.get("conversation_id", id), id)
-	id = data.get("conversation_id", id)
-	
-	position_offset = data.get("position_offset", position_offset)
-
-	for key in data:
-		if key is String:
-			var node := find_child(key, true, false)
-			if node:
-				_import_node(node, data[key])
-
 func _import_node(node: Node, value: Variant) -> void:
 	if node is ChoicesSectionLogic:
 		var choices: PackedStringArray = value
@@ -87,14 +103,33 @@ func _import_node(node: Node, value: Variant) -> void:
 	elif node is Button:
 		node.text = value
 
-func get_choices_logic() -> ChoicesSectionLogic:
-	return get_node_or_null("ChoicesSection/ChoicesSectionLogic") as ChoicesSectionLogic
+func update_title_stylebox() -> void:
+	var start := start_check.button_pressed
+	var auto := auto_check.button_pressed
+	var spoke := choices_section_logic.choices.is_empty()
 
-func get_start_check() -> CheckBox:
-	return get_node_or_null("ChoicesSection/StartCheck") as CheckBox
+	var stylebox := HubDefaults.TITLE_STYLEBOXES["default"]
+	if start:
+		stylebox = HubDefaults.TITLE_STYLEBOXES["start"]
+	elif auto:
+		if spoke:
+			stylebox = HubDefaults.TITLE_STYLEBOXES["auto_spoke"]
+		else:
+			stylebox = HubDefaults.TITLE_STYLEBOXES["auto"]
+	elif spoke:
+		stylebox = HubDefaults.TITLE_STYLEBOXES["spoke"]
+	
+	add_theme_stylebox_override("titlebar", stylebox)
+	add_theme_stylebox_override("titlebar_selected", stylebox)
+
 
 var id := -1
 const ID_GROUP := &"CONVERSATION"
 
 func _ready() -> void:
 	id = IdSystem.assign_id(self)
+
+	auto_check.toggled.connect(update_title_stylebox)
+	start_check.toggled.connect(update_title_stylebox)
+	choices_section_logic.choices_changed.connect(update_title_stylebox)
+	update_title_stylebox.call_deferred()
