@@ -9,6 +9,43 @@ class_name PSSimulator extends Node
 @export var state:PSConversationState
 var e := Expression.new()
 
+### Getters
+## These functions do not change the state of the simulator.
+
+func get_position() -> int:
+	return position
+
+func list_choices(from_position:=position, evaluate_conditions:=true) -> Array:
+	var choices := conversation.get_connections_from(from_position)
+	if evaluate_conditions: choices = _evaluate_choices(choices)
+	return choices
+
+func is_auto(from_position:=position) -> bool:
+	var h = conversation.hubs_by_id.get(from_position)
+	if h == null:
+		push_error("Hub ", from_position, " does not exist!")
+		return false
+	
+	return h.get("AutoCheck", false)
+
+func is_start(from_position:=position) -> bool:
+	var h = conversation.hubs_by_id.get(from_position)
+	if h == null:
+		push_error("Hub ", from_position, " does not exist!")
+		return false
+	
+	return h.get("StartCheck", false)
+
+func get_current_property(property:String):
+	return str(conversation.hubs_by_id[position].get(property))
+
+func roll_dice() -> int:
+	return (randi() % 6) + (randi() % 6)
+
+### Actions
+## These functions are internal actions of the simulator and should not be
+## called externally.
+
 func _ready():
 	var c := PSConversation.new()
 	c.load_from_json(conversation_path)
@@ -16,34 +53,17 @@ func _ready():
 	if c.hubs_by_id.is_empty():
 		return
 	
+	conversation = c
+	
 	var start := int(c.hubs_by_id.keys()[0])
 	for id in c.hubs_by_id:
-		if c.hubs_by_id[id].get("StartCheck"):
+		if is_start(id):
 			start = id
 			break
 	
 	if !state:
 		state = PSConversationState.new()
-	conversation = c
 	warp(start)
-
-func set_position(id) -> void:
-	position = int(id)
-
-func get_position() -> int:
-	return position
-
-func list_choices(from_position:=position, evaluate_conditions:=true, unique_choices:=true) -> Array:
-	var choices := conversation.get_connections_from(from_position)
-	if evaluate_conditions: choices = _evaluate_choices(choices)
-	if unique_choices:
-		var dict_unique_choices := {}
-		for c in choices:
-			var from_choice = c.get("from_choice", "")
-			if not dict_unique_choices.has(from_choice):
-				dict_unique_choices[from_choice] = c
-		return dict_unique_choices.values()
-	return choices
 
 func _evaluate_choices(choices: Array) -> Array:
 	var valid_choices := []
@@ -78,38 +98,6 @@ func _evaluate_choice_single(c:Dictionary) -> bool:
 		if !result:
 			return false
 	return true
-
-func get_current_property(property:String):
-	return str(conversation.hubs_by_id[position].get(property))
-
-func traverse(choice: String) -> bool:
-	for connection in conversation.get_connections_from(position):
-		if str(connection.get("from_choice", "")) == choice:
-			position = int(connection.get("to_id", ""))
-			_evaluate_hub(conversation.hubs_by_id[position])
-			state._on_traverse(position)
-			return true
-	push_error("Traversed to nonexistent choice: ", choice)
-	return false
-
-func traverse_index(i: int) -> bool:
-	var choices := conversation.get_connections_from(position)
-	if i < 0 or i >= choices.size():
-		push_error("Traversed to choice index out of bounds: ", i)
-		return false
-	position = int(choices[i].get("to_id", ""))
-	_evaluate_hub(conversation.hubs_by_id[position])
-	state._on_traverse(position)
-	return true
-
-func warp(new_position:=position) -> bool:
-	if new_position in conversation.hubs_by_id:
-		position = new_position
-		_evaluate_hub(conversation.hubs_by_id[position])
-		state._on_traverse(position)
-		return true
-	push_error("Warped to nonexistent location: ", new_position)
-	return false
 
 func _evaluate_hub(h:Dictionary) -> void:
 	_evaluate_hub_expressions(h)
@@ -181,5 +169,39 @@ func _roll_into_outcome(outcome_variable:String, skill_level:int) -> void:
 	state.scope[outcome_variable] = total
 	print("Rolled ", roll, " + ", skill_level, " = ", total, " for ", outcome_variable)
 
-func roll_dice() -> int:
-	return (randi() % 6) + (randi() % 6)
+### TRAVERSAL
+## Move through dialogue by making a choice on the current node.
+## If the resulting choice is invalid, traversal functions return false and
+## emit an error.
+## If the resulting choice is valid, traversal functions change `position` to
+## the node linked by the choice made. If the resulting node has AutoCheck
+## enabled, traversal will continue recursively until a non-auto node is
+## reached.
+func traverse(choice: String) -> bool:
+	for connection in conversation.get_connections_from(position):
+		if str(connection.get("from_choice", "")) == choice:
+			var w := warp(int(connection.get("to_id", "")))
+			if w && is_auto():
+				return traverse_index(0)
+			return w
+	push_error("Traversed to nonexistent choice: ", choice)
+	return false
+
+func traverse_index(i: int) -> bool:
+	var choices := conversation.get_connections_from(position)
+	if i < 0 or i >= choices.size():
+		push_error("Traversed to choice index out of bounds: ", i)
+		return false
+	var w := warp(int(choices[i].get("to_id", "")))
+	if w && is_auto():
+		return traverse_index(0)
+	return w
+
+func warp(new_position:=position) -> bool:
+	if new_position in conversation.hubs_by_id:
+		position = new_position
+		_evaluate_hub(conversation.hubs_by_id[position])
+		state._on_traverse(position)
+		return true
+	push_error("Warped to nonexistent location: ", new_position)
+	return false
