@@ -67,6 +67,7 @@ func update_default_choices():
 		0 if !choices.is_empty() else 1,
 		Color.WHITE
 	)
+	hub.reset_size.call_deferred()
 	if is_inside_tree():
 		get_tree().call_group.call_deferred(port_change_listener_group, &"_on_port_changed", hub.name, 0)
 
@@ -109,3 +110,5 @@ func _ready() -> void:
 	spin_box.value = choices.size()
 	spin_box.value_changed.connect(set_choice_count)
 	start_check.pressed.connect(update_default_choices)
+	
+	update_default_choices.call_deferred()

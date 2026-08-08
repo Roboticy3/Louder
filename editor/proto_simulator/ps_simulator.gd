@@ -50,10 +50,6 @@ func _evaluate_choices(choices: Array) -> Array:
 	for c in choices:
 		if _evaluate_choice_single(c):
 			valid_choices.append(c)
-	
-	#sort by length of conditions (descending) to prioritize more complex conditions first.
-	#this prioritizes more complex choices
-	valid_choices.sort_custom(func (a, b): return _count_conditions(a.get("Conditions", "")) > _count_conditions(b.get("Conditions", "")))
 
 	return valid_choices
 
@@ -170,7 +166,7 @@ func _evaluate_dice_checks(h:Dictionary) -> void:
 		var skill_level := int(state.scope.get(dice_skill))
 		var dice_level := int(check_h.get("DiceLevel", 0))
 		
-		var check_variable := "_%s_%s_dc" % [h.get("conversation_id"), c.get("to_id")]
+		var check_variable := "_%s_%s_%s_dc" % [h.get("conversation_id"), c.get("to_id"), dice_skill]
 		_roll_into_outcome(check_variable, skill_level)
 
 		#to enact the dice roll, add a condition. This means future calls to

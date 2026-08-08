@@ -85,13 +85,16 @@ right_disconnects = true
 layout_mode = 0
 offset_left = -1.0
 offset_top = 139.0
-offset_right = 329.0
-offset_bottom = 474.0
+offset_right = 342.0
+offset_bottom = 508.0
 position_offset = Vector2(-1, 139)
 selected = true
 hub_data = {
 NodePath("ChoicesSection/CheckBox"): true
 }
+
+[node name="StartCheck" parent="Control/GridContainer/GraphEdit/Hub/ChoicesSection" parent_id_path=PackedInt32Array(1992437552, 255423357) index="0" unique_id=628973272]
+button_pressed = true
 
 [node name="RichTextLabel" type="RichTextLabel" parent="Control" unique_id=409667951]
 layout_mode = 1
@@ -107,3 +110,5 @@ script = ExtResource("9_n5ixm")
 [node name="SpeakerColorsMenu" parent="Control" unique_id=255244167 instance=ExtResource("6_scmenu")]
 
 [node name="Window" parent="." unique_id=2035585249 instance=ExtResource("13_6vlff")]
+
+[editable path="Control/GridContainer/GraphEdit/Hub"]
