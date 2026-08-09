@@ -162,6 +162,7 @@ func _evaluate_dice_checks(h:Dictionary) -> void:
 		var check_conditions := str(check_h.get("Conditions", ""))
 		check_conditions += "\n%s >= %s" % [check_variable, dice_level]
 		check_h["Conditions"] = check_conditions
+		check_h.erase("DiceSkill")
 
 func _roll_into_outcome(outcome_variable:String, skill_level:int) -> void:
 	var roll := roll_dice()
@@ -188,7 +189,7 @@ func traverse(choice: String) -> bool:
 	return false
 
 func traverse_index(i: int) -> bool:
-	var choices := conversation.get_connections_from(position)
+	var choices := list_choices()
 	if i < 0 or i >= choices.size():
 		push_error("Traversed to choice index out of bounds: ", i)
 		return false

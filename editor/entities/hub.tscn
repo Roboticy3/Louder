@@ -39,7 +39,6 @@ size_flags_vertical = 4
 mouse_filter = 1
 theme_override_styles/titlebar_selected = SubResource("StyleBoxFlat_f0jtb")
 position_offset = Vector2(55, 108)
-title = "Hub"
 slot/0/left_enabled = false
 slot/0/left_type = 0
 slot/0/left_color = Color(1, 1, 1, 1)
@@ -77,26 +76,29 @@ slot/3/right_color = Color(1, 1, 1, 1)
 slot/3/right_icon = null
 slot/3/draw_stylebox = true
 script = ExtResource("1_ysrp0")
-grabber = NodePath("TextSection/Speaker")
+grabber = NodePath("TextSectionWrapper/TextSection/Speaker")
 choices_section_logic = NodePath("ChoicesSection/ChoicesSectionLogic")
 start_check = NodePath("ChoicesSection/StartCheck")
 auto_check = NodePath("ChoicesSection/AutoCheck")
 
-[node name="TextSection" type="VBoxContainer" parent="." unique_id=2073740871]
+[node name="TextSectionWrapper" type="VBoxContainer" parent="." unique_id=175791466]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="TextSection" unique_id=1509009445]
+[node name="TextSection" type="VBoxContainer" parent="TextSectionWrapper" unique_id=2073740871]
 layout_mode = 2
 
-[node name="TextContentSection" type="Label" parent="TextSection/HBoxContainer" unique_id=1351469422]
+[node name="HBoxContainer" type="HBoxContainer" parent="TextSectionWrapper/TextSection" unique_id=1509009445]
+layout_mode = 2
+
+[node name="TextContentSection" type="Label" parent="TextSectionWrapper/TextSection/HBoxContainer" unique_id=1351469422]
 layout_mode = 2
 text = "Text Content"
 
-[node name="Spacer" type="Control" parent="TextSection/HBoxContainer" unique_id=2082381832]
+[node name="Spacer" type="Control" parent="TextSectionWrapper/TextSection/HBoxContainer" unique_id=2082381832]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="PrivateCheck" type="CheckBox" parent="TextSection/HBoxContainer" unique_id=1575580911 node_paths=PackedStringArray("mutual_exclusive") groups=["hub_component"]]
+[node name="PrivateCheck" type="CheckBox" parent="TextSectionWrapper/TextSection/HBoxContainer" unique_id=1575580911 node_paths=PackedStringArray("mutual_exclusive") groups=["hub_component"]]
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
@@ -105,7 +107,7 @@ script = ExtResource("4_rhcs5")
 mutual_exclusive = [NodePath("../../Recipient")]
 inverted = true
 
-[node name="Speaker" parent="TextSection" unique_id=42355890 groups=["autocomplete_speaker", "hub_component"] instance=ExtResource("3_f0jtb")]
+[node name="Speaker" parent="TextSectionWrapper/TextSection" unique_id=42355890 groups=["autocomplete_speaker", "hub_component"] instance=ExtResource("3_f0jtb")]
 layout_mode = 2
 size_flags_vertical = 0
 placeholder_text = "Speaker"
@@ -113,16 +115,15 @@ wrap_mode = 0
 oneliner = true
 inliner = true
 
-[node name="Recipient" parent="TextSection" unique_id=849750180 groups=["autocomplete_speaker", "hub_component"] instance=ExtResource("3_f0jtb")]
+[node name="Recipient" parent="TextSectionWrapper/TextSection" unique_id=849750180 groups=["autocomplete_speaker", "hub_component"] instance=ExtResource("3_f0jtb")]
 layout_mode = 2
 size_flags_vertical = 0
 placeholder_text = "Recipient"
 wrap_mode = 0
-delimiter_strings = Array[String](["\" \"", "' '"])
 oneliner = true
 inliner = true
 
-[node name="TextContent" parent="TextSection" unique_id=778728203 groups=["hub_component"] instance=ExtResource("3_f0jtb")]
+[node name="TextContent" parent="TextSectionWrapper/TextSection" unique_id=778728203 groups=["hub_component"] instance=ExtResource("3_f0jtb")]
 layout_mode = 2
 inliner = true
 
@@ -230,7 +231,7 @@ layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
 text = "Auto"
 script = ExtResource("4_rhcs5")
-mutual_exclusive = [NodePath("../../TextSection")]
+mutual_exclusive = [NodePath("../../TextSectionWrapper/TextSection/TextContent")]
 
 [node name="ChoicesSectionLogic" type="Node" parent="ChoicesSection" unique_id=889900628 node_paths=PackedStringArray("hub", "spin_box", "start_check") groups=["hub_component"]]
 script = ExtResource("2_hjueh")
