@@ -16,12 +16,25 @@ Keyboard shortcuts are the fastest way to work in the editor. Most actions
 are single keystroke or two-key combos that work regardless of what field
 has focus.
 
-### Graph Actions
+### Shortcuts
+!TODO! Most keybinds do not work while editing text. This should be fixed somehow.
+
+## Selection and Focus
+!TODO! Focus changes based on how nodes are connected to each other is still not done. This should improve flow.
 
 | Shortcut | Action | Description |
 |---|---|---|
 | **Alt+A** | Create Node | Spawns a new dialogue node at the current mouse position. If you keep pressing Alt+A without moving the mouse, each new node is offset slightly so they don't stack on top of each other. |
+| **Tab/Shift+Tab** | Next/Previous | Move to the next editable field in a node. If no node is selected or the last editable field of the current node is selected, a different node is selected. |
+
+## Actions
+| Shortcut | Action | Description |
+|---|---|---|
 | **Delete** | Delete | Removes all currently selected nodes from the graph. After deletion, the editor automatically selects a nearby node (see [Node Selection](#node-selection)). |
+
+## Other
+| Shortcut | Action | Description |
+|---|---|---|
 | **F3** | Debug Toggle | Toggles the on-screen debug overlay, which displays runtime messages. Messages auto-expire after a short duration. |
 
 ### File Actions
@@ -32,7 +45,7 @@ has focus.
 | **Ctrl+Shift+S** | Save As | Always opens the Save As dialog, letting you choose a new file name and location. |
 | **Ctrl+O** | Load | Opens the file browser to load a previously saved conversation. The current graph is cleared before the loaded conversation is restored. |
 
-### Canvas Controls
+### Mouse Actions
 
 | Shortcut | Action | Description |
 |---|---|---|
@@ -44,49 +57,15 @@ has focus.
 | **Drag Port-to-Port** | Connect | Creates a connection between two node ports. |
 | **Right-Click Connection** | Disconnect | Right-clicking an existing connection line removes it. |
 
-## UI Flow
-
-The editor uses focus-based navigation to let you move between fields without
-reaching for the mouse. This is especially useful when editing dialogue text,
-speaker names, and other properties in quick succession.
-
-### Tab / Shift+Tab: Moving Between Fields
-
-Pressing **Tab** moves focus to the next field within a node. Pressing
-**Shift+Tab** moves focus in reverse. This works inside every text field
-(speaker name, dialogue text, expressions, choice text) as well as checkboxes,
-dropdowns, and number spinners.
-
-The tab order follows the visual layout of a node:
-
-1. Speaker name
-2. Dialogue text
-3. Difficulty check enabled (checkbox)
-4. Difficulty check skill (dropdown)
-5. Difficulty check level (number spinner)
-6. Expression (code field)
-7. Start node toggle (checkbox)
-8. Choices count (number spinner)
-9. Individual choice fields (added as you increase the count)
-
-When you Tab past the last field in a node, focus wraps to the first field
-of the next node in the graph. This makes it possible to rapidly fill out
-multiple nodes in sequence without using the mouse.
-
-Tab never inserts a literal tab character into text fields -- it always
-moves focus.
-
 ### Arrow Keys in Number Spinners
 
 When a number spinner has focus (the choices count or difficulty check level),
 **Up Arrow** increments the value and **Down Arrow** decrements it. This
 works even when the spinner's text field is focused.
 
-### Focus and Selection
+### !TODO! Moving focus
 
-Clicking any field inside a node (speaker, text, checkbox, etc.) automatically
-selects that node in the graph. You never have to worry about clicking the
-exact right spot -- interacting with any part of a node selects it.
+Pressing Alt+
 
 ## Node Selection
 
