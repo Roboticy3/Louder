@@ -10,17 +10,19 @@ character portraits, etc. This deficiency is the purpose of the [examples](/exam
 secion.
 
 ## Basic Simulation Rules
-Dialog is loaded from a project file produced by the editor (see [editor file format](/editor#file-formats) by the "simulator", the object responsible for simulation. This loaded conversation object can then be used to start a "session." A normal session is described below.
+Dialog is loaded from a project file produced by the editor (see [editor](/editor/) File Formats section) by the "simulator", the object responsible for simulation. This loaded conversation object can then be used to start a "session." A normal session is described below.
 
 ### Normal Session
- 1. Find a node with the "StartCheck" property set to true. !TODO! A starting node can also be selected by passing in specific tags. The first node with matching substrings in their "Tags" property will be used.
- 3. The "Statements" property of the starting node is [evaluated](/engine#Statements).
- 4. A choice can be selected from the choices available on the starting node. Each choice can correspond to another node in the conversation. Choices are filtered by whether the node they point to exists, and whether the "Conditions" property of the node is [evaluated](/engine#Statements) to true or false. As long as each choice corresponds to at most one node, this is an unambiguous decision. Choices can be selected by numeric index by which they appear after filtering, or by their string contents.
+!TODO! Rename Expressions to Statements and group Conditions and Statements under "Commands". Also, the last rule in 6 about choice text being used in absence of text content is not yet implemented. [32](https://github.com/Roboticy3/Louder/issues/32)
+
+ 1. Find a node with the "StartCheck" property set to true. !TODO! A starting node can also be selected by passing in specific tags. The first node with matching substrings in their "Tags" property will be used. [33](https://github.com/Roboticy3/Louder/issues/33)
+ 3. The "Statements" property of the starting node is evaluated (see Commands).
+ 4. A choice can be selected from the choices available on the starting node. Each choice can correspond to another node in the conversation. Choices are filtered by whether the node they point to exists, and whether the "Conditions" property of the node is evaluated to true or false. As long as each choice corresponds to at most one node, this is an unambiguous decision. Choices can be selected by numeric index by which they appear after filtering, or by their string contents.
  5. Once a choice is selected, the simulator travels to the associated node. If the starting node has the "AutoCheck" property set to true, the choice index 0 is selected automatically if available.
- 6. When the simulator travels to another node, the process repeats, either waiting for more choices from the user to proceed or proceeding automatically as long as the simulator is traveling through "AutoCheck" nodes.
+ 6. When the simulator travels to another node, the process repeats, either waiting for more choices from the user to proceed or proceeding automatically as long as the simulator is traveling through "AutoCheck" nodes. If the node has a blank "TextContent" field, the text of the previous choice is used.
 
 ### Commmands
-!TODO! Not all assignment expressions are currently supported. Only = is currently supported.
+!TODO! Not all assignment expressions are currently supported. Only = is currently supported [31](https://github.com/Roboticy3/Louder/issues/31)
 
 The "Statements" and "Conditions" properties of nodes are both types of commands- blocks of code, essentially, broken up into individual lines. Conditions allow for computing a value from certain variables. 
 
@@ -44,4 +46,11 @@ Here are the types of data which can be stored by an identifier. Types are treat
 Expressions always _evaluate_ to a value. The following values are treated as false: empty string `""`, zero `0` or `0.0`, and of course the Boolean `false`. All other values are treated as "truthy" for the purposes of the "Conditions" property in simulation.
 
 ### Cheats
-The user can also manually manipulate the simulation outside of normal flow. This includes manually warping to a specific node with or without progressing through AutoCheck nodes, and running commands to either see what they evaluate to or manipulate the values of variables.
+!TODO! Manual command sending, saving and loading are not yet implemented on the prototype simulator [30](https://github.com/Roboticy3/Louder/issues/30)
+
+The user can also manually manipulate the simulation outside of normal flow. This includes manually warping to a specific node with or without progressing through AutoCheck nodes, and running commands to either see what they evaluate to or manipulate the values of variables. The ability to read and write from the conversation state using commands is particularly useful for linking the simulation with the rest of a larger game, and the current state of the conversation can be saved out
+to a list of newline separated commands which can then be replayed to reload a certain state.
+
+## Advanced Simulation Rules
+### Visibility
+!TODO! A simulation should be able to be done from the perspective of a Speaker, hiding 
