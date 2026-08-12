@@ -1,6 +1,6 @@
 site_name: Louder Documentation
 theme:
-  name: readthedocs
+  name: material
   features:
     - navigation.side
 
@@ -9,6 +9,7 @@ plugins:
 
 markdown_extensions:
   - tables
+  - attr_list
 
 extra_css:
   - stylesheets/extra.css

@@ -32,7 +32,7 @@ The "Statements" and "Conditions" properties of nodes are both types of commands
 Here are the syntax elements for commands:
 
 | Element | Name | Availability | Description | Example | 
-|---|---|---|---| 
+|---|---|---|---|---|
 | name starting with a-z, A-Z or _ and containing only a-z, A-Z, 0-9 or _ | Identifier | Conditions and Expressions | The name of a variable. If the variable has not been defined, it is given a default value of 0 | `x` or `_awesome` are Identifiers by `2head` is not | 
 | +,-,*,/,%,(,) | Basic Math | Conditions and Expressions | Basic math symbols. In order of priority: Addition + Subtraction - Multiplication * Division / Modulo by an Integer % Open Group ( Close Group ) | `(x + y) * z + w` is the sum of x,y, multiplied by z, then added to w | 
 | =,+=,-=,++,\-\- | Assignment | Expressions only | Assignment operators. Must have an Identifier on the left and an Expression on the right. = Assigns the value of Expression to Identifier. +=, -= Add/Subtract the value of Expression from Identifier. ++/-- Increment/decrement the Identifier by 1. | `not_yet_defined_ident++` will define `not_yet_defined_ident` with the value 1 | 

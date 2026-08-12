@@ -1,0 +1,23 @@
+CSS
+
+/* Force all table wrappers to allow layout recalculation */
+.md-typeset__table,
+.md-typeset .md-typeset__table {
+    display: block !important;
+    overflow-x: auto !important;
+}
+
+/* Force table to behave as a standard grid layout */
+.md-typeset table {
+    display: table !important;
+    width: 100% !important;
+    table-layout: fixed !important;
+}
+
+/* Force headers and cells to wrap lines */
+.md-typeset th,
+.md-typeset td {
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: anywhere !important;
+}
