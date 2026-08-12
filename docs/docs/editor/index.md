@@ -13,6 +13,8 @@ to run dialogue in your game.
 ## Shortcuts
 !TODO! Most keybinds do not work while editing text. This should be fixed somehow. [28](https://github.com/Roboticy3/Louder/issues/28)
 
+!TODO! Implement a view menu for changing the colors of nodes based on Speaker, tags and so on. Currently node colors are hard coded.
+
 ### Selection and Focus
 !TODO! Focus changes based on how nodes are connected to each other is still not done. This should improve flow. [27](https://github.com/Roboticy3/Louder/issues/27)
 
@@ -66,7 +68,7 @@ keeps the format compact while preserving all the data you need.
 ### File Formats
 !TODO! Add support for a more readable format [23](https://github.com/Roboticy3/Louder/issues/23)
 
-Projects save out to .json in an object-based format. Each node and connection is treated as a separate object, with the hope that this will allow for easier modification later down the line. The actual node object in the editor ([hub.tscn](https://github.com/Roboticy3/Louder/blob/main/editor/entities/hub.tscn)) is composed of subnodes tagged as "hub_component", whose names are used as the names of fields in the output json, which then match up with their values. A hub with no data changed is also treated as "default". Empty text fields, unchecked checkboxes, and numbers set to 0 are ignored by the output json.
+Projects save out to .json in an object-based format. Each node and connection is treated as a separate object, with the hope that this will allow for easier modification later down the line. The actual node object in the editor ([hub.tscn](https://github.com/Roboticy3/Louder/blob/main/editor/entities/hub.tscn)) is composed of subnodes tagged as "hub_component", whose names are used as the names of fields in the output json, which then match up with their values. A hub with no data changed is also treated as "default". Empty text fields, unchecked checkboxes, and numbers set to 0 are ignored by the output json. The goal is for future versions to support custom node types in the editor- ones with fields that are not yet provided.
 
 ### What Gets Saved
 

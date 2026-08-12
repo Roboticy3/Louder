@@ -6,3 +6,9 @@ theme:
 
 plugins:
   - search
+
+markdown_extensions:
+  - tables
+
+extra_css:
+  - stylesheets/extra.css
