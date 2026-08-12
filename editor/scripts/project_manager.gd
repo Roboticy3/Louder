@@ -40,7 +40,7 @@ func _make_dialog(dialog_name:String, for_open:=false) -> FileDialog:
 	var dialog := FileDialog.new()
 	dialog.name = dialog_name
 	dialog.use_native_dialog = true
-	dialog.access = FileDialog.ACCESS_USERDATA
+	dialog.access = FileDialog.ACCESS_RESOURCES
 	dialog.filters = PackedStringArray(["*.json"])
 	if for_open:
 		dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE

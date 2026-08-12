@@ -11,7 +11,7 @@ const HUB_SCHK := "StartCheck"
 const HUB_ACHK := "AutoCheck"
 
 const CON_TOID := "to_id"
-const CON_FRID := "from_id"
+const CON_FCHC := "from_choice"
 
 @export var conversation_path:="user://test.json"
 @export var conversation: PSConversation
@@ -112,9 +112,11 @@ func _evaluate_choice_single(c:Dictionary) -> bool:
 			return false
 	return true
 
-func _evaluate_hub(h:Dictionary) -> void:
+func _evaluate_hub(h:Dictionary, backfill:={}) -> void:
 	_evaluate_hub_expressions(h)
 	_evaluate_dice_checks(h)
+	if !backfill.is_empty():
+		h.merge(backfill)
 
 func _evaluate_hub_expressions(h:Dictionary) -> void:
 	if !h.get(HUB_STMT):
@@ -191,30 +193,42 @@ func _roll_into_outcome(outcome_variable:String, skill_level:int) -> void:
 ## the node linked by the choice made. If the resulting node has AutoCheck
 ## enabled, traversal will continue recursively until a non-auto node is
 ## reached.
-func traverse(choice: String) -> bool:
-	for connection in conversation.get_connections_from(position):
-		if str(connection.get("from_choice", "")) == choice:
-			var w := warp(int(connection.get(CON_TOID, "")))
-			if w && is_auto():
-				return traverse_index(0)
-			return w
-	push_error("Traversed to nonexistent choice: ", choice)
-	return false
+## If a resulting choice is 
+func traverse(choice_text: String, backfill:={}) -> bool:
+	var choice = null
+	for c in conversation.get_connections_from(position):
+		if str(c.get(CON_FCHC, "")) == choice_text:
+			choice = c
+			break
+	
+	if choice == null:
+		push_error("Traversed to nonexistent choice: ", choice_text)
+		return false
+	
+	backfill[HUB_TXTC] = choice.get(CON_FCHC)
+	var w := warp(int(choice.get(CON_TOID, "")), backfill)
+	if w && is_auto():
+		return traverse_index(0)
+	
+	return w
 
-func traverse_index(i: int) -> bool:
+func traverse_index(i: int, backfill:={}) -> bool:
 	var choices := list_choices()
 	if i < 0 or i >= choices.size():
 		push_error("Traversed to choice index out of bounds: ", i)
 		return false
-	var w := warp(int(choices[i].get(CON_TOID, "")))
+	
+	backfill[HUB_TXTC] = choices[i].get(CON_FCHC)
+	var w := warp(int(choices[i].get(CON_TOID, "")), backfill)
 	if w && is_auto():
 		return traverse_index(0)
+	
 	return w
 
-func warp(new_position:=position) -> bool:
+func warp(new_position:=position, backfill:={}) -> bool:
 	if new_position in conversation.hubs_by_id:
 		position = new_position
-		_evaluate_hub(conversation.hubs_by_id[position])
+		_evaluate_hub(conversation.hubs_by_id[position], backfill)
 		state._on_traverse(position)
 		return true
 	push_error("Warped to nonexistent location: ", new_position)

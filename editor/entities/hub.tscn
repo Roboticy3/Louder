@@ -197,9 +197,9 @@ text = "Condition"
 clip_text = true
 text_overrun_behavior = 5
 
-[node name="Expressions" parent="OtherSection/VBoxContainer/GridContainer2" unique_id=1321863141 groups=["autocomplete_expression", "hub_component"] instance=ExtResource("3_f0jtb")]
+[node name="Statements" parent="OtherSection/VBoxContainer/GridContainer2" unique_id=1321863141 groups=["autocomplete_expression", "hub_component"] instance=ExtResource("3_f0jtb")]
 layout_mode = 2
-placeholder_text = "Expressions"
+placeholder_text = "Statements"
 
 [node name="ChoicesSection" type="GridContainer" parent="." unique_id=255423357]
 layout_mode = 2
