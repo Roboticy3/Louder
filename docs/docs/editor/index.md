@@ -10,29 +10,24 @@ choices. When you save, the entire graph is exported as a single file
 that can be shared with collaborators or used with the [engine](/engine/)
 to run dialogue in your game.
 
-## Quick Actions
+## Shortcuts
+!TODO! Most keybinds do not work while editing text. This should be fixed somehow. [28](https://github.com/Roboticy3/Louder/issues/28)
 
-Keyboard shortcuts are the fastest way to work in the editor. Most actions
-are single keystroke or two-key combos that work regardless of what field
-has focus.
-
-### Shortcuts
-!TODO! Most keybinds do not work while editing text. This should be fixed somehow.
-
-## Selection and Focus
-!TODO! Focus changes based on how nodes are connected to each other is still not done. This should improve flow.
+### Selection and Focus
+!TODO! Focus changes based on how nodes are connected to each other is still not done. This should improve flow. [27](https://github.com/Roboticy3/Louder/issues/27)
 
 | Shortcut | Action | Description |
 |---|---|---|
 | **Alt+A** | Create Node | Spawns a new dialogue node at the current mouse position. If you keep pressing Alt+A without moving the mouse, each new node is offset slightly so they don't stack on top of each other. |
 | **Tab/Shift+Tab** | Next/Previous | Move to the next editable field in a node. If no node is selected or the last editable field of the current node is selected, a different node is selected. |
+| **Up/Down** | Increase/Decrease | Change the value of a number spinner up or down by one. |
 
-## Actions
+### Actions
 | Shortcut | Action | Description |
 |---|---|---|
 | **Delete** | Delete | Removes all currently selected nodes from the graph. After deletion, the editor automatically selects a nearby node (see [Node Selection](#node-selection)). |
 
-## Other
+### Other
 | Shortcut | Action | Description |
 |---|---|---|
 | **F3** | Debug Toggle | Toggles the on-screen debug overlay, which displays runtime messages. Messages auto-expire after a short duration. |
@@ -63,85 +58,15 @@ When a number spinner has focus (the choices count or difficulty check level),
 **Up Arrow** increments the value and **Down Arrow** decrements it. This
 works even when the spinner's text field is focused.
 
-### !TODO! Moving focus
-
-Pressing Alt+
-
-## Node Selection
-
-The editor keeps the graph in a usable state by ensuring something useful is
-always selected.
-
-### Basics
-
-- **Click** a node to select it.
-- **Shift+Click** to add or remove nodes from the selection.
-- **Drag on empty space** to box-select multiple nodes.
-- Clicking any field inside a node (speaker, text, checkbox, etc.) also
-  selects that node.
-
-When a node is selected, the editor focuses the first editable field so you
-can start typing right away.
-
-### Auto-Selection on Startup
-
-When the editor opens, it selects the first node in the graph so there is
-always something selected on launch.
-
-### Auto-Selection After Delete
-
-Pressing **Delete** removes all selected nodes. After removal, the editor
-picks a new node to select using a three-tier fallback:
-
-1. **Connected node** -- Follows connections from or to the last deleted node
-   and selects the first connected node that is still on the graph.
-2. **Start node** -- If no connected node is found, selects whichever node
-   has the "Start" toggle enabled.
-3. **Any node** -- As a last resort, selects the first node remaining on the
-   graph.
-
-If there are no nodes left at all, nothing is selected.
-
-### Auto-Selection on Create
-
-When you press **Alt+A** to create a new node, it is immediately selected so
-you can start editing its fields right away.
-
-### Drag-to-Empty Creates a Node
-
-If you drag a connection from a port into empty space, a new node is created
-at the drop point and selected automatically. This is a quick way to extend
-the conversation without reaching for Alt+A.
-
 ## Saving and Loading
 
 The editor saves and loads conversations as self-contained files. This
 keeps the format compact while preserving all the data you need.
 
 ### File Formats
+!TODO! Add support for a more readable format [23](https://github.com/Roboticy3/Louder/issues/23)
 
-The editor supports two file formats:
-
-- **`.tres`** -- A human-readable, text-based format. Great for version
-  control and manual inspection.
-- **`.res`** -- A compact binary format. Smaller file size but not
-  diff-friendly.
-
-Both formats store the same data. The choice between them is a matter of
-preference.
-
-### Quick Save (Ctrl+S)
-
-If the conversation has been saved before, **Ctrl+S** overwrites the existing
-file immediately with no dialog.
-
-If the conversation has never been saved, **Ctrl+S** opens the Save As dialog
-so you can choose a file name and location.
-
-### Save As (Ctrl+Shift+S)
-
-Always opens the Save As dialog, even if the conversation already has a file
-path. Use this to save a copy under a different name.
+Projects save out to .json in an object-based format. Each node and connection is treated as a separate object, with the hope that this will allow for easier modification later down the line. The actual node object in the editor ([hub.tscn](https://github.com/Roboticy3/Louder/blob/main/editor/entities/hub.tscn)) is composed of subnodes tagged as "hub_component", whose names are used as the names of fields in the output json, which then match up with their values. A hub with no data changed is also treated as "default". Empty text fields, unchecked checkboxes, and numbers set to 0 are ignored by the output json.
 
 ### What Gets Saved
 
@@ -155,18 +80,7 @@ When you save, the editor stores:
 - **Camera state** -- The graph's scroll position and zoom level, so the
   view is restored when you reopen the file.
 
-### Loading (Ctrl+O)
+### Exporting
 
-Opening a file via **Ctrl+O** clears the entire editor and recreates the
-conversation from the file. All nodes and connections are rebuilt, and the
-camera position and zoom are restored.
-
-### Sharing Conversations
-
-Because conversations are stored as standard files, you can share them with
-other people who have the editor. Simply send the `.tres` or `.res` file and
-they can open it with **Ctrl+O**.
-
-You can also use saved conversation files directly with the
-[engine](/engine/) to run dialogue trees in your game.
+!TODO! Set up the engine. Goal: Any saved json can be exported and fed as text into the [engine](/engine/) to run dialogue trees in your game. [29](https://github.com/Roboticy3/Louder/issues/29)
 
