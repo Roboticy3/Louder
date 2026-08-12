@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 IdSystem="*uid://emcgvjw2xenp"
 HubDefaults="*uid://bttyhihvjbpso"
+PsFields="*uid://baeiqny10rpx2"
 
 [gui]
 

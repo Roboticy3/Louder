@@ -1,5 +1,18 @@
 class_name PSSimulator extends Node
 
+const HUB_CVID := "conversation_id"
+const HUB_TXTC := "TextContent"
+const HUB_SPKR := "Speaker"
+const HUB_COND := "Conditions"
+const HUB_STMT := "Statements"
+const HUB_DSKL := "DiceSkill"
+const HUB_DLVL := "DiceLevel"
+const HUB_SCHK := "StartCheck"
+const HUB_ACHK := "AutoCheck"
+
+const CON_TOID := "to_id"
+const CON_FRID := "from_id"
+
 @export var conversation_path:="user://test.json"
 @export var conversation: PSConversation
 
@@ -26,7 +39,7 @@ func is_auto(from_position:=position) -> bool:
 		push_error("Hub ", from_position, " does not exist!")
 		return false
 	
-	return h.get("AutoCheck", false)
+	return h.get(HUB_ACHK, false)
 
 func is_start(from_position:=position) -> bool:
 	var h = conversation.hubs_by_id.get(from_position)
@@ -34,7 +47,7 @@ func is_start(from_position:=position) -> bool:
 		push_error("Hub ", from_position, " does not exist!")
 		return false
 	
-	return h.get("StartCheck", false)
+	return h.get(HUB_SCHK, false)
 
 func get_current_property(property:String):
 	return str(conversation.hubs_by_id[position].get(property))
@@ -79,13 +92,13 @@ func _count_conditions(conditions:String) -> int:
 	return conditions.count("\n") + 1
 
 func _evaluate_choice_single(c:Dictionary) -> bool:
-	var to_id = int(c.get("to_id"))
+	var to_id = int(c.get(CON_TOID))
 	var hub = conversation.hubs_by_id[to_id]
-	if !hub.get("Conditions"):
+	if !hub.get(HUB_COND):
 		return true
 	
-	var conditions := str(hub.get("Conditions"))
-	c["Conditions"] = conditions
+	var conditions := str(hub.get(HUB_COND))
+	c[HUB_COND] = conditions
 	
 	var conditions_arr := conditions.split("\n", false)
 	for condition in conditions_arr:
@@ -104,9 +117,9 @@ func _evaluate_hub(h:Dictionary) -> void:
 	_evaluate_dice_checks(h)
 
 func _evaluate_hub_expressions(h:Dictionary) -> void:
-	if !h.get("Expressions"):
+	if !h.get(HUB_STMT):
 		return
-	var expressions = str(h.get("Expressions"))
+	var expressions = str(h.get(HUB_STMT))
 	var expressions_arr = expressions.split("\n")
 	
 	#three group regex to manually parse assignments:
@@ -126,43 +139,43 @@ func _evaluate_hub_expressions(h:Dictionary) -> void:
 	return
 
 func _evaluate_dice_checks(h:Dictionary) -> void:
-	if h.get("conversation_id") == null:
+	if h.get(HUB_CVID) == null:
 		push_error("Hub ", h, " has no conversation_id!")
 		return
 	
 	#get *all* connections from this hub, even if one port repeats.
-	var connections = conversation.get_connections_from(int(h.get("conversation_id")))
+	var connections = conversation.get_connections_from(int(h.get(HUB_CVID)))
 	for c in connections:
 		if !(c is Dictionary):
 			continue
 		
-		if c.get("to_id") == null:
-			push_error("Connection ", c, " from hub ", h.get("conversation_id"), " has no to_id!")
+		if c.get(CON_TOID) == null:
+			push_error("Connection ", c, " from hub ", h.get(HUB_CVID), " has no to_id!")
 			continue
 
-		var check_h = conversation.hubs_by_id.get(int(c.get("to_id")))
+		var check_h = conversation.hubs_by_id.get(int(c.get(CON_TOID)))
 		if !(check_h is Dictionary):
-			push_error("Connection ", c, " from hub ", h.get("conversation_id"), " has invalid to_id!")
+			push_error("Connection ", c, " from hub ", h.get(HUB_CVID), " has invalid to_id!")
 			continue
 		
-		if check_h.get("DiceSkill") == null or c.get("DiceSkill") == "":
+		if check_h.get(HUB_DSKL) == null or c.get(HUB_DSKL) == "":
 			continue
 
-		print("Evaluating dice check for connection ", c, " from hub ", h.get("conversation_id"))
+		print("Evaluating dice check for connection ", c, " from hub ", h.get(HUB_CVID))
 
-		var dice_skill := str(check_h.get("DiceSkill", ""))
+		var dice_skill := str(check_h.get(HUB_DSKL, ""))
 		var skill_level := int(state.scope.get(dice_skill))
-		var dice_level := int(check_h.get("DiceLevel", 0))
+		var dice_level := int(check_h.get(HUB_DLVL, 0))
 		
-		var check_variable := "_%s_%s_%s_dc" % [h.get("conversation_id"), c.get("to_id"), dice_skill]
+		var check_variable := "_%s_%s_%s_dc" % [h.get(HUB_CVID), c.get(CON_TOID), dice_skill]
 		_roll_into_outcome(check_variable, skill_level)
 
 		#to enact the dice roll, add a condition. This means future calls to
 		#list_choices will filter out failed rolls.
-		var check_conditions := str(check_h.get("Conditions", ""))
+		var check_conditions := str(check_h.get(HUB_COND, ""))
 		check_conditions += "\n%s >= %s" % [check_variable, dice_level]
-		check_h["Conditions"] = check_conditions
-		check_h.erase("DiceSkill")
+		check_h[HUB_COND] = check_conditions
+		check_h.erase(HUB_DSKL)
 
 func _roll_into_outcome(outcome_variable:String, skill_level:int) -> void:
 	var roll := roll_dice()
@@ -181,7 +194,7 @@ func _roll_into_outcome(outcome_variable:String, skill_level:int) -> void:
 func traverse(choice: String) -> bool:
 	for connection in conversation.get_connections_from(position):
 		if str(connection.get("from_choice", "")) == choice:
-			var w := warp(int(connection.get("to_id", "")))
+			var w := warp(int(connection.get(CON_TOID, "")))
 			if w && is_auto():
 				return traverse_index(0)
 			return w
@@ -193,7 +206,7 @@ func traverse_index(i: int) -> bool:
 	if i < 0 or i >= choices.size():
 		push_error("Traversed to choice index out of bounds: ", i)
 		return false
-	var w := warp(int(choices[i].get("to_id", "")))
+	var w := warp(int(choices[i].get(CON_TOID, "")))
 	if w && is_auto():
 		return traverse_index(0)
 	return w
