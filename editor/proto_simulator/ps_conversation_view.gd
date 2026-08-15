@@ -1,6 +1,7 @@
 extends Node
 
 @export var simulator: PSSimulator
+@export var speakers:PackedStringArray
 
 var _components: Array[Node] = []
 
