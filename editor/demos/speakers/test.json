@@ -1,0 +1,39 @@
+[
+	{
+		"conversation_id": "0",
+		"position_offset:x": "-1.0",
+		"position_offset:y": "139.0",
+		"start": true
+	},
+	{
+		"conversation_id": "2",
+		"position_offset:x": "400.0",
+		"position_offset:y": "40.0",
+		"relationships": [],
+		"speaker": "a",
+		"type": "speaker"
+	},
+	{
+		"conversation_id": "3",
+		"position_offset:x": "580.0",
+		"position_offset:y": "260.0",
+		"private": true,
+		"relationships": [],
+		"speaker": "c",
+		"type": "speaker"
+	},
+	{
+		"conversation_id": "4",
+		"position_offset:x": "180.0",
+		"position_offset:y": "380.0",
+		"relationships": [],
+		"speaker": "d",
+		"type": "speaker"
+	},
+	{
+		"position:x": "-81.8788452148438",
+		"position:y": "-57.2767333984375",
+		"type": "camera",
+		"zoom": "0.90909087657928"
+	}
+]

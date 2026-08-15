@@ -5,6 +5,7 @@ extends MenuButton
 const SAVE := 0
 const SAVE_AS := 1
 const LOAD := 2
+const NEW := 3
 
 var current_project_path:String
 signal current_project_changed()
@@ -27,10 +28,12 @@ func _ready():
 	popup.add_item("Save", SAVE)
 	popup.add_item("Save As...", SAVE_AS)
 	popup.add_item("Load...", LOAD)
+	popup.add_item("New...", NEW)
 	popup.id_pressed.connect(_on_id_pressed)
 	popup.set_item_shortcut(SAVE, _shortcut_for_action(&"graph_save"))
 	popup.set_item_shortcut(SAVE_AS, _shortcut_for_action(&"graph_save_as"))
 	popup.set_item_shortcut(LOAD, _shortcut_for_action(&"graph_load"))
+	popup.set_item_shortcut(NEW, _shortcut_for_action(&"graph_new"))
 
 	save_as_dialog = _make_dialog("Save As")
 	save_as_dialog.file_selected.connect(save_project_to_file)
@@ -65,6 +68,8 @@ func _on_id_pressed(id:int):
 			save_as_dialog.show()
 		LOAD:
 			load_dialog.show()
+		NEW:
+			clear_project()
 
 func _on_save_pressed():
 	if has_current_project():
@@ -114,13 +119,7 @@ func load_project_from_file(path:String, make_current:=true) -> bool:
 	if !path.is_absolute_path():
 		return false
 
-	for child in editor.get_children():
-		if child is NetworkEntity:
-			editor.remove_child(child)
-			child.queue_free()
-	editor.clear_connections()
-
-	await get_tree().process_frame # wait for the editor to process the removal of nodes
+	await clear_project()
 
 	var file := FileAccess.open(path, FileAccess.READ)
 	if not file:
@@ -182,6 +181,15 @@ func load_project_from_file(path:String, make_current:=true) -> bool:
 	print("loaded conversation from ", path, " with ", hubs_created.size(), " hubs and ", connections.size(), " edges!")
 
 	return true
+
+func clear_project():
+	for child in editor.get_children():
+		if child is NetworkEntity:
+			editor.remove_child(child)
+			child.queue_free()
+	editor.clear_connections()
+
+	await get_tree().process_frame # wait for the editor to process the removal of nodes
 
 func _export_network_entity(hub: NetworkEntity) -> Dictionary:
 	var data := {}
