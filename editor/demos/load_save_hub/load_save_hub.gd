@@ -1,7 +1,7 @@
 extends Node
 
 @export var hub_data:Dictionary
-@export var hub:CustomGraphHub
+@export var hub:NetworkEntity
 
 func _ready() -> void:
 	print("import test: inspect screen to see it matches the hub described in the editor")

@@ -77,13 +77,13 @@ func save_project_to_file(path:String) -> bool:
 	var objects:Array[Dictionary] = []
 
 	for child in editor.get_children():
-		if child is CustomGraphHub:
+		if child is NetworkEntity:
 			objects.append(_export_hub(child))
 
 	for c in editor.connections:
 		var from_hub = editor.get_node(NodePath(c["from_node"]))
 		var to_hub = editor.get_node(NodePath(c["to_node"]))
-		if not (from_hub is CustomGraphHub and to_hub is CustomGraphHub):
+		if not (from_hub is NetworkEntity and to_hub is NetworkEntity):
 			continue
 		objects.append({
 			OBJECT_TYPE: TYPE_CONNECTION,
@@ -113,7 +113,7 @@ func load_project_from_file(path:String, make_current:=true) -> bool:
 		return false
 
 	for child in editor.get_children():
-		if child is CustomGraphHub:
+		if child is NetworkEntity:
 			editor.remove_child(child)
 			child.queue_free()
 	editor.clear_connections()
@@ -132,7 +132,7 @@ func load_project_from_file(path:String, make_current:=true) -> bool:
 		current_project_path = path
 		current_project_changed.emit()
 
-	var hubs_created: Array[CustomGraphHub] = []
+	var hubs_created: Array[NetworkEntity] = []
 	var connections: Array[Dictionary] = []
 	var camera_position := Vector2.ZERO
 	var camera_zoom := 1.0
@@ -142,7 +142,7 @@ func load_project_from_file(path:String, make_current:=true) -> bool:
 			continue
 		match object.get(OBJECT_TYPE):
 			TYPE_HUB:
-				var hub:CustomGraphHub = HUB_SCENE.instantiate()
+				var hub:NetworkEntity = HUB_SCENE.instantiate()
 				hub.hub_data = _import_hub_data(object, hub)
 				editor.add_child(hub)
 				hubs_created.append(hub)
@@ -156,7 +156,7 @@ func load_project_from_file(path:String, make_current:=true) -> bool:
 	for connection in connections:
 		var from_hub := IdSystem.get_assigned(int(connection.get("from_id", "-1")))
 		var to_hub := IdSystem.get_assigned(int(connection.get("to_id", "-1")))
-		if (from_hub is CustomGraphHub) && (to_hub is CustomGraphHub):
+		if (from_hub is NetworkEntity) && (to_hub is NetworkEntity):
 			var from_port:int = from_hub.get_choices_logic().choice_to_port_out(connection.get("from_choice", ""))
 			var to_port:int = to_hub.get_choices_logic().port_in()
 			
@@ -176,7 +176,7 @@ func load_project_from_file(path:String, make_current:=true) -> bool:
 
 	return true
 
-func _export_hub(hub: CustomGraphHub) -> Dictionary:
+func _export_hub(hub: NetworkEntity) -> Dictionary:
 	var data := {}
 	var exported := hub.export()
 	for key in exported:
@@ -193,7 +193,7 @@ func _export_hub(hub: CustomGraphHub) -> Dictionary:
 	data[OBJECT_TYPE] = TYPE_HUB
 	return data
 
-func _import_hub_data(data: Dictionary, hub: CustomGraphHub) -> Dictionary:
+func _import_hub_data(data: Dictionary, hub: NetworkEntity) -> Dictionary:
 	var restored := {"position_offset": _join_vector(data, "position_offset")}
 	for key in data:
 		match key:

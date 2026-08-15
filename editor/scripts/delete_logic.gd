@@ -42,6 +42,6 @@ func _input(event: InputEvent) -> void:
 		#otherwise otherwise, just select anything
 		if !auto_next_found:
 			for n in editor.get_children():
-				if n is CustomGraphHub:
+				if n is NetworkEntity:
 					editor.set_selected(n)
 					break
