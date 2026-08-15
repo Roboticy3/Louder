@@ -10,9 +10,11 @@ var current_project_path:String
 signal current_project_changed()
 
 const HUB_SCENE := preload("res://entities/hub.tscn")
+const SPEAKER_SCENE := preload("res://entities/speaker.tscn")
 
 const OBJECT_TYPE := "type"
 const TYPE_HUB := "hub"
+const TYPE_SPEAKER := "speaker"
 const TYPE_CONNECTION := "connection"
 const TYPE_CAMERA := "camera"
 
@@ -78,7 +80,7 @@ func save_project_to_file(path:String) -> bool:
 
 	for child in editor.get_children():
 		if child is NetworkEntity:
-			objects.append(_export_hub(child))
+			objects.append(_export_network_entity(child))
 
 	for c in editor.connections:
 		var from_hub = editor.get_node(NodePath(c["from_node"]))
@@ -142,10 +144,15 @@ func load_project_from_file(path:String, make_current:=true) -> bool:
 			continue
 		match object.get(OBJECT_TYPE):
 			TYPE_HUB:
-				var hub:NetworkEntity = HUB_SCENE.instantiate()
-				hub.hub_data = _import_hub_data(object, hub)
+				var hub:CustomGraphHub = HUB_SCENE.instantiate()
+				hub.hub_data = _import_network_entity(object, hub)
 				editor.add_child(hub)
 				hubs_created.append(hub)
+			TYPE_SPEAKER:
+				var speaker:SpeakerEntity = SPEAKER_SCENE.instantiate()
+				speaker.hub_data = _import_network_entity(object, speaker)
+				editor.add_child(speaker)
+				hubs_created.append(speaker)
 			TYPE_CONNECTION:
 				connections.append(object)
 			TYPE_CAMERA:
@@ -176,7 +183,7 @@ func load_project_from_file(path:String, make_current:=true) -> bool:
 
 	return true
 
-func _export_hub(hub: NetworkEntity) -> Dictionary:
+func _export_network_entity(hub: NetworkEntity) -> Dictionary:
 	var data := {}
 	var exported := hub.export()
 	for key in exported:
@@ -190,10 +197,9 @@ func _export_hub(hub: NetworkEntity) -> Dictionary:
 				data[key] = str(value)
 			_:
 				data[key] = value if (value is bool or value is PackedStringArray) else str(value)
-	data[OBJECT_TYPE] = TYPE_HUB
 	return data
 
-func _import_hub_data(data: Dictionary, hub: NetworkEntity) -> Dictionary:
+func _import_network_entity(data: Dictionary, hub: NetworkEntity) -> Dictionary:
 	var restored := {"position_offset": _join_vector(data, "position_offset")}
 	for key in data:
 		match key:

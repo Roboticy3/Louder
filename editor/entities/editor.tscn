@@ -34,11 +34,12 @@ script = ExtResource("5_o1q8q")
 script = ExtResource("4_d3wec")
 editor = NodePath("../Control/GridContainer/GraphEdit")
 
-[node name="CreateLogic" type="Node" parent="." unique_id=1700872222 node_paths=PackedStringArray("editor", "pointer", "debugger")]
+[node name="CreateLogic" type="Node" parent="." unique_id=1700872222 node_paths=PackedStringArray("editor", "pointer", "debugger", "type_dropdown")]
 script = ExtResource("4_2vd5y")
 editor = NodePath("../Control/GridContainer/GraphEdit")
 pointer = NodePath("../PointerLogic")
 debugger = NodePath("../Control/RichTextLabel")
+type_dropdown = NodePath("../Control/GridContainer/FileBar/NodeType")
 
 [node name="PointerLogic" type="Node" parent="." unique_id=1525646304 node_paths=PackedStringArray("editor")]
 script = ExtResource("6_qdkfl")
@@ -76,6 +77,9 @@ editor = NodePath("../../GraphEdit")
 layout_mode = 2
 
 [node name="Edit" parent="Control/GridContainer/FileBar" unique_id=615417156 instance=ExtResource("10_vvcdv")]
+layout_mode = 2
+
+[node name="NodeType" type="OptionButton" parent="Control/GridContainer/FileBar" unique_id=2626262626]
 layout_mode = 2
 
 [node name="GraphEdit" type="GraphEdit" parent="Control/GridContainer" unique_id=2143194040]
