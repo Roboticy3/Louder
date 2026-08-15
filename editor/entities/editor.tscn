@@ -93,7 +93,7 @@ hub_data = {
 NodePath("ChoicesSection/CheckBox"): true
 }
 
-[node name="StartCheck" parent="Control/GridContainer/GraphEdit/Hub/ChoicesSection" parent_id_path=PackedInt32Array(1992437552, 255423357) index="0" unique_id=628973272]
+[node name="start" parent="Control/GridContainer/GraphEdit/Hub/ChoicesSection" parent_id_path=PackedInt32Array(1992437552, 255423357) index="0" unique_id=628973272]
 button_pressed = true
 
 [node name="RichTextLabel" type="RichTextLabel" parent="Control" unique_id=409667951]
@@ -107,7 +107,7 @@ grow_vertical = 0
 fit_content = true
 script = ExtResource("9_n5ixm")
 
-[node name="SpeakerColorsMenu" parent="Control" unique_id=255244167 instance=ExtResource("6_scmenu")]
+[node name="speakerColorsMenu" parent="Control" unique_id=255244167 instance=ExtResource("6_scmenu")]
 
 [node name="Window" parent="." unique_id=2035585249 instance=ExtResource("13_6vlff")]
 

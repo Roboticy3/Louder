@@ -21,11 +21,11 @@ offset_top = 390.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Speaker" type="RichTextLabel" parent="GridContainer" unique_id=1876214056 groups=["ui_component"]]
+[node name="speaker" type="RichTextLabel" parent="GridContainer" unique_id=1876214056 groups=["ui_component"]]
 layout_mode = 2
 fit_content = true
 
-[node name="TextContent" type="RichTextLabel" parent="GridContainer" unique_id=381995481 groups=["ui_component"]]
+[node name="text" type="RichTextLabel" parent="GridContainer" unique_id=381995481 groups=["ui_component"]]
 layout_mode = 2
 fit_content = true
 horizontal_alignment = 1

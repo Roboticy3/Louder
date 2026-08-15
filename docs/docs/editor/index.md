@@ -13,7 +13,7 @@ to run dialogue in your game.
 ## Shortcuts
 !TODO! Most keybinds do not work while editing text. This should be fixed somehow. [28](https://github.com/Roboticy3/Louder/issues/28)
 
-!TODO! Implement a view menu for changing the colors of nodes based on Speaker, tags and so on. Currently node colors are hard coded.
+!TODO! Implement a view menu for changing the colors of nodes based on speaker, tags and so on. Currently node colors are hard coded.
 
 ### Selection and Focus
 !TODO! Focus changes based on how nodes are connected to each other is still not done. This should improve flow. [27](https://github.com/Roboticy3/Louder/issues/27)
@@ -74,7 +74,7 @@ Projects save out to .json in an object-based format. Each node and connection i
 
 When you save, the editor stores:
 
-- **All nodes** -- Speaker name, dialogue text, difficulty check settings
+- **All nodes** -- speaker name, dialogue text, difficulty check settings
   (enabled, skill, level), expressions, start node toggle, choice texts, and
   graph position.
 - **All connections** -- Which nodes are connected, and which choice each

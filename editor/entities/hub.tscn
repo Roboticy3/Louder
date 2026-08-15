@@ -76,10 +76,10 @@ slot/3/right_color = Color(1, 1, 1, 1)
 slot/3/right_icon = null
 slot/3/draw_stylebox = true
 script = ExtResource("1_ysrp0")
-grabber = NodePath("TextSectionWrapper/TextSection/Speaker")
-choices_section_logic = NodePath("ChoicesSection/ChoicesSectionLogic")
-start_check = NodePath("ChoicesSection/StartCheck")
-auto_check = NodePath("ChoicesSection/AutoCheck")
+grabber = NodePath("TextSectionWrapper/TextSection/speaker")
+choices_section_logic = NodePath("ChoicesSection/choices")
+start_check = NodePath("ChoicesSection/start")
+auto_check = NodePath("ChoicesSection/auto")
 
 [node name="TextSectionWrapper" type="VBoxContainer" parent="." unique_id=175791466]
 layout_mode = 2
@@ -90,7 +90,7 @@ layout_mode = 2
 [node name="HBoxContainer" type="HBoxContainer" parent="TextSectionWrapper/TextSection" unique_id=1509009445]
 layout_mode = 2
 
-[node name="TextContentSection" type="Label" parent="TextSectionWrapper/TextSection/HBoxContainer" unique_id=1351469422]
+[node name="textSection" type="Label" parent="TextSectionWrapper/TextSection/HBoxContainer" unique_id=1351469422]
 layout_mode = 2
 text = "Text Content"
 
@@ -107,10 +107,10 @@ script = ExtResource("4_rhcs5")
 mutual_exclusive = [NodePath("../../Recipient")]
 inverted = true
 
-[node name="Speaker" parent="TextSectionWrapper/TextSection" unique_id=42355890 groups=["autocomplete_speaker", "hub_component"] instance=ExtResource("3_f0jtb")]
+[node name="speaker" parent="TextSectionWrapper/TextSection" unique_id=42355890 groups=["autocomplete_speaker", "hub_component"] instance=ExtResource("3_f0jtb")]
 layout_mode = 2
 size_flags_vertical = 0
-placeholder_text = "Speaker"
+placeholder_text = "speaker"
 wrap_mode = 0
 oneliner = true
 inliner = true
@@ -123,7 +123,7 @@ wrap_mode = 0
 oneliner = true
 inliner = true
 
-[node name="TextContent" parent="TextSectionWrapper/TextSection" unique_id=778728203 groups=["hub_component"] instance=ExtResource("3_f0jtb")]
+[node name="text" parent="TextSectionWrapper/TextSection" unique_id=778728203 groups=["hub_component"] instance=ExtResource("3_f0jtb")]
 layout_mode = 2
 inliner = true
 
@@ -152,20 +152,20 @@ size_flags_horizontal = 3
 [node name="HBoxContainer" type="HBoxContainer" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=522784680]
 layout_mode = 2
 
-[node name="DiceSkill" type="CodeEdit" parent="OtherSection/VBoxContainer/HBoxContainer/HBoxContainer" unique_id=1819305514 groups=["autocomplete_speaker", "hub_component"]]
+[node name="dice_skill" type="CodeEdit" parent="OtherSection/VBoxContainer/HBoxContainer/HBoxContainer" unique_id=1819305514 groups=["autocomplete_speaker", "hub_component"]]
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "Skill"
 scroll_fit_content_width = true
 script = ExtResource("4_54sja")
 
-[node name="DiceLevel" type="SpinBox" parent="OtherSection/VBoxContainer/HBoxContainer/HBoxContainer" unique_id=872709569 groups=["hub_component"]]
+[node name="dice_level" type="SpinBox" parent="OtherSection/VBoxContainer/HBoxContainer/HBoxContainer" unique_id=872709569 groups=["hub_component"]]
 layout_mode = 2
 alignment = 3
 prefix = "lvl:"
 script = ExtResource("2_w7r13")
 
-[node name="DiceFail" type="CheckBox" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=792754216 groups=["hub_component"]]
+[node name="dice_fail" type="CheckBox" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=792754216 groups=["hub_component"]]
 layout_mode = 2
 script = ExtResource("4_rhcs5")
 
@@ -173,31 +173,31 @@ script = ExtResource("4_rhcs5")
 layout_mode = 2
 text = "Fail"
 
-[node name="GridContainer" type="HBoxContainer" parent="OtherSection/VBoxContainer" unique_id=543840975]
+[node name="HboxContainer" type="HBoxContainer" parent="OtherSection/VBoxContainer" unique_id=543840975]
 layout_mode = 2
 
-[node name="ConditionLabel" type="Label" parent="OtherSection/VBoxContainer/GridContainer" unique_id=747363944]
+[node name="ConditionLabel" type="Label" parent="OtherSection/VBoxContainer/HboxContainer" unique_id=747363944]
 layout_mode = 2
 size_flags_stretch_ratio = 6.32
 text = "Condition"
 clip_text = true
 text_overrun_behavior = 5
 
-[node name="Conditions" parent="OtherSection/VBoxContainer/GridContainer" unique_id=647734270 groups=["autocomplete_expression", "hub_component"] instance=ExtResource("3_f0jtb")]
+[node name="Conditions" parent="OtherSection/VBoxContainer/HboxContainer" unique_id=647734270 groups=["autocomplete_expression", "hub_component"] instance=ExtResource("3_f0jtb")]
 layout_mode = 2
 placeholder_text = "Conditions"
 
-[node name="GridContainer2" type="HBoxContainer" parent="OtherSection/VBoxContainer" unique_id=1125872985]
+[node name="HboxContainer2" type="HBoxContainer" parent="OtherSection/VBoxContainer" unique_id=1125872985]
 layout_mode = 2
 
-[node name="ExpressionLabel" type="Label" parent="OtherSection/VBoxContainer/GridContainer2" unique_id=965497717]
+[node name="ExpressionLabel" type="Label" parent="OtherSection/VBoxContainer/HboxContainer2" unique_id=965497717]
 layout_mode = 2
 size_flags_stretch_ratio = 6.32
 text = "Condition"
 clip_text = true
 text_overrun_behavior = 5
 
-[node name="Statements" parent="OtherSection/VBoxContainer/GridContainer2" unique_id=1321863141 groups=["autocomplete_expression", "hub_component"] instance=ExtResource("3_f0jtb")]
+[node name="Statements" parent="OtherSection/VBoxContainer/HboxContainer2" unique_id=1321863141 groups=["autocomplete_expression", "hub_component"] instance=ExtResource("3_f0jtb")]
 layout_mode = 2
 placeholder_text = "Statements"
 
@@ -205,7 +205,7 @@ placeholder_text = "Statements"
 layout_mode = 2
 columns = 4
 
-[node name="StartCheck" type="CheckBox" parent="ChoicesSection" unique_id=628973272 groups=["hub_component"]]
+[node name="start" type="CheckBox" parent="ChoicesSection" unique_id=628973272 groups=["hub_component"]]
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
@@ -226,20 +226,20 @@ size_flags_horizontal = 0
 size_flags_vertical = 0
 script = ExtResource("2_w7r13")
 
-[node name="AutoCheck" type="CheckBox" parent="ChoicesSection" unique_id=412385513 node_paths=PackedStringArray("mutual_exclusive") groups=["hub_component"]]
+[node name="auto" type="CheckBox" parent="ChoicesSection" unique_id=412385513 node_paths=PackedStringArray("mutual_exclusive") groups=["hub_component"]]
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
 text = "Auto"
 script = ExtResource("4_rhcs5")
-mutual_exclusive = [NodePath("../../TextSectionWrapper/TextSection/TextContent")]
+mutual_exclusive = [NodePath("../../TextSectionWrapper/TextSection/text")]
 
-[node name="ChoicesSectionLogic" type="Node" parent="ChoicesSection" unique_id=889900628 node_paths=PackedStringArray("hub", "spin_box", "start_check") groups=["hub_component"]]
+[node name="choices" type="Node" parent="ChoicesSection" unique_id=889900628 node_paths=PackedStringArray("hub", "spin_box", "start_check") groups=["hub_component"]]
 script = ExtResource("2_hjueh")
 hub = NodePath("../..")
 spin_box = NodePath("../ChoicesSpinBox")
-start_check = NodePath("../StartCheck")
+start_check = NodePath("../start")
 spoke_child_index = 1
 
 [connection signal="folding_changed" from="OtherSection" to="." method="reset_size" flags=3 unbinds=1]
-[connection signal="pressed" from="ChoicesSection/AutoCheck" to="." method="reset_size" flags=3]
-[connection signal="choices_changed" from="ChoicesSection/ChoicesSectionLogic" to="." method="reset_size" flags=3]
+[connection signal="pressed" from="ChoicesSection/auto" to="." method="reset_size" flags=3]
+[connection signal="choices_changed" from="ChoicesSection/choices" to="." method="reset_size" flags=3]

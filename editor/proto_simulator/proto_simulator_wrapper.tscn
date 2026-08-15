@@ -12,7 +12,7 @@ script = ExtResource("1_1074j")
 
 [node name="PSSimulator" type="Node" parent="." unique_id=448811002 node_paths=PackedStringArray("conversation")]
 script = ExtResource("3_psim")
-conversation_path = "user://cordon.json"
+conversation_path = "file://demos/conversations/cordon.json"
 conversation = NodePath("../PSConversation")
 
 [node name="LoadConversation" type="Node" parent="." unique_id=1703789268 node_paths=PackedStringArray("simulator", "view")]
