@@ -14,8 +14,8 @@ const HUB_SCENE := preload("res://entities/hub.tscn")
 const SPEAKER_SCENE := preload("res://entities/speaker.tscn")
 
 const OBJECT_TYPE := "type"
-const TYPE_HUB := "hub"
-const TYPE_SPEAKER := "speaker"
+const TYPE_HUB := CustomGraphHub.TYPE
+const TYPE_SPEAKER := SpeakerEntity.TYPE
 const TYPE_CONNECTION := "connection"
 const TYPE_CAMERA := "camera"
 
@@ -188,11 +188,12 @@ func clear_project():
 			editor.remove_child(child)
 			child.queue_free()
 	editor.clear_connections()
+	IdSystem.clear_ids()
 
 	await get_tree().process_frame # wait for the editor to process the removal of nodes
 
 func _export_network_entity(hub: NetworkEntity) -> Dictionary:
-	var data := {}
+	var data := {OBJECT_TYPE: hub.get_entity_type()}
 	var exported := hub.export()
 	for key in exported:
 		var value = exported[key]

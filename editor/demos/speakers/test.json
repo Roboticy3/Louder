@@ -10,8 +10,7 @@
 		"position_offset:x": "400.0",
 		"position_offset:y": "40.0",
 		"relationships": [],
-		"speaker": "a",
-		"type": "speaker"
+		"speaker": "a"
 	},
 	{
 		"conversation_id": "3",
@@ -19,16 +18,14 @@
 		"position_offset:y": "260.0",
 		"private": true,
 		"relationships": [],
-		"speaker": "c",
-		"type": "speaker"
+		"speaker": "c"
 	},
 	{
 		"conversation_id": "4",
 		"position_offset:x": "180.0",
 		"position_offset:y": "380.0",
 		"relationships": [],
-		"speaker": "d",
-		"type": "speaker"
+		"speaker": "d"
 	},
 	{
 		"position:x": "-81.8788452148438",

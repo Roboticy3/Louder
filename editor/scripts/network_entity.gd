@@ -92,6 +92,9 @@ func _import_node(node: Node, value: Variant) -> void:
 	elif node is Button:
 		node.text = value
 
+func get_entity_type() -> String:
+	return "network_entity"
+
 var id := -1
 const ID_GROUP := &"CONVERSATION"
 

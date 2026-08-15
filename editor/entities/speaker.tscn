@@ -102,7 +102,7 @@ columns = 2
 layout_mode = 2
 text = "Color: "
 
-[node name="color" type="ColorPickerButton" parent="ChoicesSection" unique_id=2044739777]
+[node name="color" type="ColorPickerButton" parent="ChoicesSection" unique_id=2044739777 groups=["hub_component"]]
 custom_minimum_size = Vector2(0, 28)
 layout_mode = 2
 size_flags_horizontal = 3

@@ -17,6 +17,11 @@ func get_auto_check() -> CheckBox:
 func get_grabber() -> Control:
 	return grabber
 
+const TYPE := "hub"
+
+func get_entity_type() -> String:
+	return TYPE
+
 func update_title_stylebox() -> void:
 	var start := start_check.button_pressed
 	var auto := auto_check.button_pressed
