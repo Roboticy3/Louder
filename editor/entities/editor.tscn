@@ -9,10 +9,8 @@
 [ext_resource type="Script" uid="uid://o0sx5q87o113" path="res://scripts/walker_logic.gd" id="5_o1q8q"]
 [ext_resource type="PackedScene" uid="uid://5auivb6rkpb8" path="res://entities/menus/view_menu.tscn" id="5_vumenu"]
 [ext_resource type="Script" uid="uid://b3jvwrspygwuc" path="res://scripts/pointer_logic.gd" id="6_qdkfl"]
-[ext_resource type="PackedScene" path="res://entities/menus/speaker_colors_menu.tscn" id="6_scmenu"]
 [ext_resource type="Script" uid="uid://bboylqujoaqru" path="res://scripts/on_screen_debug.gd" id="9_n5ixm"]
 [ext_resource type="Script" uid="uid://dfhadrloniwdc" path="res://scripts/user_config.gd" id="10_07l17"]
-[ext_resource type="PackedScene" uid="uid://buwp2pegwfmfg" path="res://entities/speaker_colors.tscn" id="13_6vlff"]
 
 [node name="Editor" type="CanvasLayer" unique_id=1835673697]
 
@@ -86,7 +84,7 @@ layout_mode = 0
 offset_left = -1.0
 offset_top = 139.0
 offset_right = 342.0
-offset_bottom = 508.0
+offset_bottom = 548.0
 position_offset = Vector2(-1, 139)
 selected = true
 hub_data = {
@@ -107,8 +105,11 @@ grow_vertical = 0
 fit_content = true
 script = ExtResource("9_n5ixm")
 
-[node name="speakerColorsMenu" parent="Control" unique_id=255244167 instance=ExtResource("6_scmenu")]
-
-[node name="Window" parent="." unique_id=2035585249 instance=ExtResource("13_6vlff")]
+[node name="ViewMenu" type="PopupPanel" parent="." unique_id=372021348 groups=["node_colors"]]
+oversampling_override = 1.0
+initial_position = 1
+visible = true
+unresizable = false
+borderless = false
 
 [editable path="Control/GridContainer/GraphEdit/Hub"]

@@ -1,7 +1,13 @@
 [gd_scene format=3 uid="uid://5auivb6rkpb8"]
 
-[ext_resource type="Script" uid="uid://cu5isk0py810q" path="res://scripts/view_menu.gd" id="1_viewm"]
+[ext_resource type="Script" uid="uid://ddhlj0gl04yy0" path="res://scripts/toggle_group_menu_item.gd" id="1_6hvmd"]
 
 [node name="View" type="MenuButton" unique_id=615417156]
 text = "View"
-script = ExtResource("1_viewm")
+
+[node name="Node" type="Node" parent="." unique_id=485333044 node_paths=PackedStringArray("menu_button")]
+script = ExtResource("1_6hvmd")
+menu_button = NodePath("..")
+button_name = "Node Colors"
+toggle_group = &"node_colors"
+accel = "view_node_colors"
