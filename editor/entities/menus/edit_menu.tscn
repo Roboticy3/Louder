@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://dr7rs8c2sfbde"]
+
+[ext_resource type="Script" uid="uid://ddhlj0gl04yy0" path="res://scripts/toggle_group_menu_item.gd" id="1_nygx6"]
+
+[node name="Edit" type="MenuButton" unique_id=615417156]
+text = "Edit"
+
+[node name="Node" type="Node" parent="." unique_id=485333044 node_paths=PackedStringArray("menu_button")]
+script = ExtResource("1_nygx6")
+menu_button = NodePath("..")
+button_name = "Knowledge Graph"
+toggle_group = &"knowledge_graph"
+accel = "view_knowledge_graph"

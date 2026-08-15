@@ -11,6 +11,7 @@
 [ext_resource type="Script" uid="uid://b3jvwrspygwuc" path="res://scripts/pointer_logic.gd" id="6_qdkfl"]
 [ext_resource type="Script" uid="uid://bboylqujoaqru" path="res://scripts/on_screen_debug.gd" id="9_n5ixm"]
 [ext_resource type="Script" uid="uid://dfhadrloniwdc" path="res://scripts/user_config.gd" id="10_07l17"]
+[ext_resource type="PackedScene" uid="uid://dr7rs8c2sfbde" path="res://entities/menus/edit_menu.tscn" id="10_vvcdv"]
 
 [node name="Editor" type="CanvasLayer" unique_id=1835673697]
 
@@ -73,6 +74,9 @@ editor = NodePath("../../GraphEdit")
 [node name="View" parent="Control/GridContainer/FileBar" unique_id=1679255408 instance=ExtResource("5_vumenu")]
 layout_mode = 2
 
+[node name="Edit" parent="Control/GridContainer/FileBar" unique_id=615417156 instance=ExtResource("10_vvcdv")]
+layout_mode = 2
+
 [node name="GraphEdit" type="GraphEdit" parent="Control/GridContainer" unique_id=2143194040]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -105,7 +109,14 @@ grow_vertical = 0
 fit_content = true
 script = ExtResource("9_n5ixm")
 
-[node name="ViewMenu" type="PopupPanel" parent="." unique_id=372021348 groups=["node_colors"]]
+[node name="NodeColorsPopup" type="PopupPanel" parent="." unique_id=372021348 groups=["node_colors"]]
+oversampling_override = 1.0
+initial_position = 1
+visible = true
+unresizable = false
+borderless = false
+
+[node name="KnowledgeGraphPopup" type="PopupPanel" parent="." unique_id=1796554176 groups=["knowledge_graph"]]
 oversampling_override = 1.0
 initial_position = 1
 visible = true
