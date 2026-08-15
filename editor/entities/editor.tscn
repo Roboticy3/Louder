@@ -123,4 +123,10 @@ visible = true
 unresizable = false
 borderless = false
 
+[node name="GraphEdit" type="GraphEdit" parent="KnowledgeGraphPopup" unique_id=119884730]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 96.0
+offset_bottom = 96.0
+
 [editable path="Control/GridContainer/GraphEdit/Hub"]
