@@ -12,6 +12,7 @@
 [ext_resource type="Script" uid="uid://bboylqujoaqru" path="res://scripts/on_screen_debug.gd" id="9_n5ixm"]
 [ext_resource type="Script" uid="uid://dfhadrloniwdc" path="res://scripts/user_config.gd" id="10_07l17"]
 [ext_resource type="PackedScene" uid="uid://dr7rs8c2sfbde" path="res://entities/menus/edit_menu.tscn" id="10_vvcdv"]
+[ext_resource type="PackedScene" uid="uid://sc3ddjdaefp1" path="res://entities/knowledge_graph.tscn" id="13_6vlff"]
 
 [node name="Editor" type="CanvasLayer" unique_id=1835673697]
 
@@ -123,10 +124,6 @@ visible = true
 unresizable = false
 borderless = false
 
-[node name="GraphEdit" type="GraphEdit" parent="KnowledgeGraphPopup" unique_id=119884730]
-offset_left = 4.0
-offset_top = 4.0
-offset_right = 96.0
-offset_bottom = 96.0
+[node name="Editor" parent="KnowledgeGraphPopup" unique_id=1821343670 instance=ExtResource("13_6vlff")]
 
 [editable path="Control/GridContainer/GraphEdit/Hub"]

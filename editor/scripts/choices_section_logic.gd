@@ -2,6 +2,7 @@ class_name ChoicesSectionLogic extends Node
 @export var hub:GraphNode
 @export var spin_box:SpinBox
 @export var start_check:CheckBox
+@export var start_check_default:bool = false
 @export var child_index := 4
 @export var spoke_child_index := 2
 
@@ -11,13 +12,19 @@ class_name ChoicesSectionLogic extends Node
 var choices:Array[TextEdit] = []
 signal choices_changed()
 
-func add_choice_auto():
-	var string := "(Choice " + str(choices.size()) + ")"
-	add_choice(string)
+func is_start_checked():
+	if is_instance_valid(start_check):
+		return start_check.get("button_pressed")
+	return start_check_default
 
-func add_choice(text:String):
+func add_choice_auto():
+	var placeholder_text := "(Choice " + str(choices.size()) + ")"
+	add_choice("", placeholder_text)
+
+func add_choice(text:String, placeholder_text:String = "(Choice)"):
 	var le:Node = load("res://entities/text_content.tscn").instantiate()
 	le.set("text", text)
+	le.set("placeholder_text", placeholder_text)
 	le.set("inliner", true)
 	hub.add_child(le)
 	hub.move_child(le, child_index + choices.size())
@@ -60,8 +67,8 @@ func remove_choice(index:int):
 func update_default_choices():
 	hub.set_slot(
 		spoke_child_index,
-		!start_check.button_pressed, 
-		0 if start_check.button_pressed else 1, 
+		!is_start_checked(), 
+		0 if is_start_checked() else 1, 
 		Color.WHITE,
 		choices.is_empty(),
 		0 if !choices.is_empty() else 1,
@@ -109,6 +116,7 @@ func port_in() -> int:
 func _ready() -> void:
 	spin_box.value = choices.size()
 	spin_box.value_changed.connect(set_choice_count)
-	start_check.pressed.connect(update_default_choices)
+	if is_instance_valid(start_check):
+		start_check.pressed.connect(update_default_choices)
 	
 	update_default_choices.call_deferred()

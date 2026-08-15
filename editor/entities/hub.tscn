@@ -98,7 +98,7 @@ text = "Text Content"
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="PrivateCheck" type="CheckBox" parent="TextSectionWrapper/TextSection/HBoxContainer" unique_id=1575580911 node_paths=PackedStringArray("mutual_exclusive") groups=["hub_component"]]
+[node name="private" type="CheckBox" parent="TextSectionWrapper/TextSection/HBoxContainer" unique_id=1575580911 node_paths=PackedStringArray("mutual_exclusive") groups=["hub_component"]]
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
@@ -110,7 +110,7 @@ inverted = true
 [node name="speaker" parent="TextSectionWrapper/TextSection" unique_id=42355890 groups=["autocomplete_speaker", "hub_component"] instance=ExtResource("3_f0jtb")]
 layout_mode = 2
 size_flags_vertical = 0
-placeholder_text = "speaker"
+placeholder_text = "Speaker"
 wrap_mode = 0
 oneliner = true
 inliner = true

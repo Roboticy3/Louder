@@ -1,0 +1,66 @@
+[gd_scene format=3 uid="uid://sc3ddjdaefp1"]
+
+[ext_resource type="Script" uid="uid://cwc5u75bjft3r" path="res://scripts/connection_logic.gd" id="1_qv6nx"]
+[ext_resource type="Script" uid="uid://cb5oairoh5jue" path="res://scripts/selection_logic.gd" id="2_nfb1f"]
+[ext_resource type="Script" uid="uid://o0sx5q87o113" path="res://scripts/walker_logic.gd" id="3_o1w5s"]
+[ext_resource type="Script" uid="uid://vgv2nlv4m715" path="res://scripts/delete_logic.gd" id="4_i2nmt"]
+[ext_resource type="Script" uid="uid://c3iywyrk7o8yw" path="res://scripts/create_logic.gd" id="5_1v052"]
+[ext_resource type="Script" uid="uid://b3jvwrspygwuc" path="res://scripts/pointer_logic.gd" id="6_tj610"]
+[ext_resource type="PackedScene" uid="uid://c6mdxbco57qh2" path="res://entities/speaker.tscn" id="7_pkp4o"]
+
+[node name="KnowledgeGraph" type="CanvasLayer" unique_id=1835673697]
+
+[node name="ConnectionLogic" type="Node" parent="." unique_id=501378103 node_paths=PackedStringArray("editor", "pointer")]
+script = ExtResource("1_qv6nx")
+editor = NodePath("../Control/GridContainer/GraphEdit")
+pointer = NodePath("../PointerLogic")
+port_change_listener_group = null
+
+[node name="SelectionLogic" type="Node" parent="." unique_id=985025703 node_paths=PackedStringArray("editor")]
+script = ExtResource("2_nfb1f")
+editor = NodePath("../Control/GridContainer/GraphEdit")
+
+[node name="WalkerLogic" type="Node" parent="." unique_id=1353188201]
+script = ExtResource("3_o1w5s")
+
+[node name="DeleteLogic" type="Node" parent="." unique_id=302191628 node_paths=PackedStringArray("editor")]
+script = ExtResource("4_i2nmt")
+editor = NodePath("../Control/GridContainer/GraphEdit")
+
+[node name="CreateLogic" type="Node" parent="." unique_id=1700872222 node_paths=PackedStringArray("editor", "pointer")]
+script = ExtResource("5_1v052")
+editor = NodePath("../Control/GridContainer/GraphEdit")
+pointer = NodePath("../PointerLogic")
+
+[node name="PointerLogic" type="Node" parent="." unique_id=1525646304 node_paths=PackedStringArray("editor")]
+script = ExtResource("6_tj610")
+editor = NodePath("../Control/GridContainer/GraphEdit")
+
+[node name="Control" type="Control" parent="." unique_id=2092511738]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GridContainer" type="GridContainer" parent="Control" unique_id=1756259022]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GraphEdit" type="GraphEdit" parent="Control/GridContainer" unique_id=2143194040]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+right_disconnects = true
+
+[node name="Speaker" parent="Control/GridContainer/GraphEdit" unique_id=1992437552 instance=ExtResource("7_pkp4o")]
+layout_mode = 0
+offset_left = 55.0
+offset_top = 108.0
+offset_right = 385.0
+offset_bottom = 230.0

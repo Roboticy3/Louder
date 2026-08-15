@@ -21,7 +21,7 @@ func _on_node_selected(node:GraphElement):
 	if !focus or !node.is_ancestor_of(focus):
 		if node.get_child_count() == 0:
 			node.selected = false
-		elif node is NetworkEntity and node.get_grabber() is Control:
+		elif node is CustomGraphHub and node.get_grabber() is Control:
 			node.get_grabber().grab_focus()
 
 func _on_gui_focus_changed(to:Control):
