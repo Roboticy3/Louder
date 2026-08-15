@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://c6mdxbco57qh2"]
 
-[ext_resource type="Script" uid="uid://cr0xi0ehqamx4" path="res://scripts/network_entity.gd" id="1_f3f4n"]
+[ext_resource type="Script" uid="uid://cpdekulpatyo0" path="res://scripts/speaker_entity.gd" id="1_f3f4n"]
 [ext_resource type="PackedScene" uid="uid://d2ffa88ufdvl6" path="res://entities/text_content.tscn" id="3_k1deq"]
 [ext_resource type="Script" uid="uid://ctb32vrbjkrsg" path="res://scripts/arrow_keys_spin_box.gd" id="4_f3f4n"]
 [ext_resource type="Script" uid="uid://derdgutm4a213" path="res://scripts/start_check.gd" id="7_soybp"]
@@ -25,12 +25,12 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[node name="Speaker" type="GraphNode" unique_id=1992437552]
+[node name="Speaker" type="GraphNode" unique_id=301621410]
 custom_minimum_size = Vector2(330, 0)
 offset_left = 95.0
 offset_top = 148.0
 offset_right = 425.0
-offset_bottom = 270.0
+offset_bottom = 333.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
 mouse_filter = 1
@@ -64,6 +64,7 @@ slot/2/right_color = Color(1, 1, 1, 1)
 slot/2/right_icon = null
 slot/2/draw_stylebox = false
 script = ExtResource("1_f3f4n")
+metadata/_custom_type_script = "uid://cpdekulpatyo0"
 
 [node name="TextSectionWrapper" type="VBoxContainer" parent="." unique_id=175791466]
 layout_mode = 2

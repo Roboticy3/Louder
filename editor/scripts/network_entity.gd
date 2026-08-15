@@ -53,16 +53,18 @@ func _export_node(node: Node) -> Variant:
 		for c in node.choices:
 			choices.append(c.text)
 		return choices
-	if node is CodeEdit:
+	elif node is CodeEdit:
 		return node.text
-	if node is OptionButton:
+	elif node is ColorPickerButton:
+		return node.color.to_html()
+	elif node is OptionButton:
 		var idx:int = node.selected
 		return node.get_item_text(idx) if idx >= 0 else ""
-	if node is CheckBox:
+	elif node is CheckBox:
 		return node.button_pressed
-	if node is SpinBox:
+	elif node is SpinBox:
 		return node.value
-	if node is Button:
+	elif node is Button:
 		return node.text
 	return null
 
@@ -74,6 +76,8 @@ func _import_node(node: Node, value: Variant) -> void:
 			node.choices[i].text = choices[i]
 	elif node is CodeEdit:
 		node.text = value
+	elif node is ColorPickerButton:
+		node.color = Color.html(value)
 	elif node is OptionButton:
 		var skill := value as String
 		if not skill.is_empty():
