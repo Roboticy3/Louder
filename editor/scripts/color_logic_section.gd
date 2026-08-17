@@ -1,11 +1,14 @@
 extends Node
 
+@export var color_picker:ColorPickerButton
+@export var hub:GraphNode
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
+	color_picker.color_changed.connect(_on_color_updated)
+	_on_color_updated(color_picker.color)
 
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
+func _on_color_updated(color:Color):
+	var new_box := StyleBoxFlat.new()
+	new_box.bg_color = color
+	hub.add_theme_stylebox_override("titlebar", new_box)

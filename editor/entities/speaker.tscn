@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://cpdekulpatyo0" path="res://scripts/speaker_entity.gd" id="1_f3f4n"]
 [ext_resource type="PackedScene" uid="uid://d2ffa88ufdvl6" path="res://entities/text_content.tscn" id="3_k1deq"]
 [ext_resource type="Script" uid="uid://ctb32vrbjkrsg" path="res://scripts/arrow_keys_spin_box.gd" id="4_f3f4n"]
+[ext_resource type="Script" uid="uid://u0dkbptw8kh6" path="res://scripts/color_logic_section.gd" id="6_3ykgf"]
 [ext_resource type="Script" uid="uid://derdgutm4a213" path="res://scripts/start_check.gd" id="7_soybp"]
 [ext_resource type="Script" uid="uid://dabkdaqchjesv" path="res://scripts/choices_section_logic.gd" id="8_57h7j"]
 
@@ -127,5 +128,10 @@ hub = NodePath("../..")
 spin_box = NodePath("../ChoicesSpinBox")
 child_index = 3
 spoke_child_index = 1
+
+[node name="ColorPickerLogic" type="Node" parent="ChoicesSection" unique_id=59080645 node_paths=PackedStringArray("color_picker", "hub")]
+script = ExtResource("6_3ykgf")
+color_picker = NodePath("../color")
+hub = NodePath("../..")
 
 [connection signal="choices_changed" from="ChoicesSection/relationships" to="." method="reset_size" flags=3]
