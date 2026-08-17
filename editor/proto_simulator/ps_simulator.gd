@@ -28,9 +28,11 @@ var e := Expression.new()
 func get_position() -> int:
 	return position
 
-func list_choices(from_position:=position, evaluate_conditions:=true) -> Array:
+func list_choices(filter=null, from_position:=position, evaluate_conditions:=true) -> Array:
 	var choices := conversation.get_connections_from(from_position)
 	if evaluate_conditions: choices = _evaluate_choices(choices)
+	if filter is Callable:
+		choices = choices.filter(filter)
 	return choices
 
 func is_auto(from_position:=position) -> bool:
@@ -212,8 +214,8 @@ func traverse(choice_text: String, backfill:={}) -> bool:
 	
 	return w
 
-func traverse_index(i: int, backfill:={}) -> bool:
-	var choices := list_choices()
+func traverse_index(i: int, filter=null, backfill:={}) -> bool:
+	var choices := list_choices(filter)
 	if i < 0 or i >= choices.size():
 		push_error("Traversed to choice index out of bounds: ", i)
 		return false

@@ -2,8 +2,14 @@ class_name PSConfig extends Node
 
 const OBJECT_TYPE := "type"
 const OBJECT_SPEAKER := "speaker"
+const SPEAKER_NAME := "name"
 
 var speakers_by_name:Dictionary[String, Dictionary]
+
+@export var config_path := "res://demos/speakers/test.json"
+
+func _ready():
+	load_from_json(config_path)
 
 func load_from_json(path:String):
 	var parsed := JSONSceneLoader.load_from_json(path)
@@ -23,4 +29,4 @@ func unroll(objects:Array):
 		
 		match (o.get(OBJECT_TYPE)):
 			OBJECT_SPEAKER:
-				speakers_by_name[o.get("Name")] = o
+				if o.get(SPEAKER_NAME): speakers_by_name[o.get(SPEAKER_NAME)] = o

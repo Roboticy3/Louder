@@ -1,7 +1,10 @@
 extends Node
 
 @export var simulator: PSSimulator
-@export var speakers:PackedStringArray
+
+#Speaker visibility data
+@export var config: PSConfig
+@export var my_speakers:PackedStringArray
 
 var _components: Array[Node] = []
 
@@ -10,7 +13,12 @@ func _ready() -> void:
 	for component in _components:
 		if component is PSChoicesContainer:
 			component.choice_pressed.connect(_on_choice_pressed)
-	update()
+	
+	#is simulator ready to feed choices?
+	if simulator.is_node_ready():
+		await get_tree().process_frame
+		update()
+	simulator.ready.connect(update, CONNECT_DEFERRED)
 
 func _collect_ui_components(node: Node, components: Array[Node]) -> void:
 	for child in node.get_children():
@@ -22,11 +30,21 @@ func update() -> void:
 	if !is_instance_valid(simulator):
 		push_error("Updated PSConversationView ", self, " with no simulator.")
 		return
+
 	for component in _components:
 		if component is RichTextLabel:
 			component.text = simulator.get_current_property(component.name)
 		elif component is PSChoicesContainer:
-			component.set_choices(simulator.list_choices())
+			component.set_choices(simulator.list_choices(_filter_valid_speakers))
+
+
+#Asynchronous Multiple Speakers
+#1. Hide choices pointing to speakers not owned in `my_speakers`
+func _filter_valid_speakers(c:Dictionary) -> bool:
+	var h = simulator.get(c["to_id"])
+	if h is Dictionary and h.get("speaker") in my_speakers:
+		return true
+	return false
 
 func _on_choice_pressed(choice: String) -> void:
 	if simulator.traverse(choice):

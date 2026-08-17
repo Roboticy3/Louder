@@ -62,4 +62,6 @@ One way to approach multiple playable characters in dialogue is to first have a 
 
 Additionally, speakers can be flagged as "Private". When dialogue enters a node owned by a private speaker, clients that do not own that speaker percieve nothing as happening. They can also check for other player-characters other than their own with access to the node, displaying "<character> is thinking" in these sections.
 
+Only if *all* clients have no remaining dialogue options does the simulator send an "end" signal to all clients.
+
 The engine provides functions to tell a client who, if anyone, is thinking. And the effect of these rules on the basic rules is otherwise subtractive- taking the original behavior of showing dialogue and choices and simply not showing them sometimes.

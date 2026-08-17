@@ -16,10 +16,5 @@ func set_choices(choices: Array) -> void:
 		button.pressed.connect(_on_choice_pressed.bind(choice))
 		add_child(button)
 
-	if choices.is_empty():
-		var button := Button.new()
-		button.text = "END"
-		add_child(button)
-
 func _on_choice_pressed(choice: String) -> void:
 	choice_pressed.emit(choice)
