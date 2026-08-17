@@ -4,7 +4,7 @@ The Louder editor is an open source graph editor for creating branching
 dialogue trees. You build conversations by placing dialogue nodes on a
 graph and connecting them to define the flow of conversation.
 
-Each node holds a line of dialogue (or a choice prompt) with properties
+Each node can hold a line of dialogue with properties
 like speaker name, text content, difficulty check settings, and branching
 choices. When you save, the entire graph is exported as a single file
 that can be shared with collaborators or used with the [engine](/engine/)

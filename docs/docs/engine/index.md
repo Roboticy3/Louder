@@ -54,3 +54,12 @@ Expressions always _evaluate_ to a value. The following values are treated as fa
 
 The user can also manually manipulate the simulation outside of normal flow. This includes manually warping to a specific node with or without progressing through auto nodes, and running commands to either see what they evaluate to or manipulate the values of variables. The ability to read and write from the conversation state using commands is particularly useful for linking the simulation with the rest of a larger game, and the current state of the conversation can be saved out
 to a list of newline separated commands which can then be replayed to reload a certain state.
+
+## Advanced Simulation Rules
+
+### Synchronous Multiple Speakers
+One way to approach multiple playable characters in dialogue is to first have a set of rules, where each speaker can "own" nodes belonging to a list of speakers, indicated by the "Speaker" property. Next, for 2 or more clients, choices are restricted by those that lead to nodes either in the own list.
+
+Additionally, speakers can be flagged as "Private". When dialogue enters a node owned by a private speaker, clients that do not own that speaker percieve nothing as happening. They can also check for other player-characters other than their own with access to the node, displaying "<character> is thinking" in these sections.
+
+The engine provides functions to tell a client who, if anyone, is thinking. And the effect of these rules on the basic rules is otherwise subtractive- taking the original behavior of showing dialogue and choices and simply not showing them sometimes.
