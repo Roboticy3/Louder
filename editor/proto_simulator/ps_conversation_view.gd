@@ -5,6 +5,7 @@ extends Node
 #Speaker visibility data
 @export var config: PSConfig
 @export var my_speakers:PackedStringArray
+@export var mute:bool
 
 var _components: Array[Node] = []
 
@@ -43,6 +44,7 @@ func update() -> void:
 #Asynchronous Multiple Speakers
 #1. Hide choices pointing to speakers not owned in `my_speakers`
 func _filter_valid_speakers(c:Dictionary) -> bool:
+	if mute: return false
 	var c_speaker := str(simulator.get_property(int(c["to_id"]), "speaker"))
 	if !(c_speaker in config.speakers_by_name):
 		return true

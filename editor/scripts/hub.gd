@@ -44,6 +44,8 @@ func update_title_stylebox() -> void:
 func _ready() -> void:
 	super._ready()
 	
+	title = str(id)
+	
 	auto_check.pressed.connect(update_title_stylebox)
 	start_check.pressed.connect(update_title_stylebox)
 	choices_section_logic.choices_changed.connect(update_title_stylebox)
