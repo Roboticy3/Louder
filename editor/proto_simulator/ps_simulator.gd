@@ -51,8 +51,11 @@ func is_start(from_position:=position) -> bool:
 	
 	return h.get(HUB_SCHK, false)
 
+func get_property(from_position:int, property:String):
+	return str(conversation.hubs_by_id[from_position].get(property))
+
 func get_current_property(property:String):
-	return str(conversation.hubs_by_id[position].get(property))
+	return get_property(position, property)
 
 func roll_dice() -> int:
 	return (randi() % 6) + (randi() % 6)
@@ -196,6 +199,7 @@ func _roll_into_outcome(outcome_variable:String, skill_level:int) -> void:
 ## enabled, traversal will continue recursively until a non-auto node is
 ## reached.
 ## If a resulting choice is 
+signal choice_made()
 func traverse(choice_text: String, backfill:={}) -> bool:
 	var choice = null
 	for c in conversation.get_connections_from(position):
@@ -212,6 +216,7 @@ func traverse(choice_text: String, backfill:={}) -> bool:
 	if w && is_auto():
 		return traverse_index(0)
 	
+	choice_made.emit()
 	return w
 
 func traverse_index(i: int, filter=null, backfill:={}) -> bool:
@@ -225,6 +230,7 @@ func traverse_index(i: int, filter=null, backfill:={}) -> bool:
 	if w && is_auto():
 		return traverse_index(0)
 	
+	choice_made.emit()
 	return w
 
 func warp(new_position:=position, backfill:={}) -> bool:

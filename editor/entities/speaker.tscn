@@ -88,6 +88,13 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
 text = "Private"
 script = ExtResource("7_soybp")
 
+[node name="npc" type="CheckBox" parent="TextSectionWrapper/HBoxContainer" unique_id=1530881190 groups=["hub_component"]]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
+text = "Npc"
+script = ExtResource("7_soybp")
+
 [node name="Control" type="Control" parent="TextSectionWrapper/HBoxContainer" unique_id=16546190]
 layout_mode = 2
 size_flags_horizontal = 3

@@ -19,6 +19,8 @@ func _ready() -> void:
 		await get_tree().process_frame
 		update()
 	simulator.ready.connect(update, CONNECT_DEFERRED)
+	
+	simulator.choice_made.connect(update, CONNECT_DEFERRED)
 
 func _collect_ui_components(node: Node, components: Array[Node]) -> void:
 	for child in node.get_children():
@@ -41,11 +43,12 @@ func update() -> void:
 #Asynchronous Multiple Speakers
 #1. Hide choices pointing to speakers not owned in `my_speakers`
 func _filter_valid_speakers(c:Dictionary) -> bool:
-	var h = simulator.get(c["to_id"])
-	if h is Dictionary and h.get("speaker") in my_speakers:
+	var c_speaker := str(simulator.get_property(int(c["to_id"]), "speaker"))
+	if !(c_speaker in config.speakers_by_name):
+		return true
+	if c_speaker in my_speakers:
 		return true
 	return false
 
 func _on_choice_pressed(choice: String) -> void:
-	if simulator.traverse(choice):
-		update()
+	simulator.traverse(choice)

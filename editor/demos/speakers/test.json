@@ -1,32 +1,178 @@
 [
 	{
-		"color": "ff0000ff",
-		"conversation_id": "0",
-		"position_offset:x": "-511.331909179688",
-		"position_offset:y": "-14.78235912323",
+		"color": "ffffffff",
+		"conversation_id": "6",
+		"npc": false,
+		"position_offset:x": "21.9446563720703",
+		"position_offset:y": "-108.527931213379",
+		"private": true,
 		"relationships": [],
+		"speaker": "Heart",
 		"type": "speaker"
 	},
 	{
-		"color": "0e00ffff",
-		"conversation_id": "1",
-		"position_offset:x": "64.4255981445313",
-		"position_offset:y": "-152.964157104492",
+		"color": "ffffffff",
+		"conversation_id": "7",
+		"npc": false,
+		"position_offset:x": "20.0",
+		"position_offset:y": "80.0",
+		"private": true,
 		"relationships": [],
+		"speaker": "Stars",
 		"type": "speaker"
 	},
 	{
-		"color": "00ff34ff",
-		"conversation_id": "2",
-		"position_offset:x": "-215.48112487793",
-		"position_offset:y": "231.464706420898",
+		"color": "ffffffff",
+		"conversation_id": "8",
+		"npc": false,
+		"position_offset:x": "20.0",
+		"position_offset:y": "260.0",
+		"private": true,
 		"relationships": [],
+		"speaker": "Planets",
 		"type": "speaker"
 	},
 	{
-		"position:x": "-481.495269775391",
-		"position:y": "-227.344253540039",
+		"color": "ffffffff",
+		"conversation_id": "9",
+		"npc": false,
+		"position_offset:x": "20.0",
+		"position_offset:y": "440.0",
+		"private": true,
+		"relationships": [],
+		"speaker": "Memory",
+		"type": "speaker"
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "10",
+		"npc": false,
+		"position_offset:x": "20.0",
+		"position_offset:y": "640.0",
+		"private": true,
+		"relationships": [],
+		"speaker": "Rhythm",
+		"type": "speaker"
+	},
+	{
+		"color": "000000ff",
+		"conversation_id": "11",
+		"npc": true,
+		"position_offset:x": "-660.0",
+		"position_offset:y": "-520.0",
+		"relationships": [],
+		"speaker": "Fosser",
+		"type": "speaker"
+	},
+	{
+		"color": "8a44d6ff",
+		"conversation_id": "12",
+		"npc": false,
+		"position_offset:x": "20.0",
+		"position_offset:y": "-300.0",
+		"relationships": [],
+		"speaker": "Benjamin",
+		"type": "speaker"
+	},
+	{
+		"conversation_id": "13",
+		"position_offset:x": "-640.0",
+		"position_offset:y": "-920.0",
+		"speaker": "Note",
+		"text": "Quick test that npcs can be defined without issue",
+		"type": "hub"
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "16",
+		"npc": false,
+		"position_offset:x": "-420.0",
+		"position_offset:y": "640.0",
+		"private": true,
+		"relationships": [],
+		"speaker": "Life",
+		"type": "speaker"
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "17",
+		"npc": false,
+		"position_offset:x": "-420.0",
+		"position_offset:y": "440.0",
+		"private": true,
+		"relationships": [],
+		"speaker": "Strategy",
+		"type": "speaker"
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "18",
+		"npc": false,
+		"position_offset:x": "-420.0",
+		"position_offset:y": "260.0",
+		"private": true,
+		"relationships": [],
+		"speaker": "Sight",
+		"type": "speaker"
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "19",
+		"npc": false,
+		"position_offset:x": "-420.0",
+		"position_offset:y": "80.0",
+		"private": true,
+		"relationships": [],
+		"speaker": "Structure",
+		"type": "speaker"
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "20",
+		"npc": false,
+		"position_offset:x": "-420.0",
+		"position_offset:y": "-120.0",
+		"private": true,
+		"relationships": [],
+		"speaker": "Volition",
+		"type": "speaker"
+	},
+	{
+		"color": "f9dcaaff",
+		"conversation_id": "21",
+		"npc": false,
+		"position_offset:x": "-420.0",
+		"position_offset:y": "-300.0",
+		"relationships": [],
+		"speaker": "Freya",
+		"type": "speaker"
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "22",
+		"npc": false,
+		"position_offset:x": "20.0",
+		"position_offset:y": "820.0",
+		"private": true,
+		"relationships": [],
+		"speaker": "Future",
+		"type": "speaker"
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "23",
+		"npc": false,
+		"position_offset:x": "-420.0",
+		"position_offset:y": "820.0",
+		"private": true,
+		"relationships": [],
+		"speaker": "Death",
+		"type": "speaker"
+	},
+	{
+		"position:x": "-809.001708984375",
+		"position:y": "-209.301544189453",
 		"type": "camera",
-		"zoom": "0.56447374820709"
+		"zoom": "0.90909057855606"
 	}
 ]

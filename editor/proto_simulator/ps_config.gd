@@ -2,7 +2,7 @@ class_name PSConfig extends Node
 
 const OBJECT_TYPE := "type"
 const OBJECT_SPEAKER := "speaker"
-const SPEAKER_NAME := "name"
+const SPEAKER_NAME := "speaker"
 
 var speakers_by_name:Dictionary[String, Dictionary]
 
@@ -29,4 +29,8 @@ func unroll(objects:Array):
 		
 		match (o.get(OBJECT_TYPE)):
 			OBJECT_SPEAKER:
-				if o.get(SPEAKER_NAME): speakers_by_name[o.get(SPEAKER_NAME)] = o
+				if o.get(SPEAKER_NAME): 
+					print("registering speaker ", o.get(SPEAKER_NAME))
+					speakers_by_name[o.get(SPEAKER_NAME)] = o
+	
+	print("registered speakers: ", speakers_by_name.keys())
