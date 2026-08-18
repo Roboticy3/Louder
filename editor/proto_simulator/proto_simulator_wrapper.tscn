@@ -36,39 +36,15 @@ grow_horizontal = 2
 grow_vertical = 2
 columns = 2
 
-[node name="Panel" type="Panel" parent="CanvasLayer/Grid" unique_id=708492661]
+[node name="RichTextLabel" type="RichTextLabel" parent="CanvasLayer/Grid" unique_id=1023735506]
 layout_mode = 2
-size_flags_horizontal = 3
+fit_content = true
 
-[node name="Control" parent="CanvasLayer/Grid/Panel" unique_id=644629500 node_paths=PackedStringArray("simulator", "config") instance=ExtResource("4_hwksk")]
-layout_mode = 1
-size_flags_horizontal = 3
-simulator = NodePath("../../../../PSSimulator")
-config = NodePath("../../../../PSConfig")
-my_speakers = PackedStringArray("Freya", "Volition", "Structure", "Sight", "Strategy", "Life", "Death")
-mute = true
-
-[node name="Panel2" type="Panel" parent="CanvasLayer/Grid" unique_id=934824621]
+[node name="Control" type="Control" parent="CanvasLayer/Grid" unique_id=1049670308]
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_vertical = 3
 
-[node name="Control" parent="CanvasLayer/Grid/Panel2" unique_id=1827982243 node_paths=PackedStringArray("simulator", "config") instance=ExtResource("4_hwksk")]
-layout_mode = 1
-size_flags_horizontal = 3
-simulator = NodePath("../../../../PSSimulator")
-config = NodePath("../../../../PSConfig")
-my_speakers = PackedStringArray("Benjamin", "Heart", "Stars", "Planets", "Memory", "Rhythm", "Future")
-
-[node name="Control" type="Control" parent="CanvasLayer" unique_id=1049670308]
-layout_mode = 3
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -386.0
-offset_bottom = 231.0
-grow_horizontal = 0
-
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Control" unique_id=1155212054]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Grid/Control" unique_id=1155212054]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -76,18 +52,44 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="CodeEdit" type="CodeEdit" parent="CanvasLayer/Control/VBoxContainer" unique_id=1876542513]
+[node name="CodeEdit" type="CodeEdit" parent="CanvasLayer/Grid/Control/VBoxContainer" unique_id=1876542513]
 layout_mode = 2
 size_flags_vertical = 3
 editable = false
 context_menu_enabled = false
 emoji_menu_enabled = false
 shortcut_keys_enabled = false
+wrap_mode = 1
+indent_wrapped_lines = true
 
-[node name="CodeEdit2" type="CodeEdit" parent="CanvasLayer/Control/VBoxContainer" unique_id=711150527 node_paths=PackedStringArray("simulator", "output_stream")]
+[node name="CodeEdit2" type="CodeEdit" parent="CanvasLayer/Grid/Control/VBoxContainer" unique_id=711150527 node_paths=PackedStringArray("simulator", "output_stream")]
 layout_mode = 2
 placeholder_text = "Enter Command"
 scroll_fit_content_height = true
 script = ExtResource("6_6fql2")
-simulator = NodePath("../../../../PSSimulator")
+simulator = NodePath("../../../../../PSSimulator")
 output_stream = NodePath("../CodeEdit")
+
+[node name="Panel" type="Panel" parent="CanvasLayer/Grid" unique_id=708492661]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Control" parent="CanvasLayer/Grid/Panel" unique_id=644629500 node_paths=PackedStringArray("simulator", "config") instance=ExtResource("4_hwksk")]
+layout_mode = 1
+size_flags_horizontal = 3
+simulator = NodePath("../../../../PSSimulator")
+config = NodePath("../../../../PSConfig")
+my_speakers = PackedStringArray("Freya", "Volition", "Structure", "Sight", "Strategy", "Life", "Death")
+
+[node name="Panel2" type="Panel" parent="CanvasLayer/Grid" unique_id=934824621]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Control" parent="CanvasLayer/Grid/Panel2" unique_id=1827982243 node_paths=PackedStringArray("simulator", "config") instance=ExtResource("4_hwksk")]
+layout_mode = 1
+size_flags_horizontal = 3
+simulator = NodePath("../../../../PSSimulator")
+config = NodePath("../../../../PSConfig")
+my_speakers = PackedStringArray("Benjamin", "Heart", "Stars", "Planets", "Memory", "Rhythm", "Future")

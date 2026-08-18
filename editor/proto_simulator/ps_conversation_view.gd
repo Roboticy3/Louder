@@ -1,5 +1,7 @@
 extends Node
 
+@export var group := &"ps_conversation_view"
+
 @export var simulator: PSSimulator
 
 #Speaker visibility data
@@ -10,6 +12,8 @@ extends Node
 var _components: Array[Node] = []
 
 func _ready() -> void:
+	add_to_group(group)
+	
 	_collect_ui_components(self, _components)
 	for component in _components:
 		if component is PSChoicesContainer:
