@@ -117,11 +117,13 @@ func _evaluate_choice_single(c:Dictionary) -> bool:
 			return false
 	return true
 
-func _evaluate_hub(h:Dictionary, backfill:={}) -> void:
+func _evaluate_hub(h:Dictionary, recessive:={}, dominant:={}) -> void:
 	_evaluate_hub_expressions(h)
 	_evaluate_dice_checks(h)
-	if !backfill.is_empty():
-		h.merge(backfill)
+	if !recessive.is_empty():
+		h.merge(recessive)
+	if !dominant.is_empty():
+		h.merge(dominant, true)
 
 func _evaluate_hub_expressions(h:Dictionary) -> void:
 	if !h.get(HUB_STMT):
@@ -198,9 +200,8 @@ func _roll_into_outcome(outcome_variable:String, skill_level:int) -> void:
 ## the node linked by the choice made. If the resulting node has AutoCheck
 ## enabled, traversal will continue recursively until a non-auto node is
 ## reached.
-## If a resulting choice is 
 signal choice_made()
-func traverse(choice_text: String, backfill:={}) -> bool:
+func traverse(choice_text: String, filter=null, recessive:={}, dominant:={}) -> bool:
 	var choice = null
 	for c in conversation.get_connections_from(position):
 		if str(c.get(CON_FCHC, "")) == choice_text:
@@ -211,33 +212,43 @@ func traverse(choice_text: String, backfill:={}) -> bool:
 		push_error("Traversed to nonexistent choice: ", choice_text)
 		return false
 	
-	backfill[HUB_TXTC] = choice.get(CON_FCHC)
-	var w := warp(int(choice.get(CON_TOID, "")), backfill)
+	recessive[HUB_TXTC] = choice.get(CON_FCHC)
+	var w := warp(int(choice.get(CON_TOID, "")), recessive, dominant)
 	if w && is_auto():
-		return traverse_index(0)
+		_fill_dominant_on_auto(dominant)
+		return traverse_index(0,filter,recessive, dominant)
 	
 	choice_made.emit()
 	return w
 
-func traverse_index(i: int, filter=null, backfill:={}) -> bool:
+func traverse_index(i: int, filter=null, recessive:={}, dominant:={}) -> bool:
 	var choices := list_choices(filter)
 	if i < 0 or i >= choices.size():
 		push_error("Traversed to choice index out of bounds: ", i)
 		return false
 	
-	backfill[HUB_TXTC] = choices[i].get(CON_FCHC)
-	var w := warp(int(choices[i].get(CON_TOID, "")), backfill)
+	recessive[HUB_TXTC] = choices[i].get(CON_FCHC)
+	var w := warp(int(choices[i].get(CON_TOID, "")), recessive, dominant)
 	if w && is_auto():
-		return traverse_index(0)
+		_fill_dominant_on_auto(dominant)
+		return traverse_index(0, filter, recessive, dominant)
 	
 	choice_made.emit()
 	return w
 
-func warp(new_position:=position, backfill:={}) -> bool:
+func warp(new_position:=position, recessive:={}, dominant:={}) -> bool:
 	if new_position in conversation.hubs_by_id:
 		position = new_position
-		_evaluate_hub(conversation.hubs_by_id[position], backfill)
+		_evaluate_hub(conversation.hubs_by_id[position], recessive, dominant)
 		state._on_traverse(position)
 		return true
 	push_error("Warped to nonexistent location: ", new_position)
 	return false
+
+func _fill_dominant_on_auto(dominant:Dictionary):
+	var w_txtc = get_current_property(HUB_TXTC)
+	if w_txtc:
+		dominant[HUB_TXTC] = w_txtc
+		var w_spkr = get_current_property(HUB_SPKR)
+		if w_spkr:
+			dominant[HUB_SPKR] = w_spkr

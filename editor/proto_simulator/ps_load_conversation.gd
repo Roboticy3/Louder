@@ -8,7 +8,7 @@ var dialog: FileDialog
 func _ready():
 	dialog = FileDialog.new()
 	dialog.title = "Open Conversation"
-	dialog.access = FileDialog.ACCESS_USERDATA
+	dialog.access = FileDialog.ACCESS_RESOURCES
 	dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
 	dialog.filters = PackedStringArray(["*.json"])
 	dialog.file_selected.connect(_on_file_selected)

@@ -20,7 +20,7 @@ conversation = NodePath("../PSConversation")
 [node name="LoadConversation" type="Node" parent="." unique_id=1703789268 node_paths=PackedStringArray("simulator", "view")]
 script = ExtResource("3_hwksk")
 simulator = NodePath("../PSSimulator")
-view = NodePath("../CanvasLayer/HBoxContainer/Panel/Control")
+view = NodePath("../CanvasLayer/Grid/Panel/Control")
 
 [node name="PSConfig" type="Node" parent="." unique_id=494521167]
 script = ExtResource("4_63mts")
@@ -28,18 +28,19 @@ metadata/_custom_type_script = "uid://b8jjbbtjemx6g"
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=199318734]
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer" unique_id=1868080551]
+[node name="Grid" type="GridContainer" parent="CanvasLayer" unique_id=771740834]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+columns = 2
 
-[node name="Panel" type="Panel" parent="CanvasLayer/HBoxContainer" unique_id=708492661]
+[node name="Panel" type="Panel" parent="CanvasLayer/Grid" unique_id=708492661]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Control" parent="CanvasLayer/HBoxContainer/Panel" unique_id=644629500 node_paths=PackedStringArray("simulator", "config") instance=ExtResource("4_hwksk")]
+[node name="Control" parent="CanvasLayer/Grid/Panel" unique_id=644629500 node_paths=PackedStringArray("simulator", "config") instance=ExtResource("4_hwksk")]
 layout_mode = 1
 size_flags_horizontal = 3
 simulator = NodePath("../../../../PSSimulator")
@@ -47,11 +48,11 @@ config = NodePath("../../../../PSConfig")
 my_speakers = PackedStringArray("Freya", "Volition", "Structure", "Sight", "Strategy", "Life", "Death")
 mute = true
 
-[node name="Panel2" type="Panel" parent="CanvasLayer/HBoxContainer" unique_id=934824621]
+[node name="Panel2" type="Panel" parent="CanvasLayer/Grid" unique_id=934824621]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Control" parent="CanvasLayer/HBoxContainer/Panel2" unique_id=1827982243 node_paths=PackedStringArray("simulator", "config") instance=ExtResource("4_hwksk")]
+[node name="Control" parent="CanvasLayer/Grid/Panel2" unique_id=1827982243 node_paths=PackedStringArray("simulator", "config") instance=ExtResource("4_hwksk")]
 layout_mode = 1
 size_flags_horizontal = 3
 simulator = NodePath("../../../../PSSimulator")
@@ -87,7 +88,6 @@ shortcut_keys_enabled = false
 layout_mode = 2
 placeholder_text = "Enter Command"
 scroll_fit_content_height = true
-delimiter_strings = Array[String](["\" \"", "' '"])
 script = ExtResource("6_6fql2")
 simulator = NodePath("../../../../PSSimulator")
 output_stream = NodePath("../CodeEdit")

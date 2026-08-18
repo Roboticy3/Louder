@@ -21,6 +21,10 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("graph_create"):
 		spawn_node(_selected_scene())
 		return
+	if event is InputEventMouseMotion:
+		spawns_on_point = 0
+
+func _gui_input(event:InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
 		match event.keycode:
 			KEY_1:
@@ -33,8 +37,6 @@ func _input(event: InputEvent) -> void:
 					type_dropdown.select(1)
 				spawn_node(SPEAKER_SCENE)
 				return
-	if event is InputEventMouseMotion:
-		spawns_on_point = 0
 
 func _selected_scene() -> PackedScene:
 	if type_dropdown and type_dropdown.selected == 1:

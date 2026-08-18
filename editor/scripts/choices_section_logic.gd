@@ -67,8 +67,8 @@ func remove_choice(index:int):
 func update_default_choices():
 	hub.set_slot(
 		spoke_child_index,
-		!is_start_checked(), 
-		0 if is_start_checked() else 1, 
+		true,
+		1,
 		Color.WHITE,
 		choices.is_empty(),
 		0 if !choices.is_empty() else 1,

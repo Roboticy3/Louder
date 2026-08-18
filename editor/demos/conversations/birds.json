@@ -1,0 +1,1012 @@
+[
+	{
+		"auto": true,
+		"choices": [
+			"",
+			""
+		],
+		"conversation_id": "6",
+		"position_offset:x": "320.0",
+		"position_offset:y": "480.0",
+		"type": "hub"
+	},
+	{
+		"Statements": "morale(\"Geno\")++",
+		"conversation_id": "7",
+		"dice_level": "8.0",
+		"dice_skill": "Good",
+		"position_offset:x": "780.0",
+		"position_offset:y": "440.0",
+		"speaker": "Good",
+		"text": "I'm dreaming. Some of me is asleep. Let's see who's awake",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "8",
+		"position_offset:x": "1189.55578613281",
+		"position_offset:y": "478.251953125",
+		"speaker": "Cage",
+		"text": "Isn't is so nice and safe here?",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "9",
+		"position_offset:x": "1560.0",
+		"position_offset:y": "480.0",
+		"speaker": "Inspiration",
+		"text": "Come, let's paint something together.",
+		"type": "hub"
+	},
+	{
+		"Statements": "geno_lucid_bird = 1",
+		"conversation_id": "10",
+		"position_offset:x": "1920.0",
+		"position_offset:y": "500.0",
+		"speaker": "Good",
+		"text": "Anybody else? Good anyways.  can stay aware.",
+		"type": "hub"
+	},
+	{
+		"Statements": "trigger(\"Bird\")",
+		"conversation_id": "11",
+		"position_offset:x": "340.0",
+		"position_offset:y": "-260.0",
+		"speaker": "nspiration",
+		"text": "Inside that cage, is a bird.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "12",
+		"position_offset:x": "780.0",
+		"position_offset:y": "840.0",
+		"speaker": "Good",
+		"text": "Hmm? What? Why don't me ask the wordsmith. Nothing good is happening here.",
+		"type": "hub"
+	},
+	{
+		"Conditions": "geno_lucid_bird",
+		"choices": [
+			"Yes! I want to go home and sleep in my bed and take a warm shower! ",
+			"No. Idiot bird.",
+			"No. (politely)"
+		],
+		"conversation_id": "13",
+		"position_offset:x": "340.0",
+		"position_offset:y": "1240.0",
+		"speaker": "Bird",
+		"text": "A bird caws somewhere far away. \"Would me like to go home?\"",
+		"type": "hub"
+	},
+	{
+		"Statements": "relationship(\"Geno\", \"Bird\")--",
+		"auto": true,
+		"conversation_id": "15",
+		"position_offset:x": "780.0",
+		"position_offset:y": "1600.0",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "18",
+		"position_offset:x": "1240.0",
+		"position_offset:y": "1580.0",
+		"speaker": "Bird",
+		"text": "\"Then me might as well stay awhile.\" The bird pecks at the inside the cage.",
+		"type": "hub"
+	},
+	{
+		"choices": [
+			"Ok. Go there! (Wake up.)",
+			"Actually, I changed my mind.."
+		],
+		"conversation_id": "19",
+		"position_offset:x": "780.0",
+		"position_offset:y": "1240.0",
+		"speaker": "Cage",
+		"text": "The family manner appears on the horizon!",
+		"type": "hub"
+	},
+	{
+		"Statements": "trigger(\"BirdEnding\")",
+		"conversation_id": "20",
+		"position_offset:x": "1220.0",
+		"position_offset:y": "1220.0",
+		"speaker": "Evil",
+		"text": "Ah! What the hell? Everything hurts. Don't let that happen again.",
+		"type": "hub"
+	},
+	{
+		"Conditions": "relationship(\"Geno\", \"Bird\") < 0",
+		"conversation_id": "22",
+		"position_offset:x": "1600.0",
+		"position_offset:y": "-580.0",
+		"speaker": "Bird",
+		"text": "\"I'm not an idiot! I'm not and idiot!\"",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"choices": [
+			"",
+			""
+		],
+		"conversation_id": "24",
+		"position_offset:x": "2040.0",
+		"position_offset:y": "-640.0",
+		"type": "hub"
+	},
+	{
+		"choices": [
+			"There's a cage inside of me. And I'm in a cage. Are the cages different?",
+			"How long have me lived down here?"
+		],
+		"conversation_id": "25",
+		"position_offset:x": "1620.0",
+		"position_offset:y": "-180.0",
+		"speaker": "Bird",
+		"text": "\"Hello. I'm a bird.\" The bird is a bird.",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"choices": [
+			"",
+			""
+		],
+		"conversation_id": "26",
+		"position_offset:x": "1180.0",
+		"position_offset:y": "-360.0",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "27",
+		"position_offset:x": "2060.0",
+		"position_offset:y": "-140.0",
+		"speaker": "Bird",
+		"text": "\"I'd hope so! One cage is bigger than me, and the other is smaller. If they were the same, that wouldn't make any sense.\"",
+		"type": "hub"
+	},
+	{
+		"choices": [
+			"That doesn't make any sense. I miss Rhetoric.",
+			"Stupid, stupid, stupid.",
+			""
+		],
+		"conversation_id": "28",
+		"dice_level": "10.0",
+		"dice_skill": "Cage",
+		"position_offset:x": "2480.0",
+		"position_offset:y": "-840.0",
+		"speaker": "Cage",
+		"text": "It is an idiot. It shouldn't have gotten stuck in that cage. Or rather, that cage shouldn't have gotten stuck in it. That cage and that bird shouldn't have gotten stuck with each other, and they did. Because they're stupid.",
+		"type": "hub"
+	},
+	{
+		"choices": [
+			"Who created me?",
+			"Why were me born inside a cage?"
+		],
+		"conversation_id": "30",
+		"position_offset:x": "2080.0",
+		"position_offset:y": "200.0",
+		"speaker": "Bird",
+		"text": "\"Sixteen years. I'm sixteen years old. I was born in this cage and I've never seen the outside.\"",
+		"type": "hub"
+	},
+	{
+		"Conditions": "geno_lucid_bird",
+		"choices": [
+			"Try to revive him.",
+			"Try to read the scratched out marks with what's left of my brain."
+		],
+		"conversation_id": "31",
+		"position_offset:x": "3020.0",
+		"position_offset:y": "-1060.0",
+		"speaker": "Rhetoric",
+		"text": "(I see a piece of my brain pressed into a perfect simple squared square in the corner of my peripheral vision. The numbers have been scratched out. He isn't going to help me here.)",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"choices": [
+			"",
+			""
+		],
+		"conversation_id": "33",
+		"position_offset:x": "3420.0",
+		"position_offset:y": "-960.0",
+		"type": "hub"
+	},
+	{
+		"Statements": "morale(\"Geno\")++",
+		"conversation_id": "35",
+		"position_offset:x": "3866.22241210938",
+		"position_offset:y": "-1138.60986328125",
+		"speaker": "Good",
+		"text": "Sorry, he's out for good, but I do know someone who can read the scratches.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "37",
+		"position_offset:x": "3880.0",
+		"position_offset:y": "-700.0",
+		"speaker": "Good",
+		"text": "Stupid, stupid.. Like song lyrics I can't get out of my head. Sorry, I can't do this right now.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "38",
+		"position_offset:x": "3020.0",
+		"position_offset:y": "-440.0",
+		"speaker": "Good",
+		"text": "Yes. The bird is stupid. But don't call myself stupid, please. He's going to wake up soon.",
+		"type": "hub"
+	},
+	{
+		"Statements": "thought(\"Geno\", \"Cage in a Bird\")\ngeno_cage_surreal = 1",
+		"conversation_id": "39",
+		"position_offset:x": "2520.0",
+		"position_offset:y": "-200.0",
+		"speaker": "Bird",
+		"text": "\"One cage can't be inside me and around me were the same. If something doesn't make sense, it's probably because it doesn't exist.\"",
+		"type": "hub"
+	},
+	{
+		"Statements": "trigger(\"Cage\")",
+		"choices": [
+			"The cage isn't real.",
+			"I'm not really here.",
+			"Hey! interrupted my train of thought!"
+		],
+		"conversation_id": "40",
+		"position_offset:x": "3340.0",
+		"position_offset:y": "140.0",
+		"speaker": "Cage",
+		"text": "Inside me, is a cage.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "41",
+		"position_offset:x": "2540.0",
+		"position_offset:y": "300.0",
+		"speaker": "Bird",
+		"text": "\"You did. You created me when you gave up.\"",
+		"type": "hub"
+	},
+	{
+		"Statements": "thought(\"Geno\", \"Bird in a Cage\")",
+		"conversation_id": "42",
+		"position_offset:x": "2540.0",
+		"position_offset:y": "620.0",
+		"speaker": "Bird",
+		"text": "\"Because the cage came first, I think.\"",
+		"type": "hub"
+	},
+	{
+		"Statements": "whats_beneath_the_cages = 1",
+		"conversation_id": "43",
+		"position_offset:x": "4280.0",
+		"position_offset:y": "-1100.0",
+		"speaker": "Inspiration",
+		"text": "I may not be able to read, but the intention is clear. He's saying that, beneath all the birds and the cages...",
+		"type": "hub"
+	},
+	{
+		"Conditions": "geno_cage_surreal",
+		"conversation_id": "44",
+		"position_offset:x": "3920.0",
+		"position_offset:y": "-320.0",
+		"speaker": "Geno",
+		"text": "The cage isn't real, I made it up. I can come out now.",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"choices": [
+			"",
+			""
+		],
+		"conversation_id": "45",
+		"position_offset:x": "3960.0",
+		"position_offset:y": "620.0",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "46",
+		"position_offset:x": "4380.0",
+		"position_offset:y": "-320.0",
+		"speaker": "Bird",
+		"text": "\"But what about the cage inside me?\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "47",
+		"position_offset:x": "4860.0",
+		"position_offset:y": "-320.0",
+		"speaker": "Geno",
+		"text": "That one too. I can come out now.",
+		"type": "hub"
+	},
+	{
+		"Statements": "thought(\"Geno\", \"And the Cage inside the Bird\")",
+		"choices": [
+			"Should I go?"
+		],
+		"conversation_id": "48",
+		"position_offset:x": "5320.0",
+		"position_offset:y": "-320.0",
+		"speaker": "Good",
+		"text": "I feel a sublime pressure within myself. The bird is trying. But it will be a while.",
+		"type": "hub"
+	},
+	{
+		"Statements": "trigger(\"Bird\")",
+		"choices": [
+			"And let me guess... Inside the bird..",
+			"So I guess my input just doesn't matter right now.",
+			"Wait, let me go back a step.",
+			"Wait, let me talk to the bird again.",
+			"Wait, let me go *all* the way to the beginning again."
+		],
+		"conversation_id": "50",
+		"position_offset:x": "4408.61572265625",
+		"position_offset:y": "934.829956054688",
+		"speaker": "Inspiration",
+		"text": "Inside that cage is a bird.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "52",
+		"position_offset:x": "4920.0",
+		"position_offset:y": "1260.0",
+		"speaker": "Good",
+		"text": "I wouldn't say that. This is the culmination of everything me've done in my entire life. Just because me can't stop the ball now doesn't mean I'm useless. I",
+		"type": "hub"
+	},
+	{
+		"Conditions": "whats_beneath_the_cages == 1",
+		"conversation_id": "53",
+		"position_offset:x": "4400.0",
+		"position_offset:y": "500.0",
+		"speaker": "Inspiration",
+		"text": "Right! Beneath all the cages and birds...",
+		"type": "hub"
+	},
+	{
+		"Statements": "trigger(\"BirdEnding\")",
+		"conversation_id": "54",
+		"position_offset:x": "4380.0",
+		"position_offset:y": "80.0",
+		"speaker": "Evil",
+		"text": "Yeah! Wake up! Let's make some money.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "55",
+		"position_offset:x": "3960.0",
+		"position_offset:y": "160.0",
+		"speaker": "Geno",
+		"text": "It's been fun being here, but I should really go.",
+		"type": "hub"
+	},
+	{
+		"Statements": "trigger(\"Cage\")",
+		"choices": [
+			"What's inside the cage?",
+			"What does the cage look like?",
+			"What's happening right now?",
+			"Wait.. I don't want to do this right now."
+		],
+		"conversation_id": "56",
+		"position_offset:x": "-120.0",
+		"position_offset:y": "100.0",
+		"speaker": "Cage",
+		"start": true,
+		"text": "Inside me, is a cage.",
+		"type": "hub"
+	},
+	{
+		"Statements": "trigger(\"Cage2\")",
+		"conversation_id": "57",
+		"position_offset:x": "4900.0",
+		"position_offset:y": "880.0",
+		"speaker": "Cage",
+		"text": "Another cage.",
+		"type": "hub"
+	},
+	{
+		"Statements": "trigger(\"Cube\")",
+		"choices": [
+			"Cubes exist!",
+			"Bird? Where are me?",
+			"Is this where Rhetoric's scratches lead?",
+			"Actually, I change my mind, I don't want to do this right now."
+		],
+		"conversation_id": "58",
+		"position_offset:x": "4880.0",
+		"position_offset:y": "300.0",
+		"speaker": "Cube",
+		"text": "Is a Cube!",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "59",
+		"position_offset:x": "5473.55810546875",
+		"position_offset:y": "966.294311523438",
+		"speaker": "Inspiration",
+		"text": "Oh.. Ok.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "60",
+		"position_offset:x": "5877.4501953125",
+		"position_offset:y": "973.829711914063",
+		"speaker": "Inspiration",
+		"text": "But I put all this work into translating these scratches. Oh well.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "61",
+		"position_offset:x": "4920.0",
+		"position_offset:y": "1660.0",
+		"speaker": "Evil",
+		"text": "Wha- what? Somethings happening? What if it.. uh.. didn't happen. Take that.",
+		"type": "hub"
+	},
+	{
+		"Conditions": "geno_cage_surreal",
+		"conversation_id": "62",
+		"position_offset:x": "5500.0",
+		"position_offset:y": "180.0",
+		"speaker": "Geno",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "63",
+		"position_offset:x": "5900.0",
+		"position_offset:y": "180.0",
+		"speaker": "Geno",
+		"text": "Wait, what now?",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "64",
+		"position_offset:x": "6317.9697265625",
+		"position_offset:y": "181.766937255859",
+		"speaker": "Cage",
+		"text": "T-two customers in one day?",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "65",
+		"position_offset:x": "6720.0",
+		"position_offset:y": "180.0",
+		"speaker": "Inspiration",
+		"text": "Cubes exist! Cubes exist! Cubes exist!",
+		"type": "hub"
+	},
+	{
+		"choices": [
+			"(Appreciate the Cube)",
+			"(Reject the Cube)"
+		],
+		"conversation_id": "66",
+		"position_offset:x": "7120.0",
+		"position_offset:y": "180.0",
+		"speaker": "Good",
+		"text": "Even my dream functions are declining. It does have a stunning beauty to it, doesn't it? Let's just rest a while and appreciate it.",
+		"type": "hub"
+	},
+	{
+		"Statements": "thought(\"Geno\", \"The Cube\")",
+		"conversation_id": "67",
+		"position_offset:x": "7540.0",
+		"position_offset:y": "180.0",
+		"speaker": "Cube",
+		"text": "I rest in the warm light of the platonic form until me are prepared for the next day.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "68",
+		"position_offset:x": "7560.0",
+		"position_offset:y": "620.0",
+		"speaker": "Evil",
+		"text": "Actually, the fuck is happening here? Get up. I'm an entrepreneur. Not.. whatever this is.",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"conversation_id": "70",
+		"position_offset:x": "6700.0",
+		"position_offset:y": "840.0",
+		"speaker": "Inspiration",
+		"text": "Either way, I quite like this.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "71",
+		"position_offset:x": "6300.0",
+		"position_offset:y": "680.0",
+		"speaker": "Inspiration",
+		"text": "Everything Rhetoric had looked like a flat square. Maybe it just looked flat from a distance. Or maybe we went the wrong way and he was referring to a completely different corner of my mind!",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "72",
+		"position_offset:x": "5960.0",
+		"position_offset:y": "480.0",
+		"speaker": "Note",
+		"text": "This behavior of an auto node \"replacing\" text and Speaker properties of an upcoming node is not currently implemented.\n\nThe reaon for it i that the text \"No response, just Cube\" does not make sense to then be followed by \"Is a Cube!\".",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"conversation_id": "69",
+		"position_offset:x": "5560.0",
+		"position_offset:y": "600.0",
+		"speaker": "Cube",
+		"text": "No response. Just Cube.",
+		"type": "hub"
+	},
+	{
+		"from_choice": "What's inside the cage?",
+		"from_id": "56",
+		"to_id": "11",
+		"type": "connection"
+	},
+	{
+		"from_choice": "What does the cage look like?",
+		"from_id": "56",
+		"to_id": "11",
+		"type": "connection"
+	},
+	{
+		"from_choice": "What's happening right now?",
+		"from_id": "56",
+		"to_id": "6",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "6",
+		"to_id": "7",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "7",
+		"to_id": "8",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "8",
+		"to_id": "9",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "9",
+		"to_id": "10",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "10",
+		"to_id": "56",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "6",
+		"to_id": "12",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "12",
+		"to_id": "56",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Wait.. I don't want to do this right now.",
+		"from_id": "56",
+		"to_id": "13",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Yes! I want to go home and sleep in my bed and take a warm shower! ",
+		"from_id": "13",
+		"to_id": "19",
+		"type": "connection"
+	},
+	{
+		"from_choice": "No. Idiot bird.",
+		"from_id": "13",
+		"to_id": "15",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "15",
+		"to_id": "18",
+		"type": "connection"
+	},
+	{
+		"from_choice": "No. (politely)",
+		"from_id": "13",
+		"to_id": "18",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "18",
+		"to_id": "56",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Ok. Go there! (Wake up.)",
+		"from_id": "19",
+		"to_id": "20",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Actually, I changed my mind..",
+		"from_id": "19",
+		"to_id": "13",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "26",
+		"to_id": "25",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "22",
+		"to_id": "24",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "24",
+		"to_id": "28",
+		"type": "connection"
+	},
+	{
+		"from_choice": "There's a cage inside of me. And I'm in a cage. Are the cages different?",
+		"from_id": "25",
+		"to_id": "27",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "27",
+		"to_id": "24",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "24",
+		"to_id": "39",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Stupid, stupid, stupid.",
+		"from_id": "28",
+		"to_id": "38",
+		"type": "connection"
+	},
+	{
+		"from_choice": "That doesn't make any sense. I miss Rhetoric.",
+		"from_id": "28",
+		"to_id": "31",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Why were me born inside a cage?",
+		"from_id": "30",
+		"to_id": "42",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Who created me?",
+		"from_id": "30",
+		"to_id": "41",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Try to revive him.",
+		"from_id": "31",
+		"to_id": "33",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "33",
+		"to_id": "35",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "35",
+		"to_id": "43",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Try to read the scratched out marks with what's left of my brain.",
+		"from_id": "31",
+		"to_id": "43",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "33",
+		"to_id": "37",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "37",
+		"to_id": "31",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "38",
+		"to_id": "28",
+		"type": "connection"
+	},
+	{
+		"from_choice": "How long have me lived down here?",
+		"from_id": "25",
+		"to_id": "30",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "39",
+		"to_id": "40",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "41",
+		"to_id": "40",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "42",
+		"to_id": "40",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "43",
+		"to_id": "40",
+		"type": "connection"
+	},
+	{
+		"from_choice": "The cage isn't real.",
+		"from_id": "40",
+		"to_id": "44",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Hey! interrupted my train of thought!",
+		"from_id": "40",
+		"to_id": "45",
+		"type": "connection"
+	},
+	{
+		"from_choice": "I'm not really here.",
+		"from_id": "40",
+		"to_id": "55",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "44",
+		"to_id": "46",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "46",
+		"to_id": "47",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "47",
+		"to_id": "48",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "45",
+		"to_id": "53",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "45",
+		"to_id": "50",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "11",
+		"to_id": "26",
+		"type": "connection"
+	},
+	{
+		"from_choice": "And let me guess... Inside the bird..",
+		"from_id": "50",
+		"to_id": "57",
+		"type": "connection"
+	},
+	{
+		"from_choice": "So I guess my input just doesn't matter right now.",
+		"from_id": "50",
+		"to_id": "52",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "52",
+		"to_id": "50",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Wait, let me go back a step.",
+		"from_id": "50",
+		"to_id": "40",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "53",
+		"to_id": "58",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "55",
+		"to_id": "54",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Should I go?",
+		"from_id": "48",
+		"to_id": "55",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "57",
+		"to_id": "50",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "26",
+		"to_id": "22",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Wait, let me talk to the bird again.",
+		"from_id": "50",
+		"to_id": "26",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Cubes exist!",
+		"from_id": "58",
+		"to_id": "62",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Bird? Where are me?",
+		"from_id": "58",
+		"to_id": "69",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Actually, I change my mind, I don't want to do this right now.",
+		"from_id": "58",
+		"to_id": "59",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "59",
+		"to_id": "60",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "60",
+		"to_id": "40",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Wait, let me go *all* the way to the beginning again.",
+		"from_id": "50",
+		"to_id": "61",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "61",
+		"to_id": "50",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "62",
+		"to_id": "63",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "63",
+		"to_id": "64",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "64",
+		"to_id": "65",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "65",
+		"to_id": "66",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Appreciate the Cube)",
+		"from_id": "66",
+		"to_id": "67",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Is this where Rhetoric's scratches lead?",
+		"from_id": "58",
+		"to_id": "71",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "71",
+		"to_id": "70",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Reject the Cube)",
+		"from_id": "66",
+		"to_id": "68",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "69",
+		"to_id": "58",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "70",
+		"to_id": "58",
+		"type": "connection"
+	},
+	{
+		"position:x": "1990.11450195313",
+		"position:y": "201.952575683594",
+		"type": "camera",
+		"zoom": "0.45320922136307"
+	}
+]
