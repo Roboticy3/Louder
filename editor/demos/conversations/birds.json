@@ -11,7 +11,7 @@
 		"type": "hub"
 	},
 	{
-		"Statements": "morale(\"Geno\")++",
+		"statements": "morale(\"Geno\")++",
 		"conversation_id": "7",
 		"dice_level": "8.0",
 		"dice_skill": "Good",
@@ -38,7 +38,7 @@
 		"type": "hub"
 	},
 	{
-		"Statements": "geno_lucid_bird = 1",
+		"statements": "geno_lucid_bird = 1",
 		"conversation_id": "10",
 		"position_offset:x": "1920.0",
 		"position_offset:y": "500.0",
@@ -47,7 +47,7 @@
 		"type": "hub"
 	},
 	{
-		"Statements": "trigger(\"Bird\")",
+		"statements": "trigger(\"Bird\")",
 		"conversation_id": "11",
 		"position_offset:x": "340.0",
 		"position_offset:y": "-260.0",
@@ -64,7 +64,7 @@
 		"type": "hub"
 	},
 	{
-		"Conditions": "geno_lucid_bird",
+		"conditions": "geno_lucid_bird",
 		"choices": [
 			"Yes! I want to go home and sleep in my bed and take a warm shower! ",
 			"No. Idiot bird.",
@@ -78,7 +78,7 @@
 		"type": "hub"
 	},
 	{
-		"Statements": "relationship(\"Geno\", \"Bird\")--",
+		"statements": "relationship(\"Geno\", \"Bird\")--",
 		"auto": true,
 		"conversation_id": "15",
 		"position_offset:x": "780.0",
@@ -106,7 +106,7 @@
 		"type": "hub"
 	},
 	{
-		"Statements": "trigger(\"BirdEnding\")",
+		"statements": "trigger(\"BirdEnding\")",
 		"conversation_id": "20",
 		"position_offset:x": "1220.0",
 		"position_offset:y": "1220.0",
@@ -115,7 +115,7 @@
 		"type": "hub"
 	},
 	{
-		"Conditions": "relationship(\"Geno\", \"Bird\") < 0",
+		"conditions": "relationship(\"Geno\", \"Bird\") < 0",
 		"conversation_id": "22",
 		"position_offset:x": "1600.0",
 		"position_offset:y": "-580.0",
@@ -193,7 +193,7 @@
 		"type": "hub"
 	},
 	{
-		"Conditions": "geno_lucid_bird",
+		"conditions": "geno_lucid_bird",
 		"choices": [
 			"Try to revive him.",
 			"Try to read the scratched out marks with what's left of my brain."
@@ -217,7 +217,7 @@
 		"type": "hub"
 	},
 	{
-		"Statements": "morale(\"Geno\")++",
+		"statements": "morale(\"Geno\")++",
 		"conversation_id": "35",
 		"position_offset:x": "3866.22241210938",
 		"position_offset:y": "-1138.60986328125",
@@ -242,7 +242,7 @@
 		"type": "hub"
 	},
 	{
-		"Statements": "thought(\"Geno\", \"Cage in a Bird\")\ngeno_cage_surreal = 1",
+		"statements": "thought(\"Geno\", \"Cage in a Bird\")\ngeno_cage_surreal = 1",
 		"conversation_id": "39",
 		"position_offset:x": "2520.0",
 		"position_offset:y": "-200.0",
@@ -251,7 +251,7 @@
 		"type": "hub"
 	},
 	{
-		"Statements": "trigger(\"Cage\")",
+		"statements": "trigger(\"Cage\")",
 		"choices": [
 			"The cage isn't real.",
 			"I'm not really here.",
@@ -273,7 +273,7 @@
 		"type": "hub"
 	},
 	{
-		"Statements": "thought(\"Geno\", \"Bird in a Cage\")",
+		"statements": "thought(\"Geno\", \"Bird in a Cage\")",
 		"conversation_id": "42",
 		"position_offset:x": "2540.0",
 		"position_offset:y": "620.0",
@@ -282,7 +282,7 @@
 		"type": "hub"
 	},
 	{
-		"Statements": "whats_beneath_the_cages = 1",
+		"statements": "whats_beneath_the_cages = 1",
 		"conversation_id": "43",
 		"position_offset:x": "4280.0",
 		"position_offset:y": "-1100.0",
@@ -291,7 +291,7 @@
 		"type": "hub"
 	},
 	{
-		"Conditions": "geno_cage_surreal",
+		"conditions": "geno_cage_surreal",
 		"conversation_id": "44",
 		"position_offset:x": "3920.0",
 		"position_offset:y": "-320.0",
@@ -327,7 +327,7 @@
 		"type": "hub"
 	},
 	{
-		"Statements": "thought(\"Geno\", \"And the Cage inside the Bird\")",
+		"statements": "thought(\"Geno\", \"And the Cage inside the Bird\")",
 		"choices": [
 			"Should I go?"
 		],
@@ -339,7 +339,7 @@
 		"type": "hub"
 	},
 	{
-		"Statements": "trigger(\"Bird\")",
+		"statements": "trigger(\"Bird\")",
 		"choices": [
 			"And let me guess... Inside the bird..",
 			"So I guess my input just doesn't matter right now.",
@@ -363,7 +363,7 @@
 		"type": "hub"
 	},
 	{
-		"Conditions": "whats_beneath_the_cages == 1",
+		"conditions": "whats_beneath_the_cages == 1",
 		"conversation_id": "53",
 		"position_offset:x": "4400.0",
 		"position_offset:y": "500.0",
@@ -372,7 +372,7 @@
 		"type": "hub"
 	},
 	{
-		"Statements": "trigger(\"BirdEnding\")",
+		"statements": "trigger(\"BirdEnding\")",
 		"conversation_id": "54",
 		"position_offset:x": "4380.0",
 		"position_offset:y": "80.0",
@@ -389,7 +389,7 @@
 		"type": "hub"
 	},
 	{
-		"Statements": "trigger(\"Cage\")",
+		"statements": "trigger(\"Cage\")",
 		"choices": [
 			"What's inside the cage?",
 			"What does the cage look like?",
@@ -405,7 +405,7 @@
 		"type": "hub"
 	},
 	{
-		"Statements": "trigger(\"Cage2\")",
+		"statements": "trigger(\"Cage2\")",
 		"conversation_id": "57",
 		"position_offset:x": "4900.0",
 		"position_offset:y": "880.0",
@@ -414,7 +414,7 @@
 		"type": "hub"
 	},
 	{
-		"Statements": "trigger(\"Cube\")",
+		"statements": "trigger(\"Cube\")",
 		"choices": [
 			"Cubes exist!",
 			"Bird? Where are me?",
@@ -453,7 +453,7 @@
 		"type": "hub"
 	},
 	{
-		"Conditions": "geno_cage_surreal",
+		"conditions": "geno_cage_surreal",
 		"conversation_id": "62",
 		"position_offset:x": "5500.0",
 		"position_offset:y": "180.0",
@@ -497,7 +497,7 @@
 		"type": "hub"
 	},
 	{
-		"Statements": "thought(\"Geno\", \"The Cube\")",
+		"statements": "thought(\"Geno\", \"The Cube\")",
 		"conversation_id": "67",
 		"position_offset:x": "7540.0",
 		"position_offset:y": "180.0",

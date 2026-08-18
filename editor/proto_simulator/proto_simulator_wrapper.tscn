@@ -37,12 +37,11 @@ grow_horizontal = 2
 grow_vertical = 2
 columns = 2
 
-[node name="RichTextLabel" type="RichTextLabel" parent="CanvasLayer/Grid" unique_id=1023735506 node_paths=PackedStringArray("simulator")]
+[node name="RichTextLabel" type="RichTextLabel" parent="CanvasLayer/Grid" unique_id=1023735506]
 layout_mode = 2
 bbcode_enabled = true
 fit_content = true
 script = ExtResource("7_debug")
-simulator = NodePath("../../../PSSimulator")
 
 [node name="Control" type="Control" parent="CanvasLayer/Grid" unique_id=1049670308]
 layout_mode = 2

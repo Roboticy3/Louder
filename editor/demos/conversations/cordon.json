@@ -230,7 +230,7 @@
 		"type": "hub"
 	},
 	{
-		"Statements": "fica_main = 200",
+		"statements": "fica_main = 200",
 		"speaker": "Fica",
 		"text": "The opposite effect is had on Fica. The creepy fish man drives her out of hiding. \"Let's go, brother.\"",
 		"conversation_id": "107",
@@ -239,7 +239,7 @@
 		"type": "hub"
 	},
 	{
-		"Statements": "fosser_main = 100",
+		"statements": "fosser_main = 100",
 		"speaker": "Fosser",
 		"text": "Fosser complies to the knight's command, but Fica is staying behind her rock.",
 		"conversation_id": "108",
@@ -255,7 +255,7 @@
 		"type": "hub"
 	},
 	{
-		"Statements": "fosser_main = 100",
+		"statements": "fosser_main = 100",
 		"speaker": "Fosser",
 		"text": "Fosser complies, but the girl stays stubbornly behind the rock.",
 		"conversation_id": "110",
@@ -274,7 +274,7 @@
 		"type": "hub"
 	},
 	{
-		"Statements": "freya_asserted_fosser = true",
+		"statements": "freya_asserted_fosser = true",
 		"speaker": "Freya",
 		"conversation_id": "112",
 		"position_offset:x": "980.0",

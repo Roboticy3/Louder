@@ -1,14 +1,14 @@
 class_name PSSimulator extends Node
 
 const HUB_CVID := "conversation_id"
-const HUB_TXTC := "TextContent"
-const HUB_SPKR := "Speaker"
-const HUB_COND := "Conditions"
-const HUB_STMT := "Statements"
-const HUB_DSKL := "DiceSkill"
-const HUB_DLVL := "DiceLevel"
-const HUB_SCHK := "StartCheck"
-const HUB_ACHK := "AutoCheck"
+const HUB_TXTC := "text"
+const HUB_SPKR := "speaker"
+const HUB_COND := "conditions"
+const HUB_STMT := "statements"
+const HUB_DSKL := "dice_skill"
+const HUB_DLVL := "dice_level"
+const HUB_SCHK := "start"
+const HUB_ACHK := "auto"
 
 const CON_TOID := "to_id"
 const CON_FCHC := "from_choice"

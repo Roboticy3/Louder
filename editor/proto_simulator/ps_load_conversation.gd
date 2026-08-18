@@ -34,6 +34,6 @@ func _find_start_id() -> int:
 		return 0
 	var start := int(hubs.keys()[0])
 	for id in hubs:
-		if hubs[id].get("StartCheck"):
+		if hubs[id].get(PSSimulator.HUB_SCHK):
 			return id
 	return start
