@@ -136,8 +136,12 @@ func _evaluate_hub_expressions(h:Dictionary) -> void:
 	var re := RegEx.create_from_string(r"\s*([a-zA-Z][a-zA-Z0-9_]*)\s*(=)\s*(.*)")
 	for expression in expressions_arr:
 		var matches := re.search(expression)
-		if matches and matches.strings.size() < 4:
-			push_error("Assignment ", expression, " is incomplete. Expected the form \"<identifier> = <expression>\"")
+		if !matches:
+			push_error("Assignment ", expression, " confused the parser.")
+			continue
+		
+		if matches.strings.size() < 4:
+			push_error("Assignment ", expression, " is incomplete.")
 			continue
 		
 		var error := e.parse(matches.strings[3])

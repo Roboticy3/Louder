@@ -6,7 +6,6 @@
 [ext_resource type="Script" uid="uid://b8jjbbtjemx6g" path="res://proto_simulator/ps_config.gd" id="4_63mts"]
 [ext_resource type="PackedScene" uid="uid://dfuvngpcvkh4u" path="res://proto_simulator/proto_simulator_ui_mockup.tscn" id="4_hwksk"]
 [ext_resource type="Script" uid="uid://gm3kj8xc3cel" path="res://proto_simulator/ps_command_line.gd" id="6_6fql2"]
-[ext_resource type="Script" uid="uid://dnttvqwd8iavc" path="res://proto_simulator/ps_debug_info.gd" id="7_debug"]
 
 [node name="ProtoSimulatorWrapper" type="Node" unique_id=331396007]
 
@@ -18,10 +17,9 @@ script = ExtResource("3_psim")
 conversation_path = "res://demos/conversations/cordon.json"
 conversation = NodePath("../PSConversation")
 
-[node name="LoadConversation" type="Node" parent="." unique_id=1703789268 node_paths=PackedStringArray("simulator", "view")]
+[node name="LoadConversation" type="Node" parent="." unique_id=1703789268 node_paths=PackedStringArray("simulator")]
 script = ExtResource("3_hwksk")
 simulator = NodePath("../PSSimulator")
-view = NodePath("../CanvasLayer/Grid/Panel/Control")
 
 [node name="PSConfig" type="Node" parent="." unique_id=494521167]
 script = ExtResource("4_63mts")
@@ -41,7 +39,6 @@ columns = 2
 layout_mode = 2
 bbcode_enabled = true
 fit_content = true
-script = ExtResource("7_debug")
 
 [node name="Control" type="Control" parent="CanvasLayer/Grid" unique_id=1049670308]
 layout_mode = 2

@@ -19,9 +19,10 @@ func _ready() -> void:
 		if component is PSChoicesContainer:
 			component.choice_pressed.connect(_on_choice_pressed)
 	
+	await get_tree().process_frame
+	
 	#is simulator ready to feed choices?
 	if simulator.is_node_ready():
-		await get_tree().process_frame
 		update()
 	simulator.ready.connect(update, CONNECT_DEFERRED)
 	
@@ -53,6 +54,8 @@ func _filter_valid_speakers(c:Dictionary) -> bool:
 	if !(c_speaker in config.speakers_by_name):
 		return true
 	if c_speaker in my_speakers:
+		return true
+	if config.is_npc(c_speaker):
 		return true
 	return false
 

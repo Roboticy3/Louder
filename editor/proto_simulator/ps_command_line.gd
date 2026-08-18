@@ -58,7 +58,7 @@ func setspeakers(command:Array) -> CommandError:
 	
 	var speakers = views[vi].get("my_speakers")
 	views[vi].set("my_speakers", command.slice(2))
-	views[vi].call("update")
+	views[vi].call_deferred("update")
 	output_stream.text += "changed my_speakers on viewer " + str(vi) + " from " + str(speakers) + " to " + str(command.slice(2)) + "\n"
 	
 	return CommandError.OK

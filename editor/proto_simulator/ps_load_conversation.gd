@@ -1,7 +1,7 @@
 extends Node
 
 @export var simulator: PSSimulator
-@export var view: Node
+@export var update_group := &"ps_conversation_view"
 
 var dialog: FileDialog
 
@@ -19,21 +19,6 @@ func _input(event: InputEvent) -> void:
 		dialog.show()
 
 func _on_file_selected(path: String) -> void:
-	if not simulator or not view:
-		push_error("ps_load_conversation: simulator and view must be exported")
-		return
-	if not simulator.conversation.load_from_json(path):
-		return
-	simulator.position = _find_start_id()
-	simulator.state = PSConversationState.new()
-	view.update()
-
-func _find_start_id() -> int:
-	var hubs := simulator.conversation.hubs_by_id
-	if hubs.is_empty():
-		return 0
-	var start := int(hubs.keys()[0])
-	for id in hubs:
-		if hubs[id].get(PSSimulator.HUB_SCHK):
-			return id
-	return start
+	simulator.conversation_path = path
+	simulator._ready()
+	get_tree().call_group.call_deferred(update_group, &"update")
