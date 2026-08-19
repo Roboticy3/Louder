@@ -16,12 +16,11 @@ script = ExtResource("1_1074j")
 
 [node name="PSSimulator" type="Node" parent="." unique_id=448811002 node_paths=PackedStringArray("conversation") groups=["conversation_changed_listener"]]
 script = ExtResource("3_psim")
-conversation_path = "res://demos/conversations/cordon.json"
 conversation = NodePath("../PSConversation")
+reset_state_on_ready = true
 
-[node name="PSConversationLoader" type="Node" parent="." unique_id=1703789268 node_paths=PackedStringArray("input_context", "simulator")]
+[node name="PSConversationLoader" type="Node" parent="." unique_id=1703789268 node_paths=PackedStringArray("simulator")]
 script = ExtResource("3_hwksk")
-input_context = NodePath("../CanvasLayer/HSplitContainer/Editor")
 simulator = NodePath("../PSSimulator")
 
 [node name="PSConfig" type="Node" parent="." unique_id=494521167]
@@ -36,14 +35,14 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+split_offsets = PackedInt32Array(731)
+split_offset = 731
 
 [node name="Editor" parent="CanvasLayer/HSplitContainer" unique_id=1835673697 instance=ExtResource("5_winkx")]
 custom_minimum_size = Vector2(382.125, 0)
 layout_mode = 2
 
 [node name="File" parent="CanvasLayer/HSplitContainer/Editor/Control/GridContainer/FileBar" parent_id_path=PackedInt32Array(1835673697, 810829967) index="0" unique_id=853677447 groups=["conversation_changed_listener"]]
-visible = false
-disable_save = true
 disable_load = true
 
 [node name="GraphEdit" parent="CanvasLayer/HSplitContainer/Editor/Control/GridContainer" parent_id_path=PackedInt32Array(1835673697, 1756259022) index="1" unique_id=2143194040]

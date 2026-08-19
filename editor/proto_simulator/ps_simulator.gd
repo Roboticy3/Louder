@@ -19,6 +19,8 @@ const CON_FCHC := "from_choice"
 @export var start_position: int = 0
 
 @onready var position := 0
+
+@export var reset_state_on_ready := false
 @export var state:PSConversationState
 var e := Expression.new()
 
@@ -58,13 +60,15 @@ func get_current_property(property:String):
 	return get_property(position, property)
 
 func roll_dice() -> int:
-	return (randi() % 6) + (randi() % 6)
+	return (randi() % 6) + (randi() % 6) + 2
 
 ### Actions
 ## These functions are internal actions of the simulator and should not be
 ## called externally.
 
 func _ready():
+	if reset_state_on_ready:
+		_reset_state()
 	var c := PSConversation.new()
 	c.load_from_json(conversation_path)
 	
@@ -84,6 +88,9 @@ func _ready():
 	warp(start)
 	
 	choice_made.emit()
+
+func _reset_state():
+	state = PSConversationState.new()
 
 func _on_conversation_changed(new_path:String):
 	conversation_path = new_path
