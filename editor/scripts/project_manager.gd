@@ -22,6 +22,9 @@ const TYPE_CAMERA := "camera"
 var save_as_dialog:FileDialog
 var load_dialog:FileDialog
 
+@export var disable_save := false
+@export var disable_load := false
+
 func _ready():
 	text = "File"
 	var popup := get_popup()
@@ -30,10 +33,16 @@ func _ready():
 	popup.add_item("Load...", LOAD)
 	popup.add_item("New...", NEW)
 	popup.id_pressed.connect(_on_id_pressed)
+	
 	popup.set_item_shortcut(SAVE, _shortcut_for_action(&"graph_save"))
 	popup.set_item_shortcut(SAVE_AS, _shortcut_for_action(&"graph_save_as"))
 	popup.set_item_shortcut(LOAD, _shortcut_for_action(&"graph_load"))
 	popup.set_item_shortcut(NEW, _shortcut_for_action(&"graph_new"))
+
+	popup.set_item_disabled(SAVE, disable_save)
+	popup.set_item_disabled(SAVE_AS, disable_save)
+	popup.set_item_disabled(LOAD, disable_load)
+	popup.set_item_disabled(NEW, disable_load)
 
 	save_as_dialog = _make_dialog("Save As")
 	save_as_dialog.file_selected.connect(save_project_to_file)
@@ -244,3 +253,6 @@ func save_current_project() -> bool:
 
 func has_current_project() -> bool:
 	return current_project_path.is_absolute_path()
+
+func _on_conversation_changed(new_path:String):
+	load_project_from_file(new_path)

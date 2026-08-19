@@ -255,7 +255,7 @@
 		"choices": [
 			"The cage isn't real.",
 			"I'm not really here.",
-			"Hey! interrupted my train of thought!"
+			"Hey me! I interrupted my train of thought!"
 		],
 		"conversation_id": "40",
 		"position_offset:x": "3340.0",
@@ -794,7 +794,7 @@
 		"type": "connection"
 	},
 	{
-		"from_choice": "Hey! interrupted my train of thought!",
+		"from_choice": "Hey me! I interrupted my train of thought!",
 		"from_id": "40",
 		"to_id": "45",
 		"type": "connection"

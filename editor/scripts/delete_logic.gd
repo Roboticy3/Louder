@@ -2,7 +2,10 @@ extends Node
 
 @export var editor:GraphEdit
 
-func _input(event: InputEvent) -> void:
+func _ready():
+	editor.gui_input.connect(_gui_input)
+
+func _gui_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_graph_delete"):
 		var last_deleted = null
 		for c in editor.get_children():

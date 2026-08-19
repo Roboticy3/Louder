@@ -1,6 +1,7 @@
 extends CodeEdit
 
 @export var simulator:PSSimulator
+@export var conversation_loader:PSConversationLoader
 @export var output_stream:CodeEdit
 
 enum CommandError {
@@ -24,6 +25,7 @@ func flush():
 		else: match command[0]:
 			"warp": error = warp(command)
 			"setspeakers": error = setspeakers(command)
+			"setconversation": error = setconversation(command)
 			_: error = CommandError.UNRECOGNIZED
 	
 	match error:
@@ -61,6 +63,19 @@ func setspeakers(command:Array) -> CommandError:
 	views[vi].call_deferred("update")
 	output_stream.text += "changed my_speakers on viewer " + str(vi) + " from " + str(speakers) + " to " + str(command.slice(2)) + "\n"
 	
+	return CommandError.OK
+
+func setconversation(command:Array) -> CommandError:
+	if command.size() < 2: return CommandError.SYNTAX
+	
+	var path := str(command[1])
+	if not simulator.conversation.load_from_json(path):
+		output_stream.text += "failed to load conversation from " + path + "\n"
+		return CommandError.SIMULATOR
+	
+	simulator.conversation_path = path
+	simulator._ready()
+	output_stream.text += "loaded conversation from " + path + "\n"
 	return CommandError.OK
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

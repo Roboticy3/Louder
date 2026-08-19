@@ -82,6 +82,12 @@ func _ready():
 	if !state:
 		state = PSConversationState.new()
 	warp(start)
+	
+	choice_made.emit()
+
+func _on_conversation_changed(new_path:String):
+	conversation_path = new_path
+	_ready()
 
 func _evaluate_choices(choices: Array) -> Array:
 	var valid_choices := []

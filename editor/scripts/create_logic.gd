@@ -15,28 +15,17 @@ func _ready() -> void:
 		type_dropdown.add_item("Hub")
 		type_dropdown.add_item("Speaker")
 		type_dropdown.select(0)
+	
+	editor.gui_input.connect(_editor_gui_input)
 
-func _input(event: InputEvent) -> void:
+func _editor_gui_input(event: InputEvent) -> void:
 	
 	if event.is_action_pressed("graph_create"):
 		spawn_node(_selected_scene())
+		editor.accept_event()
 		return
 	if event is InputEventMouseMotion:
 		spawns_on_point = 0
-
-func _gui_input(event:InputEvent) -> void:
-	if event is InputEventKey and event.pressed and not event.echo:
-		match event.keycode:
-			KEY_1:
-				if type_dropdown:
-					type_dropdown.select(0)
-				spawn_node(HUB_SCENE)
-				return
-			KEY_2:
-				if type_dropdown:
-					type_dropdown.select(1)
-				spawn_node(SPEAKER_SCENE)
-				return
 
 func _selected_scene() -> PackedScene:
 	if type_dropdown and type_dropdown.selected == 1:

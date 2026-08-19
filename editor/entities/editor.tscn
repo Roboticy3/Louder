@@ -14,7 +14,13 @@
 [ext_resource type="PackedScene" uid="uid://dr7rs8c2sfbde" path="res://entities/menus/edit_menu.tscn" id="10_vvcdv"]
 [ext_resource type="PackedScene" uid="uid://sc3ddjdaefp1" path="res://entities/knowledge_graph.tscn" id="13_6vlff"]
 
-[node name="Editor" type="CanvasLayer" unique_id=1835673697]
+[node name="Editor" type="Control" unique_id=717003800]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="ConnectionLogic" type="Node" parent="." unique_id=501378103 node_paths=PackedStringArray("editor", "pointer", "debugger")]
 script = ExtResource("2_mnjbr")
@@ -49,7 +55,7 @@ editor = NodePath("../Control/GridContainer/GraphEdit")
 script = ExtResource("10_07l17")
 
 [node name="Control" type="Control" parent="." unique_id=2092511738]
-layout_mode = 3
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -79,20 +85,21 @@ layout_mode = 2
 [node name="Edit" parent="Control/GridContainer/FileBar" unique_id=615417156 instance=ExtResource("10_vvcdv")]
 layout_mode = 2
 
-[node name="NodeType" type="OptionButton" parent="Control/GridContainer/FileBar" unique_id=2626262626]
+[node name="NodeType" type="OptionButton" parent="Control/GridContainer/FileBar" unique_id=-1668704670]
 layout_mode = 2
 
 [node name="GraphEdit" type="GraphEdit" parent="Control/GridContainer" unique_id=2143194040]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+scroll_offset = Vector2(-171, 0)
 right_disconnects = true
 
 [node name="Hub" parent="Control/GridContainer/GraphEdit" unique_id=1992437552 instance=ExtResource("1_wlowb")]
 layout_mode = 0
-offset_left = -1.0
+offset_left = 170.0
 offset_top = 139.0
-offset_right = 342.0
+offset_right = 513.0
 offset_bottom = 548.0
 position_offset = Vector2(-1, 139)
 selected = true
