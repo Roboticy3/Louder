@@ -39,13 +39,13 @@ func update() -> void:
 		push_error("Updated PSConversationView ", self, " with no simulator.")
 		return
 	
-	var update_text := _filter_visible_node(simulator.get_position())
+	var text_visible := _filter_visible_node(simulator.get_position())
 
 	for component in _components:
-		if update_text && component is RichTextLabel:
+		if text_visible && component is RichTextLabel:
 			component.text = simulator.get_current_property(component.name)
 		elif component is PSChoicesContainer:
-			component.set_choices(simulator.list_choices(_filter_valid_choice))
+			component.set_choices(simulator.list_choices(_filter_valid_choice) if text_visible else [])
 
 
 #Asynchronous Multiple Speakers

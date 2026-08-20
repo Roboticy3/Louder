@@ -35,4 +35,14 @@ func update() -> void:
 		for key in simulator.state.variables:
 			vars.append("%s = %s" % [key, str(simulator.state.scope._get(key))])
 		parts.append("[b]Variables:[/b]\n%s" % "\n".join(vars) if vars.size() else "[b]Variables:[/b] (empty)")
+	if !simulator.recessive.is_empty():
+		var entries: PackedStringArray = []
+		for key in simulator.recessive:
+			entries.append("%s = %s" % [key, str(simulator.recessive[key])])
+		parts.append("[b]Recessive:[/b]\n%s" % "\n".join(entries))
+	if !simulator.dominant.is_empty():
+		var entries: PackedStringArray = []
+		for key in simulator.dominant:
+			entries.append("%s = %s" % [key, str(simulator.dominant[key])])
+		parts.append("[b]Dominant:[/b]\n%s" % "\n".join(entries))
 	text = "\n\n".join(parts)

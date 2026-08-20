@@ -51,7 +51,7 @@
 		"conversation_id": "11",
 		"position_offset:x": "340.0",
 		"position_offset:y": "-260.0",
-		"speaker": "nspiration",
+		"speaker": "Inspiration",
 		"statements": "trigger(\"Bird\")",
 		"text": "Inside that cage, is a bird.",
 		"type": "hub"
@@ -309,6 +309,7 @@
 		"conversation_id": "45",
 		"position_offset:x": "3960.0",
 		"position_offset:y": "620.0",
+		"speaker": "Inspiration",
 		"type": "hub"
 	},
 	{
@@ -400,7 +401,6 @@
 		"position_offset:x": "-120.0",
 		"position_offset:y": "100.0",
 		"speaker": "Cage",
-		"start": true,
 		"statements": "trigger(\"Cage\")",
 		"text": "Inside me, is a cage.",
 		"type": "hub"
@@ -546,6 +546,15 @@
 		"position_offset:y": "600.0",
 		"speaker": "Cube",
 		"text": "No response. Just Cube.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "73",
+		"position_offset:x": "-720.0",
+		"position_offset:y": "140.0",
+		"speaker": "Dreamer",
+		"start": true,
+		"text": "Hello?",
 		"type": "hub"
 	},
 	{
@@ -1005,9 +1014,15 @@
 		"type": "connection"
 	},
 	{
-		"position:x": "278.282867431641",
-		"position:y": "-10.7616577148438",
+		"from_choice": "",
+		"from_id": "73",
+		"to_id": "56",
+		"type": "connection"
+	},
+	{
+		"position:x": "89.8729553222656",
+		"position:y": "-548.883666992188",
 		"type": "camera",
-		"zoom": "0.80288791656494"
+		"zoom": "1.42236518859863"
 	}
 ]

@@ -94,9 +94,11 @@ size_flags_vertical = 3
 [node name="Control" parent="CanvasLayer/HSplitContainer/Grid/Panel" unique_id=644629500 node_paths=PackedStringArray("simulator", "config") groups=["conversation_changed_listener"] instance=ExtResource("4_hwksk")]
 layout_mode = 1
 size_flags_horizontal = 3
+group = null
 simulator = NodePath("../../../../../PSSimulator")
 config = NodePath("../../../../../PSConfig")
 my_speakers = PackedStringArray("Freya", "Volition", "Structure", "Sight", "Strategy", "Life", "Death")
+mute = null
 
 [node name="Panel2" type="Panel" parent="CanvasLayer/HSplitContainer/Grid" unique_id=934824621]
 layout_mode = 2
@@ -106,9 +108,25 @@ size_flags_vertical = 3
 [node name="Control" parent="CanvasLayer/HSplitContainer/Grid/Panel2" unique_id=1827982243 node_paths=PackedStringArray("simulator", "config") groups=["conversation_changed_listener"] instance=ExtResource("4_hwksk")]
 layout_mode = 1
 size_flags_horizontal = 3
+group = null
 simulator = NodePath("../../../../../PSSimulator")
 config = NodePath("../../../../../PSConfig")
 my_speakers = PackedStringArray("Benjamin", "Heart", "Stars", "Planets", "Memory", "Rhythm", "Future")
+mute = null
+
+[node name="Panel3" type="Panel" parent="CanvasLayer/HSplitContainer/Grid" unique_id=839495634]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Control" parent="CanvasLayer/HSplitContainer/Grid/Panel3" unique_id=2077459092 node_paths=PackedStringArray("simulator", "config") groups=["conversation_changed_listener"] instance=ExtResource("4_hwksk")]
+layout_mode = 1
+size_flags_horizontal = 3
+group = null
+simulator = NodePath("../../../../../PSSimulator")
+config = NodePath("../../../../../PSConfig")
+my_speakers = PackedStringArray("Geno", "Cage", "Good", "Inspiration", "Rhetoric", "Speed", "Evil")
+mute = null
 
 [connection signal="request_change_conversation" from="CanvasLayer/HSplitContainer/Grid/Control/VBoxContainer/CodeEdit2" to="PSConversationLoader" method="_on_file_selected"]
 

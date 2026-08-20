@@ -41,28 +41,6 @@
 		"type": "hub"
 	},
 	{
-		"auto": true,
-		"conversation_id": "85",
-		"dice_level": "10.0",
-		"dice_skill": "Volition",
-		"position_offset:x": "4060.0",
-		"position_offset:y": "320.0",
-		"speaker": "Freya",
-		"type": "hub"
-	},
-	{
-		"choices": [
-			"(Flare your gills)",
-			"(Leave it be)"
-		],
-		"conversation_id": "87",
-		"position_offset:x": "4080.0",
-		"position_offset:y": "700.0",
-		"speaker": "Rhythm",
-		"text": "Her official stance and tone are inherently less interesting than the fish man standing behind the children.",
-		"type": "hub"
-	},
-	{
 		"conversation_id": "88",
 		"position_offset:x": "4480.0",
 		"position_offset:y": "800.0",
@@ -221,15 +199,6 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "113",
-		"position_offset:x": "4520.0",
-		"position_offset:y": "340.0",
-		"speaker": "Fosser",
-		"statements": "fosser_main = 100",
-		"text": "Fosser complies to the knight's command, but Fica is staying behind her rock.",
-		"type": "hub"
-	},
-	{
 		"conversation_id": "114",
 		"position_offset:x": "1760.0",
 		"position_offset:y": "680.0",
@@ -287,7 +256,7 @@
 		"conversation_id": "121",
 		"position_offset:x": "2780.0",
 		"position_offset:y": "260.0",
-		"speaker": "eath",
+		"speaker": "Death",
 		"text": "A suspicious fish-man has appeared behind the children. He looks poor and scared, and is also in the restricted area. Change of directive- get the kids out, anywhere other than here. Then investigate this *outlier*.",
 		"type": "hub"
 	},
@@ -302,17 +271,6 @@
 		"position_offset:y": "1020.0",
 		"speaker": "Future",
 		"text": "You look like you're in trouble. Get out of here.",
-		"type": "hub"
-	},
-	{
-		"auto": true,
-		"choices": [
-			"(Choice 0)",
-			"(Choice 1)"
-		],
-		"conversation_id": "123",
-		"position_offset:x": "3640.0",
-		"position_offset:y": "540.0",
 		"type": "hub"
 	},
 	{
@@ -356,6 +314,27 @@
 		"position_offset:y": "320.0",
 		"speaker": "Note",
 		"text": "\"A knight?\" doesn't feel responsive here because it appears while Freya is thinking. Will have to wait for async flow to be implemented to do this properly.",
+		"type": "hub"
+	},
+	{
+		"choices": [
+			"(Flare your gills)",
+			"(Leave it be)"
+		],
+		"conversation_id": "87",
+		"position_offset:x": "4000.0",
+		"position_offset:y": "500.0",
+		"speaker": "Rhythm",
+		"text": "Her official stance and tone are inherently less interesting than the fish man standing behind the children.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "113",
+		"position_offset:x": "4540.0",
+		"position_offset:y": "280.0",
+		"speaker": "Fosser",
+		"statements": "fosser_main = 100",
+		"text": "Fosser complies to the knight's command, but Fica is staying behind her rock.",
 		"type": "hub"
 	},
 	{
@@ -404,24 +383,6 @@
 		"from_choice": "",
 		"from_id": "68",
 		"to_id": "114",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "85",
-		"to_id": "113",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Choice 0)",
-		"from_id": "123",
-		"to_id": "85",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Choice 1)",
-		"from_id": "123",
-		"to_id": "87",
 		"type": "connection"
 	},
 	{
@@ -581,12 +542,6 @@
 		"type": "connection"
 	},
 	{
-		"from_choice": "",
-		"from_id": "124",
-		"to_id": "123",
-		"type": "connection"
-	},
-	{
 		"from_choice": "(Choice 0)",
 		"from_id": "99",
 		"to_id": "127",
@@ -605,9 +560,15 @@
 		"type": "connection"
 	},
 	{
-		"position:x": "846.22119140625",
-		"position:y": "-120.012390136719",
+		"from_choice": "",
+		"from_id": "124",
+		"to_id": "87",
+		"type": "connection"
+	},
+	{
+		"position:x": "4372.88037109375",
+		"position:y": "77.29931640625",
 		"type": "camera",
-		"zoom": "0.54838281869888"
+		"zoom": "0.97149366140366"
 	}
 ]

@@ -6,7 +6,6 @@
 		"position_offset:x": "21.9446563720703",
 		"position_offset:y": "-108.527931213379",
 		"public": false,
-		"relationships": [],
 		"speaker": "Heart",
 		"type": "speaker"
 	},
@@ -17,7 +16,6 @@
 		"position_offset:x": "20.0",
 		"position_offset:y": "80.0",
 		"public": false,
-		"relationships": [],
 		"speaker": "Stars",
 		"type": "speaker"
 	},
@@ -28,7 +26,6 @@
 		"position_offset:x": "20.0",
 		"position_offset:y": "260.0",
 		"public": false,
-		"relationships": [],
 		"speaker": "Planets",
 		"type": "speaker"
 	},
@@ -39,7 +36,6 @@
 		"position_offset:x": "20.0",
 		"position_offset:y": "440.0",
 		"public": false,
-		"relationships": [],
 		"speaker": "Memory",
 		"type": "speaker"
 	},
@@ -50,7 +46,6 @@
 		"position_offset:x": "20.0",
 		"position_offset:y": "640.0",
 		"public": false,
-		"relationships": [],
 		"speaker": "Rhythm",
 		"type": "speaker"
 	},
@@ -61,7 +56,6 @@
 		"position_offset:x": "-660.0",
 		"position_offset:y": "-520.0",
 		"public": true,
-		"relationships": [],
 		"speaker": "Fosser",
 		"type": "speaker"
 	},
@@ -72,7 +66,6 @@
 		"position_offset:x": "20.0",
 		"position_offset:y": "-300.0",
 		"public": true,
-		"relationships": [],
 		"speaker": "Benjamin",
 		"type": "speaker"
 	},
@@ -92,7 +85,6 @@
 		"position_offset:x": "-420.0",
 		"position_offset:y": "640.0",
 		"public": false,
-		"relationships": [],
 		"speaker": "Life",
 		"type": "speaker"
 	},
@@ -103,7 +95,6 @@
 		"position_offset:x": "-420.0",
 		"position_offset:y": "440.0",
 		"public": false,
-		"relationships": [],
 		"speaker": "Strategy",
 		"type": "speaker"
 	},
@@ -114,7 +105,6 @@
 		"position_offset:x": "-420.0",
 		"position_offset:y": "260.0",
 		"public": false,
-		"relationships": [],
 		"speaker": "Sight",
 		"type": "speaker"
 	},
@@ -125,7 +115,6 @@
 		"position_offset:x": "-420.0",
 		"position_offset:y": "80.0",
 		"public": false,
-		"relationships": [],
 		"speaker": "Structure",
 		"type": "speaker"
 	},
@@ -136,7 +125,6 @@
 		"position_offset:x": "-420.0",
 		"position_offset:y": "-120.0",
 		"public": false,
-		"relationships": [],
 		"speaker": "Volition",
 		"type": "speaker"
 	},
@@ -147,7 +135,6 @@
 		"position_offset:x": "-420.0",
 		"position_offset:y": "-300.0",
 		"public": true,
-		"relationships": [],
 		"speaker": "Freya",
 		"type": "speaker"
 	},
@@ -158,7 +145,6 @@
 		"position_offset:x": "20.0",
 		"position_offset:y": "820.0",
 		"public": false,
-		"relationships": [],
 		"speaker": "Future",
 		"type": "speaker"
 	},
@@ -169,7 +155,6 @@
 		"position_offset:x": "-420.0",
 		"position_offset:y": "820.0",
 		"public": false,
-		"relationships": [],
 		"speaker": "Death",
 		"type": "speaker"
 	},
@@ -180,7 +165,6 @@
 		"position_offset:x": "-840.0",
 		"position_offset:y": "-300.0",
 		"public": true,
-		"relationships": [],
 		"speaker": "Geno",
 		"type": "speaker"
 	},
@@ -191,7 +175,6 @@
 		"position_offset:x": "-840.0",
 		"position_offset:y": "-120.0",
 		"public": false,
-		"relationships": [],
 		"speaker": "Cage",
 		"type": "speaker"
 	},
@@ -202,7 +185,6 @@
 		"position_offset:x": "-840.0",
 		"position_offset:y": "80.0",
 		"public": false,
-		"relationships": [],
 		"speaker": "Good",
 		"type": "speaker"
 	},
@@ -213,7 +195,6 @@
 		"position_offset:x": "-840.0",
 		"position_offset:y": "280.0",
 		"public": false,
-		"relationships": [],
 		"speaker": "Inspiration",
 		"type": "speaker"
 	},
@@ -224,7 +205,6 @@
 		"position_offset:x": "-840.0",
 		"position_offset:y": "480.0",
 		"public": false,
-		"relationships": [],
 		"speaker": "Rhetoric",
 		"type": "speaker"
 	},
@@ -235,7 +215,6 @@
 		"position_offset:x": "-840.0",
 		"position_offset:y": "660.0",
 		"public": false,
-		"relationships": [],
 		"speaker": "Speed",
 		"type": "speaker"
 	},
@@ -246,7 +225,6 @@
 		"position_offset:x": "-840.0",
 		"position_offset:y": "840.0",
 		"public": false,
-		"relationships": [],
 		"speaker": "Evil",
 		"type": "speaker"
 	},
