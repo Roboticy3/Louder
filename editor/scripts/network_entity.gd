@@ -99,4 +99,5 @@ var id := -1
 const ID_GROUP := &"CONVERSATION"
 
 func _ready() -> void:
-	id = IdSystem.assign_id(self)
+	if id < 0:
+		id = IdSystem.assign_id(self)

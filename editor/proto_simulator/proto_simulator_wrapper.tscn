@@ -45,13 +45,6 @@ layout_mode = 2
 [node name="File" parent="CanvasLayer/HSplitContainer/Editor/Control/GridContainer/FileBar" parent_id_path=PackedInt32Array(1835673697, 810829967) index="0" unique_id=853677447 groups=["conversation_changed_listener"]]
 disable_load = true
 
-[node name="GraphEdit" parent="CanvasLayer/HSplitContainer/Editor/Control/GridContainer" parent_id_path=PackedInt32Array(1835673697, 1756259022) index="1" unique_id=2143194040]
-scroll_offset = Vector2(0, 0)
-
-[node name="Hub" parent="CanvasLayer/HSplitContainer/Editor/Control/GridContainer/GraphEdit" index="1" unique_id=1992437552]
-offset_left = -1.0
-offset_right = 342.0
-
 [node name="Grid" type="GridContainer" parent="CanvasLayer/HSplitContainer" unique_id=771740834]
 layout_mode = 2
 columns = 2

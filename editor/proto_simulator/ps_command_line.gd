@@ -26,12 +26,8 @@ func flush():
 func run_command_stripped(command:Array):
 	var error:CommandError = CommandError.OK
 	if command.is_empty(): error = CommandError.UNRECOGNIZED
-	else: match command[0]:
-		"warp": error = warp(command)
-		"setspeakers": error = setspeakers(command)
-		"setconversation": error = setconversation(command)
-		"exec": error = exec(command)
-		_: error = CommandError.UNRECOGNIZED
+	elif has_method(command[0]): call(command[0], command)
+	else: error = CommandError.UNRECOGNIZED
 	
 	match error:
 		CommandError.SYNTAX: output_stream.text += "command \"" + text + "\" exited with syntax error.\n"
@@ -95,6 +91,9 @@ func exec(command:Array):
 	for l in lines:
 		output_stream.text += "\texec: found line \"" + l + "\"\n"
 		run_command_stripped(l.split(" ", false))
+	return CommandError.OK
+
+func debugbreak(_command:Array):
 	return CommandError.OK
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
