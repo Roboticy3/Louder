@@ -16,12 +16,10 @@ func _on_id_pressed(id:int):
 
 func _toggle_speaker_colors():
 	var nodes := get_tree().get_nodes_in_group(SPEAKER_COLORS_GROUP)
-	var show := false
+	var any_visible := false
 	for node in nodes:
-		if node is CanvasItem and node.visible:
-			show = true
+		if node.get("visible"):
+			any_visible = true
 			break
-	show = !show
 	for node in nodes:
-		if node is CanvasItem:
-			node.visible = show
+		node.set("visible", !any_visible)

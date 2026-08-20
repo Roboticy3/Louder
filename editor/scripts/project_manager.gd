@@ -5,19 +5,25 @@ extends MenuButton
 const SAVE := 0
 const SAVE_AS := 1
 const LOAD := 2
+const NEW := 3
 
 var current_project_path:String
 signal current_project_changed()
 
 const HUB_SCENE := preload("res://entities/hub.tscn")
+const SPEAKER_SCENE := preload("res://entities/speaker_entity.tscn")
 
 const OBJECT_TYPE := "type"
-const TYPE_HUB := "hub"
+const TYPE_HUB := CustomGraphHub.TYPE
+const TYPE_SPEAKER := SpeakerEntity.TYPE
 const TYPE_CONNECTION := "connection"
 const TYPE_CAMERA := "camera"
 
 var save_as_dialog:FileDialog
 var load_dialog:FileDialog
+
+@export var disable_save := false
+@export var disable_load := false
 
 func _ready():
 	text = "File"
@@ -25,10 +31,18 @@ func _ready():
 	popup.add_item("Save", SAVE)
 	popup.add_item("Save As...", SAVE_AS)
 	popup.add_item("Load...", LOAD)
+	popup.add_item("New...", NEW)
 	popup.id_pressed.connect(_on_id_pressed)
+	
 	popup.set_item_shortcut(SAVE, _shortcut_for_action(&"graph_save"))
 	popup.set_item_shortcut(SAVE_AS, _shortcut_for_action(&"graph_save_as"))
 	popup.set_item_shortcut(LOAD, _shortcut_for_action(&"graph_load"))
+	popup.set_item_shortcut(NEW, _shortcut_for_action(&"graph_new"))
+
+	popup.set_item_disabled(SAVE, disable_save)
+	popup.set_item_disabled(SAVE_AS, disable_save)
+	popup.set_item_disabled(LOAD, disable_load)
+	popup.set_item_disabled(NEW, disable_load)
 
 	save_as_dialog = _make_dialog("Save As")
 	save_as_dialog.file_selected.connect(save_project_to_file)
@@ -63,6 +77,8 @@ func _on_id_pressed(id:int):
 			save_as_dialog.show()
 		LOAD:
 			load_dialog.show()
+		NEW:
+			clear_project()
 
 func _on_save_pressed():
 	if has_current_project():
@@ -77,13 +93,13 @@ func save_project_to_file(path:String) -> bool:
 	var objects:Array[Dictionary] = []
 
 	for child in editor.get_children():
-		if child is CustomGraphHub:
-			objects.append(_export_hub(child))
+		if child is NetworkEntity:
+			objects.append(_export_network_entity(child))
 
 	for c in editor.connections:
 		var from_hub = editor.get_node(NodePath(c["from_node"]))
 		var to_hub = editor.get_node(NodePath(c["to_node"]))
-		if not (from_hub is CustomGraphHub and to_hub is CustomGraphHub):
+		if not (from_hub is NetworkEntity and to_hub is NetworkEntity):
 			continue
 		objects.append({
 			OBJECT_TYPE: TYPE_CONNECTION,
@@ -112,13 +128,7 @@ func load_project_from_file(path:String, make_current:=true) -> bool:
 	if !path.is_absolute_path():
 		return false
 
-	for child in editor.get_children():
-		if child is CustomGraphHub:
-			editor.remove_child(child)
-			child.queue_free()
-	editor.clear_connections()
-
-	await get_tree().process_frame # wait for the editor to process the removal of nodes
+	await clear_project()
 
 	var file := FileAccess.open(path, FileAccess.READ)
 	if not file:
@@ -132,7 +142,7 @@ func load_project_from_file(path:String, make_current:=true) -> bool:
 		current_project_path = path
 		current_project_changed.emit()
 
-	var hubs_created: Array[CustomGraphHub] = []
+	var hubs_created: Array[NetworkEntity] = []
 	var connections: Array[Dictionary] = []
 	var camera_position := Vector2.ZERO
 	var camera_zoom := 1.0
@@ -143,9 +153,14 @@ func load_project_from_file(path:String, make_current:=true) -> bool:
 		match object.get(OBJECT_TYPE):
 			TYPE_HUB:
 				var hub:CustomGraphHub = HUB_SCENE.instantiate()
-				hub.hub_data = _import_hub_data(object, hub)
+				hub.hub_data = _import_network_entity(object, hub)
 				editor.add_child(hub)
 				hubs_created.append(hub)
+			TYPE_SPEAKER:
+				var speaker:SpeakerEntity = SPEAKER_SCENE.instantiate()
+				speaker.hub_data = _import_network_entity(object, speaker)
+				editor.add_child(speaker)
+				hubs_created.append(speaker)
 			TYPE_CONNECTION:
 				connections.append(object)
 			TYPE_CAMERA:
@@ -156,7 +171,7 @@ func load_project_from_file(path:String, make_current:=true) -> bool:
 	for connection in connections:
 		var from_hub := IdSystem.get_assigned(int(connection.get("from_id", "-1")))
 		var to_hub := IdSystem.get_assigned(int(connection.get("to_id", "-1")))
-		if (from_hub is CustomGraphHub) && (to_hub is CustomGraphHub):
+		if (from_hub is NetworkEntity) && (to_hub is NetworkEntity):
 			var from_port:int = from_hub.get_choices_logic().choice_to_port_out(connection.get("from_choice", ""))
 			var to_port:int = to_hub.get_choices_logic().port_in()
 			
@@ -176,8 +191,18 @@ func load_project_from_file(path:String, make_current:=true) -> bool:
 
 	return true
 
-func _export_hub(hub: CustomGraphHub) -> Dictionary:
-	var data := {}
+func clear_project():
+	for child in editor.get_children():
+		if child is NetworkEntity:
+			editor.remove_child(child)
+			child.queue_free()
+	editor.clear_connections()
+	IdSystem.clear_ids()
+
+	await get_tree().process_frame # wait for the editor to process the removal of nodes
+
+func _export_network_entity(hub: NetworkEntity) -> Dictionary:
+	var data := {OBJECT_TYPE: hub.get_entity_type()}
 	var exported := hub.export()
 	for key in exported:
 		var value = exported[key]
@@ -190,10 +215,9 @@ func _export_hub(hub: CustomGraphHub) -> Dictionary:
 				data[key] = str(value)
 			_:
 				data[key] = value if (value is bool or value is PackedStringArray) else str(value)
-	data[OBJECT_TYPE] = TYPE_HUB
 	return data
 
-func _import_hub_data(data: Dictionary, hub: CustomGraphHub) -> Dictionary:
+func _import_network_entity(data: Dictionary, hub: NetworkEntity) -> Dictionary:
 	var restored := {"position_offset": _join_vector(data, "position_offset")}
 	for key in data:
 		match key:
@@ -229,3 +253,6 @@ func save_current_project() -> bool:
 
 func has_current_project() -> bool:
 	return current_project_path.is_absolute_path()
+
+func _on_conversation_changed(new_path:String):
+	load_project_from_file(new_path)

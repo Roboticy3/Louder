@@ -1,14 +1,14 @@
 class_name PSSimulator extends Node
 
 const HUB_CVID := "conversation_id"
-const HUB_TXTC := "TextContent"
-const HUB_SPKR := "Speaker"
-const HUB_COND := "Conditions"
-const HUB_STMT := "Statements"
-const HUB_DSKL := "DiceSkill"
-const HUB_DLVL := "DiceLevel"
-const HUB_SCHK := "StartCheck"
-const HUB_ACHK := "AutoCheck"
+const HUB_TXTC := "text"
+const HUB_SPKR := "speaker"
+const HUB_COND := "conditions"
+const HUB_STMT := "statements"
+const HUB_DSKL := "dice_skill"
+const HUB_DLVL := "dice_level"
+const HUB_SCHK := "start"
+const HUB_ACHK := "auto"
 
 const CON_TOID := "to_id"
 const CON_FCHC := "from_choice"
@@ -19,8 +19,12 @@ const CON_FCHC := "from_choice"
 @export var start_position: int = 0
 
 @onready var position := 0
+
+@export var reset_state_on_ready := false
 @export var state:PSConversationState
 var e := Expression.new()
+var recessive := {}
+var dominant := {}
 
 ### Getters
 ## These functions do not change the state of the simulator.
@@ -28,9 +32,11 @@ var e := Expression.new()
 func get_position() -> int:
 	return position
 
-func list_choices(from_position:=position, evaluate_conditions:=true) -> Array:
+func list_choices(filter=null, from_position:=position, evaluate_conditions:=true) -> Array:
 	var choices := conversation.get_connections_from(from_position)
 	if evaluate_conditions: choices = _evaluate_choices(choices)
+	if filter is Callable:
+		choices = choices.filter(filter)
 	return choices
 
 func is_auto(from_position:=position) -> bool:
@@ -49,17 +55,24 @@ func is_start(from_position:=position) -> bool:
 	
 	return h.get(HUB_SCHK, false)
 
+func get_property(from_position:int, property:String):
+	return str(conversation.hubs_by_id[from_position].get(property))
+
 func get_current_property(property:String):
-	return str(conversation.hubs_by_id[position].get(property))
+	return get_property(position, property)
 
 func roll_dice() -> int:
-	return (randi() % 6) + (randi() % 6)
+	return (randi() % 6) + (randi() % 6) + 2
 
 ### Actions
 ## These functions are internal actions of the simulator and should not be
 ## called externally.
 
 func _ready():
+	recessive = {}
+	dominant = {}
+	if reset_state_on_ready:
+		_reset_state()
 	var c := PSConversation.new()
 	c.load_from_json(conversation_path)
 	
@@ -77,6 +90,15 @@ func _ready():
 	if !state:
 		state = PSConversationState.new()
 	warp(start)
+	
+	choice_made.emit()
+
+func _reset_state():
+	state = PSConversationState.new()
+
+func _on_conversation_changed(new_path:String):
+	conversation_path = new_path
+	_ready()
 
 func _evaluate_choices(choices: Array) -> Array:
 	var valid_choices := []
@@ -112,11 +134,13 @@ func _evaluate_choice_single(c:Dictionary) -> bool:
 			return false
 	return true
 
-func _evaluate_hub(h:Dictionary, backfill:={}) -> void:
+func _evaluate_hub(h:Dictionary) -> void:
 	_evaluate_hub_expressions(h)
 	_evaluate_dice_checks(h)
-	if !backfill.is_empty():
-		h.merge(backfill)
+	if !recessive.is_empty() && !is_auto():
+		h.merge(recessive)
+	if !dominant.is_empty():
+		h.merge(dominant, true)
 
 func _evaluate_hub_expressions(h:Dictionary) -> void:
 	if !h.get(HUB_STMT):
@@ -129,8 +153,12 @@ func _evaluate_hub_expressions(h:Dictionary) -> void:
 	var re := RegEx.create_from_string(r"\s*([a-zA-Z][a-zA-Z0-9_]*)\s*(=)\s*(.*)")
 	for expression in expressions_arr:
 		var matches := re.search(expression)
+		if !matches:
+			push_error("Assignment ", expression, " confused the parser.")
+			continue
+		
 		if matches.strings.size() < 4:
-			push_error("Assignment ", expression, " is incomplete. Expected the form \"<identifier> = <expression>\"")
+			push_error("Assignment ", expression, " is incomplete.")
 			continue
 		
 		var error := e.parse(matches.strings[3])
@@ -193,8 +221,10 @@ func _roll_into_outcome(outcome_variable:String, skill_level:int) -> void:
 ## the node linked by the choice made. If the resulting node has AutoCheck
 ## enabled, traversal will continue recursively until a non-auto node is
 ## reached.
-## If a resulting choice is 
-func traverse(choice_text: String, backfill:={}) -> bool:
+signal choice_made()
+func traverse(choice_text: String, filter=null) -> bool:
+	recessive = {}
+	dominant = {}
 	var choice = null
 	for c in conversation.get_connections_from(position):
 		if str(c.get(CON_FCHC, "")) == choice_text:
@@ -205,31 +235,43 @@ func traverse(choice_text: String, backfill:={}) -> bool:
 		push_error("Traversed to nonexistent choice: ", choice_text)
 		return false
 	
-	backfill[HUB_TXTC] = choice.get(CON_FCHC)
-	var w := warp(int(choice.get(CON_TOID, "")), backfill)
+	recessive[HUB_TXTC] = choice.get(CON_FCHC)
+	var w := warp(int(choice.get(CON_TOID, "")))
 	if w && is_auto():
-		return traverse_index(0)
+		_fill_dominant_on_auto()
+		return traverse_index(0,filter)
 	
+	choice_made.emit()
 	return w
 
-func traverse_index(i: int, backfill:={}) -> bool:
-	var choices := list_choices()
+func traverse_index(i: int, filter=null) -> bool:
+	var choices := list_choices(filter)
 	if i < 0 or i >= choices.size():
 		push_error("Traversed to choice index out of bounds: ", i)
 		return false
 	
-	backfill[HUB_TXTC] = choices[i].get(CON_FCHC)
-	var w := warp(int(choices[i].get(CON_TOID, "")), backfill)
+	recessive[HUB_TXTC] = choices[i].get(CON_FCHC)
+	var w := warp(int(choices[i].get(CON_TOID, "")))
 	if w && is_auto():
-		return traverse_index(0)
+		_fill_dominant_on_auto()
+		return traverse_index(0, filter)
 	
+	choice_made.emit()
 	return w
 
-func warp(new_position:=position, backfill:={}) -> bool:
+func warp(new_position:=position) -> bool:
 	if new_position in conversation.hubs_by_id:
 		position = new_position
-		_evaluate_hub(conversation.hubs_by_id[position], backfill)
+		_evaluate_hub(conversation.hubs_by_id[position])
 		state._on_traverse(position)
 		return true
 	push_error("Warped to nonexistent location: ", new_position)
 	return false
+
+func _fill_dominant_on_auto():
+	var w_txtc = get_current_property(HUB_TXTC)
+	if w_txtc:
+		dominant[HUB_TXTC] = w_txtc
+		var w_spkr = get_current_property(HUB_SPKR)
+		if w_spkr:
+			dominant[HUB_SPKR] = w_spkr

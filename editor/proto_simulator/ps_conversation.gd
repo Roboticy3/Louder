@@ -16,15 +16,8 @@ func _ready() -> void:
 		load_from_json(input_path)
 
 func load_from_json(path: String) -> bool:
-	var file := FileAccess.open(path, FileAccess.READ)
-	if not file:
-		push_error("simulator: could not open '%s'" % path)
-		return false
-
-	var parsed = JSON.parse_string(file.get_as_text())
-	file.close()
-	if not (parsed is Array):
-		push_error("simulator: '%s' does not contain an array of objects" % path)
+	var parsed := JSONSceneLoader.load_from_json(path)
+	if parsed.is_empty():
 		return false
 
 	unroll(parsed)

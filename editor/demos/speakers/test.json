@@ -1,0 +1,237 @@
+[
+	{
+		"color": "ffffffff",
+		"conversation_id": "7",
+		"ownable": false,
+		"position_offset:x": "21.9446563720703",
+		"position_offset:y": "-108.527931213379",
+		"public": false,
+		"speaker": "Heart",
+		"type": "speaker"
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "8",
+		"ownable": false,
+		"position_offset:x": "20.0",
+		"position_offset:y": "80.0",
+		"public": false,
+		"speaker": "Stars",
+		"type": "speaker"
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "9",
+		"ownable": false,
+		"position_offset:x": "20.0",
+		"position_offset:y": "260.0",
+		"public": false,
+		"speaker": "Planets",
+		"type": "speaker"
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "10",
+		"ownable": false,
+		"position_offset:x": "20.0",
+		"position_offset:y": "440.0",
+		"public": false,
+		"speaker": "Memory",
+		"type": "speaker"
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "11",
+		"ownable": false,
+		"position_offset:x": "20.0",
+		"position_offset:y": "640.0",
+		"public": false,
+		"speaker": "Rhythm",
+		"type": "speaker"
+	},
+	{
+		"color": "000000ff",
+		"conversation_id": "12",
+		"ownable": false,
+		"position_offset:x": "-660.0",
+		"position_offset:y": "-520.0",
+		"public": true,
+		"speaker": "Fosser",
+		"type": "speaker"
+	},
+	{
+		"color": "8a44d6ff",
+		"conversation_id": "13",
+		"ownable": true,
+		"position_offset:x": "20.0",
+		"position_offset:y": "-300.0",
+		"public": true,
+		"speaker": "Benjamin",
+		"type": "speaker"
+	},
+	{
+		"conversation_id": "14",
+		"position_offset:x": "-640.0",
+		"position_offset:y": "-920.0",
+		"speaker": "Note",
+		"start": true,
+		"text": "Quick test that npcs can be defined without issue",
+		"type": "hub"
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "17",
+		"ownable": false,
+		"position_offset:x": "-420.0",
+		"position_offset:y": "640.0",
+		"public": false,
+		"speaker": "Life",
+		"type": "speaker"
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "18",
+		"ownable": false,
+		"position_offset:x": "-420.0",
+		"position_offset:y": "440.0",
+		"public": false,
+		"speaker": "Strategy",
+		"type": "speaker"
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "19",
+		"ownable": false,
+		"position_offset:x": "-420.0",
+		"position_offset:y": "260.0",
+		"public": false,
+		"speaker": "Sight",
+		"type": "speaker"
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "20",
+		"ownable": false,
+		"position_offset:x": "-420.0",
+		"position_offset:y": "80.0",
+		"public": false,
+		"speaker": "Structure",
+		"type": "speaker"
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "21",
+		"ownable": false,
+		"position_offset:x": "-420.0",
+		"position_offset:y": "-120.0",
+		"public": false,
+		"speaker": "Volition",
+		"type": "speaker"
+	},
+	{
+		"color": "f9dcaaff",
+		"conversation_id": "22",
+		"ownable": true,
+		"position_offset:x": "-420.0",
+		"position_offset:y": "-300.0",
+		"public": true,
+		"speaker": "Freya",
+		"type": "speaker"
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "23",
+		"ownable": false,
+		"position_offset:x": "20.0",
+		"position_offset:y": "820.0",
+		"public": false,
+		"speaker": "Future",
+		"type": "speaker"
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "24",
+		"ownable": false,
+		"position_offset:x": "-420.0",
+		"position_offset:y": "820.0",
+		"public": false,
+		"speaker": "Death",
+		"type": "speaker"
+	},
+	{
+		"color": "24647eff",
+		"conversation_id": "25",
+		"ownable": true,
+		"position_offset:x": "-840.0",
+		"position_offset:y": "-300.0",
+		"public": true,
+		"speaker": "Geno",
+		"type": "speaker"
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "26",
+		"ownable": false,
+		"position_offset:x": "-840.0",
+		"position_offset:y": "-120.0",
+		"public": false,
+		"speaker": "Cage",
+		"type": "speaker"
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "27",
+		"ownable": false,
+		"position_offset:x": "-840.0",
+		"position_offset:y": "80.0",
+		"public": false,
+		"speaker": "Good",
+		"type": "speaker"
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "28",
+		"ownable": false,
+		"position_offset:x": "-840.0",
+		"position_offset:y": "280.0",
+		"public": false,
+		"speaker": "Inspiration",
+		"type": "speaker"
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "29",
+		"ownable": false,
+		"position_offset:x": "-840.0",
+		"position_offset:y": "480.0",
+		"public": false,
+		"speaker": "Rhetoric",
+		"type": "speaker"
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "30",
+		"ownable": false,
+		"position_offset:x": "-840.0",
+		"position_offset:y": "660.0",
+		"public": false,
+		"speaker": "Speed",
+		"type": "speaker"
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "31",
+		"ownable": false,
+		"position_offset:x": "-840.0",
+		"position_offset:y": "840.0",
+		"public": false,
+		"speaker": "Evil",
+		"type": "speaker"
+	},
+	{
+		"position:x": "-463.984527587891",
+		"position:y": "-231.182754516602",
+		"type": "camera",
+		"zoom": "0.35049366950989"
+	}
+]

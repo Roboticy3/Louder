@@ -1,0 +1,7 @@
+"ChoicesSectionLogic" => choices
+"TextContent" => text
+"Speaker" => speaker
+"AutoCheck" => auto
+"StartCheck" => start
+"DiceLevel" => dice_level
+"DiceSkill" => dice_skill

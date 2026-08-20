@@ -15,12 +15,12 @@ Dialog is loaded from a project file produced by the editor (see [editor](/edito
 ### Normal Session
 !TODO! Rename Expressions to Statements and group Conditions and Statements under "Commands". Also, the last rule in 7 about choice text being used in absence of text content is not yet implemented. [32](https://github.com/Roboticy3/Louder/issues/32)
 
- 1. Find a node with the "StartCheck" property set to true. !TODO! A starting node can also be selected by passing in specific tags. The first node with matching substrings in their "Tags" property will be used. [33](https://github.com/Roboticy3/Louder/issues/33)
+ 1. Find a node with the "start" property set to true. !TODO! A starting node can also be selected by passing in specific tags. The first node with matching substrings in their "Tags" property will be used. [33](https://github.com/Roboticy3/Louder/issues/33)
  3. The "Statements" property of the starting node is evaluated (see Commands). 
  4. A choice can be selected from the choices available on the starting node. Each choice can correspond to another node in the conversation. Choices are filtered by whether the node they point to exists, and whether the "Conditions" property of the node is evaluated to true or false. As long as each choice corresponds to at most one node, this is an unambiguous decision. Choices can be selected by numeric index by which they appear after filtering, or by their string contents.
- 5. If the node of a choice has the "DiceSkill" property filled by a valid Identifier with an Integer value, that value is added to a 2d6 dice roll. If this dice roll is greater than or equal to the node's "DiceLevel" property, the roll is treated as a true Condition, otherwise, it's treated as false and the choice becomes inaccessible.
- 6. Once a choice is selected, the simulator travels to the associated node. If the starting node has the "AutoCheck" property set to true, the choice index 0 is selected automatically if available.
- 7. When the simulator travels to another node, the process repeats, either waiting for more choices from the user to proceed or proceeding automatically as long as the simulator is traveling through "AutoCheck" nodes. If the node has a blank "TextContent" field, the text of the previous choice is used.
+ 5. If the node of a choice has the "dice_skill" property filled by a valid Identifier with an Integer value, that value is added to a 2d6 dice roll. If this dice roll is greater than or equal to the node's "dice_level" property, the roll is treated as a true Condition, otherwise, it's treated as false and the choice becomes inaccessible.
+ 6. Once a choice is selected, the simulator travels to the associated node. If the starting node has the "auto" property set to true, the choice index 0 is selected automatically if available.
+ 7. When the simulator travels to another node, the process repeats, either waiting for more choices from the user to proceed or proceeding automatically as long as the simulator is traveling through "auto" nodes. If the node has a blank "text" field, the text of the previous choice is used.
 
 ### Commmands
 !TODO! Not all assignment expressions are currently supported. Only = is currently supported [31](https://github.com/Roboticy3/Louder/issues/31)
@@ -52,5 +52,16 @@ Expressions always _evaluate_ to a value. The following values are treated as fa
 ### Cheats
 !TODO! Manual command sending, saving and loading are not yet implemented on the prototype simulator [30](https://github.com/Roboticy3/Louder/issues/30)
 
-The user can also manually manipulate the simulation outside of normal flow. This includes manually warping to a specific node with or without progressing through AutoCheck nodes, and running commands to either see what they evaluate to or manipulate the values of variables. The ability to read and write from the conversation state using commands is particularly useful for linking the simulation with the rest of a larger game, and the current state of the conversation can be saved out
+The user can also manually manipulate the simulation outside of normal flow. This includes manually warping to a specific node with or without progressing through auto nodes, and running commands to either see what they evaluate to or manipulate the values of variables. The ability to read and write from the conversation state using commands is particularly useful for linking the simulation with the rest of a larger game, and the current state of the conversation can be saved out
 to a list of newline separated commands which can then be replayed to reload a certain state.
+
+## Advanced Simulation Rules
+
+### Synchronous Multiple Speakers
+One way to approach multiple playable characters in dialogue is to first have a set of rules, where each speaker can "own" nodes belonging to a list of speakers, indicated by the "Speaker" property. Next, for 2 or more clients, choices are restricted by those that lead to nodes either in the own list.
+
+Additionally, speakers can be flagged as "Private". When dialogue enters a node owned by a private speaker, clients that do not own that speaker percieve nothing as happening. They can also check for other player-characters other than their own with access to the node, displaying "<character> is thinking" in these sections.
+
+Only if *all* clients have no remaining dialogue options does the simulator send an "end" signal to all clients.
+
+The engine provides functions to tell a client who, if anyone, is thinking. And the effect of these rules on the basic rules is otherwise subtractive- taking the original behavior of showing dialogue and choices and simply not showing them sometimes.

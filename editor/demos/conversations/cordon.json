@@ -1,604 +1,574 @@
 [
 	{
-		"ChoicesSectionLogic": [
+		"choices": [
 			"\"Knight Freya of the Ancient Oak.\"",
 			"\"I don't know\"",
 			"Say nothing"
 		],
-		"Speaker": "Fosser",
-		"TextContent": "\"Hello, what's your name?\" He assumes a polite stance and looks up at you. \"Sorry about my sister, she's weird.\"",
-		"conversation_id": "60",
+		"conversation_id": "65",
 		"position_offset:x": "560.0",
 		"position_offset:y": "120.0",
+		"speaker": "Fosser",
+		"text": "\"Hello, what's your name?\" He assumes a polite stance and looks up at you. \"Sorry about my sister, she's weird.\"",
 		"type": "hub"
 	},
 	{
-		"Speaker": "Fosser",
-		"TextContent": "\"I can see you\"",
-		"conversation_id": "63",
+		"conversation_id": "68",
 		"position_offset:x": "1380.0",
 		"position_offset:y": "680.0",
+		"speaker": "Fosser",
+		"text": "\"I can see you\"",
 		"type": "hub"
 	},
 	{
-		"Speaker": "Freya",
-		"conversation_id": "66",
+		"conversation_id": "71",
 		"position_offset:x": "1920.0",
 		"position_offset:y": "0.0",
+		"speaker": "Freya",
 		"type": "hub"
 	},
 	{
-		"ChoicesSectionLogic": [
+		"choices": [
 			"\"This area is restricted. Come with me.\"",
 			"\"Everything is going to be ok. How did you get here?\"",
 			"\"A knight?\""
 		],
-		"Speaker": "Structure",
-		"TextContent": "Good. They know who you are. They have had proper processing. Now they can be processed.",
-		"conversation_id": "70",
+		"conversation_id": "75",
 		"position_offset:x": "1420.0",
 		"position_offset:y": "-160.0",
+		"speaker": "Structure",
+		"text": "Good. They know who you are. They have had proper processing. Now they can be processed.",
 		"type": "hub"
 	},
 	{
-		"AutoCheck": true,
-		"DiceLevel": "10.0",
-		"DiceSkill": "Volition",
-		"Speaker": "Freya",
-		"conversation_id": "80",
-		"position_offset:x": "4060.0",
-		"position_offset:y": "320.0",
-		"type": "hub"
-	},
-	{
-		"ChoicesSectionLogic": [
-			"(Flare your gills)",
-			"(Leave it be)"
-		],
-		"Speaker": "Rhythm",
-		"TextContent": "Her official stance and tone are inherently less interesting than the fish man standing behind the children.",
-		"conversation_id": "82",
-		"position_offset:x": "4080.0",
-		"position_offset:y": "700.0",
-		"type": "hub"
-	},
-	{
-		"Speaker": "Benjamin",
-		"TextContent": "The fish flares his gills and makes a farting sound.",
-		"conversation_id": "83",
+		"conversation_id": "88",
 		"position_offset:x": "4480.0",
 		"position_offset:y": "800.0",
+		"speaker": "Benjamin",
+		"text": "The fish flares his gills and makes a farting sound.",
 		"type": "hub"
 	},
 	{
-		"Speaker": "Fica",
-		"StartCheck": true,
-		"TextContent": "A small human girl attempts to hide from you behind an even smaller rock, motioning to her brother to do the same. The boy freezes up at the sight of your armor.",
-		"conversation_id": "85",
+		"conversation_id": "90",
 		"position_offset:x": "80.0",
 		"position_offset:y": "120.0",
+		"speaker": "Fica",
+		"start": true,
+		"text": "A small human girl attempts to hide from you behind an even smaller rock, motioning to her brother to do the same. The boy freezes up at the sight of your armor.",
 		"type": "hub"
 	},
 	{
-		"Speaker": "Fosser",
-		"TextContent": "\"What?\" He turns. The knight has lost control of the center.",
-		"conversation_id": "89",
+		"conversation_id": "94",
 		"position_offset:x": "4880.0",
 		"position_offset:y": "800.0",
+		"speaker": "Fosser",
+		"text": "\"What?\" He turns. The knight has lost control of the center.",
 		"type": "hub"
 	},
 	{
-		"Speaker": "Fica",
-		"TextContent": "Fica whispers loudly. \"What are you doing! You're revealing my position!\" ",
-		"conversation_id": "90",
+		"conversation_id": "95",
 		"position_offset:x": "1000.0",
 		"position_offset:y": "680.0",
+		"speaker": "Fica",
+		"text": "Fica whispers loudly. \"What are you doing! You're revealing my position!\" ",
 		"type": "hub"
 	},
 	{
-		"Speaker": "Fosser",
-		"TextContent": "The boy keeps looking up at you for a second, but then decides to step towards his sister for safety.",
-		"conversation_id": "91",
+		"conversation_id": "96",
 		"position_offset:x": "580.0",
 		"position_offset:y": "660.0",
+		"speaker": "Fosser",
+		"text": "The boy keeps looking up at you for a second, but then decides to step towards his sister for safety.",
 		"type": "hub"
 	},
 	{
-		"Speaker": "Benjamin",
-		"conversation_id": "92",
+		"conversation_id": "97",
 		"position_offset:x": "560.0",
 		"position_offset:y": "-780.0",
+		"speaker": "Benjamin",
 		"type": "hub"
 	},
 	{
-		"Speaker": "Benjamin",
-		"TextContent": "A fish man has appeared. There is a cave behind him in the restricted area.",
-		"conversation_id": "93",
+		"conversation_id": "98",
 		"position_offset:x": "997.964172363281",
 		"position_offset:y": "-792.313537597656",
+		"speaker": "Benjamin",
+		"text": "A fish man has appeared. There is a cave behind him in the restricted area.",
 		"type": "hub"
 	},
 	{
-		"AutoCheck": true,
-		"ChoicesSectionLogic": [
+		"auto": true,
+		"choices": [
 			"(Choice 0)",
 			"(Choice 1)",
 			"(Choice 2)"
 		],
-		"conversation_id": "94",
+		"conversation_id": "99",
 		"position_offset:x": "1400.0",
 		"position_offset:y": "-840.0",
 		"type": "hub"
 	},
 	{
-		"Speaker": "Structure",
-		"TextContent": "That's what the restricted area is protecting. Sometimes children get stuck in the caves.",
-		"conversation_id": "95",
-		"position_offset:x": "1880.0",
-		"position_offset:y": "-1680.0",
-		"type": "hub"
-	},
-	{
-		"Speaker": "Note",
-		"TextContent": "Benjamin has the opportunity here to learn more about the world in one of two ways via a demonstration of a passive check. Meanwhile, Freya's view filters these out because of the overwhelming presence of structure in her personality at the beginning of the story.",
-		"conversation_id": "96",
+		"conversation_id": "101",
 		"position_offset:x": "1880.0",
 		"position_offset:y": "-2160.0",
+		"speaker": "Note",
+		"text": "Benjamin has the opportunity here to learn more about the world in one of two ways via a demonstration of a passive check. Meanwhile, Freya's view filters these out because of the overwhelming presence of structure in her personality at the beginning of the story.",
 		"type": "hub"
 	},
 	{
-		"DiceLevel": "10.0",
-		"DiceSkill": "Planets",
-		"Speaker": "Planets",
-		"TextContent": "The exquisite sandstone was soft and serene. The particular grain here is blessed. A perfect hiding spot while you were getting over your headache.",
-		"conversation_id": "97",
-		"position_offset:x": "1860.0",
-		"position_offset:y": "-920.0",
-		"type": "hub"
-	},
-	{
-		"AutoCheck": true,
-		"Speaker": "Freya",
-		"conversation_id": "98",
+		"auto": true,
+		"conversation_id": "103",
 		"position_offset:x": "160.0",
 		"position_offset:y": "660.0",
+		"speaker": "Freya",
 		"type": "hub"
 	},
 	{
-		"Speaker": "Life",
-		"TextContent": "The kids look healthy. Even at there age, the fencing wouldn't have stood a chance.",
-		"conversation_id": "99",
+		"conversation_id": "104",
 		"position_offset:x": "2320.0",
 		"position_offset:y": "-80.0",
+		"speaker": "Life",
+		"text": "The kids look healthy. Even at there age, the fencing wouldn't have stood a chance.",
 		"type": "hub"
 	},
 	{
-		"Speaker": "Fica",
-		"TextContent": "The girl speaks while staying hidden behind the rock. \"Brother went in the cave.\"",
-		"conversation_id": "100",
+		"conversation_id": "105",
 		"position_offset:x": "2740.0",
 		"position_offset:y": "-80.0",
+		"speaker": "Fica",
+		"text": "The girl speaks while staying hidden behind the rock. \"Brother went in the cave.\"",
 		"type": "hub"
 	},
 	{
-		"AutoCheck": true,
-		"ChoicesSectionLogic": [
+		"auto": true,
+		"choices": [
 			"(Choice 0)",
 			"(Choice 1)"
 		],
-		"conversation_id": "101",
+		"conversation_id": "106",
 		"position_offset:x": "3200.0",
 		"position_offset:y": "-40.0",
 		"type": "hub"
 	},
 	{
-		"Speaker": "Memory",
-		"TextContent": "You were following the sound of footsteps. The air was stale down there.",
-		"conversation_id": "102",
+		"conversation_id": "107",
 		"position_offset:x": "3660.0",
 		"position_offset:y": "-520.0",
+		"speaker": "Memory",
+		"text": "You were following the sound of footsteps. The air was stale down there.",
 		"type": "hub"
 	},
 	{
-		"Speaker": "Death",
-		"TextContent": "The fish man and the caves smell similar. Either way, no place for kids.",
-		"conversation_id": "103",
+		"conversation_id": "108",
 		"position_offset:x": "3660.0",
 		"position_offset:y": "-200.0",
+		"speaker": "Death",
+		"text": "The fish man and the caves smell similar. Either way, no place for kids.",
 		"type": "hub"
 	},
 	{
-		"AutoCheck": true,
-		"conversation_id": "104",
+		"auto": true,
+		"conversation_id": "109",
 		"position_offset:x": "4120.0",
 		"position_offset:y": "-260.0",
 		"type": "hub"
 	},
 	{
-		"Speaker": "Freya",
-		"conversation_id": "105",
+		"conversation_id": "110",
 		"position_offset:x": "1920.0",
 		"position_offset:y": "-380.0",
+		"speaker": "Freya",
 		"type": "hub"
 	},
 	{
-		"Speaker": "Note",
-		"TextContent": "fosser_main and fica_main are story states. \"100\" in this case represents being en-route to being processed by freya.\n\nMeanwhile, \"200\" represents the kids going away on their own.\n\nBy default, variables behavve as \"0\" within the current system.",
-		"conversation_id": "106",
+		"conversation_id": "111",
 		"position_offset:x": "5060.0",
 		"position_offset:y": "220.0",
+		"speaker": "Note",
+		"text": "fosser_main and fica_main are story states. \"100\" in this case represents being en-route to being processed by freya.\n\nMeanwhile, \"200\" represents the kids going away on their own.\n\nBy default, variables behavve as \"0\" within the current system.",
 		"type": "hub"
 	},
 	{
-		"Statements": "fica_main = 200",
-		"Speaker": "Fica",
-		"TextContent": "The opposite effect is had on Fica. The creepy fish man drives her out of hiding. \"Let's go, brother.\"",
-		"conversation_id": "107",
+		"conversation_id": "112",
 		"position_offset:x": "5320.0",
 		"position_offset:y": "800.0",
+		"speaker": "Fica",
+		"statements": "fica_main = 200",
+		"text": "The opposite effect is had on Fica. The creepy fish man drives her out of hiding. \"Let's go, brother.\"",
 		"type": "hub"
 	},
 	{
-		"Statements": "fosser_main = 100",
-		"Speaker": "Fosser",
-		"TextContent": "Fosser complies to the knight's command, but Fica is staying behind her rock.",
-		"conversation_id": "108",
-		"position_offset:x": "4520.0",
-		"position_offset:y": "340.0",
-		"type": "hub"
-	},
-	{
-		"TextContent": "The kids are arguing now, you'll have to come back later when they've settled down.",
-		"conversation_id": "109",
+		"conversation_id": "114",
 		"position_offset:x": "1760.0",
 		"position_offset:y": "680.0",
+		"speaker": "Fosser",
+		"text": "The kids are arguing now, you'll have to come back later when they've settled down.",
 		"type": "hub"
 	},
 	{
-		"Statements": "fosser_main = 100",
-		"Speaker": "Fosser",
-		"TextContent": "Fosser complies, but the girl stays stubbornly behind the rock.",
-		"conversation_id": "110",
+		"conversation_id": "115",
 		"position_offset:x": "2560.0",
 		"position_offset:y": "-1240.0",
+		"speaker": "Fosser",
+		"statements": "fosser_main = 100",
+		"text": "Fosser complies, but the girl stays stubbornly behind the rock.",
 		"type": "hub"
 	},
 	{
-		"DiceLevel": "10.0",
-		"DiceSkill": "Stars",
-		"Speaker": "Stars",
-		"TextContent": "The dense network of caves made you feel at home. Like a copy of the constellations, all linked together. ",
-		"conversation_id": "111",
-		"position_offset:x": "1880.0",
-		"position_offset:y": "-1360.0",
-		"type": "hub"
-	},
-	{
-		"Statements": "freya_asserted_fosser = true",
-		"Speaker": "Freya",
-		"conversation_id": "112",
+		"conversation_id": "117",
 		"position_offset:x": "980.0",
 		"position_offset:y": "-120.0",
+		"speaker": "Freya",
+		"statements": "relationship(\"Freya\", \"Fosser\")++",
 		"type": "hub"
 	},
 	{
-		"Speaker": "Benjamin",
-		"conversation_id": "113",
+		"conversation_id": "118",
 		"position_offset:x": "1921.57897949219",
 		"position_offset:y": "257.490905761719",
+		"speaker": "Benjamin",
 		"type": "hub"
 	},
 	{
-		"AutoCheck": true,
-		"ChoicesSectionLogic": [
+		"auto": true,
+		"choices": [
 			"(Choice 0)",
 			"(Choice 1)"
 		],
-		"conversation_id": "114",
+		"conversation_id": "119",
 		"position_offset:x": "2340.0",
 		"position_offset:y": "520.0",
 		"type": "hub"
 	},
 	{
-		"Speaker": "Note",
-		"TextContent": "Maybe Freya can access the restricted area but other characters cannot?",
-		"conversation_id": "115",
+		"conversation_id": "120",
 		"position_offset:x": "3340.0",
 		"position_offset:y": "1180.0",
+		"speaker": "Note",
+		"text": "Maybe Freya can access the restricted area but other characters cannot?",
 		"type": "hub"
 	},
 	{
-		"ChoicesSectionLogic": [
+		"choices": [
 			"\"Both of you need to leave. This is a restricted area.\" (point towards the plaza)"
 		],
-		"Speaker": "eath",
-		"TextContent": "A suspicious fish-man has appeared behind the children. He looks poor and scared, and is also in the restricted area. Change of directive- get the kids out, anywhere other than here. Then investigate this *outlier*.",
-		"conversation_id": "116",
+		"conversation_id": "121",
 		"position_offset:x": "2780.0",
 		"position_offset:y": "260.0",
+		"speaker": "Death",
+		"text": "A suspicious fish-man has appeared behind the children. He looks poor and scared, and is also in the restricted area. Change of directive- get the kids out, anywhere other than here. Then investigate this *outlier*.",
 		"type": "hub"
 	},
 	{
-		"ChoicesSectionLogic": [
+		"choices": [
 			"I'm *fine*. (Stand your ground)",
 			"\"Am I in trouble?\"",
 			"(Retreat into the cave behind you)"
 		],
-		"Speaker": "Future",
-		"TextContent": "You look like you're in trouble. Get out of here.",
-		"conversation_id": "117",
+		"conversation_id": "122",
 		"position_offset:x": "2780.0",
 		"position_offset:y": "1020.0",
+		"speaker": "Future",
+		"text": "You look like you're in trouble. Get out of here.",
 		"type": "hub"
 	},
 	{
-		"AutoCheck": true,
-		"ChoicesSectionLogic": [
-			"(Choice 0)",
-			"(Choice 1)"
-		],
-		"conversation_id": "79",
-		"position_offset:x": "3640.0",
-		"position_offset:y": "540.0",
-		"type": "hub"
-	},
-	{
-		"Speaker": "Freya",
-		"conversation_id": "118",
+		"conversation_id": "124",
 		"position_offset:x": "3200.0",
 		"position_offset:y": "560.0",
+		"speaker": "Freya",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "125",
+		"dice_level": "6.0",
+		"dice_skill": "Planets",
+		"position_offset:x": "1880.0",
+		"position_offset:y": "-1180.0",
+		"speaker": "Planets",
+		"text": "The exquisite sandstone was soft and serene. The particular grain here is blessed. A perfect hiding spot while you were getting over your headache.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "126",
+		"position_offset:x": "1880.0",
+		"position_offset:y": "-780.0",
+		"speaker": "Structure",
+		"text": "That's what the restricted area is protecting. Sometimes children get stuck in the caves.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "127",
+		"dice_level": "6.0",
+		"dice_skill": "Stars",
+		"position_offset:x": "1880.0",
+		"position_offset:y": "-1640.0",
+		"speaker": "Stars",
+		"text": "The dense network of caves made you feel at home. Like a copy of the constellations, all linked together. ",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "128",
+		"position_offset:x": "1420.0",
+		"position_offset:y": "320.0",
+		"speaker": "Note",
+		"text": "\"A knight?\" doesn't feel responsive here because it appears while Freya is thinking. Will have to wait for async flow to be implemented to do this properly.",
+		"type": "hub"
+	},
+	{
+		"choices": [
+			"(Flare your gills)",
+			"(Leave it be)"
+		],
+		"conversation_id": "87",
+		"position_offset:x": "4000.0",
+		"position_offset:y": "500.0",
+		"speaker": "Rhythm",
+		"text": "Her official stance and tone are inherently less interesting than the fish man standing behind the children.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "113",
+		"position_offset:x": "4540.0",
+		"position_offset:y": "280.0",
+		"speaker": "Fosser",
+		"statements": "fosser_main = 100",
+		"text": "Fosser complies to the knight's command, but Fica is staying behind her rock.",
 		"type": "hub"
 	},
 	{
 		"from_choice": "\"Knight Freya of the Ancient Oak.\"",
-		"from_id": "60",
-		"to_id": "112",
+		"from_id": "65",
+		"to_id": "117",
 		"type": "connection"
 	},
 	{
 		"from_choice": "\"I don't know\"",
-		"from_id": "60",
-		"to_id": "92",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "91",
-		"to_id": "90",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "112",
-		"to_id": "70",
-		"type": "connection"
-	},
-	{
-		"from_choice": "\"This area is restricted. Come with me.\"",
-		"from_id": "70",
-		"to_id": "105",
-		"type": "connection"
-	},
-	{
-		"from_choice": "\"Everything is going to be ok. How did you get here?\"",
-		"from_id": "70",
-		"to_id": "66",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "90",
-		"to_id": "63",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "63",
-		"to_id": "109",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "80",
-		"to_id": "108",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Choice 0)",
-		"from_id": "79",
-		"to_id": "80",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Choice 1)",
-		"from_id": "79",
-		"to_id": "82",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Leave it be)",
-		"from_id": "82",
-		"to_id": "108",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Flare your gills)",
-		"from_id": "82",
-		"to_id": "83",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "83",
-		"to_id": "89",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "89",
-		"to_id": "107",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "92",
-		"to_id": "93",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "93",
-		"to_id": "94",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Choice 0)",
-		"from_id": "94",
-		"to_id": "95",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Choice 1)",
-		"from_id": "94",
-		"to_id": "111",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Choice 2)",
-		"from_id": "94",
+		"from_id": "65",
 		"to_id": "97",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
-		"from_id": "97",
-		"to_id": "60",
+		"from_id": "96",
+		"to_id": "95",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
-		"from_id": "111",
-		"to_id": "60",
+		"from_id": "117",
+		"to_id": "75",
 		"type": "connection"
 	},
 	{
-		"from_choice": "",
-		"from_id": "85",
-		"to_id": "60",
+		"from_choice": "\"This area is restricted. Come with me.\"",
+		"from_id": "75",
+		"to_id": "110",
+		"type": "connection"
+	},
+	{
+		"from_choice": "\"Everything is going to be ok. How did you get here?\"",
+		"from_id": "75",
+		"to_id": "71",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
 		"from_id": "95",
-		"to_id": "60",
+		"to_id": "68",
 		"type": "connection"
 	},
 	{
-		"from_choice": "Say nothing",
-		"from_id": "60",
+		"from_choice": "",
+		"from_id": "68",
+		"to_id": "114",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Leave it be)",
+		"from_id": "87",
+		"to_id": "113",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Flare your gills)",
+		"from_id": "87",
+		"to_id": "88",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "88",
+		"to_id": "94",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "94",
+		"to_id": "112",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "97",
 		"to_id": "98",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
 		"from_id": "98",
-		"to_id": "91",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "66",
 		"to_id": "99",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
-		"from_id": "99",
-		"to_id": "100",
+		"from_id": "125",
+		"to_id": "65",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
-		"from_id": "100",
-		"to_id": "101",
+		"from_id": "127",
+		"to_id": "65",
 		"type": "connection"
 	},
 	{
-		"from_choice": "(Choice 0)",
-		"from_id": "101",
-		"to_id": "102",
+		"from_choice": "",
+		"from_id": "90",
+		"to_id": "65",
 		"type": "connection"
 	},
 	{
-		"from_choice": "(Choice 1)",
-		"from_id": "101",
+		"from_choice": "",
+		"from_id": "126",
+		"to_id": "65",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Say nothing",
+		"from_id": "65",
 		"to_id": "103",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
 		"from_id": "103",
-		"to_id": "104",
+		"to_id": "96",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
-		"from_id": "102",
+		"from_id": "71",
 		"to_id": "104",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
 		"from_id": "104",
-		"to_id": "70",
+		"to_id": "105",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
 		"from_id": "105",
-		"to_id": "110",
-		"type": "connection"
-	},
-	{
-		"from_choice": "\"A knight?\"",
-		"from_id": "70",
-		"to_id": "113",
+		"to_id": "106",
 		"type": "connection"
 	},
 	{
 		"from_choice": "(Choice 0)",
-		"from_id": "114",
-		"to_id": "116",
+		"from_id": "106",
+		"to_id": "107",
 		"type": "connection"
 	},
 	{
 		"from_choice": "(Choice 1)",
-		"from_id": "114",
-		"to_id": "117",
+		"from_id": "106",
+		"to_id": "108",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
-		"from_id": "113",
-		"to_id": "114",
+		"from_id": "108",
+		"to_id": "109",
 		"type": "connection"
 	},
 	{
-		"from_choice": "\"Both of you need to leave. This is a restricted area.\" (point towards the plaza)",
-		"from_id": "116",
+		"from_choice": "",
+		"from_id": "107",
+		"to_id": "109",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "109",
+		"to_id": "75",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "110",
+		"to_id": "115",
+		"type": "connection"
+	},
+	{
+		"from_choice": "\"A knight?\"",
+		"from_id": "75",
 		"to_id": "118",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 0)",
+		"from_id": "119",
+		"to_id": "121",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 1)",
+		"from_id": "119",
+		"to_id": "122",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
 		"from_id": "118",
-		"to_id": "79",
+		"to_id": "119",
 		"type": "connection"
 	},
 	{
-		"position:x": "2320.033203125",
-		"position:y": "176.498962402344",
+		"from_choice": "\"Both of you need to leave. This is a restricted area.\" (point towards the plaza)",
+		"from_id": "121",
+		"to_id": "124",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 0)",
+		"from_id": "99",
+		"to_id": "127",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 1)",
+		"from_id": "99",
+		"to_id": "125",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 2)",
+		"from_id": "99",
+		"to_id": "126",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "124",
+		"to_id": "87",
+		"type": "connection"
+	},
+	{
+		"position:x": "4372.88037109375",
+		"position:y": "77.29931640625",
 		"type": "camera",
-		"zoom": "0.80288791656494"
+		"zoom": "0.97149366140366"
 	}
 ]

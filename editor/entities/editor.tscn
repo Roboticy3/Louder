@@ -9,12 +9,18 @@
 [ext_resource type="Script" uid="uid://o0sx5q87o113" path="res://scripts/walker_logic.gd" id="5_o1q8q"]
 [ext_resource type="PackedScene" uid="uid://5auivb6rkpb8" path="res://entities/menus/view_menu.tscn" id="5_vumenu"]
 [ext_resource type="Script" uid="uid://b3jvwrspygwuc" path="res://scripts/pointer_logic.gd" id="6_qdkfl"]
-[ext_resource type="PackedScene" path="res://entities/menus/speaker_colors_menu.tscn" id="6_scmenu"]
 [ext_resource type="Script" uid="uid://bboylqujoaqru" path="res://scripts/on_screen_debug.gd" id="9_n5ixm"]
 [ext_resource type="Script" uid="uid://dfhadrloniwdc" path="res://scripts/user_config.gd" id="10_07l17"]
-[ext_resource type="PackedScene" uid="uid://buwp2pegwfmfg" path="res://entities/speaker_colors.tscn" id="13_6vlff"]
+[ext_resource type="PackedScene" uid="uid://dr7rs8c2sfbde" path="res://entities/menus/edit_menu.tscn" id="10_vvcdv"]
+[ext_resource type="PackedScene" uid="uid://sc3ddjdaefp1" path="res://entities/knowledge_graph.tscn" id="13_6vlff"]
 
-[node name="Editor" type="CanvasLayer" unique_id=1835673697]
+[node name="Editor" type="Control" unique_id=717003800]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="ConnectionLogic" type="Node" parent="." unique_id=501378103 node_paths=PackedStringArray("editor", "pointer", "debugger")]
 script = ExtResource("2_mnjbr")
@@ -34,11 +40,12 @@ script = ExtResource("5_o1q8q")
 script = ExtResource("4_d3wec")
 editor = NodePath("../Control/GridContainer/GraphEdit")
 
-[node name="CreateLogic" type="Node" parent="." unique_id=1700872222 node_paths=PackedStringArray("editor", "pointer", "debugger")]
+[node name="CreateLogic" type="Node" parent="." unique_id=1700872222 node_paths=PackedStringArray("editor", "pointer", "debugger", "type_dropdown")]
 script = ExtResource("4_2vd5y")
 editor = NodePath("../Control/GridContainer/GraphEdit")
 pointer = NodePath("../PointerLogic")
 debugger = NodePath("../Control/RichTextLabel")
+type_dropdown = NodePath("../Control/GridContainer/FileBar/NodeType")
 
 [node name="PointerLogic" type="Node" parent="." unique_id=1525646304 node_paths=PackedStringArray("editor")]
 script = ExtResource("6_qdkfl")
@@ -48,7 +55,7 @@ editor = NodePath("../Control/GridContainer/GraphEdit")
 script = ExtResource("10_07l17")
 
 [node name="Control" type="Control" parent="." unique_id=2092511738]
-layout_mode = 3
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -75,6 +82,12 @@ editor = NodePath("../../GraphEdit")
 [node name="View" parent="Control/GridContainer/FileBar" unique_id=1679255408 instance=ExtResource("5_vumenu")]
 layout_mode = 2
 
+[node name="Edit" parent="Control/GridContainer/FileBar" unique_id=615417156 instance=ExtResource("10_vvcdv")]
+layout_mode = 2
+
+[node name="NodeType" type="OptionButton" parent="Control/GridContainer/FileBar" unique_id=-1668704670]
+layout_mode = 2
+
 [node name="GraphEdit" type="GraphEdit" parent="Control/GridContainer" unique_id=2143194040]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -86,14 +99,14 @@ layout_mode = 0
 offset_left = -1.0
 offset_top = 139.0
 offset_right = 342.0
-offset_bottom = 508.0
+offset_bottom = 548.0
 position_offset = Vector2(-1, 139)
 selected = true
 hub_data = {
 NodePath("ChoicesSection/CheckBox"): true
 }
 
-[node name="StartCheck" parent="Control/GridContainer/GraphEdit/Hub/ChoicesSection" parent_id_path=PackedInt32Array(1992437552, 255423357) index="0" unique_id=628973272]
+[node name="start" parent="Control/GridContainer/GraphEdit/Hub/ChoicesSection" parent_id_path=PackedInt32Array(1992437552, 255423357) index="0" unique_id=628973272]
 button_pressed = true
 
 [node name="RichTextLabel" type="RichTextLabel" parent="Control" unique_id=409667951]
@@ -107,8 +120,20 @@ grow_vertical = 0
 fit_content = true
 script = ExtResource("9_n5ixm")
 
-[node name="SpeakerColorsMenu" parent="Control" unique_id=255244167 instance=ExtResource("6_scmenu")]
+[node name="NodeColorsPopup" type="PopupPanel" parent="." unique_id=372021348 groups=["node_colors"]]
+oversampling_override = 1.0
+initial_position = 1
+visible = true
+unresizable = false
+borderless = false
 
-[node name="Window" parent="." unique_id=2035585249 instance=ExtResource("13_6vlff")]
+[node name="KnowledgeGraphPopup" type="PopupPanel" parent="." unique_id=1796554176 groups=["knowledge_graph"]]
+oversampling_override = 1.0
+initial_position = 1
+visible = true
+unresizable = false
+borderless = false
+
+[node name="Editor" parent="KnowledgeGraphPopup" unique_id=1821343670 instance=ExtResource("13_6vlff")]
 
 [editable path="Control/GridContainer/GraphEdit/Hub"]
