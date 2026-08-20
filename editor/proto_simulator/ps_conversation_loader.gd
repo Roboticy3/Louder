@@ -3,10 +3,6 @@ class_name PSConversationLoader extends Node
 @export var simulator: PSSimulator
 @export var load_now := "res://demos/conversations/cordon.json"
 
-#recieve a delayed update after conversation load for visuals
-#"update" is called on this group
-@export var update_group := &"ps_conversation_view"
-
 #recieve an update immediately at conversation load for technical changes- simulation/editor etc.
 #"_on_conversation_changed" is called on this group with the new conversation path passed as an argument.
 @export var conversation_changed_listener_group := &"conversation_changed_listener"
@@ -35,4 +31,3 @@ var current_loaded := ""
 func _on_file_selected(path: String) -> void:
 	current_loaded = path
 	get_tree().call_group.call_deferred(conversation_changed_listener_group, &"_on_conversation_changed", path)
-	get_tree().call_group.call_deferred(update_group, &"update")

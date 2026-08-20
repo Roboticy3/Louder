@@ -206,12 +206,10 @@ size_flags_horizontal = 0
 size_flags_vertical = 0
 script = ExtResource("2_w7r13")
 
-[node name="auto" type="CheckBox" parent="ChoicesSection" unique_id=412385513 node_paths=PackedStringArray("mutual_exclusive") groups=["hub_component"]]
+[node name="auto" type="CheckBox" parent="ChoicesSection" unique_id=412385513 groups=["hub_component"]]
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
 text = "Auto"
-script = ExtResource("4_rhcs5")
-mutual_exclusive = [NodePath("../../TextSectionWrapper/TextSection/text")]
 
 [node name="choices" type="Node" parent="ChoicesSection" unique_id=889900628 node_paths=PackedStringArray("hub", "spin_box", "start_check") groups=["hub_component"]]
 script = ExtResource("2_hjueh")
@@ -221,5 +219,4 @@ start_check = NodePath("../start")
 spoke_child_index = 1
 
 [connection signal="folding_changed" from="OtherSection" to="." method="reset_size" flags=3 unbinds=1]
-[connection signal="pressed" from="ChoicesSection/auto" to="." method="reset_size" flags=3]
 [connection signal="choices_changed" from="ChoicesSection/choices" to="." method="reset_size" flags=3]

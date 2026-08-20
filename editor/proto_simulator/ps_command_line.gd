@@ -10,6 +10,7 @@ enum CommandError {
 	UNRECOGNIZED,
 	SIMULATOR,
 	INDEX,
+	FILE,
 }
 
 var busy := false
@@ -18,21 +19,26 @@ func flush():
 		return
 	busy = true
 	
-	var error:CommandError = CommandError.OK
 	if text.begins_with("/"):
 		var command := text.trim_prefix("/").split(" ", false)
-		if command.is_empty(): error = CommandError.UNRECOGNIZED
-		else: match command[0]:
-			"warp": error = warp(command)
-			"setspeakers": error = setspeakers(command)
-			"setconversation": error = setconversation(command)
-			_: error = CommandError.UNRECOGNIZED
+		run_command_stripped(command)
+
+func run_command_stripped(command:Array):
+	var error:CommandError = CommandError.OK
+	if command.is_empty(): error = CommandError.UNRECOGNIZED
+	else: match command[0]:
+		"warp": error = warp(command)
+		"setspeakers": error = setspeakers(command)
+		"setconversation": error = setconversation(command)
+		"exec": error = exec(command)
+		_: error = CommandError.UNRECOGNIZED
 	
 	match error:
 		CommandError.SYNTAX: output_stream.text += "command \"" + text + "\" exited with syntax error.\n"
 		CommandError.UNRECOGNIZED: output_stream.text += "command \"" + text + "\" was not recognized.\n"
 		CommandError.SIMULATOR: output_stream.text += "simulator could not process command \"" + text + "\". Exited with simulator error.\n" 
-		CommandError.SIMULATOR: output_stream.text += "command \"" + text + "\" caused an index exception.\n"
+		CommandError.INDEX: output_stream.text += "command \"" + text + "\" caused an index exception.\n"
+		CommandError.FILE: output_stream.text += "command \"" + text + "\" failed to open the given file.\n"
 		
 	await get_tree().process_frame
 	text = ""
@@ -65,6 +71,7 @@ func setspeakers(command:Array) -> CommandError:
 	
 	return CommandError.OK
 
+signal request_change_conversation(path:String)
 func setconversation(command:Array) -> CommandError:
 	if command.size() < 2: return CommandError.SYNTAX
 	
@@ -73,9 +80,21 @@ func setconversation(command:Array) -> CommandError:
 		output_stream.text += "failed to load conversation from " + path + "\n"
 		return CommandError.SIMULATOR
 	
-	simulator.conversation_path = path
-	simulator._ready()
+	request_change_conversation.emit(path)
 	output_stream.text += "loaded conversation from " + path + "\n"
+	return CommandError.OK
+
+func exec(command:Array):
+	if command.size() < 2: return CommandError.SYNTAX
+	
+	var f := FileAccess.open(command[1], FileAccess.READ)
+	if FileAccess.get_open_error() != OK:
+		return CommandError.FILE
+	
+	var lines := f.get_as_text().split("\n", false)
+	for l in lines:
+		output_stream.text += "\texec: found line \"" + l + "\"\n"
+		run_command_stripped(l.split(" ", false))
 	return CommandError.OK
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

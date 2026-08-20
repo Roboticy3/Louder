@@ -11,7 +11,7 @@ var current_project_path:String
 signal current_project_changed()
 
 const HUB_SCENE := preload("res://entities/hub.tscn")
-const SPEAKER_SCENE := preload("res://entities/speaker.tscn")
+const SPEAKER_SCENE := preload("res://entities/speaker_entity.tscn")
 
 const OBJECT_TYPE := "type"
 const TYPE_HUB := CustomGraphHub.TYPE

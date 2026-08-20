@@ -6,7 +6,7 @@
 [ext_resource type="Script" uid="uid://vgv2nlv4m715" path="res://scripts/delete_logic.gd" id="4_i2nmt"]
 [ext_resource type="Script" uid="uid://c3iywyrk7o8yw" path="res://scripts/create_logic.gd" id="5_1v052"]
 [ext_resource type="Script" uid="uid://b3jvwrspygwuc" path="res://scripts/pointer_logic.gd" id="6_tj610"]
-[ext_resource type="PackedScene" uid="uid://c6mdxbco57qh2" path="res://entities/speaker.tscn" id="7_pkp4o"]
+[ext_resource type="PackedScene" uid="uid://c6mdxbco57qh2" path="res://entities/speaker_entity.tscn" id="7_pkp4o"]
 
 [node name="KnowledgeGraph" type="CanvasLayer" unique_id=1835673697]
 

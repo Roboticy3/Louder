@@ -4,8 +4,8 @@ const OBJECT_TYPE := "type"
 const OBJECT_SPEAKER := "speaker"
 
 const SPK_NAME := "speaker"
-const SPK_PRVT := "private"
-const SPK_NPC := "npc"
+const SPK_PBLC := "public"
+const SPK_OWND := "ownable"
 
 var speakers_by_name:Dictionary[String, Dictionary]
 
@@ -38,8 +38,14 @@ func unroll(objects:Array):
 	
 	print("registered speakers: ", speakers_by_name.keys())
 
-func is_npc(speaker:String):
+func is_ownable(speaker:String):
 	var s = speakers_by_name.get(speaker)
 	if s is Dictionary:
-		return true if s.get(SPK_NPC, true) else false
+		return true if s.get(SPK_OWND, false) else false
+	return true
+
+func is_public(speaker:String):
+	var s = speakers_by_name.get(speaker)
+	if s is Dictionary:
+		return true if s.get(SPK_PBLC, false) else false
 	return true

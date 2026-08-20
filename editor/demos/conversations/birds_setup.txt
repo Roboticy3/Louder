@@ -1,0 +1,2 @@
+setconversation res://demos/conversations/birds.json
+setspeakers 0 Geno Cage Good Inspiration Rhetoric Speed Evil 

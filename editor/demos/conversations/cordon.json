@@ -5,7 +5,7 @@
 			"\"I don't know\"",
 			"Say nothing"
 		],
-		"conversation_id": "64",
+		"conversation_id": "65",
 		"position_offset:x": "560.0",
 		"position_offset:y": "120.0",
 		"speaker": "Fosser",
@@ -13,7 +13,7 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "67",
+		"conversation_id": "68",
 		"position_offset:x": "1380.0",
 		"position_offset:y": "680.0",
 		"speaker": "Fosser",
@@ -21,7 +21,7 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "70",
+		"conversation_id": "71",
 		"position_offset:x": "1920.0",
 		"position_offset:y": "0.0",
 		"speaker": "Freya",
@@ -33,7 +33,7 @@
 			"\"Everything is going to be ok. How did you get here?\"",
 			"\"A knight?\""
 		],
-		"conversation_id": "74",
+		"conversation_id": "75",
 		"position_offset:x": "1420.0",
 		"position_offset:y": "-160.0",
 		"speaker": "Structure",
@@ -42,7 +42,7 @@
 	},
 	{
 		"auto": true,
-		"conversation_id": "84",
+		"conversation_id": "85",
 		"dice_level": "10.0",
 		"dice_skill": "Volition",
 		"position_offset:x": "4060.0",
@@ -55,7 +55,7 @@
 			"(Flare your gills)",
 			"(Leave it be)"
 		],
-		"conversation_id": "86",
+		"conversation_id": "87",
 		"position_offset:x": "4080.0",
 		"position_offset:y": "700.0",
 		"speaker": "Rhythm",
@@ -63,7 +63,7 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "87",
+		"conversation_id": "88",
 		"position_offset:x": "4480.0",
 		"position_offset:y": "800.0",
 		"speaker": "Benjamin",
@@ -71,7 +71,7 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "89",
+		"conversation_id": "90",
 		"position_offset:x": "80.0",
 		"position_offset:y": "120.0",
 		"speaker": "Fica",
@@ -80,7 +80,7 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "93",
+		"conversation_id": "94",
 		"position_offset:x": "4880.0",
 		"position_offset:y": "800.0",
 		"speaker": "Fosser",
@@ -88,7 +88,7 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "94",
+		"conversation_id": "95",
 		"position_offset:x": "1000.0",
 		"position_offset:y": "680.0",
 		"speaker": "Fica",
@@ -96,7 +96,7 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "95",
+		"conversation_id": "96",
 		"position_offset:x": "580.0",
 		"position_offset:y": "660.0",
 		"speaker": "Fosser",
@@ -104,14 +104,14 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "96",
+		"conversation_id": "97",
 		"position_offset:x": "560.0",
 		"position_offset:y": "-780.0",
 		"speaker": "Benjamin",
 		"type": "hub"
 	},
 	{
-		"conversation_id": "97",
+		"conversation_id": "98",
 		"position_offset:x": "997.964172363281",
 		"position_offset:y": "-792.313537597656",
 		"speaker": "Benjamin",
@@ -125,13 +125,13 @@
 			"(Choice 1)",
 			"(Choice 2)"
 		],
-		"conversation_id": "98",
+		"conversation_id": "99",
 		"position_offset:x": "1400.0",
 		"position_offset:y": "-840.0",
 		"type": "hub"
 	},
 	{
-		"conversation_id": "100",
+		"conversation_id": "101",
 		"position_offset:x": "1880.0",
 		"position_offset:y": "-2160.0",
 		"speaker": "Note",
@@ -140,14 +140,14 @@
 	},
 	{
 		"auto": true,
-		"conversation_id": "102",
+		"conversation_id": "103",
 		"position_offset:x": "160.0",
 		"position_offset:y": "660.0",
 		"speaker": "Freya",
 		"type": "hub"
 	},
 	{
-		"conversation_id": "103",
+		"conversation_id": "104",
 		"position_offset:x": "2320.0",
 		"position_offset:y": "-80.0",
 		"speaker": "Life",
@@ -155,7 +155,7 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "104",
+		"conversation_id": "105",
 		"position_offset:x": "2740.0",
 		"position_offset:y": "-80.0",
 		"speaker": "Fica",
@@ -168,13 +168,13 @@
 			"(Choice 0)",
 			"(Choice 1)"
 		],
-		"conversation_id": "105",
+		"conversation_id": "106",
 		"position_offset:x": "3200.0",
 		"position_offset:y": "-40.0",
 		"type": "hub"
 	},
 	{
-		"conversation_id": "106",
+		"conversation_id": "107",
 		"position_offset:x": "3660.0",
 		"position_offset:y": "-520.0",
 		"speaker": "Memory",
@@ -182,7 +182,7 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "107",
+		"conversation_id": "108",
 		"position_offset:x": "3660.0",
 		"position_offset:y": "-200.0",
 		"speaker": "Death",
@@ -191,20 +191,20 @@
 	},
 	{
 		"auto": true,
-		"conversation_id": "108",
+		"conversation_id": "109",
 		"position_offset:x": "4120.0",
 		"position_offset:y": "-260.0",
 		"type": "hub"
 	},
 	{
-		"conversation_id": "109",
+		"conversation_id": "110",
 		"position_offset:x": "1920.0",
 		"position_offset:y": "-380.0",
 		"speaker": "Freya",
 		"type": "hub"
 	},
 	{
-		"conversation_id": "110",
+		"conversation_id": "111",
 		"position_offset:x": "5060.0",
 		"position_offset:y": "220.0",
 		"speaker": "Note",
@@ -212,7 +212,7 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "111",
+		"conversation_id": "112",
 		"position_offset:x": "5320.0",
 		"position_offset:y": "800.0",
 		"speaker": "Fica",
@@ -221,7 +221,7 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "112",
+		"conversation_id": "113",
 		"position_offset:x": "4520.0",
 		"position_offset:y": "340.0",
 		"speaker": "Fosser",
@@ -230,7 +230,7 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "113",
+		"conversation_id": "114",
 		"position_offset:x": "1760.0",
 		"position_offset:y": "680.0",
 		"speaker": "Fosser",
@@ -238,7 +238,7 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "114",
+		"conversation_id": "115",
 		"position_offset:x": "2560.0",
 		"position_offset:y": "-1240.0",
 		"speaker": "Fosser",
@@ -247,7 +247,7 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "116",
+		"conversation_id": "117",
 		"position_offset:x": "980.0",
 		"position_offset:y": "-120.0",
 		"speaker": "Freya",
@@ -255,7 +255,7 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "117",
+		"conversation_id": "118",
 		"position_offset:x": "1921.57897949219",
 		"position_offset:y": "257.490905761719",
 		"speaker": "Benjamin",
@@ -267,13 +267,13 @@
 			"(Choice 0)",
 			"(Choice 1)"
 		],
-		"conversation_id": "118",
+		"conversation_id": "119",
 		"position_offset:x": "2340.0",
 		"position_offset:y": "520.0",
 		"type": "hub"
 	},
 	{
-		"conversation_id": "119",
+		"conversation_id": "120",
 		"position_offset:x": "3340.0",
 		"position_offset:y": "1180.0",
 		"speaker": "Note",
@@ -284,7 +284,7 @@
 		"choices": [
 			"\"Both of you need to leave. This is a restricted area.\" (point towards the plaza)"
 		],
-		"conversation_id": "120",
+		"conversation_id": "121",
 		"position_offset:x": "2780.0",
 		"position_offset:y": "260.0",
 		"speaker": "eath",
@@ -297,7 +297,7 @@
 			"\"Am I in trouble?\"",
 			"(Retreat into the cave behind you)"
 		],
-		"conversation_id": "121",
+		"conversation_id": "122",
 		"position_offset:x": "2780.0",
 		"position_offset:y": "1020.0",
 		"speaker": "Future",
@@ -310,20 +310,20 @@
 			"(Choice 0)",
 			"(Choice 1)"
 		],
-		"conversation_id": "122",
+		"conversation_id": "123",
 		"position_offset:x": "3640.0",
 		"position_offset:y": "540.0",
 		"type": "hub"
 	},
 	{
-		"conversation_id": "123",
+		"conversation_id": "124",
 		"position_offset:x": "3200.0",
 		"position_offset:y": "560.0",
 		"speaker": "Freya",
 		"type": "hub"
 	},
 	{
-		"conversation_id": "101",
+		"conversation_id": "125",
 		"dice_level": "6.0",
 		"dice_skill": "Planets",
 		"position_offset:x": "1880.0",
@@ -333,7 +333,7 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "99",
+		"conversation_id": "126",
 		"position_offset:x": "1880.0",
 		"position_offset:y": "-780.0",
 		"speaker": "Structure",
@@ -341,7 +341,7 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "115",
+		"conversation_id": "127",
 		"dice_level": "6.0",
 		"dice_skill": "Stars",
 		"position_offset:x": "1880.0",
@@ -351,99 +351,101 @@
 		"type": "hub"
 	},
 	{
+		"conversation_id": "128",
+		"position_offset:x": "1420.0",
+		"position_offset:y": "320.0",
+		"speaker": "Note",
+		"text": "\"A knight?\" doesn't feel responsive here because it appears while Freya is thinking. Will have to wait for async flow to be implemented to do this properly.",
+		"type": "hub"
+	},
+	{
 		"from_choice": "\"Knight Freya of the Ancient Oak.\"",
-		"from_id": "64",
-		"to_id": "116",
+		"from_id": "65",
+		"to_id": "117",
 		"type": "connection"
 	},
 	{
 		"from_choice": "\"I don't know\"",
-		"from_id": "64",
-		"to_id": "96",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "95",
-		"to_id": "94",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "116",
-		"to_id": "74",
-		"type": "connection"
-	},
-	{
-		"from_choice": "\"This area is restricted. Come with me.\"",
-		"from_id": "74",
-		"to_id": "109",
-		"type": "connection"
-	},
-	{
-		"from_choice": "\"Everything is going to be ok. How did you get here?\"",
-		"from_id": "74",
-		"to_id": "70",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "94",
-		"to_id": "67",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "67",
-		"to_id": "113",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "84",
-		"to_id": "112",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Choice 0)",
-		"from_id": "122",
-		"to_id": "84",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Choice 1)",
-		"from_id": "122",
-		"to_id": "86",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Leave it be)",
-		"from_id": "86",
-		"to_id": "112",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Flare your gills)",
-		"from_id": "86",
-		"to_id": "87",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "87",
-		"to_id": "93",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "93",
-		"to_id": "111",
+		"from_id": "65",
+		"to_id": "97",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
 		"from_id": "96",
-		"to_id": "97",
+		"to_id": "95",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "117",
+		"to_id": "75",
+		"type": "connection"
+	},
+	{
+		"from_choice": "\"This area is restricted. Come with me.\"",
+		"from_id": "75",
+		"to_id": "110",
+		"type": "connection"
+	},
+	{
+		"from_choice": "\"Everything is going to be ok. How did you get here?\"",
+		"from_id": "75",
+		"to_id": "71",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "95",
+		"to_id": "68",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "68",
+		"to_id": "114",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "85",
+		"to_id": "113",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 0)",
+		"from_id": "123",
+		"to_id": "85",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 1)",
+		"from_id": "123",
+		"to_id": "87",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Leave it be)",
+		"from_id": "87",
+		"to_id": "113",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Flare your gills)",
+		"from_id": "87",
+		"to_id": "88",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "88",
+		"to_id": "94",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "94",
+		"to_id": "112",
 		"type": "connection"
 	},
 	{
@@ -454,49 +456,49 @@
 	},
 	{
 		"from_choice": "",
-		"from_id": "101",
-		"to_id": "64",
+		"from_id": "98",
+		"to_id": "99",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
-		"from_id": "115",
-		"to_id": "64",
+		"from_id": "125",
+		"to_id": "65",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
-		"from_id": "89",
-		"to_id": "64",
+		"from_id": "127",
+		"to_id": "65",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
-		"from_id": "99",
-		"to_id": "64",
+		"from_id": "90",
+		"to_id": "65",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "126",
+		"to_id": "65",
 		"type": "connection"
 	},
 	{
 		"from_choice": "Say nothing",
-		"from_id": "64",
-		"to_id": "102",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "102",
-		"to_id": "95",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "70",
+		"from_id": "65",
 		"to_id": "103",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
 		"from_id": "103",
+		"to_id": "96",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "71",
 		"to_id": "104",
 		"type": "connection"
 	},
@@ -507,25 +509,19 @@
 		"type": "connection"
 	},
 	{
-		"from_choice": "(Choice 0)",
+		"from_choice": "",
 		"from_id": "105",
 		"to_id": "106",
 		"type": "connection"
 	},
 	{
-		"from_choice": "(Choice 1)",
-		"from_id": "105",
+		"from_choice": "(Choice 0)",
+		"from_id": "106",
 		"to_id": "107",
 		"type": "connection"
 	},
 	{
-		"from_choice": "",
-		"from_id": "107",
-		"to_id": "108",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
+		"from_choice": "(Choice 1)",
 		"from_id": "106",
 		"to_id": "108",
 		"type": "connection"
@@ -533,73 +529,85 @@
 	{
 		"from_choice": "",
 		"from_id": "108",
-		"to_id": "74",
+		"to_id": "109",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "107",
+		"to_id": "109",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
 		"from_id": "109",
-		"to_id": "114",
-		"type": "connection"
-	},
-	{
-		"from_choice": "\"A knight?\"",
-		"from_id": "74",
-		"to_id": "117",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Choice 0)",
-		"from_id": "118",
-		"to_id": "120",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Choice 1)",
-		"from_id": "118",
-		"to_id": "121",
+		"to_id": "75",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
-		"from_id": "117",
-		"to_id": "118",
-		"type": "connection"
-	},
-	{
-		"from_choice": "\"Both of you need to leave. This is a restricted area.\" (point towards the plaza)",
-		"from_id": "120",
-		"to_id": "123",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "123",
-		"to_id": "122",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Choice 0)",
-		"from_id": "98",
+		"from_id": "110",
 		"to_id": "115",
 		"type": "connection"
 	},
 	{
+		"from_choice": "\"A knight?\"",
+		"from_id": "75",
+		"to_id": "118",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 0)",
+		"from_id": "119",
+		"to_id": "121",
+		"type": "connection"
+	},
+	{
 		"from_choice": "(Choice 1)",
-		"from_id": "98",
-		"to_id": "101",
+		"from_id": "119",
+		"to_id": "122",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "118",
+		"to_id": "119",
+		"type": "connection"
+	},
+	{
+		"from_choice": "\"Both of you need to leave. This is a restricted area.\" (point towards the plaza)",
+		"from_id": "121",
+		"to_id": "124",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "124",
+		"to_id": "123",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 0)",
+		"from_id": "99",
+		"to_id": "127",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 1)",
+		"from_id": "99",
+		"to_id": "125",
 		"type": "connection"
 	},
 	{
 		"from_choice": "(Choice 2)",
-		"from_id": "98",
-		"to_id": "99",
+		"from_id": "99",
+		"to_id": "126",
 		"type": "connection"
 	},
 	{
-		"position:x": "921.447143554688",
-		"position:y": "-1248.85412597656",
+		"position:x": "846.22119140625",
+		"position:y": "-120.012390136719",
 		"type": "camera",
-		"zoom": "0.66354334354401"
+		"zoom": "0.54838281869888"
 	}
 ]

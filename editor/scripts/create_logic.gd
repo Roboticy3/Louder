@@ -6,7 +6,7 @@ extends Node
 @export var type_dropdown:OptionButton
 
 const HUB_SCENE := preload("res://entities/hub.tscn")
-const SPEAKER_SCENE := preload("res://entities/speaker.tscn")
+const SPEAKER_SCENE := preload("res://entities/speaker_entity.tscn")
 
 var spawns_on_point := 0
 
