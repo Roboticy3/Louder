@@ -80,7 +80,7 @@ func setconversation(command:Array) -> CommandError:
 	output_stream.text += "loaded conversation from " + path + "\n"
 	return CommandError.OK
 
-func exec(command:Array):
+func execute(command:Array):
 	if command.size() < 2: return CommandError.SYNTAX
 	
 	var f := FileAccess.open(command[1], FileAccess.READ)
