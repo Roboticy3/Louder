@@ -20,6 +20,7 @@ func _ready() -> void:
 		update()
 
 signal updated()
+signal show_end()
 func update():
 	if !is_instance_valid(simulator):
 		push_error("Updated PSController ", self, " with no simulator.")
@@ -39,6 +40,8 @@ func update():
 	data[CTRL_THNK] = _filter_thinking()
 	
 	updated.emit()
+	if get_thinking().is_empty() and get_choices().is_empty():
+		show_end.emit()
 	
 func is_active():
 	return !data.is_empty()
@@ -94,3 +97,7 @@ func get_thinking() -> Array:
 	if thinking is Array:
 		return thinking
 	return []
+
+func end():
+	#TODO Disconnect from the simulator
+	pass
