@@ -271,10 +271,10 @@ func warp(new_position:=position) -> bool:
 	return false
 
 func _fill_dominant_on_auto():
-	var w_txtc = get_current_property(HUB_TXTC)
+	var w_txtc = conversation.hubs_by_id[position].get(HUB_TXTC)
 	if w_txtc:
 		dominant[HUB_TXTC] = w_txtc
-		var w_spkr = get_current_property(HUB_SPKR)
+		var w_spkr = conversation.hubs_by_id[position].get(HUB_SPKR)
 		if w_spkr:
 			dominant[HUB_SPKR] = w_spkr
 
