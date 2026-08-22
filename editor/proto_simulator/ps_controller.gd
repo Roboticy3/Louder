@@ -25,12 +25,12 @@ func update():
 		push_error("Updated PSController ", self, " with no simulator.")
 		return
 	
-	if !_filter_visible_node(simulator.get_position()):
-		return
+	var text_visible := _filter_visible_node(simulator.get_position())
 	
-	data[PSSimulator.HUB_SPKR] = simulator.get_current_property(PSSimulator.HUB_SPKR)
-	data[PSSimulator.HUB_TXTC] = simulator.get_current_property(PSSimulator.HUB_TXTC)
-	data[PSSimulator.HUB_CHCS] = simulator.list_choices_data(_filter_valid_choice)
+	if text_visible:
+		data[PSSimulator.HUB_SPKR] = simulator.get_current_property(PSSimulator.HUB_SPKR)
+		data[PSSimulator.HUB_TXTC] = simulator.get_current_property(PSSimulator.HUB_TXTC)
+	data[PSSimulator.HUB_CHCS] = simulator.list_choices_data(_filter_valid_choice) if text_visible else []
 	
 	#sync with the rest of the controllers getting their choices
 	await get_tree().process_frame
