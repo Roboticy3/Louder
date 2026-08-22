@@ -10,6 +10,7 @@ const HUB_DLVL := "dice_level"
 const HUB_SCHK := "start"
 const HUB_ACHK := "auto"
 const HUB_CHCS := "choices"
+const HUB_BRCH := "branch"
 
 const CON_TOID := "to_id"
 const CON_FCHC := "from_choice"
@@ -63,6 +64,12 @@ func get_property(from_position:int, property:String):
 
 func get_current_property(property:String):
 	return get_property(position, property)
+
+func merge_current_into(data:Dictionary):
+	var h:Dictionary = conversation.hubs_by_id.get(position, {})
+	for k in h:
+		if h[k]:
+			data[k] = h[k]
 
 func roll_dice() -> int:
 	return (randi() % 6) + (randi() % 6) + 2

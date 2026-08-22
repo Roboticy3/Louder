@@ -29,8 +29,8 @@ func update():
 	var text_visible := _filter_visible_node(simulator.get_position())
 	
 	if text_visible:
-		data[PSSimulator.HUB_SPKR] = simulator.get_current_property(PSSimulator.HUB_SPKR)
-		data[PSSimulator.HUB_TXTC] = simulator.get_current_property(PSSimulator.HUB_TXTC)
+		simulator.merge_current_into(data)
+		
 	data[PSSimulator.HUB_CHCS] = simulator.list_choices_data(_filter_valid_choice) if text_visible else []
 	
 	#sync with the rest of the controllers getting their choices
@@ -97,6 +97,9 @@ func get_thinking() -> Array:
 	if thinking is Array:
 		return thinking
 	return []
+
+func get_branch() -> String:
+	return data.get(PSSimulator.HUB_BRCH, "")
 
 func end():
 	#TODO Disconnect from the simulator

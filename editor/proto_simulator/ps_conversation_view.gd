@@ -33,6 +33,8 @@ func _collect_ui_components(node: Node, components: Array[Node]) -> void:
 func update() -> void:
 	for component in _components:
 		if component is RichTextLabel:
-			component.text = controller.data.get(component.name)
+			var text = controller.data.get(component.name)
+			if text is String:
+				component.text = text
 		elif component is PSChoicesContainer:
 			component.set_choices(controller.get_choices(), controller.get_thinking())

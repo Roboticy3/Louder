@@ -24,6 +24,7 @@ var load_dialog:FileDialog
 
 @export var disable_save := false
 @export var disable_load := false
+@export var disable_new := false
 
 func _ready():
 	text = "File"
@@ -42,7 +43,7 @@ func _ready():
 	popup.set_item_disabled(SAVE, disable_save)
 	popup.set_item_disabled(SAVE_AS, disable_save)
 	popup.set_item_disabled(LOAD, disable_load)
-	popup.set_item_disabled(NEW, disable_load)
+	popup.set_item_disabled(NEW, disable_new)
 
 	save_as_dialog = _make_dialog("Save As")
 	save_as_dialog.file_selected.connect(save_project_to_file)
@@ -78,7 +79,7 @@ func _on_id_pressed(id:int):
 		LOAD:
 			load_dialog.show()
 		NEW:
-			clear_project()
+			new_project()
 
 func _on_save_pressed():
 	if has_current_project():
@@ -190,6 +191,10 @@ func load_project_from_file(path:String, make_current:=true) -> bool:
 	print("loaded conversation from ", path, " with ", hubs_created.size(), " hubs and ", connections.size(), " edges!")
 
 	return true
+
+func new_project():
+	if disable_new: return
+	clear_project()
 
 func clear_project():
 	for child in editor.get_children():
