@@ -35,4 +35,4 @@ func update() -> void:
 		if component is RichTextLabel:
 			component.text = controller.data.get(component.name)
 		elif component is PSChoicesContainer:
-			component.set_choices(controller.get_choices())
+			component.set_choices(controller.get_choices(), controller.get_thinking())

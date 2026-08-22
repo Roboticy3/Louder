@@ -1,5 +1,7 @@
 class_name PSController extends Node
 
+const CTRL_THNK := "thinking"
+
 @export var group := &"ps_controller"
 @export var simulator:PSSimulator
 @export var config:PSConfig
@@ -29,6 +31,13 @@ func update():
 	data[PSSimulator.HUB_SPKR] = simulator.get_current_property(PSSimulator.HUB_SPKR)
 	data[PSSimulator.HUB_TXTC] = simulator.get_current_property(PSSimulator.HUB_TXTC)
 	data[PSSimulator.HUB_CHCS] = simulator.list_choices_data(_filter_valid_choice)
+	
+	#sync with the rest of the controllers getting their choices
+	await get_tree().process_frame
+	
+	#now we have enough info to see who's thinking
+	data[CTRL_THNK] = _filter_thinking()
+	
 	updated.emit()
 	
 func is_active():
@@ -69,4 +78,19 @@ func get_choices() -> Array:
 	var choices = data.get(PSSimulator.HUB_CHCS)
 	if choices is Array:
 		return choices
+	return []
+
+func _filter_thinking() -> Array:
+	var thinking := {}
+	for controller in get_tree().get_nodes_in_group(group):
+		if controller == self: continue
+		if controller is PSController and !controller.get_choices().is_empty():
+			for speaker in controller.speak_as:
+				thinking[speaker] = true
+	return thinking.keys()
+
+func get_thinking() -> Array:
+	var thinking = data.get(CTRL_THNK)
+	if thinking is Array:
+		return thinking
 	return []
