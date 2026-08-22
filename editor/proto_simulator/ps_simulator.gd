@@ -9,6 +9,8 @@ const HUB_DSKL := "dice_skill"
 const HUB_DLVL := "dice_level"
 const HUB_SCHK := "start"
 const HUB_ACHK := "auto"
+const HUB_CHCS := "choices"
+const HUB_BRCH := "branch"
 
 const CON_TOID := "to_id"
 const CON_FCHC := "from_choice"
@@ -26,13 +28,15 @@ var e := Expression.new()
 var recessive := {}
 var dominant := {}
 
+@export var controller_group := &"ps_controller"
+
 ### Getters
 ## These functions do not change the state of the simulator.
 
 func get_position() -> int:
 	return position
 
-func list_choices(filter=null, from_position:=position, evaluate_conditions:=true) -> Array:
+func list_choices_data(filter=null, from_position:=position, evaluate_conditions:=true) -> Array:
 	var choices := conversation.get_connections_from(from_position)
 	if evaluate_conditions: choices = _evaluate_choices(choices)
 	if filter is Callable:
@@ -60,6 +64,12 @@ func get_property(from_position:int, property:String):
 
 func get_current_property(property:String):
 	return get_property(position, property)
+
+func merge_current_into(data:Dictionary):
+	var h:Dictionary = conversation.hubs_by_id.get(position, {})
+	for k in h:
+		if h[k]:
+			data[k] = h[k]
 
 func roll_dice() -> int:
 	return (randi() % 6) + (randi() % 6) + 2
@@ -91,7 +101,7 @@ func _ready():
 		state = PSConversationState.new()
 	warp(start)
 	
-	choice_made.emit()
+	update_controllers()
 
 func _reset_state():
 	state = PSConversationState.new()
@@ -221,7 +231,6 @@ func _roll_into_outcome(outcome_variable:String, skill_level:int) -> void:
 ## the node linked by the choice made. If the resulting node has AutoCheck
 ## enabled, traversal will continue recursively until a non-auto node is
 ## reached.
-signal choice_made()
 func traverse(choice_text: String, filter=null) -> bool:
 	recessive = {}
 	dominant = {}
@@ -241,11 +250,11 @@ func traverse(choice_text: String, filter=null) -> bool:
 		_fill_dominant_on_auto()
 		return traverse_index(0,filter)
 	
-	choice_made.emit()
+	update_controllers()
 	return w
 
 func traverse_index(i: int, filter=null) -> bool:
-	var choices := list_choices(filter)
+	var choices := list_choices_data(filter)
 	if i < 0 or i >= choices.size():
 		push_error("Traversed to choice index out of bounds: ", i)
 		return false
@@ -256,7 +265,7 @@ func traverse_index(i: int, filter=null) -> bool:
 		_fill_dominant_on_auto()
 		return traverse_index(0, filter)
 	
-	choice_made.emit()
+	update_controllers()
 	return w
 
 func warp(new_position:=position) -> bool:
@@ -269,9 +278,12 @@ func warp(new_position:=position) -> bool:
 	return false
 
 func _fill_dominant_on_auto():
-	var w_txtc = get_current_property(HUB_TXTC)
+	var w_txtc = conversation.hubs_by_id[position].get(HUB_TXTC)
 	if w_txtc:
 		dominant[HUB_TXTC] = w_txtc
-		var w_spkr = get_current_property(HUB_SPKR)
+		var w_spkr = conversation.hubs_by_id[position].get(HUB_SPKR)
 		if w_spkr:
 			dominant[HUB_SPKR] = w_spkr
+
+func update_controllers():
+	get_tree().call_group(controller_group, &"update")

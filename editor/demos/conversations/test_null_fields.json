@@ -1,0 +1,43 @@
+[
+	{
+		"conversation_id": "0",
+		"position_offset:x": "46.7358245849609",
+		"position_offset:y": "389.503326416016",
+		"speaker": "I'm a speaker",
+		"start": true,
+		"text": "I'm some text",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "2",
+		"position_offset:x": "880.911560058594",
+		"position_offset:y": "356.982330322266",
+		"speaker": "Updating speaker without text!",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "1",
+		"position_offset:x": "460.0",
+		"position_offset:y": "360.0",
+		"text": "Updating text without speaker!",
+		"type": "hub"
+	},
+	{
+		"from_choice": "",
+		"from_id": "0",
+		"to_id": "1",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "1",
+		"to_id": "2",
+		"type": "connection"
+	},
+	{
+		"position:x": "-46.0",
+		"position:y": "40.0",
+		"type": "camera",
+		"zoom": "0.88317602872849"
+	}
+]

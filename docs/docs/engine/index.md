@@ -16,8 +16,8 @@ Dialog is loaded from a project file produced by the editor (see [editor](/edito
 !TODO! Rename Expressions to Statements and group Conditions and Statements under "Commands". Also, the last rule in 7 about choice text being used in absence of text content is not yet implemented. [32](https://github.com/Roboticy3/Louder/issues/32)
 
  1. Find a node with the "start" property set to true. !TODO! A starting node can also be selected by passing in specific tags. The first node with matching substrings in their "Tags" property will be used. [33](https://github.com/Roboticy3/Louder/issues/33)
- 3. The "Statements" property of the starting node is evaluated (see Commands). 
- 4. A choice can be selected from the choices available on the starting node. Each choice can correspond to another node in the conversation. Choices are filtered by whether the node they point to exists, and whether the "Conditions" property of the node is evaluated to true or false. As long as each choice corresponds to at most one node, this is an unambiguous decision. Choices can be selected by numeric index by which they appear after filtering, or by their string contents.
+ 3. The "statements" property of the starting node is evaluated (see Commands). 
+ 4. A choice can be selected from the choices available on the starting node. Each choice can correspond to another node in the conversation. Choices are filtered by whether the node they point to exists, and whether the "conditions" property of the node is evaluated to true or false. As long as each choice corresponds to at most one node, this is an unambiguous decision. Choices can be selected by numeric index by which they appear after filtering, or by their string contents.
  5. If the node of a choice has the "dice_skill" property filled by a valid Identifier with an Integer value, that value is added to a 2d6 dice roll. If this dice roll is greater than or equal to the node's "dice_level" property, the roll is treated as a true Condition, otherwise, it's treated as false and the choice becomes inaccessible.
  6. Once a choice is selected, the simulator travels to the associated node. If the starting node has the "auto" property set to true, the choice index 0 is selected automatically if available.
  7. When the simulator travels to another node, the process repeats, either waiting for more choices from the user to proceed or proceeding automatically as long as the simulator is traveling through "auto" nodes. If the node has a blank "text" field, the text of the previous choice is used.
@@ -33,9 +33,9 @@ Here are the syntax elements for commands:
 
 | Element | Name | Availability | Description | Example | 
 |---|---|---|---|---|
-| name starting with a-z, A-Z or _ and containing only a-z, A-Z, 0-9 or _ | Identifier | Conditions and Expressions | The name of a variable. If the variable has not been defined, it is given a default value of 0 | `x` or `_awesome` are Identifiers by `2head` is not | 
-| +,-,*,/,%,(,) | Basic Math | Conditions and Expressions | Basic math symbols. In order of priority: Addition + Subtraction - Multiplication * Division / Modulo by an Integer % Open Group ( Close Group ) | `(x + y) * z + w` is the sum of x,y, multiplied by z, then added to w | 
-| =,+=,-=,++,\-\- | Assignment | Expressions only | Assignment operators. Must have an Identifier on the left and an Expression on the right. = Assigns the value of Expression to Identifier. +=, -= Add/Subtract the value of Expression from Identifier. ++/-- Increment/decrement the Identifier by 1. | `not_yet_defined_ident++` will define `not_yet_defined_ident` with the value 1 | 
+| name starting with a-z, A-Z or _ and containing only a-z, A-Z, 0-9 or _ | Identifier | Conditions and Statements | The name of a variable. If the variable has not been defined, it is given a default value of 0 | `x` or `_awesome` are Identifiers by `2head` is not | 
+| +,-,*,/,%,(,) | Basic Math | Conditions and Statements | Basic math symbols. In order of priority: Addition + Subtraction - Multiplication * Division / Modulo by an Integer % Open Group ( Close Group ) | `(x + y) * z + w` is the sum of x,y, multiplied by z, then added to w | 
+| =,+=,-=,++,\-\- | Assignment | Statements only | Assignment operators. Must have an Identifier on the left and an Expression on the right. = Assigns the value of Expression to Identifier. +=, -= Add/Subtract the value of Expression from Identifier. ++/-- Increment/decrement the Identifier by 1. | `not_yet_defined_ident++` will define `not_yet_defined_ident` with the value 1 | 
 | \\n (newline) | End | End of a command | In the editor, multiple commands can be stacked using multiple lines of code | 
 
 Here are the types of data which can be stored by an identifier. Types are treated loosely, meaning they can change without causing errors:
@@ -65,3 +65,13 @@ Additionally, speakers can be flagged as "Private". When dialogue enters a node 
 Only if *all* clients have no remaining dialogue options does the simulator send an "end" signal to all clients.
 
 The engine provides functions to tell a client who, if anyone, is thinking. And the effect of these rules on the basic rules is otherwise subtractive- taking the original behavior of showing dialogue and choices and simply not showing them sometimes.
+
+### Asynchronous Multiple Speakers
+Dialogue may specify a "branch" property with a String value. When dialogue is shown to a client with this property, they are given their own flow by the simulator, separate from the rest of the conversation. If a flow has already been created with the same branch name, those clients' flows are instead merged with that branch. 
+
+This pattern allows for dialogue to split off into seemingly separate conversations.
+
+A client can also deploy a "spectator", who sees all branches but does not interact with the conversation. This is the strategy to dispatch dialogue bubbles to the client so they don't miss out on other parts of the conversation even when they have gone off on their own branch.
+
+### User Provided Functions
+Conditions and Statements can contain functions in the form `my_function(argument1, argument2, ...)++` where `argument1`, `argument2` and so on are each expressions and `++` can be any unary operator (only available in statements). This can be handled by the user in the form of a callback `int user_callback(function_name, char** args, int argc, char* operator)` and handled however the user pleases. For conditions, the integer returned by the function is used as the value. For statements, the operator can be read by the user to change their game state accordingly.
