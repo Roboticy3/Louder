@@ -24,9 +24,6 @@ func _ready() -> void:
 	#is simulator ready to feed choices?
 	if simulator.is_node_ready():
 		update()
-	simulator.ready.connect(update, CONNECT_DEFERRED)
-	
-	simulator.choice_made.connect(update, CONNECT_DEFERRED)
 
 func _collect_ui_components(node: Node, components: Array[Node]) -> void:
 	for child in node.get_children():

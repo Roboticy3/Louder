@@ -12,10 +12,12 @@ func _ready() -> void:
 		return
 	if not simulator.is_node_ready():
 		await simulator.ready
-	simulator.choice_made.connect(update)
+	add_to_group(&"ps_controller")
 	update()
 
 func update() -> void:
+	await get_tree().process_frame
+
 	if not simulator:
 		text = "No simulator assigned."
 		return

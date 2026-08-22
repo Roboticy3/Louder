@@ -45,7 +45,7 @@ func warp(command:Array) -> CommandError:
 	
 	if simulator.warp(int(command[1])):
 		output_stream.text += "warped to position " + str(command[1]) + "\n"
-		simulator.choice_made.emit()
+		simulator.update_controllers()
 		return CommandError.OK
 	else:
 		output_stream.text += "failed to warp to position " + str(command[1]) + "\n"

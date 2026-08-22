@@ -26,6 +26,8 @@ var e := Expression.new()
 var recessive := {}
 var dominant := {}
 
+@export var controller_group := &"ps_controller"
+
 ### Getters
 ## These functions do not change the state of the simulator.
 
@@ -91,7 +93,7 @@ func _ready():
 		state = PSConversationState.new()
 	warp(start)
 	
-	choice_made.emit()
+	update_controllers()
 
 func _reset_state():
 	state = PSConversationState.new()
@@ -221,7 +223,6 @@ func _roll_into_outcome(outcome_variable:String, skill_level:int) -> void:
 ## the node linked by the choice made. If the resulting node has AutoCheck
 ## enabled, traversal will continue recursively until a non-auto node is
 ## reached.
-signal choice_made()
 func traverse(choice_text: String, filter=null) -> bool:
 	recessive = {}
 	dominant = {}
@@ -241,7 +242,7 @@ func traverse(choice_text: String, filter=null) -> bool:
 		_fill_dominant_on_auto()
 		return traverse_index(0,filter)
 	
-	choice_made.emit()
+	update_controllers()
 	return w
 
 func traverse_index(i: int, filter=null) -> bool:
@@ -256,7 +257,7 @@ func traverse_index(i: int, filter=null) -> bool:
 		_fill_dominant_on_auto()
 		return traverse_index(0, filter)
 	
-	choice_made.emit()
+	update_controllers()
 	return w
 
 func warp(new_position:=position) -> bool:
@@ -275,3 +276,6 @@ func _fill_dominant_on_auto():
 		var w_spkr = get_current_property(HUB_SPKR)
 		if w_spkr:
 			dominant[HUB_SPKR] = w_spkr
+
+func update_controllers():
+	get_tree().call_group(controller_group, &"update")
