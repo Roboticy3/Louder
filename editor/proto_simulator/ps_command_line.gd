@@ -51,22 +51,6 @@ func warp(command:Array) -> CommandError:
 		output_stream.text += "failed to warp to position " + str(command[1]) + "\n"
 		return CommandError.SIMULATOR
 
-func setspeakers(command:Array) -> CommandError:
-	if command.size() < 3: return CommandError.SYNTAX
-	
-	if !str(command[1]).is_valid_int(): return CommandError.SYNTAX
-	
-	var vi = int(command[1])
-	var views := get_tree().get_nodes_in_group(&"ps_conversation_view")
-	if vi < 0 || vi >= views.size(): return CommandError.INDEX
-	
-	var speakers = views[vi].get("my_speakers")
-	views[vi].set("my_speakers", command.slice(2))
-	views[vi].call_deferred("update")
-	output_stream.text += "changed my_speakers on viewer " + str(vi) + " from " + str(speakers) + " to " + str(command.slice(2)) + "\n"
-	
-	return CommandError.OK
-
 signal request_change_conversation(path:String)
 func setconversation(command:Array) -> CommandError:
 	if command.size() < 2: return CommandError.SYNTAX
