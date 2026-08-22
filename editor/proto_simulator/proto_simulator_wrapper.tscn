@@ -28,10 +28,25 @@ speak_as = PackedStringArray("Geno")
 listen_to = PackedStringArray("Cage", "Good", "Inspiration", "Rhetoric", "Speed", "Evil")
 metadata/_custom_type_script = "uid://cbiclxd6bqxa4"
 
+[node name="PSControllerFreya" type="Node" parent="PSSimulator" unique_id=935159503 node_paths=PackedStringArray("simulator", "config")]
+script = ExtResource("3_a37o0")
+simulator = NodePath("..")
+config = NodePath("../../PSConfig")
+speak_as = PackedStringArray("Freya")
+listen_to = PackedStringArray("Volition", "Structure", "Sight", "Strategy", "Life", "Death")
+metadata/_custom_type_script = "uid://cbiclxd6bqxa4"
+
+[node name="PSControllerBenjamin" type="Node" parent="PSSimulator" unique_id=259410277 node_paths=PackedStringArray("simulator", "config")]
+script = ExtResource("3_a37o0")
+simulator = NodePath("..")
+config = NodePath("../../PSConfig")
+speak_as = PackedStringArray("Benjamin")
+listen_to = PackedStringArray("Heart", "Stars", "Planets", "Memory", "Rhythm", "Future")
+metadata/_custom_type_script = "uid://cbiclxd6bqxa4"
+
 [node name="PSConversationLoader" type="Node" parent="." unique_id=1703789268 node_paths=PackedStringArray("simulator")]
 script = ExtResource("3_hwksk")
 simulator = NodePath("../PSSimulator")
-load_now = "res://demos/conversations/birds.json"
 
 [node name="PSConfig" type="Node" parent="." unique_id=494521167]
 script = ExtResource("4_63mts")
@@ -102,15 +117,40 @@ script = ExtResource("6_6fql2")
 simulator = NodePath("../../../../../../../PSSimulator")
 output_stream = NodePath("../CodeEdit")
 
-[node name="Panel" type="Panel" parent="CanvasLayer/HSplitContainer/VSplitContainer" unique_id=708492661]
+[node name="FlowContainer" type="GridContainer" parent="CanvasLayer/HSplitContainer/VSplitContainer" unique_id=906641710]
+layout_mode = 2
+size_flags_vertical = 3
+columns = 2
+
+[node name="Panel" type="Panel" parent="CanvasLayer/HSplitContainer/VSplitContainer/FlowContainer" unique_id=708492661]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Control" parent="CanvasLayer/HSplitContainer/VSplitContainer/Panel" unique_id=644629500 node_paths=PackedStringArray("controller") groups=["conversation_changed_listener"] instance=ExtResource("4_hwksk")]
+[node name="Control" parent="CanvasLayer/HSplitContainer/VSplitContainer/FlowContainer/Panel" unique_id=644629500 node_paths=PackedStringArray("controller") groups=["conversation_changed_listener"] instance=ExtResource("4_hwksk")]
 layout_mode = 1
 size_flags_horizontal = 3
-controller = NodePath("../../../../../PSSimulator/PSControllerGeno")
+controller = NodePath("../../../../../../PSSimulator/PSControllerGeno")
+
+[node name="Panel2" type="Panel" parent="CanvasLayer/HSplitContainer/VSplitContainer/FlowContainer" unique_id=991561153]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Control" parent="CanvasLayer/HSplitContainer/VSplitContainer/FlowContainer/Panel2" unique_id=865123221 node_paths=PackedStringArray("controller") groups=["conversation_changed_listener"] instance=ExtResource("4_hwksk")]
+layout_mode = 1
+size_flags_horizontal = 3
+controller = NodePath("../../../../../../PSSimulator/PSControllerFreya")
+
+[node name="Panel3" type="Panel" parent="CanvasLayer/HSplitContainer/VSplitContainer/FlowContainer" unique_id=208183035]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Control" parent="CanvasLayer/HSplitContainer/VSplitContainer/FlowContainer/Panel3" unique_id=785671189 node_paths=PackedStringArray("controller") groups=["conversation_changed_listener"] instance=ExtResource("4_hwksk")]
+layout_mode = 1
+size_flags_horizontal = 3
+controller = NodePath("../../../../../../PSSimulator/PSControllerBenjamin")
 
 [connection signal="request_change_conversation" from="CanvasLayer/HSplitContainer/VSplitContainer/Grid/Control/VBoxContainer/CodeEdit2" to="PSConversationLoader" method="_on_file_selected"]
 

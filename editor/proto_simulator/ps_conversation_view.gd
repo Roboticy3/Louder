@@ -3,6 +3,7 @@ extends Node
 @export var group := &"ps_conversation_view"
 
 @export var controller: PSController
+@export var debug_speaker_label: Label
 
 var _components: Array[Node] = []
 
@@ -14,7 +15,13 @@ func _ready() -> void:
 		if controller.is_active():
 			update()
 		controller.updated.connect(update)
-
+	
+	if debug_speaker_label:
+		if controller:
+			debug_speaker_label.text = ",".join(controller.speak_as)
+		else:
+			debug_speaker_label.text = "(no speakers connected)"
+	
 func _collect_ui_components(node: Node, components: Array[Node]) -> void:
 	for child in node.get_children():
 		if child.is_in_group("ui_component"):
