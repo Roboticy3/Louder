@@ -9,6 +9,7 @@ const HUB_DSKL := "dice_skill"
 const HUB_DLVL := "dice_level"
 const HUB_SCHK := "start"
 const HUB_ACHK := "auto"
+const HUB_CHCS := "choices"
 
 const CON_TOID := "to_id"
 const CON_FCHC := "from_choice"
@@ -34,7 +35,7 @@ var dominant := {}
 func get_position() -> int:
 	return position
 
-func list_choices(filter=null, from_position:=position, evaluate_conditions:=true) -> Array:
+func list_choices_data(filter=null, from_position:=position, evaluate_conditions:=true) -> Array:
 	var choices := conversation.get_connections_from(from_position)
 	if evaluate_conditions: choices = _evaluate_choices(choices)
 	if filter is Callable:
@@ -246,7 +247,7 @@ func traverse(choice_text: String, filter=null) -> bool:
 	return w
 
 func traverse_index(i: int, filter=null) -> bool:
-	var choices := list_choices(filter)
+	var choices := list_choices_data(filter)
 	if i < 0 or i >= choices.size():
 		push_error("Traversed to choice index out of bounds: ", i)
 		return false

@@ -27,7 +27,7 @@ func update() -> void:
 	if show_position:
 		parts.append("[b]Position:[/b] %s" % str(simulator.get_position()))
 	if show_choices:
-		var raw_choices := simulator.list_choices(null, simulator.position, false)
+		var raw_choices := simulator.list_choices_data(null, simulator.position, false)
 		var choice_texts: PackedStringArray = []
 		for c in raw_choices:
 			choice_texts.append(str(c.get("from_choice", "?")))
