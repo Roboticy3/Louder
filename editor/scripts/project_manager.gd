@@ -10,7 +10,7 @@ const NEW := 3
 var current_project_path:String
 signal current_project_changed()
 
-const HUB_SCENE := preload("res://entities/hub.tscn")
+const HUB_SCENE := preload("res://entities/hub_entity.tscn")
 const SPEAKER_SCENE := preload("res://entities/speaker_entity.tscn")
 
 const OBJECT_TYPE := "type"

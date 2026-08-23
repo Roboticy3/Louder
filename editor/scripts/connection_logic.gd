@@ -6,7 +6,7 @@ extends Node
 
 @export var port_change_listener_group := &"port_change_listener"
 
-const HUB_SCENE := preload("res://entities/hub.tscn")
+const HUB_SCENE := preload("res://entities/hub_entity.tscn")
 	
 func _ready() -> void:
 	add_to_group(port_change_listener_group)

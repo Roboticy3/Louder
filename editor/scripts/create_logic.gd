@@ -5,7 +5,8 @@ extends Node
 @export var debugger:OnScreenDebugger
 @export var type_dropdown:OptionButton
 
-const HUB_SCENE := preload("res://entities/hub.tscn")
+const HUB_SCENE := preload("res://entities/hub_entity.tscn")
+const CHOICE_SCENE := preload("res://entities/choice_entity.tscn")
 const SPEAKER_SCENE := preload("res://entities/speaker_entity.tscn")
 
 var spawns_on_point := 0
@@ -13,6 +14,7 @@ var spawns_on_point := 0
 func _ready() -> void:
 	if type_dropdown:
 		type_dropdown.add_item("Hub")
+		type_dropdown.add_item("Choice")
 		type_dropdown.add_item("Speaker")
 		type_dropdown.select(0)
 	
@@ -28,8 +30,11 @@ func _editor_gui_input(event: InputEvent) -> void:
 		spawns_on_point = 0
 
 func _selected_scene() -> PackedScene:
-	if type_dropdown and type_dropdown.selected == 1:
-		return SPEAKER_SCENE
+	if type_dropdown:
+		match type_dropdown.selected:
+			0: return HUB_SCENE
+			1: return CHOICE_SCENE
+			2: return SPEAKER_SCENE
 	return HUB_SCENE
 
 func spawn_node(scene: PackedScene) -> void:

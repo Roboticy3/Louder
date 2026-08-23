@@ -1,13 +1,13 @@
 [gd_scene format=3 uid="uid://skobcwr5ug03"]
 
-[ext_resource type="Script" uid="uid://dg0iod8djj6io" path="res://scripts/hub.gd" id="1_ysrp0"]
-[ext_resource type="Script" uid="uid://dabkdaqchjesv" path="res://scripts/choices_section_logic.gd" id="2_hjueh"]
-[ext_resource type="Script" uid="uid://ctb32vrbjkrsg" path="res://scripts/arrow_keys_spin_box.gd" id="2_w7r13"]
-[ext_resource type="Script" uid="uid://87y4efdm8bdm" path="res://scripts/hub_properties_folder.gd" id="3_2sc04"]
-[ext_resource type="PackedScene" uid="uid://d2ffa88ufdvl6" path="res://entities/text_content.tscn" id="3_f0jtb"]
-[ext_resource type="Script" uid="uid://njuhx76nyuqd" path="res://scripts/hub_text_edit.gd" id="4_54sja"]
-[ext_resource type="Script" uid="uid://derdgutm4a213" path="res://scripts/start_check.gd" id="4_f0jtb"]
-[ext_resource type="Script" uid="uid://ya7il61i4u2e" path="res://scripts/mutual_exclusive_checkbox.gd" id="4_rhcs5"]
+[ext_resource type="Script" uid="uid://dg0iod8djj6io" path="res://scripts/hub.gd" id="1_so4sa"]
+[ext_resource type="Script" uid="uid://ya7il61i4u2e" path="res://scripts/mutual_exclusive_checkbox.gd" id="2_6jgyt"]
+[ext_resource type="PackedScene" uid="uid://d2ffa88ufdvl6" path="res://entities/text_content.tscn" id="3_f5yrs"]
+[ext_resource type="Script" uid="uid://87y4efdm8bdm" path="res://scripts/hub_properties_folder.gd" id="4_jhl5y"]
+[ext_resource type="Script" uid="uid://njuhx76nyuqd" path="res://scripts/hub_text_edit.gd" id="5_hw554"]
+[ext_resource type="Script" uid="uid://ctb32vrbjkrsg" path="res://scripts/arrow_keys_spin_box.gd" id="6_vwbjy"]
+[ext_resource type="Script" uid="uid://derdgutm4a213" path="res://scripts/start_check.gd" id="7_212te"]
+[ext_resource type="Script" uid="uid://dabkdaqchjesv" path="res://scripts/choices_section_logic.gd" id="8_7pvce"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f0jtb"]
 bg_color = Color(1, 1, 1, 1)
@@ -75,7 +75,7 @@ slot/3/right_type = 0
 slot/3/right_color = Color(1, 1, 1, 1)
 slot/3/right_icon = null
 slot/3/draw_stylebox = true
-script = ExtResource("1_ysrp0")
+script = ExtResource("1_so4sa")
 grabber = NodePath("TextSectionWrapper/TextSection/speaker")
 choices_section_logic = NodePath("ChoicesSection/choices")
 start_check = NodePath("ChoicesSection/start")
@@ -103,11 +103,11 @@ layout_mode = 2
 size_flags_vertical = 4
 theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
 text = "Private"
-script = ExtResource("4_rhcs5")
+script = ExtResource("2_6jgyt")
 mutual_exclusive = [NodePath("../../Recipient")]
 inverted = true
 
-[node name="speaker" parent="TextSectionWrapper/TextSection" unique_id=42355890 groups=["autocomplete_speaker", "hub_component"] instance=ExtResource("3_f0jtb")]
+[node name="speaker" parent="TextSectionWrapper/TextSection" unique_id=42355890 groups=["autocomplete_speaker", "hub_component"] instance=ExtResource("3_f5yrs")]
 layout_mode = 2
 size_flags_vertical = 0
 placeholder_text = "Speaker"
@@ -115,7 +115,7 @@ wrap_mode = 0
 oneliner = true
 inliner = true
 
-[node name="Recipient" parent="TextSectionWrapper/TextSection" unique_id=849750180 groups=["autocomplete_speaker", "hub_component"] instance=ExtResource("3_f0jtb")]
+[node name="Recipient" parent="TextSectionWrapper/TextSection" unique_id=849750180 groups=["autocomplete_speaker", "hub_component"] instance=ExtResource("3_f5yrs")]
 layout_mode = 2
 size_flags_vertical = 0
 placeholder_text = "Recipient"
@@ -123,7 +123,7 @@ wrap_mode = 0
 oneliner = true
 inliner = true
 
-[node name="text" parent="TextSectionWrapper/TextSection" unique_id=778728203 groups=["hub_component"] instance=ExtResource("3_f0jtb")]
+[node name="text" parent="TextSectionWrapper/TextSection" unique_id=778728203 groups=["hub_component"] instance=ExtResource("3_f5yrs")]
 layout_mode = 2
 inliner = true
 
@@ -133,7 +133,7 @@ layout_mode = 2
 [node name="OtherSection" type="FoldableContainer" parent="." unique_id=675481074 groups=["non_auto_component"]]
 layout_mode = 2
 title = "Properties"
-script = ExtResource("3_2sc04")
+script = ExtResource("4_jhl5y")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="OtherSection" unique_id=72269939]
 layout_mode = 2
@@ -157,27 +157,27 @@ layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "Skill"
 scroll_fit_content_width = true
-script = ExtResource("4_54sja")
+script = ExtResource("5_hw554")
 
 [node name="dice_level" type="SpinBox" parent="OtherSection/VBoxContainer/HBoxContainer/HBoxContainer" unique_id=872709569 groups=["hub_component"]]
 layout_mode = 2
 alignment = 3
 prefix = "lvl:"
-script = ExtResource("2_w7r13")
+script = ExtResource("6_vwbjy")
 
 [node name="dice_fail" type="CheckBox" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=792754216 groups=["hub_component"]]
 layout_mode = 2
-script = ExtResource("4_rhcs5")
+script = ExtResource("2_6jgyt")
 
 [node name="DiceFailLabel" type="Label" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=1534492008]
 layout_mode = 2
 text = "Fail"
 
-[node name="conditions" parent="OtherSection/VBoxContainer" unique_id=647734270 groups=["autocomplete_expression", "hub_component"] instance=ExtResource("3_f0jtb")]
+[node name="conditions" parent="OtherSection/VBoxContainer" unique_id=647734270 groups=["autocomplete_expression", "hub_component"] instance=ExtResource("3_f5yrs")]
 layout_mode = 2
 placeholder_text = "Conditions"
 
-[node name="statements" parent="OtherSection/VBoxContainer" unique_id=1321863141 groups=["autocomplete_expression", "hub_component"] instance=ExtResource("3_f0jtb")]
+[node name="statements" parent="OtherSection/VBoxContainer" unique_id=1321863141 groups=["autocomplete_expression", "hub_component"] instance=ExtResource("3_f5yrs")]
 layout_mode = 2
 placeholder_text = "Statements"
 
@@ -190,7 +190,7 @@ layout_mode = 2
 size_flags_vertical = 4
 theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
 text = "Start"
-script = ExtResource("4_f0jtb")
+script = ExtResource("7_212te")
 
 [node name="ChoicesSpacer" type="Control" parent="ChoicesSection" unique_id=321633302]
 layout_mode = 2
@@ -204,7 +204,7 @@ text = "Choices"
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
-script = ExtResource("2_w7r13")
+script = ExtResource("6_vwbjy")
 
 [node name="auto" type="CheckBox" parent="ChoicesSection" unique_id=412385513 groups=["hub_component"]]
 layout_mode = 2
@@ -212,7 +212,7 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
 text = "Auto"
 
 [node name="choices" type="Node" parent="ChoicesSection" unique_id=889900628 node_paths=PackedStringArray("hub", "spin_box", "start_check") groups=["hub_component"]]
-script = ExtResource("2_hjueh")
+script = ExtResource("8_7pvce")
 hub = NodePath("../..")
 spin_box = NodePath("../ChoicesSpinBox")
 start_check = NodePath("../start")
