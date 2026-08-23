@@ -1,74 +1,66 @@
 [
 	{
-		"conversation_id": "2",
-		"position_offset:x": "728.0",
-		"position_offset:y": "220.5",
-		"type": "hub"
-	},
-	{
-		"auto": true,
-		"choices": [
-			"",
-			""
-		],
-		"conversation_id": "9",
-		"position_offset:x": "1245.419921875",
-		"position_offset:y": "62.1645355224609",
-		"type": "hub"
-	},
-	{
-		"conversation_id": "11",
-		"position_offset:x": "1777.65124511719",
-		"position_offset:y": "305.966156005859",
-		"type": "hub"
-	},
-	{
-		"conversation_id": "10",
-		"dice_level": "4.0",
-		"position_offset:x": "1760.0",
-		"position_offset:y": "-120.0",
-		"type": "hub"
-	},
-	{
-		"choices": [
-			"",
-			"",
-			""
-		],
 		"conversation_id": "0",
-		"position_offset:x": "220.0",
-		"position_offset:y": "200.0",
+		"position_offset:x": "0.0",
+		"position_offset:y": "140.0",
+		"speaker": "test test",
 		"start": true,
 		"type": "hub"
 	},
 	{
-		"from_choice": "",
-		"from_id": "0",
-		"to_id": "2",
-		"type": "connection"
+		"Recipient": "ahhhhhhhhhhh",
+		"auto": true,
+		"conversation_id": "2",
+		"position_offset:x": "540.0",
+		"position_offset:y": "60.0",
+		"private": true,
+		"start": true,
+		"type": "hub"
+	},
+	{
+		"conversation_id": "3",
+		"position_offset:x": "492.0",
+		"position_offset:y": "337.5",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "5",
+		"position_offset:x": "140.0",
+		"position_offset:y": "660.0",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "4",
+		"position_offset:x": "900.0",
+		"position_offset:y": "380.0",
+		"type": "choice"
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "6",
+		"ownable": false,
+		"position_offset:x": "-487.894256591797",
+		"position_offset:y": "410.870849609375",
+		"public": false,
+		"relationships": [],
+		"type": "speaker"
 	},
 	{
 		"from_choice": "",
 		"from_id": "2",
-		"to_id": "9",
+		"to_id": "3",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
-		"from_id": "9",
-		"to_id": "10",
+		"from_id": "0",
+		"to_id": "5",
 		"type": "connection"
 	},
 	{
-		"from_choice": "",
-		"from_id": "9",
-		"to_id": "11",
-		"type": "connection"
-	},
-	{
-		"position:x": "138.057067871094",
-		"position:y": "-216.589477539063",
+		"position:x": "-535.59521484375",
+		"position:y": "14.6933288574219",
 		"type": "camera",
-		"zoom": "0.8264462351799"
+		"zoom": "0.75131475925446"
 	}
 ]

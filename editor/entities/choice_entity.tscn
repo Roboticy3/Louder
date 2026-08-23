@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cjd6knjryca3f"]
 
-[ext_resource type="Script" uid="uid://cpdekulpatyo0" path="res://scripts/speaker_entity.gd" id="1_s2fhy"]
+[ext_resource type="Script" uid="uid://cm68nw7hu4asn" path="res://scripts/choice_entity.gd" id="1_vuhsy"]
 [ext_resource type="PackedScene" uid="uid://d2ffa88ufdvl6" path="res://entities/text_content.tscn" id="2_jfyt7"]
 [ext_resource type="Script" uid="uid://ya7il61i4u2e" path="res://scripts/mutual_exclusive_checkbox.gd" id="2_vuhsy"]
 
@@ -23,12 +23,12 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[node name="Choice" type="GraphNode" unique_id=301621410]
+[node name="Choice" type="GraphNode" unique_id=469772695]
 custom_minimum_size = Vector2(330, 0)
 offset_left = 95.0
 offset_top = 148.0
 offset_right = 425.0
-offset_bottom = 333.0
+offset_bottom = 346.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
 mouse_filter = 1
@@ -52,8 +52,8 @@ slot/1/right_type = 0
 slot/1/right_color = Color(1, 1, 1, 1)
 slot/1/right_icon = null
 slot/1/draw_stylebox = true
-script = ExtResource("1_s2fhy")
-metadata/_custom_type_script = "uid://cpdekulpatyo0"
+script = ExtResource("1_vuhsy")
+metadata/_custom_type_script = "uid://cm68nw7hu4asn"
 
 [node name="TextSectionWrapper" type="VBoxContainer" parent="." unique_id=1478447168]
 layout_mode = 2
