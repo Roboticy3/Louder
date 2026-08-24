@@ -27,7 +27,6 @@ script = ExtResource("2_mnjbr")
 editor = NodePath("../Control/GridContainer/GraphEdit")
 pointer = NodePath("../PointerLogic")
 debugger = NodePath("../Control/RichTextLabel")
-port_change_listener_group = null
 
 [node name="SelectionLogic" type="Node" parent="." unique_id=985025703 node_paths=PackedStringArray("editor")]
 script = ExtResource("3_2wuvf")

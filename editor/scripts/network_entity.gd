@@ -25,17 +25,17 @@ func export() -> Dictionary:
 	return _filter_to_non_default(data)
 
 func import(data: Dictionary) -> void:
-	data = _filter_to_non_default(data)
+	hub_data.merge(_filter_to_non_default(data), true)
 	IdSystem.assign_id(self, data.get("conversation_id", id), id)
-	id = data.get("conversation_id", id)
+	id = hub_data.get("conversation_id", id)
 	
-	position_offset = data.get("position_offset", position_offset)
+	position_offset = hub_data.get("position_offset", position_offset)
 
-	for key in data:
+	for key in hub_data:
 		if key is String:
 			var node := find_child(key, true, false)
 			if node:
-				_import_node(node, data[key])
+				_import_node(node, hub_data[key])
 
 func _filter_to_non_default(data: Dictionary) -> Dictionary:
 	var defaults: Dictionary = NetworkEntityDefaults.default_data.get(default_source, {})
@@ -98,6 +98,9 @@ func get_entity_type() -> String:
 
 func get_choices_logic() -> ChoicesSectionLogic:
 	return choices_section_logic
+
+func get_data(field:String, default):
+	return hub_data.get(field, default)
 
 var id := -1
 const ID_GROUP := &"CONVERSATION"
