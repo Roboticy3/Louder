@@ -1,0 +1,110 @@
+[
+	{
+		"auto": false,
+		"conditions": "",
+		"conversation_id": "3",
+		"dice_fail": false,
+		"dice_level": "0.0",
+		"dice_skill": "",
+		"is_choice": false,
+		"position_offset:x": "320.0",
+		"position_offset:y": "380.0",
+		"recipient": "",
+		"speaker": "b",
+		"start": false,
+		"statements": "",
+		"text": "b",
+		"type": "hub"
+	},
+	{
+		"auto": false,
+		"conditions": "",
+		"conversation_id": "4",
+		"dice_fail": false,
+		"dice_level": "0.0",
+		"dice_skill": "",
+		"is_choice": false,
+		"position_offset:x": "852.884948730469",
+		"position_offset:y": "377.706207275391",
+		"recipient": "",
+		"speaker": "d",
+		"start": false,
+		"statements": "",
+		"text": "d",
+		"type": "hub"
+	},
+	{
+		"auto": false,
+		"choices": [
+			"to b",
+			"to a"
+		],
+		"conditions": "",
+		"conversation_id": "0",
+		"dice_fail": false,
+		"dice_level": "0.0",
+		"dice_skill": "",
+		"is_choice": false,
+		"position_offset:x": "-120.0",
+		"position_offset:y": "380.0",
+		"recipient": "",
+		"speaker": "a",
+		"start": true,
+		"statements": "",
+		"text": "a",
+		"type": "hub"
+	},
+	{
+		"auto": false,
+		"conditions": "",
+		"conversation_id": "5",
+		"dice_fail": false,
+		"dice_level": "0.0",
+		"dice_skill": "",
+		"is_choice": true,
+		"position_offset:x": "300.0",
+		"position_offset:y": "660.0",
+		"recipient": "",
+		"speaker": "c",
+		"start": false,
+		"statements": "",
+		"text": "c",
+		"type": "hub"
+	},
+	{
+		"from_choice": "",
+		"from_id": "3",
+		"to_id": "4",
+		"type": "connection"
+	},
+	{
+		"from_choice": "to b",
+		"from_id": "0",
+		"to_id": "3",
+		"type": "connection"
+	},
+	{
+		"from_choice": "to a",
+		"from_id": "0",
+		"to_id": "5",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "5",
+		"to_id": "4",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "4",
+		"to_id": "0",
+		"type": "connection"
+	},
+	{
+		"position:x": "-207.463470458984",
+		"position:y": "179.545227050781",
+		"type": "camera",
+		"zoom": "1.06864309310913"
+	}
+]

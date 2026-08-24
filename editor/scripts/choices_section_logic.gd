@@ -114,8 +114,9 @@ func port_in() -> int:
 	return 0
 
 func _ready() -> void:
-	spin_box.value = choices.size()
-	spin_box.value_changed.connect(set_choice_count)
+	if is_instance_valid(spin_box):
+		spin_box.value = choices.size()
+		spin_box.value_changed.connect(set_choice_count)
 	if is_instance_valid(start_check):
 		start_check.pressed.connect(update_default_choices)
 	

@@ -2,6 +2,7 @@ class_name NetworkEntity extends GraphNode
 
 @export var component_group := &"hub_component"
 @export var default_source := &"hub"
+@export var choices_section_logic:ChoicesSectionLogic
 
 @export var hub_data:Dictionary :
 	set(new_hub_data):
@@ -94,6 +95,9 @@ func _import_node(node: Node, value: Variant) -> void:
 
 func get_entity_type() -> String:
 	return "network_entity"
+
+func get_choices_logic() -> ChoicesSectionLogic:
+	return choices_section_logic
 
 var id := -1
 const ID_GROUP := &"CONVERSATION"

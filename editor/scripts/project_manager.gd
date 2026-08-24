@@ -199,6 +199,7 @@ func clear_project():
 			child.queue_free()
 	editor.clear_connections()
 	IdSystem.clear_ids()
+	current_project_path = ""
 
 	await get_tree().process_frame # wait for the editor to process the removal of nodes
 

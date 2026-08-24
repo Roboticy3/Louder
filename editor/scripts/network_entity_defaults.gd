@@ -10,7 +10,6 @@ const TITLE_STYLEBOXES := {
 
 const ENTITY_SOURCES:Dictionary[String, PackedScene] = {
 	"hub":preload("res://entities/hub_entity.tscn"),
-	"choice":preload("res://entities/choice_entity.tscn"),
 	"speaker":preload("res://entities/speaker_entity.tscn"),
 }
 

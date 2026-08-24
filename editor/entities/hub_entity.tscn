@@ -28,7 +28,7 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[node name="Hub" type="GraphNode" unique_id=1992437552 node_paths=PackedStringArray("grabber", "choices_section_logic", "start_check", "auto_check")]
+[node name="Hub" type="GraphNode" unique_id=1992437552 node_paths=PackedStringArray("grabber", "start_check", "auto_check", "choices_section_logic")]
 custom_minimum_size = Vector2(330, 0)
 offset_left = 95.0
 offset_top = 148.0
@@ -77,9 +77,9 @@ slot/3/right_icon = null
 slot/3/draw_stylebox = true
 script = ExtResource("1_so4sa")
 grabber = NodePath("TextSectionWrapper/TextSection/speaker")
-choices_section_logic = NodePath("ChoicesSection/choices")
 start_check = NodePath("ChoicesSection/start")
 auto_check = NodePath("ChoicesSection/auto")
+choices_section_logic = NodePath("ChoicesSection/choices")
 
 [node name="TextSectionWrapper" type="VBoxContainer" parent="." unique_id=175791466]
 layout_mode = 2
@@ -98,13 +98,21 @@ text = "Text Content"
 layout_mode = 2
 size_flags_horizontal = 3
 
+[node name="is_choice" type="CheckBox" parent="TextSectionWrapper/TextSection/HBoxContainer" unique_id=1659837714 node_paths=PackedStringArray("mutual_exclusive") groups=["hub_component"]]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
+text = "Is Choice"
+script = ExtResource("2_6jgyt")
+mutual_exclusive = [NodePath("../../../../ChoicesSection")]
+
 [node name="private" type="CheckBox" parent="TextSectionWrapper/TextSection/HBoxContainer" unique_id=1575580911 node_paths=PackedStringArray("mutual_exclusive") groups=["hub_component"]]
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
 text = "Private"
 script = ExtResource("2_6jgyt")
-mutual_exclusive = [NodePath("../../Recipient")]
+mutual_exclusive = [NodePath("../../recipient")]
 inverted = true
 
 [node name="speaker" parent="TextSectionWrapper/TextSection" unique_id=42355890 groups=["autocomplete_speaker", "hub_component"] instance=ExtResource("3_f5yrs")]
@@ -115,7 +123,7 @@ wrap_mode = 0
 oneliner = true
 inliner = true
 
-[node name="Recipient" parent="TextSectionWrapper/TextSection" unique_id=849750180 groups=["autocomplete_speaker", "hub_component"] instance=ExtResource("3_f5yrs")]
+[node name="recipient" parent="TextSectionWrapper/TextSection" unique_id=849750180 groups=["autocomplete_speaker", "hub_component"] instance=ExtResource("3_f5yrs")]
 layout_mode = 2
 size_flags_vertical = 0
 placeholder_text = "Recipient"
@@ -218,5 +226,6 @@ spin_box = NodePath("../ChoicesSpinBox")
 start_check = NodePath("../start")
 spoke_child_index = 1
 
+[connection signal="pressed" from="TextSectionWrapper/TextSection/HBoxContainer/is_choice" to="." method="reset_size" flags=3]
 [connection signal="folding_changed" from="OtherSection" to="." method="reset_size" flags=3 unbinds=1]
 [connection signal="choices_changed" from="ChoicesSection/choices" to="." method="reset_size" flags=3]
