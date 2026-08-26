@@ -19,9 +19,8 @@ const CON_FCHC := "from_choice"
 @export var conversation: PSConversation
 
 @export var reset_state_on_ready := false
-@export var state:Dictionary[String, PSConversationState] = {
-	"": PSConversationState.new()
-}
+@export var state:PSConversationState
+
 var e := Expression.new()
 var recessive := {}
 var dominant := {}
@@ -32,9 +31,9 @@ var dominant := {}
 ## These functions do not change the state of the simulator.
 
 func get_position(branch:="") -> int:
-	var b:PSConversationState = state.get(branch)
+	var b:PSConversationBranch = state.branches.get(branch)
 	if !b:
-		push_error("PSSimulator::get_position invalid branch ", branch, " (options: ", state.keys(), ")")
+		push_error("PSSimulator::get_position invalid branch ", branch, " (options: ", state.branches.keys(), ")")
 		return -1
 	return b.position
 
@@ -104,7 +103,7 @@ func _ready():
 	update_controllers()
 
 func _reset_state():
-	state = {"": PSConversationState.new()}
+	state = PSConversationState.new()
 
 func _on_conversation_changed(new_path:String):
 	conversation_path = new_path
@@ -124,9 +123,9 @@ func _count_conditions(conditions:String) -> int:
 	return conditions.count("\n") + 1
 
 func _evaluate_choice_single(c:Dictionary, branch:="") -> bool:
-	var b:PSConversationState = state.get(branch)
+	var b:PSConversationBranch = state.branches.get(branch)
 	if !b:
-		push_error("PSSimulator::_evaluate_choice_single invalid branch ", branch, " (options: ", state.keys(), ")")
+		push_error("PSSimulator::_evaluate_choice_single invalid branch ", branch, " (options: ", state.branches.keys(), ")")
 		return false
 	
 	var to_id = int(c.get(CON_TOID))
@@ -143,8 +142,8 @@ func _evaluate_choice_single(c:Dictionary, branch:="") -> bool:
 		if error != OK:
 			push_error("Condition ", condition, " \"", e.get_error_text(), "\". Treating as false")
 			return false
-		var result = e.execute([], b.scope)
-		print("Condition ", condition, " evaluated to ", result, ". Resulting scope: ", b.scope)
+		var result = e.execute([], state.scope)
+		print("Condition ", condition, " evaluated to ", result, ". Resulting scope: ", state.scope)
 		if !result:
 			return false
 	return true
@@ -152,15 +151,17 @@ func _evaluate_choice_single(c:Dictionary, branch:="") -> bool:
 func _evaluate_hub(h:Dictionary, branch:="") -> void:
 	_evaluate_hub_expressions(h, branch)
 	_evaluate_dice_checks(h, branch)
+	_evaluate_branching(h, branch)
+	
 	if !recessive.is_empty() && !is_auto(get_position(branch)):
 		h.merge(recessive)
 	if !dominant.is_empty():
 		h.merge(dominant, true)
 
 func _evaluate_hub_expressions(h:Dictionary, branch:="") -> void:
-	var b:PSConversationState = state.get(branch)
+	var b:PSConversationBranch = state.branches.get(branch)
 	if !b:
-		push_error("PSSimulator::_evaluate_hub_expressions invalid branch ", branch, " (options: ", state.keys(), ")")
+		push_error("PSSimulator::_evaluate_hub_expressions invalid branch ", branch, " (options: ", state.branches.keys(), ")")
 		return
 	
 	if !h.get(HUB_STMT):
@@ -184,14 +185,14 @@ func _evaluate_hub_expressions(h:Dictionary, branch:="") -> void:
 		var error := e.parse(matches.strings[3])
 		if error != OK:
 			push_warning("Expression ", matches.strings[3], " \"", e.get_error_text(), "\". Skipping..")
-		b.scope[matches.strings[1]] = e.execute([], b.scope)
-		print("Expression ", matches.strings[3], " evaluated \"", e.get_error_text(), "\". Resulting scope: ", b.scope)
+		state.scope[matches.strings[1]] = e.execute([], state.scope)
+		print("Expression ", matches.strings[3], " evaluated \"", e.get_error_text(), "\". Resulting scope: ", state.scope)
 	return
 
 func _evaluate_dice_checks(h:Dictionary, branch:="") -> void:
-	var b:PSConversationState = state.get(branch)
+	var b:PSConversationBranch = state.branches.get(branch)
 	if !b:
-		push_error("PSSimulator::_evaluate_dice_checks invalid branch ", branch, " (options: ", state.keys(), ")")
+		push_error("PSSimulator::_evaluate_dice_checks invalid branch ", branch, " (options: ", state.branches.keys(), ")")
 		return
 	
 	if h.get(HUB_CVID) == null:
@@ -219,11 +220,11 @@ func _evaluate_dice_checks(h:Dictionary, branch:="") -> void:
 		print("Evaluating dice check for connection ", c, " from hub ", h.get(HUB_CVID))
 
 		var dice_skill := str(check_h.get(HUB_DSKL, ""))
-		var skill_level := int(b.scope.get(dice_skill))
+		var skill_level := int(state.scope.get(dice_skill))
 		var dice_level := int(check_h.get(HUB_DLVL, 0))
 		
 		var check_variable := "_%s_%s_%s_dc" % [h.get(HUB_CVID), c.get(CON_TOID), dice_skill]
-		_roll_into_outcome(check_variable, skill_level, b.scope)
+		_roll_into_outcome(check_variable, skill_level, state.scope)
 
 		#to enact the dice roll, add a condition. This means future calls to
 		#list_choices will filter out failed rolls.
@@ -237,6 +238,13 @@ func _roll_into_outcome(outcome_variable:String, skill_level:int, scope:PSVariab
 	var total := roll + skill_level
 	scope[outcome_variable] = total
 	print("Rolled ", roll, " + ", skill_level, " = ", total, " for ", outcome_variable)
+
+func _evaluate_branching(h:Dictionary, branch:=""):
+	var h_branch:String = h.get(HUB_BRCH, "")
+	if h_branch.is_empty():
+		return
+	
+	
 
 ### TRAVERSAL
 ## Move through dialogue by making a choice on the current node.
@@ -279,15 +287,15 @@ func traverse_index(i: int, filter=null, branch:="") -> bool:
 	return w
 
 func warp(new_position:int, filter=null, branch:="") -> bool:
-	var b:PSConversationState = state.get(branch)
+	var b:PSConversationBranch = state.branches.get(branch)
 	if !b:
-		push_error("PSSimulator::warp invalid branch ", branch, " (options: ", state.keys(), ")")
+		push_error("PSSimulator::warp invalid branch ", branch, " (options: ", state.branches.keys(), ")")
 		return false
 	
 	if new_position in conversation.hubs_by_id:
 		b.position = new_position
 		_evaluate_hub(conversation.hubs_by_id[new_position], branch)
-		b._on_traverse(new_position)
+		state._on_traverse(new_position)
 		
 		if is_auto(new_position):
 			_fill_dominant_on_auto(branch)

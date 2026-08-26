@@ -26,7 +26,7 @@ func update() -> void:
 	if show_conversation:
 		parts.append("[b]Conversation:[/b] %s" % simulator.conversation_path)
 	
-	var branches := simulator.state.keys()
+	var branches := simulator.state.branches.keys()
 	if !all_branches:
 		if "" in branches:
 			branches = [""]
@@ -43,11 +43,12 @@ func update() -> void:
 			for c in raw_choices:
 				choice_texts.append("  %s" % str(c.get("from_choice", "?")))
 			parts.append("  [i]Choices:[/i]\n%s" % "\n".join(choice_texts) if choice_texts.size() else "[b]Choices:[/b] (none)")
-		if show_variables and simulator.state.get(branch):
-			var vars: PackedStringArray = []
-			for key in simulator.state[branch].variables:
-				vars.append("  %s = %s" % [key, str(simulator.state[branch].scope._get(key))])
-			parts.append("  [i]Variables:[/i]\n%s" % "\n".join(vars) if vars.size() else "[b]Variables:[/b] (empty)")
+	
+	if show_variables and simulator.state:
+		var vars: PackedStringArray = []
+		for key in simulator.state.variables:
+			vars.append("%s = %s" % [key, str(simulator.state.scope._get(key))])
+		parts.append("[b]Variables:[/b]\n%s" % "\n".join(vars) if vars.size() else "[b]Variables:[/b] (empty)")
 	
 	if !simulator.recessive.is_empty():
 		var entries: PackedStringArray = []

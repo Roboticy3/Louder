@@ -1,14 +1,23 @@
 class_name PSConversationState extends Resource
 
-@export var position:int
+@export var branches:Dictionary[String, PSConversationBranch]
 @export var covered:Dictionary[int, bool]
 
 @export var variables:Dictionary[StringName, Variant]
 var scope:PSVariableScope = PSVariableScope.new(variables)
 
+func _init() -> void:
+	_reset_branches()
+
+func _reset_branches():
+	branches = {
+		"": PSConversationBranch.new()
+	}
+
 func clear():
 	variables.clear()
 	covered.clear()
+	_reset_branches()
 
 func _on_traverse(to_position:int) -> bool:
 	var exists := to_position in covered
