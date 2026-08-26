@@ -2,6 +2,7 @@ class_name NetworkEntity extends GraphNode
 
 @export var component_group := &"hub_component"
 @export var default_source := &"hub"
+@export var choices_section_logic:ChoicesSectionLogic
 
 @export var hub_data:Dictionary :
 	set(new_hub_data):
@@ -24,17 +25,17 @@ func export() -> Dictionary:
 	return _filter_to_non_default(data)
 
 func import(data: Dictionary) -> void:
-	data = _filter_to_non_default(data)
+	hub_data.merge(_filter_to_non_default(data), true)
 	IdSystem.assign_id(self, data.get("conversation_id", id), id)
-	id = data.get("conversation_id", id)
+	id = hub_data.get("conversation_id", id)
 	
-	position_offset = data.get("position_offset", position_offset)
+	position_offset = hub_data.get("position_offset", position_offset)
 
-	for key in data:
+	for key in hub_data:
 		if key is String:
 			var node := find_child(key, true, false)
 			if node:
-				_import_node(node, data[key])
+				_import_node(node, hub_data[key])
 
 func _filter_to_non_default(data: Dictionary) -> Dictionary:
 	var defaults: Dictionary = NetworkEntityDefaults.default_data.get(default_source, {})
@@ -51,7 +52,10 @@ func _export_node(node: Node) -> Variant:
 	if node is ChoicesSectionLogic:
 		var choices: PackedStringArray = []
 		for c in node.choices:
-			choices.append(c.text)
+			var text:String = c.text
+			if text.is_empty():
+				text = c.placeholder_text
+			choices.append(text)
 		return choices
 	elif node is CodeEdit:
 		return node.text
@@ -73,7 +77,8 @@ func _import_node(node: Node, value: Variant) -> void:
 		var choices: PackedStringArray = value
 		node.set_choice_count(choices.size())
 		for i in choices.size():
-			node.choices[i].text = choices[i]
+			if choices[i] != node.choices[i].placeholder_text:
+				node.choices[i].text = choices[i]
 	elif node is CodeEdit:
 		node.text = value
 	elif node is ColorPickerButton:
@@ -94,6 +99,12 @@ func _import_node(node: Node, value: Variant) -> void:
 
 func get_entity_type() -> String:
 	return "network_entity"
+
+func get_choices_logic() -> ChoicesSectionLogic:
+	return choices_section_logic
+
+func get_data(field:String, default):
+	return hub_data.get(field, default)
 
 var id := -1
 const ID_GROUP := &"CONVERSATION"

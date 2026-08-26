@@ -117,14 +117,6 @@
 		"type": "hub"
 	},
 	{
-		"auto": true,
-		"conversation_id": "103",
-		"position_offset:x": "160.0",
-		"position_offset:y": "660.0",
-		"speaker": "Freya",
-		"type": "hub"
-	},
-	{
 		"conversation_id": "104",
 		"position_offset:x": "2320.0",
 		"position_offset:y": "-80.0",
@@ -335,6 +327,14 @@
 		"speaker": "Fosser",
 		"statements": "fosser_main = 100",
 		"text": "Fosser complies to the knight's command, but Fica is staying behind her rock.",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"conversation_id": "103",
+		"position_offset:x": "160.0",
+		"position_offset:y": "660.0",
+		"speaker": "Freya",
 		"type": "hub"
 	},
 	{
@@ -566,8 +566,8 @@
 		"type": "connection"
 	},
 	{
-		"position:x": "4372.88037109375",
-		"position:y": "77.29931640625",
+		"position:x": "-12.4190673828125",
+		"position:y": "442.172119140625",
 		"type": "camera",
 		"zoom": "0.97149366140366"
 	}

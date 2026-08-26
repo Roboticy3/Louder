@@ -18,32 +18,34 @@ const CON_FCHC := "from_choice"
 @export var conversation_path:="user://test.json"
 @export var conversation: PSConversation
 
-@export var start_position: int = 0
-
-@onready var position := 0
-
 @export var reset_state_on_ready := false
-@export var state:PSConversationState
+@export var state:PSDialogueState
+
 var e := Expression.new()
 var recessive := {}
 var dominant := {}
+var last_branch_traversal := ""
 
 @export var controller_group := &"ps_controller"
 
 ### Getters
 ## These functions do not change the state of the simulator.
 
-func get_position() -> int:
-	return position
+func get_position(branch:="") -> int:
+	var b:PSDialogueBranch = state.branches.get(branch)
+	if !b:
+		push_error("PSSimulator::get_position invalid branch ", branch, " (options: ", state.branches.keys(), ")")
+		return -1
+	return b.position
 
-func list_choices_data(filter=null, from_position:=position, evaluate_conditions:=true) -> Array:
-	var choices := conversation.get_connections_from(from_position)
-	if evaluate_conditions: choices = _evaluate_choices(choices)
+func list_choices_data(filter=null, branch:="", evaluate_conditions:=true) -> Array:
+	var choices := conversation.get_connections_from(get_position(branch))
+	if evaluate_conditions: choices = _evaluate_choices(choices, branch)
 	if filter is Callable:
 		choices = choices.filter(filter)
 	return choices
 
-func is_auto(from_position:=position) -> bool:
+func is_auto(from_position:=get_position()) -> bool:
 	var h = conversation.hubs_by_id.get(from_position)
 	if h == null:
 		push_error("Hub ", from_position, " does not exist!")
@@ -51,7 +53,7 @@ func is_auto(from_position:=position) -> bool:
 	
 	return h.get(HUB_ACHK, false)
 
-func is_start(from_position:=position) -> bool:
+func is_start(from_position:=get_position()) -> bool:
 	var h = conversation.hubs_by_id.get(from_position)
 	if h == null:
 		push_error("Hub ", from_position, " does not exist!")
@@ -59,14 +61,15 @@ func is_start(from_position:=position) -> bool:
 	
 	return h.get(HUB_SCHK, false)
 
-func get_property(from_position:int, property:String):
-	return str(conversation.hubs_by_id[from_position].get(property))
+func get_property(from_position:int, property:String, default=null):
+	var h = conversation.hubs_by_id.get(from_position, {})
+	return str(h.get(property, default))
 
-func get_current_property(property:String):
-	return get_property(position, property)
+func get_current_property(property:String, branch:="", default=null):
+	return get_property(get_position(branch), property, default)
 
-func merge_current_into(data:Dictionary):
-	var h:Dictionary = conversation.hubs_by_id.get(position, {})
+func merge_current_into(data:Dictionary, branch:=""):
+	var h:Dictionary = conversation.hubs_by_id.get(get_position(branch), {})
 	for k in h:
 		if h[k]:
 			data[k] = h[k]
@@ -79,9 +82,10 @@ func roll_dice() -> int:
 ## called externally.
 
 func _ready():
+	last_branch_traversal = ""
 	recessive = {}
 	dominant = {}
-	if reset_state_on_ready:
+	if !state or reset_state_on_ready:
 		_reset_state()
 	var c := PSConversation.new()
 	c.load_from_json(conversation_path)
@@ -96,24 +100,22 @@ func _ready():
 		if is_start(id):
 			start = id
 			break
-	
-	if !state:
-		state = PSConversationState.new()
+		
 	warp(start)
 	
 	update_controllers()
 
 func _reset_state():
-	state = PSConversationState.new()
+	state = PSDialogueState.new()
 
 func _on_conversation_changed(new_path:String):
 	conversation_path = new_path
 	_ready()
 
-func _evaluate_choices(choices: Array) -> Array:
+func _evaluate_choices(choices: Array, branch:="") -> Array:
 	var valid_choices := []
 	for c in choices:
-		if _evaluate_choice_single(c):
+		if _evaluate_choice_single(c, branch):
 			valid_choices.append(c)
 
 	return valid_choices
@@ -123,7 +125,12 @@ func _count_conditions(conditions:String) -> int:
 		return 0
 	return conditions.count("\n") + 1
 
-func _evaluate_choice_single(c:Dictionary) -> bool:
+func _evaluate_choice_single(c:Dictionary, branch:="") -> bool:
+	var b:PSDialogueBranch = state.branches.get(branch)
+	if !b:
+		push_error("PSSimulator::_evaluate_choice_single invalid branch ", branch, " (options: ", state.branches.keys(), ")")
+		return false
+	
 	var to_id = int(c.get(CON_TOID))
 	var hub = conversation.hubs_by_id[to_id]
 	if !hub.get(HUB_COND):
@@ -144,15 +151,21 @@ func _evaluate_choice_single(c:Dictionary) -> bool:
 			return false
 	return true
 
-func _evaluate_hub(h:Dictionary) -> void:
-	_evaluate_hub_expressions(h)
-	_evaluate_dice_checks(h)
-	if !recessive.is_empty() && !is_auto():
+func _evaluate_hub(h:Dictionary, branch:="") -> void:
+	_evaluate_hub_expressions(h, branch)
+	_evaluate_dice_checks(h, branch)
+	
+	if !recessive.is_empty() && !is_auto(get_position(branch)):
 		h.merge(recessive)
 	if !dominant.is_empty():
 		h.merge(dominant, true)
 
-func _evaluate_hub_expressions(h:Dictionary) -> void:
+func _evaluate_hub_expressions(h:Dictionary, branch:="") -> void:
+	var b:PSDialogueBranch = state.branches.get(branch)
+	if !b:
+		push_error("PSSimulator::_evaluate_hub_expressions invalid branch ", branch, " (options: ", state.branches.keys(), ")")
+		return
+	
 	if !h.get(HUB_STMT):
 		return
 	var expressions = str(h.get(HUB_STMT))
@@ -178,7 +191,12 @@ func _evaluate_hub_expressions(h:Dictionary) -> void:
 		print("Expression ", matches.strings[3], " evaluated \"", e.get_error_text(), "\". Resulting scope: ", state.scope)
 	return
 
-func _evaluate_dice_checks(h:Dictionary) -> void:
+func _evaluate_dice_checks(h:Dictionary, branch:="") -> void:
+	var b:PSDialogueBranch = state.branches.get(branch)
+	if !b:
+		push_error("PSSimulator::_evaluate_dice_checks invalid branch ", branch, " (options: ", state.branches.keys(), ")")
+		return
+	
 	if h.get(HUB_CVID) == null:
 		push_error("Hub ", h, " has no conversation_id!")
 		return
@@ -208,7 +226,7 @@ func _evaluate_dice_checks(h:Dictionary) -> void:
 		var dice_level := int(check_h.get(HUB_DLVL, 0))
 		
 		var check_variable := "_%s_%s_%s_dc" % [h.get(HUB_CVID), c.get(CON_TOID), dice_skill]
-		_roll_into_outcome(check_variable, skill_level)
+		_roll_into_outcome(check_variable, skill_level, state.scope)
 
 		#to enact the dice roll, add a condition. This means future calls to
 		#list_choices will filter out failed rolls.
@@ -217,10 +235,10 @@ func _evaluate_dice_checks(h:Dictionary) -> void:
 		check_h[HUB_COND] = check_conditions
 		check_h.erase(HUB_DSKL)
 
-func _roll_into_outcome(outcome_variable:String, skill_level:int) -> void:
+func _roll_into_outcome(outcome_variable:String, skill_level:int, scope:PSVariableScope) -> void:
 	var roll := roll_dice()
 	var total := roll + skill_level
-	state.scope[outcome_variable] = total
+	scope[outcome_variable] = total
 	print("Rolled ", roll, " + ", skill_level, " = ", total, " for ", outcome_variable)
 
 ### TRAVERSAL
@@ -231,9 +249,12 @@ func _roll_into_outcome(outcome_variable:String, skill_level:int) -> void:
 ## the node linked by the choice made. If the resulting node has AutoCheck
 ## enabled, traversal will continue recursively until a non-auto node is
 ## reached.
-func traverse(choice_text: String, filter=null) -> bool:
-	recessive = {}
-	dominant = {}
+func traverse(choice_text: String, filter=null, branch:="", depth:=0) -> bool:
+	if depth == 0:
+		last_branch_traversal = ""
+		recessive = {}
+		dominant = {}
+	var position := get_position(branch)
 	var choice = null
 	for c in conversation.get_connections_from(position):
 		if str(c.get(CON_FCHC, "")) == choice_text:
@@ -245,45 +266,92 @@ func traverse(choice_text: String, filter=null) -> bool:
 		return false
 	
 	recessive[HUB_TXTC] = choice.get(CON_FCHC)
-	var w := warp(int(choice.get(CON_TOID, "")))
-	if w && is_auto():
-		_fill_dominant_on_auto()
-		return traverse_index(0,filter)
+	var w := warp(int(choice.get(CON_TOID, "")), branch, depth)
 	
 	update_controllers()
 	return w
 
-func traverse_index(i: int, filter=null) -> bool:
-	var choices := list_choices_data(filter)
+func traverse_index(i: int, filter=null, branch:="", depth:=0) -> bool:
+	if depth == 0:
+		last_branch_traversal = ""
+		recessive = {}
+		dominant = {}
+	var choices := list_choices_data(filter, branch)
 	if i < 0 or i >= choices.size():
 		push_error("Traversed to choice index out of bounds: ", i)
 		return false
 	
 	recessive[HUB_TXTC] = choices[i].get(CON_FCHC)
-	var w := warp(int(choices[i].get(CON_TOID, "")))
-	if w && is_auto():
-		_fill_dominant_on_auto()
-		return traverse_index(0, filter)
+	var w := warp(int(choices[i].get(CON_TOID, "")), branch, depth)
 	
 	update_controllers()
 	return w
 
-func warp(new_position:=position) -> bool:
+func warp(new_position:int, branch:="", depth:=0) -> bool:
+	var b:PSDialogueBranch = state.branches.get(branch)
+	if !b:
+		push_error("PSSimulator::warp invalid branch ", branch, " (options: ", state.branches.keys(), ")")
+		return false
+	
 	if new_position in conversation.hubs_by_id:
-		position = new_position
-		_evaluate_hub(conversation.hubs_by_id[position])
-		state._on_traverse(position)
+		var h:Dictionary = conversation.hubs_by_id[new_position]
+		branch = _fill_branch_traversal(h, new_position, branch)
+		_evaluate_hub(h, branch)
+		state._on_traverse(new_position)
+		
+		if is_auto(new_position):
+			_fill_dominant_on_auto(branch)
+			#consume choices until either all branches are consumed or no choices are left
+			var working_branch := branch
+			var i = 0
+			var found_any := false
+			while traverse_index(i,null,branch,depth + 1):
+				found_any = true
+				if last_branch_traversal.is_empty() || last_branch_traversal == working_branch:
+					#branches have been consumed
+					#repeatedly travesing on the same branch will cause unexpected behavior
+					break 
+				working_branch = last_branch_traversal
+				i += 1
+			
+			return found_any
+		
 		return true
 	push_error("Warped to nonexistent location: ", new_position)
 	return false
 
-func _fill_dominant_on_auto():
+func _fill_dominant_on_auto(branch:=""):
+	var position := get_position(branch)
 	var w_txtc = conversation.hubs_by_id[position].get(HUB_TXTC)
 	if w_txtc:
 		dominant[HUB_TXTC] = w_txtc
 		var w_spkr = conversation.hubs_by_id[position].get(HUB_SPKR)
 		if w_spkr:
 			dominant[HUB_SPKR] = w_spkr
+
+func _fill_branch_traversal(h:Dictionary, position:int, branch:="") ->String:
+	var working_branch := branch
+	
+	var h_branch:String = h.get(HUB_BRCH, "")
+	if !h_branch.is_empty():
+		working_branch = h_branch
+	
+	var different_branch := false
+	if !working_branch.is_empty() and working_branch != branch:
+		different_branch = true
+		last_branch_traversal = working_branch
+	
+	var b:PSDialogueBranch = state.branches.get(working_branch)
+	var new_branch := false
+	if !b:
+		new_branch = true
+		b = PSDialogueBranch.new()
+		state.branches[working_branch] = b
+	
+	if new_branch or !different_branch: 
+		b.position = position
+	
+	return working_branch
 
 func update_controllers():
 	get_tree().call_group(controller_group, &"update")

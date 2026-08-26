@@ -10,9 +10,6 @@ const NEW := 3
 var current_project_path:String
 signal current_project_changed()
 
-const HUB_SCENE := preload("res://entities/hub.tscn")
-const SPEAKER_SCENE := preload("res://entities/speaker_entity.tscn")
-
 const OBJECT_TYPE := "type"
 const TYPE_HUB := CustomGraphHub.TYPE
 const TYPE_SPEAKER := SpeakerEntity.TYPE
@@ -151,17 +148,16 @@ func load_project_from_file(path:String, make_current:=true) -> bool:
 	for object in parsed:
 		if not (object is Dictionary):
 			continue
-		match object.get(OBJECT_TYPE):
-			TYPE_HUB:
-				var hub:CustomGraphHub = HUB_SCENE.instantiate()
-				hub.hub_data = _import_network_entity(object, hub)
-				editor.add_child(hub)
-				hubs_created.append(hub)
-			TYPE_SPEAKER:
-				var speaker:SpeakerEntity = SPEAKER_SCENE.instantiate()
-				speaker.hub_data = _import_network_entity(object, speaker)
-				editor.add_child(speaker)
-				hubs_created.append(speaker)
+		
+		var ot := str(object.get(OBJECT_TYPE))
+		
+		if ot in NetworkEntityDefaults.ENTITY_SOURCES:
+			var entity:NetworkEntity = NetworkEntityDefaults.ENTITY_SOURCES[ot].instantiate()
+			entity.hub_data = _import_network_entity(object, entity)
+			editor.add_child(entity)
+			hubs_created.append(entity)
+			
+		match ot:
 			TYPE_CONNECTION:
 				connections.append(object)
 			TYPE_CAMERA:
@@ -203,6 +199,7 @@ func clear_project():
 			child.queue_free()
 	editor.clear_connections()
 	IdSystem.clear_ids()
+	current_project_path = ""
 
 	await get_tree().process_frame # wait for the editor to process the removal of nodes
 

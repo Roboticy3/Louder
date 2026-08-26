@@ -10,6 +10,12 @@
 [ext_resource type="Script" uid="uid://gm3kj8xc3cel" path="res://proto_simulator/ps_command_line.gd" id="6_6fql2"]
 [ext_resource type="Script" uid="uid://dnttvqwd8iavc" path="res://proto_simulator/ps_debug_info.gd" id="7_debug"]
 
+[sub_resource type="InputEventAction" id="InputEventAction_iwx4b"]
+action = &"simulator_toggle"
+
+[sub_resource type="Shortcut" id="Shortcut_a37o0"]
+events = [SubResource("InputEventAction_iwx4b")]
+
 [node name="ProtoSimulatorWrapper" type="Node" unique_id=331396007]
 
 [node name="PSConversation" type="Node" parent="." unique_id=771286231]
@@ -26,6 +32,14 @@ simulator = NodePath("..")
 config = NodePath("../../PSConfig")
 speak_as = PackedStringArray("Geno")
 listen_to = PackedStringArray("Cage", "Good", "Inspiration", "Rhetoric", "Speed", "Evil")
+metadata/_custom_type_script = "uid://cbiclxd6bqxa4"
+
+[node name="PSControllerReka" type="Node" parent="PSSimulator" unique_id=422930367 node_paths=PackedStringArray("simulator", "config")]
+script = ExtResource("3_a37o0")
+simulator = NodePath("..")
+config = NodePath("../../PSConfig")
+speak_as = PackedStringArray("Reka")
+listen_to = PackedStringArray("Power", "Soul", "Body", "Integumetary System", "Nervous System", "Skeletal System")
 metadata/_custom_type_script = "uid://cbiclxd6bqxa4"
 
 [node name="PSControllerFreya" type="Node" parent="PSSimulator" unique_id=935159503 node_paths=PackedStringArray("simulator", "config")]
@@ -47,8 +61,9 @@ metadata/_custom_type_script = "uid://cbiclxd6bqxa4"
 [node name="PSConversationLoader" type="Node" parent="." unique_id=1703789268 node_paths=PackedStringArray("simulator")]
 script = ExtResource("3_hwksk")
 simulator = NodePath("../PSSimulator")
+load_now = "res://demos/conversations/merchant.json"
 
-[node name="PSConfig" type="Node" parent="." unique_id=494521167]
+[node name="PSConfig" type="Node" parent="." unique_id=494521167 groups=["conversation_changed_listener"]]
 script = ExtResource("4_63mts")
 metadata/_custom_type_script = "uid://b8jjbbtjemx6g"
 
@@ -132,6 +147,16 @@ layout_mode = 1
 size_flags_horizontal = 3
 controller = NodePath("../../../../../../PSSimulator/PSControllerGeno")
 
+[node name="Panel4" type="Panel" parent="CanvasLayer/HSplitContainer/VSplitContainer/FlowContainer" unique_id=171754033]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Control" parent="CanvasLayer/HSplitContainer/VSplitContainer/FlowContainer/Panel4" unique_id=1108421565 node_paths=PackedStringArray("controller") groups=["conversation_changed_listener"] instance=ExtResource("4_hwksk")]
+layout_mode = 1
+size_flags_horizontal = 3
+controller = NodePath("../../../../../../PSSimulator/PSControllerReka")
+
 [node name="Panel2" type="Panel" parent="CanvasLayer/HSplitContainer/VSplitContainer/FlowContainer" unique_id=991561153]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -152,7 +177,20 @@ layout_mode = 1
 size_flags_horizontal = 3
 controller = NodePath("../../../../../../PSSimulator/PSControllerBenjamin")
 
+[node name="Button" type="Button" parent="CanvasLayer" unique_id=677696188]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -138.0
+offset_bottom = 31.0
+grow_horizontal = 0
+toggle_mode = true
+button_pressed = true
+shortcut = SubResource("Shortcut_a37o0")
+text = "Toggle Debugger"
+
 [connection signal="request_change_conversation" from="CanvasLayer/HSplitContainer/VSplitContainer/Grid/Control/VBoxContainer/CodeEdit2" to="PSConversationLoader" method="_on_file_selected"]
+[connection signal="toggled" from="CanvasLayer/Button" to="CanvasLayer/HSplitContainer/VSplitContainer" method="set_visible"]
 
 [editable path="CanvasLayer/HSplitContainer/Editor"]
 [editable path="CanvasLayer/HSplitContainer/Editor/Control/GridContainer/GraphEdit/Hub"]

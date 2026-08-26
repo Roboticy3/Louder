@@ -10,6 +10,7 @@ const CTRL_THNK := "thinking"
 @export var mute:bool
 
 var data:Dictionary
+var branch:String
 
 func _ready() -> void:
 	add_to_group(group)
@@ -26,12 +27,19 @@ func update():
 		push_error("Updated PSController ", self, " with no simulator.")
 		return
 	
-	var text_visible := _filter_visible_node(simulator.get_position())
+	var temp_branch := branch
+	if !simulator.last_branch_traversal.is_empty() and simulator.last_branch_traversal != branch:
+		branch = simulator.last_branch_traversal
+	var text_visible := _filter_visible_node(simulator.get_position(branch))
+	
+	if !text_visible:
+		branch = temp_branch #undo branching if we tried to follow branching to a place we can't see
+		text_visible = _filter_visible_node(simulator.get_position(branch))
 	
 	if text_visible:
-		simulator.merge_current_into(data)
+		simulator.merge_current_into(data, branch)
 		
-	data[PSSimulator.HUB_CHCS] = simulator.list_choices_data(_filter_valid_choice) if text_visible else []
+	data[PSSimulator.HUB_CHCS] = simulator.list_choices_data(_filter_valid_choice, branch) if text_visible else []
 	
 	#sync with the rest of the controllers getting their choices
 	await get_tree().process_frame
@@ -56,6 +64,8 @@ func _filter_valid_choice(c:Dictionary) -> bool:
 	if c_speaker in speak_as:
 		return true
 	if !config.is_ownable(c_speaker):
+		if !config.is_public(c_speaker) and !(c_speaker in listen_to):
+			return false
 		return true
 	return false
 
@@ -70,9 +80,8 @@ func _filter_visible_node(position:int) -> bool:
 	return false
 
 func traverse(choice:String) -> bool:
-	#TODO - maybe some validation here that the choice is accessible to *this*
-	#controller and not just the simulator overall?
-	return simulator.traverse(choice)
+	var result := simulator.traverse(choice, _filter_valid_choice, branch)
+	return result
 
 func get_text(property:String) -> String:
 	return str(data.get(property))

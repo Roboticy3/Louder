@@ -67,11 +67,11 @@ Only if *all* clients have no remaining dialogue options does the simulator send
 The engine provides functions to tell a client who, if anyone, is thinking. And the effect of these rules on the basic rules is otherwise subtractive- taking the original behavior of showing dialogue and choices and simply not showing them sometimes.
 
 ### Asynchronous Multiple Speakers
-Dialogue may specify a "branch" property with a String value. When dialogue is shown to a client with this property, they are given their own flow by the simulator, separate from the rest of the conversation. If a flow has already been created with the same branch name, those clients' flows are instead merged with that branch. 
+Dialogue may specify a "branch" property with a String value. When dialogue is shown to a client with this property, they are given their own flow by the simulator, separate from the rest of the conversation. If a flow has already been created with the same branch name, those clients' flows are instead merged with that branch. This "merging" is visualized as a choice with no text, which clicking will update the client with the current state of the branch they're merging into, and set them to recieve updates from that branch instead of their previous branch.
 
-This pattern allows for dialogue to split off into seemingly separate conversations.
+This pattern allows for dialogue to split off into seemingly separate conversations. Clients can also deploy a spectator to recieve updates on what's happening in different branches, even though they can't interact with these directly.
 
 A client can also deploy a "spectator", who sees all branches but does not interact with the conversation. This is the strategy to dispatch dialogue bubbles to the client so they don't miss out on other parts of the conversation even when they have gone off on their own branch.
 
-### User Provided Functions
-Conditions and Statements can contain functions in the form `my_function(argument1, argument2, ...)++` where `argument1`, `argument2` and so on are each expressions and `++` can be any unary operator (only available in statements). This can be handled by the user in the form of a callback `int user_callback(function_name, char** args, int argc, char* operator)` and handled however the user pleases. For conditions, the integer returned by the function is used as the value. For statements, the operator can be read by the user to change their game state accordingly.
+Nodes with the "auto" property that connect to nodes with the "branch" property will automatically create multiple branches. For now, these branches must be the first choices from the auto node, as the first non-branching choice will tell the simulator to stop consuming choices in this way.
+

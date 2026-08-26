@@ -49,3 +49,6 @@ func is_public(speaker:String):
 	if s is Dictionary:
 		return true if s.get(SPK_PBLC, false) else false
 	return true
+
+func _on_conversation_changed(_path:String):
+	_ready()

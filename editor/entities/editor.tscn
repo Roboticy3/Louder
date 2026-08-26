@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://d1xnbir365a7q"]
 
-[ext_resource type="PackedScene" uid="uid://skobcwr5ug03" path="res://entities/hub.tscn" id="1_wlowb"]
+[ext_resource type="PackedScene" uid="uid://skobcwr5ug03" path="res://entities/hub_entity.tscn" id="1_wlowb"]
 [ext_resource type="Script" uid="uid://cwc5u75bjft3r" path="res://scripts/connection_logic.gd" id="2_mnjbr"]
 [ext_resource type="Script" uid="uid://cb5oairoh5jue" path="res://scripts/selection_logic.gd" id="3_2wuvf"]
 [ext_resource type="Script" uid="uid://c3iywyrk7o8yw" path="res://scripts/create_logic.gd" id="4_2vd5y"]
@@ -27,7 +27,6 @@ script = ExtResource("2_mnjbr")
 editor = NodePath("../Control/GridContainer/GraphEdit")
 pointer = NodePath("../PointerLogic")
 debugger = NodePath("../Control/RichTextLabel")
-port_change_listener_group = null
 
 [node name="SelectionLogic" type="Node" parent="." unique_id=985025703 node_paths=PackedStringArray("editor")]
 script = ExtResource("3_2wuvf")
@@ -98,13 +97,16 @@ right_disconnects = true
 layout_mode = 0
 offset_left = -1.0
 offset_top = 139.0
-offset_right = 342.0
-offset_bottom = 548.0
+offset_right = 391.0
+offset_bottom = 598.0
 position_offset = Vector2(-1, 139)
 selected = true
 hub_data = {
 NodePath("ChoicesSection/CheckBox"): true
 }
+
+[node name="callbacks" parent="Control/GridContainer/GraphEdit/Hub/OtherSection/VBoxContainer" parent_id_path=PackedInt32Array(1992437552, 72269939) index="3" unique_id=312146840]
+delimiter_strings = Array[String](["' '", "\" \""])
 
 [node name="start" parent="Control/GridContainer/GraphEdit/Hub/ChoicesSection" parent_id_path=PackedInt32Array(1992437552, 255423357) index="0" unique_id=628973272]
 button_pressed = true

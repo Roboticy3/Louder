@@ -6,8 +6,6 @@ extends Node
 
 @export var port_change_listener_group := &"port_change_listener"
 
-const HUB_SCENE := preload("res://entities/hub.tscn")
-	
 func _ready() -> void:
 	add_to_group(port_change_listener_group)
 	editor.connection_request.connect(_on_connection_request)
@@ -38,7 +36,15 @@ func _on_disconnection_request(from_node: String, from_port: int, to_node: Strin
 	editor.disconnect_node(from_node, from_port, to_node, to_port)
 
 func _on_connection_to_empty(from_node: String, from_port: int, release_position: Vector2) -> void:
-	var hub := HUB_SCENE.instantiate()
+	var source = editor.get_node_or_null(from_node)
+	var is_choice_previous := false
+	if source is CustomGraphHub:
+		is_choice_previous = source.get_data("is_choice", false) or source.get_data("auto", false)
+	
+	var hub:CustomGraphHub = NetworkEntityDefaults.ENTITY_SOURCES["hub"].instantiate()
+	hub.import({
+		"is_choice": !is_choice_previous
+	})
 	editor.add_child(hub)
 	hub.owner = editor.owner
 

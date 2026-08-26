@@ -558,6 +558,21 @@
 		"type": "hub"
 	},
 	{
+		"conversation_id": "74",
+		"position_offset:x": "3084.65942382813",
+		"position_offset:y": "1673.10314941406",
+		"speaker": "Note",
+		"text": "Testing some serialization.. please ignore this message",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "75",
+		"position_offset:x": "3579.03588867188",
+		"position_offset:y": "1677.80541992188",
+		"text": ":)",
+		"type": "hub"
+	},
+	{
 		"from_choice": "What's inside the cage?",
 		"from_id": "56",
 		"to_id": "11",
@@ -1020,9 +1035,15 @@
 		"type": "connection"
 	},
 	{
-		"position:x": "89.8729553222656",
-		"position:y": "-548.883666992188",
+		"from_choice": "",
+		"from_id": "74",
+		"to_id": "75",
+		"type": "connection"
+	},
+	{
+		"position:x": "2202.56469726563",
+		"position:y": "1144.65502929688",
 		"type": "camera",
-		"zoom": "1.42236518859863"
+		"zoom": "0.80288791656494"
 	}
 ]

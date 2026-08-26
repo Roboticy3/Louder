@@ -95,27 +95,36 @@ func set_choice_count(to:float):
 		await get_tree().process_frame
 		hub.reset_size()
 
+func get_choice_from_text_edit(text_edit:TextEdit):
+	var text := text_edit.text
+	if text.is_empty():
+		text = text_edit.placeholder_text
+	else:
+		pass
+	return text
+
 func choice_to_port_out(choice:String) -> int:
 	if choice.is_empty() and choices.is_empty():
 		return 0 #"default" or "continue"
 	
 	for i in choices.size():
-		var line_edit := choices[i]
-		if line_edit.text == choice:
+		var text_edit := choices[i]
+		if get_choice_from_text_edit(text_edit) == choice:
 			return i
 	return -1
 
 func port_out_to_choice(port:int) -> String:
 	if port >= 0 && port < choices.size():
-		return choices[port].text
+		return get_choice_from_text_edit(choices[port])
 	return ""
 
 func port_in() -> int:
 	return 0
 
 func _ready() -> void:
-	spin_box.value = choices.size()
-	spin_box.value_changed.connect(set_choice_count)
+	if is_instance_valid(spin_box):
+		spin_box.value = choices.size()
+		spin_box.value_changed.connect(set_choice_count)
 	if is_instance_valid(start_check):
 		start_check.pressed.connect(update_default_choices)
 	
