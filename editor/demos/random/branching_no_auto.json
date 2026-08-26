@@ -1,0 +1,128 @@
+[
+	{
+		"branch": "main",
+		"choices": [
+			"Reka's Thought's",
+			"Geno's affirmation."
+		],
+		"conversation_id": "0",
+		"position_offset:x": "-202.706954956055",
+		"position_offset:y": "3.50673007965088",
+		"speaker": "Geno",
+		"text": "Test Test",
+		"type": "hub"
+	},
+	{
+		"branch": "reka",
+		"conversation_id": "1",
+		"position_offset:x": "220.0",
+		"position_offset:y": "-120.0",
+		"speaker": "Soul",
+		"text": "Reka is thinking something now",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "4",
+		"position_offset:x": "703.571594238281",
+		"position_offset:y": "274.365509033203",
+		"type": "hub"
+	},
+	{
+		"branch": "geno",
+		"conversation_id": "3",
+		"is_choice": true,
+		"position_offset:x": "220.0",
+		"position_offset:y": "340.0",
+		"speaker": "Geno",
+		"text": "Hellooooooooo!",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "2",
+		"position_offset:x": "660.0",
+		"position_offset:y": "-160.0",
+		"speaker": "Soul",
+		"text": "Reka is done thinking something.",
+		"type": "hub"
+	},
+	{
+		"branch": "main",
+		"conversation_id": "5",
+		"is_choice": true,
+		"position_offset:x": "1130.34851074219",
+		"position_offset:y": "0.28369140625",
+		"speaker": "Hub",
+		"text": "We're both on the same train of thought now.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "6",
+		"position_offset:x": "1633.55224609375",
+		"position_offset:y": "42.2189483642578",
+		"speaker": "Hub",
+		"text": "See? We're moving in sync!",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"conversation_id": "7",
+		"position_offset:x": "-680.0",
+		"position_offset:y": "80.0",
+		"start": true,
+		"type": "hub"
+	},
+	{
+		"from_choice": "Reka's Thought's",
+		"from_id": "0",
+		"to_id": "1",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "1",
+		"to_id": "2",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Geno's affirmation.",
+		"from_id": "0",
+		"to_id": "3",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "3",
+		"to_id": "4",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "2",
+		"to_id": "5",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "4",
+		"to_id": "5",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "5",
+		"to_id": "6",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "7",
+		"to_id": "0",
+		"type": "connection"
+	},
+	{
+		"position:x": "-188.375396728516",
+		"position:y": "-332.878479003906",
+		"type": "camera",
+		"zoom": "0.66354370117188"
+	}
+]

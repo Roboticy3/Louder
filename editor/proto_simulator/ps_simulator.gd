@@ -62,7 +62,8 @@ func is_start(from_position:=get_position()) -> bool:
 	return h.get(HUB_SCHK, false)
 
 func get_property(from_position:int, property:String, default=null):
-	return str(conversation.hubs_by_id[from_position].get(property, default))
+	var h = conversation.hubs_by_id.get(from_position, {})
+	return str(h.get(property, default))
 
 func get_current_property(property:String, branch:="", default=null):
 	return get_property(get_position(branch), property, default)
@@ -265,7 +266,7 @@ func traverse(choice_text: String, filter=null, branch:="", depth:=0) -> bool:
 		return false
 	
 	recessive[HUB_TXTC] = choice.get(CON_FCHC)
-	var w := warp(int(choice.get(CON_TOID, "")), filter, branch, depth)
+	var w := warp(int(choice.get(CON_TOID, "")), branch, depth)
 	
 	update_controllers()
 	return w
@@ -281,11 +282,11 @@ func traverse_index(i: int, filter=null, branch:="", depth:=0) -> bool:
 		return false
 	
 	recessive[HUB_TXTC] = choices[i].get(CON_FCHC)
-	var w := warp(int(choices[i].get(CON_TOID, "")), filter, branch, depth)
+	var w := warp(int(choices[i].get(CON_TOID, "")), branch, depth)
 	
 	return w
 
-func warp(new_position:int, filter=null, branch:="", depth:=0) -> bool:
+func warp(new_position:int, branch:="", depth:=0) -> bool:
 	var b:PSDialogueBranch = state.branches.get(branch)
 	if !b:
 		push_error("PSSimulator::warp invalid branch ", branch, " (options: ", state.branches.keys(), ")")
@@ -299,7 +300,20 @@ func warp(new_position:int, filter=null, branch:="", depth:=0) -> bool:
 		
 		if is_auto(new_position):
 			_fill_dominant_on_auto(branch)
-			return traverse_index(0,filter,branch,depth + 1)
+			#consume choices until either all branches are consumed or no choices are left
+			var working_branch := branch
+			var i = 0
+			var found_any := false
+			while traverse_index(i,null,branch,depth + 1):
+				found_any = true
+				if last_branch_traversal.is_empty() || last_branch_traversal == working_branch:
+					#branches have been consumed
+					#repeatedly travesing on the same branch will cause unexpected behavior
+					break 
+				working_branch = last_branch_traversal
+				i += 1
+			
+			return found_any
 		
 		return true
 	push_error("Warped to nonexistent location: ", new_position)

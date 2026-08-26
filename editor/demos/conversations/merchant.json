@@ -1,30 +1,5 @@
 [
 	{
-		"branch": "reka",
-		"choices": [
-			"(Leave)",
-			"(Eavesdrop)"
-		],
-		"conversation_id": "2",
-		"position_offset:x": "720.0",
-		"position_offset:y": "-380.0",
-		"speaker": "Integumetary System",
-		"text": "The men are far away and speaking quietly. However, your ears can point towards the source. The sound pools downward and inward within you easily.",
-		"type": "hub"
-	},
-	{
-		"choices": [
-			"\"I found it in the desert.\"",
-			"\"I bought it off someone else.\" (Lie)"
-		],
-		"conversation_id": "3",
-		"position_offset:x": "720.0",
-		"position_offset:y": "640.0",
-		"speaker": "Bandito",
-		"text": "\"Where'd you find this thing, anyway?\" The customer is in a hurry to move the conversation along.",
-		"type": "hub"
-	},
-	{
 		"conversation_id": "4",
 		"is_choice": true,
 		"position_offset:x": "1240.0",
@@ -154,6 +129,14 @@
 		"type": "hub"
 	},
 	{
+		"conversation_id": "20",
+		"position_offset:x": "1720.0",
+		"position_offset:y": "-160.0",
+		"speaker": "Note",
+		"text": "Expected behavior here is a \"CONTINUE\" appears that hooks the player back into dialogue in the \"shop\" branch, and that they start recieving updates from the \"shop\" branch again after that. ",
+		"type": "hub"
+	},
+	{
 		"auto": true,
 		"choices": [
 			"(Choice 0)",
@@ -161,15 +144,32 @@
 		],
 		"conversation_id": "19",
 		"position_offset:x": "700.0",
-		"position_offset:y": "160.0",
+		"position_offset:y": "180.0",
 		"type": "hub"
 	},
 	{
-		"conversation_id": "20",
-		"position_offset:x": "1720.0",
-		"position_offset:y": "-160.0",
-		"speaker": "Note",
-		"text": "Expected behavior here is a \"CONTINUE\" appears that hooks the player back into dialogue in the \"shop\" branch, and that they start recieving updates from the \"shop\" branch again after that. ",
+		"choices": [
+			"\"I found it in the desert.\"",
+			"\"I bought it off someone else.\" (Lie)"
+		],
+		"conversation_id": "3",
+		"position_offset:x": "740.0",
+		"position_offset:y": "640.0",
+		"speaker": "Bandito",
+		"text": "\"Where'd you find this thing, anyway?\" The customer is in a hurry to move the conversation along.",
+		"type": "hub"
+	},
+	{
+		"branch": "reka",
+		"choices": [
+			"(Leave)",
+			"(Eavesdrop)"
+		],
+		"conversation_id": "2",
+		"position_offset:x": "700.0",
+		"position_offset:y": "-380.0",
+		"speaker": "Integumetary System",
+		"text": "The men are far away and speaking quietly. However, your ears can point towards the source. The sound pools downward and inward within you easily.",
 		"type": "hub"
 	},
 	{
@@ -269,9 +269,9 @@
 		"type": "connection"
 	},
 	{
-		"position:x": "1116.72412109375",
-		"position:y": "-817.471130371094",
+		"position:x": "387.558288574219",
+		"position:y": "-447.990112304688",
 		"type": "camera",
-		"zoom": "0.80288791656494"
+		"zoom": "0.66354370117188"
 	}
 ]
