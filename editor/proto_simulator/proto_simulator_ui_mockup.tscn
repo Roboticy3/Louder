@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dfuvngpcvkh4u"]
 
-[ext_resource type="Script" uid="uid://c8mgp47kh56t1" path="res://proto_simulator/ps_conversation_view.gd" id="1_uy6tw"]
+[ext_resource type="Script" uid="uid://c8mgp47kh56t1" path="res://proto_simulator/ps_dialogue_view.gd" id="1_uy6tw"]
 [ext_resource type="Script" uid="uid://bx4ryfqh7km2w" path="res://proto_simulator/ps_choices_container.gd" id="2_ctnr"]
 
 [node name="Control" type="Control" unique_id=644629500 node_paths=PackedStringArray("debug_speaker_label")]

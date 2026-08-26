@@ -19,7 +19,7 @@ const CON_FCHC := "from_choice"
 @export var conversation: PSConversation
 
 @export var reset_state_on_ready := false
-@export var state:PSConversationState
+@export var state:PSDialogueState
 
 var e := Expression.new()
 var recessive := {}
@@ -31,7 +31,7 @@ var dominant := {}
 ## These functions do not change the state of the simulator.
 
 func get_position(branch:="") -> int:
-	var b:PSConversationBranch = state.branches.get(branch)
+	var b:PSDialogueBranch = state.branches.get(branch)
 	if !b:
 		push_error("PSSimulator::get_position invalid branch ", branch, " (options: ", state.branches.keys(), ")")
 		return -1
@@ -60,11 +60,11 @@ func is_start(from_position:=get_position()) -> bool:
 	
 	return h.get(HUB_SCHK, false)
 
-func get_property(from_position:int, property:String):
-	return str(conversation.hubs_by_id[from_position].get(property))
+func get_property(from_position:int, property:String, default=null):
+	return str(conversation.hubs_by_id[from_position].get(property, default))
 
-func get_current_property(property:String, branch:=""):
-	return get_property(get_position(branch), property)
+func get_current_property(property:String, branch:="", default=null):
+	return get_property(get_position(branch), property, default)
 
 func merge_current_into(data:Dictionary, branch:=""):
 	var h:Dictionary = conversation.hubs_by_id.get(get_position(branch), {})
@@ -97,13 +97,14 @@ func _ready():
 		if is_start(id):
 			start = id
 			break
+	state.branches[""].position = start
 		
 	warp(start)
 	
 	update_controllers()
 
 func _reset_state():
-	state = PSConversationState.new()
+	state = PSDialogueState.new()
 
 func _on_conversation_changed(new_path:String):
 	conversation_path = new_path
@@ -123,7 +124,7 @@ func _count_conditions(conditions:String) -> int:
 	return conditions.count("\n") + 1
 
 func _evaluate_choice_single(c:Dictionary, branch:="") -> bool:
-	var b:PSConversationBranch = state.branches.get(branch)
+	var b:PSDialogueBranch = state.branches.get(branch)
 	if !b:
 		push_error("PSSimulator::_evaluate_choice_single invalid branch ", branch, " (options: ", state.branches.keys(), ")")
 		return false
@@ -151,7 +152,6 @@ func _evaluate_choice_single(c:Dictionary, branch:="") -> bool:
 func _evaluate_hub(h:Dictionary, branch:="") -> void:
 	_evaluate_hub_expressions(h, branch)
 	_evaluate_dice_checks(h, branch)
-	_evaluate_branching(h, branch)
 	
 	if !recessive.is_empty() && !is_auto(get_position(branch)):
 		h.merge(recessive)
@@ -159,7 +159,7 @@ func _evaluate_hub(h:Dictionary, branch:="") -> void:
 		h.merge(dominant, true)
 
 func _evaluate_hub_expressions(h:Dictionary, branch:="") -> void:
-	var b:PSConversationBranch = state.branches.get(branch)
+	var b:PSDialogueBranch = state.branches.get(branch)
 	if !b:
 		push_error("PSSimulator::_evaluate_hub_expressions invalid branch ", branch, " (options: ", state.branches.keys(), ")")
 		return
@@ -190,7 +190,7 @@ func _evaluate_hub_expressions(h:Dictionary, branch:="") -> void:
 	return
 
 func _evaluate_dice_checks(h:Dictionary, branch:="") -> void:
-	var b:PSConversationBranch = state.branches.get(branch)
+	var b:PSDialogueBranch = state.branches.get(branch)
 	if !b:
 		push_error("PSSimulator::_evaluate_dice_checks invalid branch ", branch, " (options: ", state.branches.keys(), ")")
 		return
@@ -239,13 +239,6 @@ func _roll_into_outcome(outcome_variable:String, skill_level:int, scope:PSVariab
 	scope[outcome_variable] = total
 	print("Rolled ", roll, " + ", skill_level, " = ", total, " for ", outcome_variable)
 
-func _evaluate_branching(h:Dictionary, branch:=""):
-	var h_branch:String = h.get(HUB_BRCH, "")
-	if h_branch.is_empty():
-		return
-	
-	
-
 ### TRAVERSAL
 ## Move through dialogue by making a choice on the current node.
 ## If the resulting choice is invalid, traversal functions return false and
@@ -287,14 +280,15 @@ func traverse_index(i: int, filter=null, branch:="") -> bool:
 	return w
 
 func warp(new_position:int, filter=null, branch:="") -> bool:
-	var b:PSConversationBranch = state.branches.get(branch)
+	var b:PSDialogueBranch = state.branches.get(branch)
 	if !b:
 		push_error("PSSimulator::warp invalid branch ", branch, " (options: ", state.branches.keys(), ")")
 		return false
 	
 	if new_position in conversation.hubs_by_id:
-		b.position = new_position
-		_evaluate_hub(conversation.hubs_by_id[new_position], branch)
+		var h:Dictionary = conversation.hubs_by_id[new_position]
+		_branch(h, new_position, branch)
+		_evaluate_hub(h, branch)
 		state._on_traverse(new_position)
 		
 		if is_auto(new_position):
@@ -313,6 +307,20 @@ func _fill_dominant_on_auto(branch:=""):
 		var w_spkr = conversation.hubs_by_id[position].get(HUB_SPKR)
 		if w_spkr:
 			dominant[HUB_SPKR] = w_spkr
+
+func _branch(h:Dictionary, position:int, branch:=""):
+	var working_branch := branch
+	
+	var h_branch:String = h.get(HUB_BRCH, "")
+	if !h_branch.is_empty():
+		working_branch = h_branch
+	
+	var b:PSDialogueBranch = state.branches.get(working_branch)
+	if !b:
+		b = PSDialogueBranch.new()
+		state.branches[working_branch] = b
+	
+	b.position = position
 
 func update_controllers():
 	get_tree().call_group(controller_group, &"update")

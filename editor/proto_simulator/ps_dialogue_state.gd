@@ -1,6 +1,6 @@
-class_name PSConversationState extends Resource
+class_name PSDialogueState extends Resource
 
-@export var branches:Dictionary[String, PSConversationBranch]
+@export var branches:Dictionary[String, PSDialogueBranch]
 @export var covered:Dictionary[int, bool]
 
 @export var variables:Dictionary[StringName, Variant]
@@ -11,7 +11,7 @@ func _init() -> void:
 
 func _reset_branches():
 	branches = {
-		"": PSConversationBranch.new()
+		"": PSDialogueBranch.new()
 	}
 
 func clear():
@@ -27,4 +27,4 @@ func _on_traverse(to_position:int) -> bool:
 	return exists
 
 func _to_string() -> String:
-	return "PSConversationState(\n variables: %s\n)" % [str(variables)]
+	return "PSDialogueState(\n variables: %s\n)" % [str(variables)]

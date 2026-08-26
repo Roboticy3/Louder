@@ -10,6 +10,7 @@ const CTRL_THNK := "thinking"
 @export var mute:bool
 
 var data:Dictionary
+var branch:String
 
 func _ready() -> void:
 	add_to_group(group)
@@ -72,9 +73,24 @@ func _filter_visible_node(position:int) -> bool:
 	return false
 
 func traverse(choice:String) -> bool:
-	#TODO - maybe some validation here that the choice is accessible to *this*
-	#controller and not just the simulator overall?
-	return simulator.traverse(choice, _filter_valid_choice)
+	var choices := simulator.list_choices_data(_filter_valid_choice, branch)
+	var found_choice := false
+	var next_branch := ""
+	for c in choices:
+		var from_choice := str(c.get(PSSimulator.CON_FCHC))
+		if from_choice != choice: continue
+		
+		found_choice = true
+		var to_id := int(c.get(PSSimulator.CON_TOID))
+		var c_branch:String = simulator.get_property(to_id, PSSimulator.HUB_BRCH, "")
+		if !c_branch.is_empty():
+			next_branch = c_branch
+	
+	if found_choice:
+		var result := simulator.traverse(choice, _filter_valid_choice, branch)
+		branch = next_branch
+		return result
+	return false
 
 func get_text(property:String) -> String:
 	return str(data.get(property))
