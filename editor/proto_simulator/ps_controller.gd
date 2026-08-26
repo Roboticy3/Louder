@@ -56,6 +56,8 @@ func _filter_valid_choice(c:Dictionary) -> bool:
 	if c_speaker in speak_as:
 		return true
 	if !config.is_ownable(c_speaker):
+		if !config.is_public(c_speaker) and !(c_speaker in listen_to):
+			return false
 		return true
 	return false
 
