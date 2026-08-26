@@ -24,6 +24,7 @@ const CON_FCHC := "from_choice"
 var e := Expression.new()
 var recessive := {}
 var dominant := {}
+var last_branch_traversal := ""
 
 @export var controller_group := &"ps_controller"
 
@@ -247,9 +248,11 @@ func _roll_into_outcome(outcome_variable:String, skill_level:int, scope:PSVariab
 ## the node linked by the choice made. If the resulting node has AutoCheck
 ## enabled, traversal will continue recursively until a non-auto node is
 ## reached.
-func traverse(choice_text: String, filter=null, branch:="") -> bool:
-	recessive = {}
-	dominant = {}
+func traverse(choice_text: String, filter=null, branch:="", depth:=0) -> bool:
+	if depth == 0:
+		last_branch_traversal = ""
+		recessive = {}
+		dominant = {}
 	var position := get_position(branch)
 	var choice = null
 	for c in conversation.get_connections_from(position):
@@ -262,24 +265,27 @@ func traverse(choice_text: String, filter=null, branch:="") -> bool:
 		return false
 	
 	recessive[HUB_TXTC] = choice.get(CON_FCHC)
-	var w := warp(int(choice.get(CON_TOID, "")), filter, branch)
+	var w := warp(int(choice.get(CON_TOID, "")), filter, branch, depth)
 	
 	update_controllers()
 	return w
 
-func traverse_index(i: int, filter=null, branch:="") -> bool:
+func traverse_index(i: int, filter=null, branch:="", depth:=0) -> bool:
+	if depth == 0:
+		last_branch_traversal = ""
+		recessive = {}
+		dominant = {}
 	var choices := list_choices_data(filter, branch)
 	if i < 0 or i >= choices.size():
 		push_error("Traversed to choice index out of bounds: ", i)
 		return false
 	
 	recessive[HUB_TXTC] = choices[i].get(CON_FCHC)
-	var w := warp(int(choices[i].get(CON_TOID, "")), filter, branch)
+	var w := warp(int(choices[i].get(CON_TOID, "")), filter, branch, depth)
 	
-	update_controllers()
 	return w
 
-func warp(new_position:int, filter=null, branch:="") -> bool:
+func warp(new_position:int, filter=null, branch:="", depth:=0) -> bool:
 	var b:PSDialogueBranch = state.branches.get(branch)
 	if !b:
 		push_error("PSSimulator::warp invalid branch ", branch, " (options: ", state.branches.keys(), ")")
@@ -287,13 +293,13 @@ func warp(new_position:int, filter=null, branch:="") -> bool:
 	
 	if new_position in conversation.hubs_by_id:
 		var h:Dictionary = conversation.hubs_by_id[new_position]
-		_branch(h, new_position, branch)
+		branch = _fill_branch_traversal(h, new_position, branch)
 		_evaluate_hub(h, branch)
 		state._on_traverse(new_position)
 		
 		if is_auto(new_position):
 			_fill_dominant_on_auto(branch)
-			return traverse_index(0,filter,branch)
+			return traverse_index(0,filter,branch,depth + 1)
 		
 		return true
 	push_error("Warped to nonexistent location: ", new_position)
@@ -308,7 +314,7 @@ func _fill_dominant_on_auto(branch:=""):
 		if w_spkr:
 			dominant[HUB_SPKR] = w_spkr
 
-func _branch(h:Dictionary, position:int, branch:=""):
+func _fill_branch_traversal(h:Dictionary, position:int, branch:="") ->String:
 	var working_branch := branch
 	
 	var h_branch:String = h.get(HUB_BRCH, "")
@@ -321,6 +327,11 @@ func _branch(h:Dictionary, position:int, branch:=""):
 		state.branches[working_branch] = b
 	
 	b.position = position
+	
+	if !working_branch.is_empty() and working_branch != branch:
+		last_branch_traversal = working_branch
+	
+	return working_branch
 
 func update_controllers():
 	get_tree().call_group(controller_group, &"update")

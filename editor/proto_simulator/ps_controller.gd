@@ -27,12 +27,12 @@ func update():
 		push_error("Updated PSController ", self, " with no simulator.")
 		return
 	
-	var text_visible := _filter_visible_node(simulator.get_position())
+	var text_visible := _filter_visible_node(simulator.get_position(branch))
 	
 	if text_visible:
-		simulator.merge_current_into(data)
+		simulator.merge_current_into(data, branch)
 		
-	data[PSSimulator.HUB_CHCS] = simulator.list_choices_data(_filter_valid_choice) if text_visible else []
+	data[PSSimulator.HUB_CHCS] = simulator.list_choices_data(_filter_valid_choice, branch) if text_visible else []
 	
 	#sync with the rest of the controllers getting their choices
 	await get_tree().process_frame
@@ -73,24 +73,12 @@ func _filter_visible_node(position:int) -> bool:
 	return false
 
 func traverse(choice:String) -> bool:
-	var choices := simulator.list_choices_data(_filter_valid_choice, branch)
-	var found_choice := false
-	var next_branch := ""
-	for c in choices:
-		var from_choice := str(c.get(PSSimulator.CON_FCHC))
-		if from_choice != choice: continue
-		
-		found_choice = true
-		var to_id := int(c.get(PSSimulator.CON_TOID))
-		var c_branch:String = simulator.get_property(to_id, PSSimulator.HUB_BRCH, "")
-		if !c_branch.is_empty():
-			next_branch = c_branch
-	
-	if found_choice:
-		var result := simulator.traverse(choice, _filter_valid_choice, branch)
-		branch = next_branch
-		return result
-	return false
+	var result := simulator.traverse(choice, _filter_valid_choice, branch)
+	if result:
+		if !simulator.last_branch_traversal.is_empty() and simulator.last_branch_traversal != branch:
+			branch = simulator.last_branch_traversal
+	simulator.update_controllers()
+	return result
 
 func get_text(property:String) -> String:
 	return str(data.get(property))
