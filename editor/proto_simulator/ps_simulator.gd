@@ -261,31 +261,24 @@ func traverse(choice_text: String, filter=null, branch:="") -> bool:
 		return false
 	
 	recessive[HUB_TXTC] = choice.get(CON_FCHC)
-	var w := warp(int(choice.get(CON_TOID, "")), branch)
-	if w && is_auto(position):
-		_fill_dominant_on_auto(branch)
-		return traverse_index(0,filter,branch)
+	var w := warp(int(choice.get(CON_TOID, "")), filter, branch)
 	
 	update_controllers()
 	return w
 
 func traverse_index(i: int, filter=null, branch:="") -> bool:
 	var choices := list_choices_data(filter, branch)
-	var position := get_position(branch)
 	if i < 0 or i >= choices.size():
 		push_error("Traversed to choice index out of bounds: ", i)
 		return false
 	
 	recessive[HUB_TXTC] = choices[i].get(CON_FCHC)
-	var w := warp(int(choices[i].get(CON_TOID, "")), branch)
-	if w && is_auto(position):
-		_fill_dominant_on_auto(branch)
-		return traverse_index(0, filter, branch)
+	var w := warp(int(choices[i].get(CON_TOID, "")), filter, branch)
 	
 	update_controllers()
 	return w
 
-func warp(new_position:int, branch:="") -> bool:
+func warp(new_position:int, filter=null, branch:="") -> bool:
 	var b:PSConversationState = state.get(branch)
 	if !b:
 		push_error("PSSimulator::warp invalid branch ", branch, " (options: ", state.keys(), ")")
@@ -295,6 +288,11 @@ func warp(new_position:int, branch:="") -> bool:
 		b.position = new_position
 		_evaluate_hub(conversation.hubs_by_id[new_position], branch)
 		b._on_traverse(new_position)
+		
+		if is_auto(new_position):
+			_fill_dominant_on_auto(branch)
+			return traverse_index(0,filter,branch)
+		
 		return true
 	push_error("Warped to nonexistent location: ", new_position)
 	return false
