@@ -251,9 +251,86 @@
 		"type": "speaker"
 	},
 	{
-		"position:x": "-450.858764648438",
-		"position:y": "-614.044799804688",
+		"color": "da1934ff",
+		"conversation_id": "33",
+		"ownable": true,
+		"position_offset:x": "460.0",
+		"position_offset:y": "-300.0",
+		"public": true,
+		"relationships": [],
+		"speaker": "Reka",
+		"type": "speaker"
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "34",
+		"ownable": false,
+		"position_offset:x": "460.0",
+		"position_offset:y": "-100.0",
+		"public": false,
+		"relationships": [],
+		"speaker": "Power",
+		"type": "speaker"
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "35",
+		"ownable": false,
+		"position_offset:x": "460.0",
+		"position_offset:y": "80.0",
+		"public": false,
+		"relationships": [],
+		"speaker": "Soul",
+		"type": "speaker"
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "36",
+		"ownable": false,
+		"position_offset:x": "460.0",
+		"position_offset:y": "260.0",
+		"public": false,
+		"relationships": [],
+		"speaker": "Body",
+		"type": "speaker"
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "37",
+		"ownable": false,
+		"position_offset:x": "460.0",
+		"position_offset:y": "440.0",
+		"public": false,
+		"relationships": [],
+		"speaker": "Nervous System",
+		"type": "speaker"
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "38",
+		"ownable": false,
+		"position_offset:x": "460.0",
+		"position_offset:y": "640.0",
+		"public": false,
+		"relationships": [],
+		"speaker": "Integumetary System",
+		"type": "speaker"
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "39",
+		"ownable": false,
+		"position_offset:x": "460.0",
+		"position_offset:y": "820.0",
+		"public": false,
+		"relationships": [],
+		"speaker": "Skeletal System",
+		"type": "speaker"
+	},
+	{
+		"position:x": "-405.343902587891",
+		"position:y": "-168.172943115234",
 		"type": "camera",
-		"zoom": "0.82644593715668"
+		"zoom": "0.35049366950989"
 	}
 ]

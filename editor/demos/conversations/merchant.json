@@ -8,7 +8,7 @@
 		"conversation_id": "2",
 		"position_offset:x": "720.0",
 		"position_offset:y": "-380.0",
-		"speaker": "Integumentary System",
+		"speaker": "Integumetary System",
 		"text": "The men are far away and speaking quietly. However, your ears can point towards the source. The sound pools downward and inward within you easily.",
 		"type": "hub"
 	},
@@ -131,7 +131,7 @@
 		"conversation_id": "17",
 		"position_offset:x": "1295.759765625",
 		"position_offset:y": "-116.98592376709",
-		"speaker": "Integumentary System",
+		"speaker": "Integumetary System",
 		"text": "You listen intently into the conversation. Keep in mind that inner monologues can distact you from your surroundings.",
 		"type": "hub"
 	},
@@ -269,9 +269,9 @@
 		"type": "connection"
 	},
 	{
-		"position:x": "256.837280273438",
-		"position:y": "-553.055725097656",
+		"position:x": "1116.72412109375",
+		"position:y": "-817.471130371094",
 		"type": "camera",
-		"zoom": "0.41200837492943"
+		"zoom": "0.80288791656494"
 	}
 ]
