@@ -82,6 +82,7 @@ func roll_dice() -> int:
 ## called externally.
 
 func _ready():
+	last_branch_traversal = ""
 	recessive = {}
 	dominant = {}
 	if !state or reset_state_on_ready:
@@ -99,7 +100,6 @@ func _ready():
 		if is_start(id):
 			start = id
 			break
-	state.branches[""].position = start
 		
 	warp(start)
 	
@@ -284,6 +284,7 @@ func traverse_index(i: int, filter=null, branch:="", depth:=0) -> bool:
 	recessive[HUB_TXTC] = choices[i].get(CON_FCHC)
 	var w := warp(int(choices[i].get(CON_TOID, "")), branch, depth)
 	
+	update_controllers()
 	return w
 
 func warp(new_position:int, branch:="", depth:=0) -> bool:
@@ -335,15 +336,20 @@ func _fill_branch_traversal(h:Dictionary, position:int, branch:="") ->String:
 	if !h_branch.is_empty():
 		working_branch = h_branch
 	
+	var different_branch := false
+	if !working_branch.is_empty() and working_branch != branch:
+		different_branch = true
+		last_branch_traversal = working_branch
+	
 	var b:PSDialogueBranch = state.branches.get(working_branch)
+	var new_branch := false
 	if !b:
+		new_branch = true
 		b = PSDialogueBranch.new()
 		state.branches[working_branch] = b
 	
-	b.position = position
-	
-	if !working_branch.is_empty() and working_branch != branch:
-		last_branch_traversal = working_branch
+	if new_branch or !different_branch: 
+		b.position = position
 	
 	return working_branch
 

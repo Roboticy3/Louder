@@ -27,7 +27,14 @@ func update():
 		push_error("Updated PSController ", self, " with no simulator.")
 		return
 	
+	var temp_branch := branch
+	if !simulator.last_branch_traversal.is_empty() and simulator.last_branch_traversal != branch:
+		branch = simulator.last_branch_traversal
 	var text_visible := _filter_visible_node(simulator.get_position(branch))
+	
+	if !text_visible:
+		branch = temp_branch #undo branching if we tried to follow branching to a place we can't see
+		text_visible = _filter_visible_node(simulator.get_position(branch))
 	
 	if text_visible:
 		simulator.merge_current_into(data, branch)
@@ -74,10 +81,6 @@ func _filter_visible_node(position:int) -> bool:
 
 func traverse(choice:String) -> bool:
 	var result := simulator.traverse(choice, _filter_valid_choice, branch)
-	if result:
-		if !simulator.last_branch_traversal.is_empty() and simulator.last_branch_traversal != branch:
-			branch = simulator.last_branch_traversal
-	simulator.update_controllers()
 	return result
 
 func get_text(property:String) -> String:

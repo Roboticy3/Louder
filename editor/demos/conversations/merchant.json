@@ -102,7 +102,6 @@
 		"type": "hub"
 	},
 	{
-		"branch": "shop",
 		"conversation_id": "17",
 		"position_offset:x": "1295.759765625",
 		"position_offset:y": "-116.98592376709",
@@ -124,27 +123,7 @@
 		"position_offset:x": "160.0",
 		"position_offset:y": "60.0",
 		"speaker": "Geno",
-		"start": true,
 		"text": "Small crystals and rusted metal sit on temporary shelving. The most prized possession in the shop is an account book behind the front desk. Though only under an awning, the inside of the shop feels like the inside of a building. 2 men on opposite sides of the counter are haggling over an ornate dagger. Both are rough an sandy. ",
-		"type": "hub"
-	},
-	{
-		"conversation_id": "20",
-		"position_offset:x": "1720.0",
-		"position_offset:y": "-160.0",
-		"speaker": "Note",
-		"text": "Expected behavior here is a \"CONTINUE\" appears that hooks the player back into dialogue in the \"shop\" branch, and that they start recieving updates from the \"shop\" branch again after that. ",
-		"type": "hub"
-	},
-	{
-		"auto": true,
-		"choices": [
-			"(Choice 0)",
-			"(Choice 1)"
-		],
-		"conversation_id": "19",
-		"position_offset:x": "700.0",
-		"position_offset:y": "180.0",
 		"type": "hub"
 	},
 	{
@@ -170,6 +149,129 @@
 		"position_offset:y": "-380.0",
 		"speaker": "Integumetary System",
 		"text": "The men are far away and speaking quietly. However, your ears can point towards the source. The sound pools downward and inward within you easily.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "20",
+		"position_offset:x": "2060.0",
+		"position_offset:y": "-60.0",
+		"speaker": "Note",
+		"text": "Expected behavior here is a \"CONTINUE\" appears that hooks the player back into dialogue in the \"shop\" branch, and that they start recieving updates from the \"shop\" branch again after that. ",
+		"type": "hub"
+	},
+	{
+		"branch": "shop",
+		"conversation_id": "21",
+		"is_choice": true,
+		"position_offset:x": "1704.32580566406",
+		"position_offset:y": "7.65135192871094",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"choices": [
+			"(Choice 0)",
+			"(Choice 1)"
+		],
+		"conversation_id": "19",
+		"position_offset:x": "700.0",
+		"position_offset:y": "180.0",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"conversation_id": "22",
+		"position_offset:x": "-240.0",
+		"position_offset:y": "220.0",
+		"start": true,
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"choices": [
+			"(Choice 0)",
+			"(Choice 1)"
+		],
+		"conversation_id": "23",
+		"position_offset:x": "3260.0",
+		"position_offset:y": "1100.0",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "30",
+		"position_offset:x": "3740.0",
+		"position_offset:y": "1440.0",
+		"speaker": "Rhetoric",
+		"text": "Look tough.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "25",
+		"position_offset:x": "4200.0",
+		"position_offset:y": "1480.0",
+		"speaker": "Geno",
+		"text": "\"The Rouge.\"",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"choices": [
+			"(Choice 0)",
+			"(Choice 1)"
+		],
+		"conversation_id": "31",
+		"position_offset:x": "4660.0",
+		"position_offset:y": "1440.0",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "28",
+		"position_offset:x": "4660.0",
+		"position_offset:y": "900.0",
+		"speaker": "Bandito",
+		"text": "The customer has started appreciating a stone mask. Not to purchase, unfortunately. But the light distraction makes the words go down easy.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "32",
+		"position_offset:x": "5100.0",
+		"position_offset:y": "1380.0",
+		"speaker": "Nervous System",
+		"text": "What? Please. Not him too.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "33",
+		"position_offset:x": "5520.0",
+		"position_offset:y": "1480.0",
+		"speaker": "Bandit",
+		"text": "\"Really?\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "34",
+		"position_offset:x": "5900.0",
+		"position_offset:y": "1460.0",
+		"speaker": "Rhetoric",
+		"text": "Great! An opportunity to double down!",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "24",
+		"position_offset:x": "4180.0",
+		"position_offset:y": "920.0",
+		"speaker": "Geno",
+		"text": "\"I don't ask questions. I got it for 6. You get that plus risk and labor. It needed cleaning.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "29",
+		"dice_level": "12.0",
+		"dice_skill": "Rhetoric",
+		"position_offset:x": "3720.0",
+		"position_offset:y": "780.0",
+		"speaker": "Rhetoric",
+		"text": "There's a mask behind you. Shift your weight aside and let the decorations do the work. He doesn't like you. Have him focus on something else, then say something that sounds like a reason. I have a perfect spool of nonsense fresh and ready.",
 		"type": "hub"
 	},
 	{
@@ -269,9 +371,87 @@
 		"type": "connection"
 	},
 	{
-		"position:x": "387.558288574219",
-		"position:y": "-447.990112304688",
+		"from_choice": "",
+		"from_id": "17",
+		"to_id": "21",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "22",
+		"to_id": "0",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "11",
+		"to_id": "23",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "24",
+		"to_id": "28",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 0)",
+		"from_id": "23",
+		"to_id": "29",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "29",
+		"to_id": "24",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 1)",
+		"from_id": "23",
+		"to_id": "30",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "30",
+		"to_id": "25",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "25",
+		"to_id": "31",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 0)",
+		"from_id": "31",
+		"to_id": "32",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 1)",
+		"from_id": "31",
+		"to_id": "33",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "32",
+		"to_id": "33",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "33",
+		"to_id": "34",
+		"type": "connection"
+	},
+	{
+		"position:x": "48.7744140625",
+		"position:y": "-245.847778320313",
 		"type": "camera",
-		"zoom": "0.66354370117188"
+		"zoom": "0.23256795108318"
 	}
 ]

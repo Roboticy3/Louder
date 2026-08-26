@@ -18,9 +18,9 @@ func _ready() -> void:
 	
 	if debug_speaker_label:
 		if controller:
-			debug_speaker_label.text = ",".join(controller.speak_as)
+			debug_speaker_label.text = ",".join(controller.speak_as) + ((" (branch: %s)" % controller.branch))
 		else:
-			debug_speaker_label.text = "(no speakers connected)"
+			debug_speaker_label.text = "(no controller connected)"
 	
 func _collect_ui_components(node: Node, components: Array[Node]) -> void:
 	for child in node.get_children():
