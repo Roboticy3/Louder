@@ -72,7 +72,7 @@ func _filter_visible_node(position:int) -> bool:
 func traverse(choice:String) -> bool:
 	#TODO - maybe some validation here that the choice is accessible to *this*
 	#controller and not just the simulator overall?
-	return simulator.traverse(choice)
+	return simulator.traverse(choice, _filter_valid_choice)
 
 func get_text(property:String) -> String:
 	return str(data.get(property))

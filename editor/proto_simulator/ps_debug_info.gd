@@ -6,6 +6,7 @@ extends RichTextLabel
 @export var show_position := true
 @export var show_choices := true
 @export var show_variables := true
+@export var all_branches := true
 
 func _ready() -> void:
 	if not simulator:
@@ -24,19 +25,30 @@ func update() -> void:
 	var parts: PackedStringArray = []
 	if show_conversation:
 		parts.append("[b]Conversation:[/b] %s" % simulator.conversation_path)
-	if show_position:
-		parts.append("[b]Position:[/b] %s" % str(simulator.get_position()))
-	if show_choices:
-		var raw_choices := simulator.list_choices_data(null, simulator.position, false)
-		var choice_texts: PackedStringArray = []
-		for c in raw_choices:
-			choice_texts.append(str(c.get("from_choice", "?")))
-		parts.append("[b]Choices:[/b]\n%s" % "\n".join(choice_texts) if choice_texts.size() else "[b]Choices:[/b] (none)")
-	if show_variables and simulator.state:
-		var vars: PackedStringArray = []
-		for key in simulator.state.variables:
-			vars.append("%s = %s" % [key, str(simulator.state.scope._get(key))])
-		parts.append("[b]Variables:[/b]\n%s" % "\n".join(vars) if vars.size() else "[b]Variables:[/b] (empty)")
+	
+	var branches := simulator.state.keys()
+	if !all_branches:
+		if "" in branches:
+			branches = [""]
+		elif !branches.is_empty():
+			branches = branches.slice(0, 1)
+	
+	for branch in branches:
+		parts.append("[b]Branch: %s [/b]" % str(branch))
+		if show_position:
+			parts.append("  [i]Position:[/i] %s" % str(simulator.get_position(branch)))
+		if show_choices:
+			var raw_choices := simulator.list_choices_data(null, branch)
+			var choice_texts: PackedStringArray = []
+			for c in raw_choices:
+				choice_texts.append("  %s" % str(c.get("from_choice", "?")))
+			parts.append("  [i]Choices:[/i]\n%s" % "\n".join(choice_texts) if choice_texts.size() else "[b]Choices:[/b] (none)")
+		if show_variables and simulator.state.get(branch):
+			var vars: PackedStringArray = []
+			for key in simulator.state[branch].variables:
+				vars.append("  %s = %s" % [key, str(simulator.state[branch].scope._get(key))])
+			parts.append("  [i]Variables:[/i]\n%s" % "\n".join(vars) if vars.size() else "[b]Variables:[/b] (empty)")
+	
 	if !simulator.recessive.is_empty():
 		var entries: PackedStringArray = []
 		for key in simulator.recessive:
