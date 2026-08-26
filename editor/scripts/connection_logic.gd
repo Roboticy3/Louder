@@ -39,7 +39,7 @@ func _on_connection_to_empty(from_node: String, from_port: int, release_position
 	var source = editor.get_node_or_null(from_node)
 	var is_choice_previous := false
 	if source is CustomGraphHub:
-		is_choice_previous = source.get_data("is_choice", false)
+		is_choice_previous = source.get_data("is_choice", false) or source.get_data("auto", false)
 	
 	var hub:CustomGraphHub = NetworkEntityDefaults.ENTITY_SOURCES["hub"].instantiate()
 	hub.import({

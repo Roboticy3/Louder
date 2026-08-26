@@ -92,20 +92,22 @@ layout_mode = 2
 
 [node name="textSection" type="Label" parent="TextSectionWrapper/TextSection/HBoxContainer" unique_id=1351469422]
 layout_mode = 2
-text = "Text Content"
+text = "Text Section"
 
 [node name="Spacer" type="Control" parent="TextSectionWrapper/TextSection/HBoxContainer" unique_id=2082381832]
+custom_minimum_size = Vector2(30, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="BranchCheck" type="CheckBox" parent="TextSectionWrapper/TextSection/HBoxContainer" unique_id=1490500834 node_paths=PackedStringArray("mutual_exclusive")]
+[node name="branch" parent="TextSectionWrapper/TextSection/HBoxContainer" unique_id=1664207967 groups=["autocomplete_speaker", "hub_component"] instance=ExtResource("3_f5yrs")]
 layout_mode = 2
-size_flags_vertical = 4
-theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
-text = "Branch"
-script = ExtResource("2_6jgyt")
-mutual_exclusive = [NodePath("../../branch")]
-inverted = true
+size_flags_vertical = 0
+placeholder_text = "Branch"
+wrap_mode = 0
+scroll_fit_content_width = true
+delimiter_strings = Array[String](["\" \"", "' '"])
+oneliner = true
+inliner = true
 
 [node name="is_choice" type="CheckBox" parent="TextSectionWrapper/TextSection/HBoxContainer" unique_id=1659837714 node_paths=PackedStringArray("mutual_exclusive") groups=["hub_component"]]
 layout_mode = 2
@@ -116,6 +118,7 @@ script = ExtResource("2_6jgyt")
 mutual_exclusive = [NodePath("../../../../ChoicesSection")]
 
 [node name="private" type="CheckBox" parent="TextSectionWrapper/TextSection/HBoxContainer" unique_id=1575580911 node_paths=PackedStringArray("mutual_exclusive") groups=["hub_component"]]
+visible = false
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
@@ -137,15 +140,6 @@ layout_mode = 2
 size_flags_vertical = 0
 placeholder_text = "Recipient"
 wrap_mode = 0
-oneliner = true
-inliner = true
-
-[node name="branch" parent="TextSectionWrapper/TextSection" unique_id=1664207967 groups=["autocomplete_speaker", "hub_component"] instance=ExtResource("3_f5yrs")]
-layout_mode = 2
-size_flags_vertical = 0
-placeholder_text = "Branch"
-wrap_mode = 0
-delimiter_strings = Array[String](["\" \"", "' '"])
 oneliner = true
 inliner = true
 
@@ -206,6 +200,11 @@ placeholder_text = "Conditions"
 [node name="statements" parent="OtherSection/VBoxContainer" unique_id=1321863141 groups=["autocomplete_expression", "hub_component"] instance=ExtResource("3_f5yrs")]
 layout_mode = 2
 placeholder_text = "Statements"
+
+[node name="callbacks" parent="OtherSection/VBoxContainer" unique_id=312146840 groups=["autocomplete_expression", "hub_component"] instance=ExtResource("3_f5yrs")]
+layout_mode = 2
+placeholder_text = "callback arg1 arg2 ..."
+delimiter_strings = Array[String](["\" \"", "' '"])
 
 [node name="ChoicesSection" type="GridContainer" parent="." unique_id=255423357]
 layout_mode = 2
