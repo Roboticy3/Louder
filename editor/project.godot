@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="CustomGraph"
-run/main_scene="uid://i5djwipicmob"
+run/main_scene="uid://262tuwnn0nqs"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://icon.svg"
 
@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 IdSystem="*uid://emcgvjw2xenp"
 NetworkEntityDefaults="*uid://bttyhihvjbpso"
+MerchantNetworkHandler="*uid://bxjm62v0fahhs"
 
 [gui]
 

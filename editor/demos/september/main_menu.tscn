@@ -1,0 +1,194 @@
+[gd_scene format=3 uid="uid://262tuwnn0nqs"]
+
+[ext_resource type="Script" uid="uid://ybu0cnnjqu7b" path="res://demos/september/main_menu_starter.gd" id="1_cv508"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_cv508"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_nunj6"]
+size = Vector2(128, 256)
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_rhy6e"]
+
+[sub_resource type="Gradient" id="Gradient_wnrnk"]
+colors = PackedColorArray(0.09167641, 0.23872939, 0.094743915, 0.6039216, 0.35989198, 0.729787, 0.9102842, 0.54901963)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_ybclp"]
+gradient = SubResource("Gradient_wnrnk")
+
+[sub_resource type="Gradient" id="Gradient_rhy6e"]
+colors = PackedColorArray(0, 0, 0, 0.6039216, 0.48179054, 0.48178917, 0.48178917, 0.54901963)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_aeouo"]
+gradient = SubResource("Gradient_rhy6e")
+
+[sub_resource type="Gradient" id="Gradient_cv508"]
+colors = PackedColorArray(0, 0, 0, 0.6039216, 1, 1, 1, 0.54901963)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_cv508"]
+gradient = SubResource("Gradient_cv508")
+
+[sub_resource type="Gradient" id="Gradient_aeouo"]
+colors = PackedColorArray(0.6344339, 0.58320415, 0.15541378, 0.6039216, 0.9361496, 0.4612704, 0.44252193, 0.54901963)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_wnrnk"]
+gradient = SubResource("Gradient_aeouo")
+
+[node name="MainMenu" type="Control" unique_id=550762822]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=191694602]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -371.0
+offset_top = -66.0
+offset_right = 371.0
+offset_bottom = 66.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MultiplayerOptions" type="VBoxContainer" parent="VBoxContainer" unique_id=659374955]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="Button" type="Button" parent="VBoxContainer/MultiplayerOptions" unique_id=970546172]
+layout_mode = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_cv508")
+text = "JOIN GAME"
+
+[node name="Button2" type="Button" parent="VBoxContainer/MultiplayerOptions" unique_id=639502323]
+layout_mode = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_cv508")
+text = "HOST GAME"
+
+[node name="CharacterSelect" type="VBoxContainer" parent="VBoxContainer" unique_id=1331463917]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/CharacterSelect" unique_id=289823913]
+layout_mode = 2
+text = "Click to select a character!"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/CharacterSelect" unique_id=1382645569]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/CharacterSelect/HBoxContainer" unique_id=1265114538]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Panel" type="HBoxContainer" parent="VBoxContainer/CharacterSelect/HBoxContainer/MarginContainer" unique_id=294684123]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RichTextLabel" type="RichTextLabel" parent="VBoxContainer/CharacterSelect/HBoxContainer/MarginContainer/Panel" unique_id=747362015]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Character description: Geno"
+
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer/CharacterSelect/HBoxContainer/MarginContainer/Panel" unique_id=1559602029]
+layout_mode = 2
+texture = SubResource("PlaceholderTexture2D_nunj6")
+
+[node name="TextureButton" type="TextureButton" parent="VBoxContainer/CharacterSelect/HBoxContainer/MarginContainer" unique_id=865076446]
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+button_group = SubResource("ButtonGroup_rhy6e")
+texture_pressed = SubResource("GradientTexture2D_ybclp")
+texture_hover = SubResource("GradientTexture2D_aeouo")
+texture_disabled = SubResource("GradientTexture2D_cv508")
+stretch_mode = 6
+
+[node name="MarginContainer2" type="MarginContainer" parent="VBoxContainer/CharacterSelect/HBoxContainer" unique_id=439794251]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Panel" type="HBoxContainer" parent="VBoxContainer/CharacterSelect/HBoxContainer/MarginContainer2" unique_id=1878198697]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer/CharacterSelect/HBoxContainer/MarginContainer2/Panel" unique_id=99596812]
+layout_mode = 2
+texture = SubResource("PlaceholderTexture2D_nunj6")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="VBoxContainer/CharacterSelect/HBoxContainer/MarginContainer2/Panel" unique_id=1858807235]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Character description: Reka"
+
+[node name="TextureButton" type="TextureButton" parent="VBoxContainer/CharacterSelect/HBoxContainer/MarginContainer2" unique_id=1543593442]
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+button_group = SubResource("ButtonGroup_rhy6e")
+texture_pressed = SubResource("GradientTexture2D_wnrnk")
+texture_hover = SubResource("GradientTexture2D_aeouo")
+texture_disabled = SubResource("GradientTexture2D_cv508")
+stretch_mode = 6
+
+[node name="Confirmation" type="VBoxContainer" parent="VBoxContainer" unique_id=498766543]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Confirmation" unique_id=1838478584]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/Confirmation/VBoxContainer" unique_id=416041778]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/Confirmation/VBoxContainer/HBoxContainer" unique_id=1659493102]
+layout_mode = 2
+text = "Username: "
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/Confirmation/VBoxContainer/HBoxContainer" unique_id=717580911]
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/Confirmation/VBoxContainer" unique_id=478965857]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/Confirmation/VBoxContainer/HBoxContainer2" unique_id=650797448]
+layout_mode = 2
+text = "Ip: "
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/Confirmation/VBoxContainer/HBoxContainer2" unique_id=814988841]
+layout_mode = 2
+text = "localhost"
+expand_to_text_length = true
+
+[node name="Label2" type="Label" parent="VBoxContainer/Confirmation/VBoxContainer/HBoxContainer2" unique_id=47428873]
+layout_mode = 2
+text = "Port:"
+
+[node name="LineEdit2" type="SpinBox" parent="VBoxContainer/Confirmation/VBoxContainer/HBoxContainer2" unique_id=426855065]
+layout_mode = 2
+max_value = 65535.0
+value = 45678.0
+
+[node name="Label" type="Label" parent="VBoxContainer/Confirmation" unique_id=1810265427 groups=["progress_message_listener"]]
+layout_mode = 2
+text = "Awaiting command...."
+horizontal_alignment = 1
+
+[node name="Button" type="Button" parent="VBoxContainer/Confirmation" unique_id=2031063729 groups=["progress_status_listener"]]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "      GO      "
+
+[node name="MainMenuStarter" type="Node" parent="." unique_id=1882237254]
+script = ExtResource("1_cv508")
+
+[connection signal="pressed" from="VBoxContainer/MultiplayerOptions/Button" to="MainMenuStarter" method="set_mode" binds= [1]]
+[connection signal="pressed" from="VBoxContainer/MultiplayerOptions/Button2" to="MainMenuStarter" method="set_mode" binds= [2]]
+[connection signal="pressed" from="VBoxContainer/CharacterSelect/HBoxContainer/MarginContainer/TextureButton" to="MainMenuStarter" method="set_play_as" binds= ["Geno"]]
+[connection signal="pressed" from="VBoxContainer/CharacterSelect/HBoxContainer/MarginContainer2/TextureButton" to="MainMenuStarter" method="set_play_as" binds= ["Reka"]]
+[connection signal="text_changed" from="VBoxContainer/Confirmation/VBoxContainer/HBoxContainer/LineEdit" to="MainMenuStarter" method="set_username"]
+[connection signal="text_changed" from="VBoxContainer/Confirmation/VBoxContainer/HBoxContainer2/LineEdit" to="MainMenuStarter" method="set_server_ip"]
+[connection signal="value_changed" from="VBoxContainer/Confirmation/VBoxContainer/HBoxContainer2/LineEdit2" to="MainMenuStarter" method="set_server_port"]

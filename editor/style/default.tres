@@ -19,3 +19,7 @@ corner_radius_bottom_left = 8
 CheckBox/styles/focus = SubResource("StyleBoxEmpty_rhcs5")
 GraphNode/styles/titlebar = SubResource("StyleBoxFlat_di7s0")
 GraphNode/styles/titlebar_selected = SubResource("StyleBoxEmpty_nsb74")
+MarginContainer/constants/margin_bottom = 30
+MarginContainer/constants/margin_left = 30
+MarginContainer/constants/margin_right = 30
+MarginContainer/constants/margin_top = 30
