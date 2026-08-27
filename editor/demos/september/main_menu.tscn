@@ -72,6 +72,7 @@ button_group = SubResource("ButtonGroup_cv508")
 text = "HOST GAME"
 
 [node name="CharacterSelect" type="VBoxContainer" parent="VBoxContainer" unique_id=1331463917]
+visible = false
 layout_mode = 2
 
 [node name="Label" type="Label" parent="VBoxContainer/CharacterSelect" unique_id=289823913]
@@ -135,42 +136,42 @@ texture_hover = SubResource("GradientTexture2D_aeouo")
 texture_disabled = SubResource("GradientTexture2D_cv508")
 stretch_mode = 6
 
-[node name="Confirmation" type="VBoxContainer" parent="VBoxContainer" unique_id=498766543]
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/CharacterSelect" unique_id=1838478584]
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Confirmation" unique_id=1838478584]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/CharacterSelect/VBoxContainer" unique_id=416041778]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/Confirmation/VBoxContainer" unique_id=416041778]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="VBoxContainer/Confirmation/VBoxContainer/HBoxContainer" unique_id=1659493102]
+[node name="Label" type="Label" parent="VBoxContainer/CharacterSelect/VBoxContainer/HBoxContainer" unique_id=1659493102]
 layout_mode = 2
 text = "Username: "
 
-[node name="LineEdit" type="LineEdit" parent="VBoxContainer/Confirmation/VBoxContainer/HBoxContainer" unique_id=717580911]
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/CharacterSelect/VBoxContainer/HBoxContainer" unique_id=717580911]
 layout_mode = 2
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/Confirmation/VBoxContainer" unique_id=478965857]
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/CharacterSelect/VBoxContainer" unique_id=478965857]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="VBoxContainer/Confirmation/VBoxContainer/HBoxContainer2" unique_id=650797448]
+[node name="Label" type="Label" parent="VBoxContainer/CharacterSelect/VBoxContainer/HBoxContainer2" unique_id=650797448]
 layout_mode = 2
 text = "Ip: "
 
-[node name="LineEdit" type="LineEdit" parent="VBoxContainer/Confirmation/VBoxContainer/HBoxContainer2" unique_id=814988841]
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/CharacterSelect/VBoxContainer/HBoxContainer2" unique_id=814988841]
 layout_mode = 2
 text = "localhost"
 expand_to_text_length = true
 
-[node name="Label2" type="Label" parent="VBoxContainer/Confirmation/VBoxContainer/HBoxContainer2" unique_id=47428873]
+[node name="Label2" type="Label" parent="VBoxContainer/CharacterSelect/VBoxContainer/HBoxContainer2" unique_id=47428873]
 layout_mode = 2
 text = "Port:"
 
-[node name="LineEdit2" type="SpinBox" parent="VBoxContainer/Confirmation/VBoxContainer/HBoxContainer2" unique_id=426855065]
+[node name="LineEdit2" type="SpinBox" parent="VBoxContainer/CharacterSelect/VBoxContainer/HBoxContainer2" unique_id=426855065]
 layout_mode = 2
 max_value = 65535.0
 value = 45678.0
+
+[node name="Confirmation" type="VBoxContainer" parent="VBoxContainer" unique_id=498766543]
+layout_mode = 2
 
 [node name="Label" type="Label" parent="VBoxContainer/Confirmation" unique_id=1810265427 groups=["progress_message_listener"]]
 layout_mode = 2
@@ -184,11 +185,16 @@ text = "      GO      "
 
 [node name="MainMenuStarter" type="Node" parent="." unique_id=1882237254]
 script = ExtResource("1_cv508")
+progress_message_listener_group = null
+progress_status_listener_group = null
+start_listener_group = null
 
+[connection signal="pressed" from="VBoxContainer/MultiplayerOptions/Button" to="VBoxContainer/CharacterSelect" method="show"]
 [connection signal="pressed" from="VBoxContainer/MultiplayerOptions/Button" to="MainMenuStarter" method="set_mode" binds= [1]]
+[connection signal="pressed" from="VBoxContainer/MultiplayerOptions/Button2" to="VBoxContainer/CharacterSelect" method="show"]
 [connection signal="pressed" from="VBoxContainer/MultiplayerOptions/Button2" to="MainMenuStarter" method="set_mode" binds= [2]]
-[connection signal="pressed" from="VBoxContainer/CharacterSelect/HBoxContainer/MarginContainer/TextureButton" to="MainMenuStarter" method="set_play_as" binds= ["Geno"]]
-[connection signal="pressed" from="VBoxContainer/CharacterSelect/HBoxContainer/MarginContainer2/TextureButton" to="MainMenuStarter" method="set_play_as" binds= ["Reka"]]
-[connection signal="text_changed" from="VBoxContainer/Confirmation/VBoxContainer/HBoxContainer/LineEdit" to="MainMenuStarter" method="set_username"]
-[connection signal="text_changed" from="VBoxContainer/Confirmation/VBoxContainer/HBoxContainer2/LineEdit" to="MainMenuStarter" method="set_server_ip"]
-[connection signal="value_changed" from="VBoxContainer/Confirmation/VBoxContainer/HBoxContainer2/LineEdit2" to="MainMenuStarter" method="set_server_port"]
+[connection signal="pressed" from="VBoxContainer/CharacterSelect/HBoxContainer/MarginContainer/TextureButton" to="MainMenuStarter" method="set_play_as" binds= ["geno"]]
+[connection signal="pressed" from="VBoxContainer/CharacterSelect/HBoxContainer/MarginContainer2/TextureButton" to="MainMenuStarter" method="set_play_as" binds= ["reka"]]
+[connection signal="text_changed" from="VBoxContainer/CharacterSelect/VBoxContainer/HBoxContainer/LineEdit" to="MainMenuStarter" method="set_username"]
+[connection signal="text_changed" from="VBoxContainer/CharacterSelect/VBoxContainer/HBoxContainer2/LineEdit" to="MainMenuStarter" method="set_server_ip"]
+[connection signal="value_changed" from="VBoxContainer/CharacterSelect/VBoxContainer/HBoxContainer2/LineEdit2" to="MainMenuStarter" method="set_server_port"]

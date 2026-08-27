@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://cb4dwvxtmavmn"]
+
+[ext_resource type="Script" uid="uid://fpt44n6qts2f" path="res://demos/september/lobby_entry.gd" id="1_wychw"]
+
+[node name="LobbyEntry" type="HBoxContainer" unique_id=2039149480 node_paths=PackedStringArray("mode", "username", "character")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_wychw")
+mode = NodePath("Mode")
+username = NodePath("Username")
+character = NodePath("Character")
+
+[node name="Mode" type="Label" parent="." unique_id=1495872731]
+layout_mode = 2
+text = "Host:"
+
+[node name="Username" type="Label" parent="." unique_id=81628059]
+layout_mode = 2
+text = "Username"
+
+[node name="Control" type="Control" parent="." unique_id=1283094914]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Character" type="Label" parent="." unique_id=196072513]
+layout_mode = 2
+text = "(playing as Character)"

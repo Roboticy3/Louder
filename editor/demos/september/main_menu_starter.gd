@@ -1,35 +1,34 @@
 extends Node
 
-enum StarterMode {
-	NONE = 0,
-	JOIN,
-	HOST
-}
-var mode := StarterMode.NONE
+
+var mode := NetworkLayer.ClientMode.NONE
 
 var play_as := ""
 var username := ""
+var ip_address := "localhost"
+var port := 45678
 
 @export var progress_message_listener_group := &"progress_message_listener"
 @export var progress_status_listener_group := &"progress_status_listener"
+@export var start_listener_group := &"start_listener"
 
 func _ready():
 	validate()
 
-func set_mode(to:StarterMode):
+func set_mode(to:NetworkLayer.ClientMode):
 	mode = to
 	validate()
 
 func set_play_as(to:String):
 	play_as = to
-	if mode == StarterMode.NONE:
-		mode = StarterMode.JOIN
+	if mode == NetworkLayer.ClientMode.NONE:
+		mode = NetworkLayer.ClientMode.JOIN
 	validate()
 
 func set_username(to:String):
 	username = to
-	if mode == StarterMode.NONE:
-		mode = StarterMode.JOIN
+	if mode == NetworkLayer.ClientMode.NONE:
+		mode = NetworkLayer.ClientMode.JOIN
 	validate()
 
 func validate():
@@ -37,10 +36,10 @@ func validate():
 	get_tree().call_group(progress_message_listener_group, &"set", &"text", get_progress_text())
 
 func get_progress_disabled() -> bool:
-	if mode == StarterMode.NONE:
+	if mode == NetworkLayer.ClientMode.NONE:
 		return true
-	if mode == StarterMode.JOIN:
-		if MerchantNetworkHandler.server_ip == "":
+	if mode == NetworkLayer.ClientMode.JOIN:
+		if ip_address == "":
 			return true
 	if play_as.is_empty():
 		return true
@@ -49,27 +48,34 @@ func get_progress_disabled() -> bool:
 	return false
 
 func set_server_ip(to:String) -> void:
-	MerchantNetworkHandler.server_ip = to
+	ip_address = to
 
 func set_server_port(to:int) -> void:
-	MerchantNetworkHandler.server_port = to
+	port = to
 
 func get_progress_text() -> String:
 	var part1 := ""
 	match mode:
-		StarterMode.NONE:
+		NetworkLayer.ClientMode.NONE:
 			part1 = "Awaiting command"
-		StarterMode.JOIN:
+		NetworkLayer.ClientMode.JOIN:
 			part1 = "Press to join game"
-		StarterMode.HOST:
+		NetworkLayer.ClientMode.HOST:
 			part1 = "Press to host game"
 	
 	var part2 := ""
 	if !play_as.is_empty():
 		part2 = " as %s" % [play_as]
 	
-	var full := part1 + part2 + "..."
+	var part3 := ""
+	if !username.is_empty():
+		part3 = " (%s)" % [username]
+	
+	var full := part1 + part2 + part3 + "..."
 	return full
 
 func start():
-	pass
+	if get_progress_disabled():
+		push_error("MainMenuStarter::start tried to start game after get_progress_disabled() returned true")
+	
+	NetworkLayer.start(character, username)
