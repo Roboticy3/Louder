@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://drw57m3h7d81d"]
+
+[node name="NetworkLayerStatus" type="CanvasLayer" unique_id=113646426]
+
+[node name="Label" type="Label" parent="." unique_id=901489718]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -23.0
+offset_right = 40.0
+grow_vertical = 0
