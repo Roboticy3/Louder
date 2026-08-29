@@ -89,6 +89,9 @@ func _ready():
 	dominant = {}
 	if !state or reset_state_on_ready:
 		_reset_state()
+	
+	if conversation_path.is_empty():
+		return
 	var c := PSConversation.new()
 	c.load_from_json(conversation_path)
 	
@@ -97,13 +100,16 @@ func _ready():
 	
 	conversation = c
 	
-	var start := int(c.hubs_by_id.keys()[0])
-	for id in c.hubs_by_id:
+	start()
+
+func start():
+	var h_start := int(conversation.hubs_by_id.keys()[0])
+	for id in conversation.hubs_by_id:
 		if is_start(id):
-			start = id
+			h_start = id
 			break
 		
-	warp(start)
+	warp(h_start)
 	
 	update_controllers()
 
@@ -113,6 +119,11 @@ func _reset_state():
 func _on_conversation_changed(new_path:String):
 	conversation_path = new_path
 	_ready()
+
+func _on_conversation_changed_to_node(new_conversation:PSConversation):
+	conversation_path = new_conversation.input_path
+	conversation = new_conversation
+	start()
 
 func _evaluate_choices(choices: Array, branch:="") -> Array:
 	var valid_choices := []
