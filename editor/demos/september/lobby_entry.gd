@@ -8,6 +8,9 @@ extends HBoxContainer
 @export var username:Label
 @export var character:Label
 
+func _enter_tree() -> void:
+	set_multiplayer_authority(str(name).to_int())
+
 func _ready() -> void:
 	add_to_group(client_data_listener_group)
 	add_to_group(server_listener_group)

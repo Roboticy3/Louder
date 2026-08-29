@@ -7,7 +7,6 @@ extends Node #extending MultiplayerSpawner seems to cause a bug(?) here. 2spooky
 func _ready() -> void:
 	add_to_group(server_listener_group)
 	multiplayer.peer_connected.connect(_on_peer_connected)
-	
 
 func _on_peer_connected(authority:int) -> void:
 	if !multiplayer.is_server(): return
@@ -15,16 +14,12 @@ func _on_peer_connected(authority:int) -> void:
 	var spawn_root = get_node(get("spawn_path"))
 	var spawnable_instance := spawnable_packed.instantiate()
 	
-	spawn_root.add_child.call_deferred(spawnable_instance)
-	spawnable_instance.name = produce_name(spawn_root)
-	spawnable_instance.set_multiplayer_authority(authority)
-
-func produce_name(on:Node) -> String:
-	if on.get_child_count() == 0:
-		return "0"
-	
-	var last := on.get_child(-1)
-	return str(int(last.name) + 1)
+	# Name the entry after the peer id instead of using an incrementing index.
+	# Node names are always replicated to remote peers, but the multiplayer
+	# authority set here is not reliably propagated (Godot issue #75067). Each
+	# replica recovers the correct authority from its own name in _enter_tree.
+	spawnable_instance.name = str(authority)
+	spawn_root.add_child(spawnable_instance)
 
 func _on_server_created(_port:int) -> void:
 	_on_peer_connected(get_multiplayer_authority())
