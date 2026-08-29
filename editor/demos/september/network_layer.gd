@@ -6,7 +6,9 @@ extends Node
 var client_data:Dictionary[int, Dictionary] = {}
 
 const LOBBY := preload("res://demos/september/lobby_menu.tscn")
-const STATUS := preload()
+const STATUS := preload("res://demos/september/network_layer_status.tscn")
+
+var status_ui:CanvasLayer
 
 var peer:ENetMultiplayerPeer
 
@@ -28,6 +30,20 @@ func _ready() -> void:
 	add_child(sync)
 	
 	add_child(LOBBY.instantiate())
+
+	status_ui = STATUS.instantiate()
+	add_child(status_ui)
+
+	multiplayer.connected_to_server.connect(func():
+		status_ui.post("Connected to server."))
+	multiplayer.connection_failed.connect(func():
+		status_ui.post("Connection to server failed."))
+	multiplayer.server_disconnected.connect(func():
+		status_ui.post("Server disconnected."))
+	multiplayer.peer_connected.connect(func(id:int):
+		status_ui.post("Peer %d connected." % id))
+	multiplayer.peer_disconnected.connect(func(id:int):
+		status_ui.post("Peer %d disconnected." % id))
 
 	peer = ENetMultiplayerPeer.new()
 	
@@ -54,9 +70,11 @@ func start(mode:ClientMode, ip_address:String, port:int, data:Dictionary) -> boo
 	#snapshot. Each peer keeps its own entry; the server aggregates them all.
 	var peer_id := multiplayer.get_unique_id()
 	if mode == ClientMode.JOIN:
+		status_ui.post("Connecting to server %s:%d..." % [ip_address, port])
 		await multiplayer.connected_to_server
 		_merge_client_data.rpc_id(1, peer_id, data)
 	else:
+		status_ui.post("Hosting server on port %d." % port)
 		client_data[peer_id] = data
 
 	if mode == ClientMode.HOST:
