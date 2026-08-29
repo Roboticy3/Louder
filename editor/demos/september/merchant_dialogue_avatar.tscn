@@ -1,9 +1,11 @@
 [gd_scene format=3 uid="uid://c2gm64o43wbsc"]
 
 [ext_resource type="Script" uid="uid://boqtrny21e2v0" path="res://demos/september/merchant_dialogue_avatar.gd" id="1_4ow0u"]
+[ext_resource type="Script" uid="uid://cbiclxd6bqxa4" path="res://proto_simulator/ps_controller.gd" id="1_ee4gr"]
 [ext_resource type="Texture2D" uid="uid://cehn1pamkib1t" path="res://icon.svg" id="1_mkixu"]
 [ext_resource type="Script" uid="uid://bajbnbufiv5vc" path="res://demos/september/avatar_body_2d.gd" id="1_vlnjk"]
 [ext_resource type="Script" uid="uid://dshl0su1su5xe" path="res://proto_simulator/ps_simulator.gd" id="4_edwrj"]
+[ext_resource type="Script" uid="uid://b8jjbbtjemx6g" path="res://proto_simulator/ps_config.gd" id="4_i7f3t"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_nunj6"]
 radius = 62.008064
@@ -13,9 +15,10 @@ properties/0/path = NodePath("CharacterBody2D:position")
 properties/0/spawn = true
 properties/0/replication_mode = 1
 
-[node name="MerchantDialogueAvatar" type="Node" unique_id=1812669900 node_paths=PackedStringArray("simulator")]
+[node name="MerchantDialogueAvatar" type="Node" unique_id=1812669900 node_paths=PackedStringArray("simulator", "controller")]
 script = ExtResource("1_4ow0u")
 simulator = NodePath("PSSimulator")
+controller = NodePath("PSSimulator/PSController")
 
 [node name="CharacterBody2D" type="CharacterBody2D" parent="." unique_id=1766363668]
 script = ExtResource("1_vlnjk")
@@ -29,7 +32,17 @@ shape = SubResource("CircleShape2D_nunj6")
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=822459477]
 replication_config = SubResource("SceneReplicationConfig_4ow0u")
 
+[node name="PSConfig" type="Node" parent="." unique_id=567162440 groups=["conversation_changed_listener"]]
+script = ExtResource("4_i7f3t")
+metadata/_custom_type_script = "uid://b8jjbbtjemx6g"
+
 [node name="PSSimulator" type="Node" parent="." unique_id=506508902]
 script = ExtResource("4_edwrj")
 conversation_path = ""
 metadata/_custom_type_script = "uid://dshl0su1su5xe"
+
+[node name="PSController" type="Node" parent="PSSimulator" unique_id=1900619408 node_paths=PackedStringArray("simulator", "config")]
+script = ExtResource("1_ee4gr")
+simulator = NodePath("..")
+config = NodePath("../../PSConfig")
+metadata/_custom_type_script = "uid://cbiclxd6bqxa4"

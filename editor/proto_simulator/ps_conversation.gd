@@ -5,6 +5,7 @@ const TYPE_HUB := "hub"
 const TYPE_CONNECTION := "connection"
 const TYPE_CAMERA := "camera"
 
+@export var group := &"ps_conversation"
 @export var input_path: String = ""
 
 var hubs_by_id:Dictionary[int, Dictionary] = {}
@@ -12,6 +13,7 @@ var connections_by_from:Dictionary[int, Array] = {}
 var camera := {}
 
 func _ready() -> void:
+	add_to_group(group)
 	if not input_path.is_empty():
 		load_from_json(input_path)
 
