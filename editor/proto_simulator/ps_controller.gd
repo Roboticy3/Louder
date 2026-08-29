@@ -59,6 +59,12 @@ func update(branch_changed:=false, old_branch:="", new_branch:=""):
 func is_active():
 	return !data.is_empty()
 
+func may_speak_as(speaker:String) -> bool:
+	return speak_as.is_empty() or (speaker in speak_as)
+
+func may_listen_to(speaker:String) -> bool:
+	return listen_to.is_empty() or (speaker in listen_to)
+
 #Asynchronous Multiple Speakers
 #1. Hide choices pointing to speakers not owned in `my_speakers`
 func _filter_valid_choice(c:Dictionary) -> bool:
@@ -66,10 +72,13 @@ func _filter_valid_choice(c:Dictionary) -> bool:
 	var c_speaker := str(simulator.get_property(int(c["to_id"]), PSSimulator.HUB_SPKR))
 	if !(c_speaker in config.speakers_by_name):
 		return true
-	if c_speaker in speak_as:
+	
+	var speaking := may_speak_as(c_speaker)
+	var listening := may_listen_to(c_speaker)
+	if speaking:
 		return true
 	if !config.is_ownable(c_speaker):
-		if !config.is_public(c_speaker) and !(c_speaker in listen_to):
+		if !config.is_public(c_speaker) and !(listening):
 			return false
 		return true
 	return false
@@ -78,7 +87,9 @@ func _filter_visible_node(position:int) -> bool:
 	var n_speaker := str(simulator.get_property(position, PSSimulator.HUB_SPKR))
 	if !(n_speaker in config.speakers_by_name):
 		return true
-	if n_speaker in listen_to:
+	
+	var listening := may_listen_to(n_speaker)
+	if listening:
 		return true
 	if config.is_public(n_speaker):
 		return true

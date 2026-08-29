@@ -27,6 +27,7 @@ var dominant := {}
 var last_branch_traversal := ""
 
 @export var controller_group := &"ps_controller"
+@export var group := &"ps_simulator"
 
 ### Getters
 ## These functions do not change the state of the simulator.
@@ -82,6 +83,7 @@ func roll_dice() -> int:
 ## called externally.
 
 func _ready():
+	add_to_group(group)
 	last_branch_traversal = ""
 	recessive = {}
 	dominant = {}

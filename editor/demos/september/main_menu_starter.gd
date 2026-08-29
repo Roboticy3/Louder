@@ -12,6 +12,8 @@ var port := 45678
 @export var progress_status_listener_group := &"progress_status_listener"
 @export var start_listener_group := &"start_listener"
 
+@export var level:PackedScene
+
 func _ready():
 	validate()
 
@@ -83,3 +85,5 @@ func start():
 		"username": username,
 		"play_as": play_as
 	})
+	
+	get_tree().change_scene_to_packed(level)
