@@ -7,6 +7,7 @@ extends Node
 func _ready() -> void:
 	add_to_group(server_listener_group)
 	multiplayer.peer_connected.connect(_on_peer_connected)
+	
 
 func _on_peer_connected(authority:int) -> void:
 	if !multiplayer.is_server(): return

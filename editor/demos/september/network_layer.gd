@@ -16,7 +16,7 @@ func _ready() -> void:
 	add_child(LOBBY.instantiate())
 
 	peer = ENetMultiplayerPeer.new()
-
+	
 func start(mode:ClientMode, ip_address:String, port:int, data:Dictionary) -> bool:
 	
 	var error := OK

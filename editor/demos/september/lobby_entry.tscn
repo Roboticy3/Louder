@@ -24,11 +24,11 @@ mode = NodePath("Mode")
 username = NodePath("Username")
 character = NodePath("Character")
 
-[node name="Mode" type="Label" parent="." unique_id=1495872731]
+[node name="Mode" type="Label" parent="." unique_id=1495872731 groups=["lobby_entry_component"]]
 layout_mode = 2
 text = "Host:"
 
-[node name="Username" type="Label" parent="." unique_id=81628059]
+[node name="Username" type="Label" parent="." unique_id=81628059 groups=["lobby_entry_component"]]
 layout_mode = 2
 text = "Username"
 
@@ -36,7 +36,7 @@ text = "Username"
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Character" type="Label" parent="." unique_id=196072513]
+[node name="Character" type="Label" parent="." unique_id=196072513 groups=["lobby_entry_component"]]
 layout_mode = 2
 text = "(playing as Character)"
 
