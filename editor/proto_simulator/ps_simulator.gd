@@ -268,7 +268,10 @@ func traverse(choice_text: String, filter=null, branch:="", depth:=0) -> bool:
 	recessive[HUB_TXTC] = choice.get(CON_FCHC)
 	var w := warp(int(choice.get(CON_TOID, "")), branch, depth)
 	
-	update_controllers()
+	var branch_changed := false
+	if !last_branch_traversal.is_empty() and last_branch_traversal != branch:
+		branch_changed = true
+	update_controllers(branch_changed, branch, last_branch_traversal)
 	return w
 
 func traverse_index(i: int, filter=null, branch:="", depth:=0) -> bool:
@@ -284,7 +287,10 @@ func traverse_index(i: int, filter=null, branch:="", depth:=0) -> bool:
 	recessive[HUB_TXTC] = choices[i].get(CON_FCHC)
 	var w := warp(int(choices[i].get(CON_TOID, "")), branch, depth)
 	
-	update_controllers()
+	var branch_changed := false
+	if !last_branch_traversal.is_empty() and last_branch_traversal != branch:
+		branch_changed = true
+	update_controllers(branch_changed, branch, last_branch_traversal) 
 	return w
 
 func warp(new_position:int, branch:="", depth:=0) -> bool:
@@ -353,5 +359,5 @@ func _fill_branch_traversal(h:Dictionary, position:int, branch:="") ->String:
 	
 	return working_branch
 
-func update_controllers():
-	get_tree().call_group(controller_group, &"update")
+func update_controllers(branch_changed:=false, from_branch:="", to_branch:=""):
+	get_tree().call_group(controller_group, &"update", branch_changed, from_branch, to_branch)

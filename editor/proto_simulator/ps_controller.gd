@@ -22,19 +22,24 @@ func _ready() -> void:
 
 signal updated()
 signal show_end()
-func update():
+func update(branch_changed:=false, old_branch:="", new_branch:=""):
 	if !is_instance_valid(simulator):
 		push_error("Updated PSController ", self, " with no simulator.")
 		return
 	
+	if old_branch != branch:
+		return
+	
 	var temp_branch := branch
-	if !simulator.last_branch_traversal.is_empty() and simulator.last_branch_traversal != branch:
+	if branch_changed:
 		branch = simulator.last_branch_traversal
+	
 	var text_visible := _filter_visible_node(simulator.get_position(branch))
 	
 	if !text_visible:
-		branch = temp_branch #undo branching if we tried to follow branching to a place we can't see
-		text_visible = _filter_visible_node(simulator.get_position(branch))
+		if branch_changed:
+			branch = temp_branch #undo branching if we tried to follow branching to a place we can't see
+			text_visible = _filter_visible_node(simulator.get_position(branch))
 	
 	if text_visible:
 		simulator.merge_current_into(data, branch)

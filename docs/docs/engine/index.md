@@ -23,7 +23,7 @@ Dialog is loaded from a project file produced by the editor (see [editor](/edito
  7. When the simulator travels to another node, the process repeats, either waiting for more choices from the user to proceed or proceeding automatically as long as the simulator is traveling through "auto" nodes. If the node has a blank "text" field, the text of the previous choice is used.
 
 ### Commmands
-!TODO! Not all assignment expressions are currently supported. Only = is currently supported [31](https://github.com/Roboticy3/Louder/issues/31)
+!TODO! Not all assignment expressions are currently supported. Only = is currently supported [31](https://github.com/Roboticy3/Louder/issues/31) Bitwise operations should also be supported.
 
 !TODO! Currently there is no error logging. [34](https://github.com/Roboticy3/Louder/issues/34)
 
