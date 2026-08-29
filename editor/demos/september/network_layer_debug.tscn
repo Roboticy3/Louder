@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://dhihd4tsjrard"]
+
+[ext_resource type="Script" uid="uid://cnds7ajvrwwir" path="res://demos/september/network_layer_debug.gd" id="1_d0jtc"]
+
+[node name="NetworkLayerDebug" type="CanvasLayer" unique_id=1228424685 node_paths=PackedStringArray("label")]
+script = ExtResource("1_d0jtc")
+label = NodePath("RichTextLabel")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="." unique_id=1631936406]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -391.0
+offset_right = 376.0
+grow_vertical = 0
+mouse_filter = 2

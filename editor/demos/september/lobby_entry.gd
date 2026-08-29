@@ -1,6 +1,7 @@
 extends HBoxContainer
 
-@export var group := &"lobby_entry"
+@export var client_data_listener_group := &"client_data_listener"
+@export var server_listener_group := &"server_listener"
 @export var component_group := &"lobby_entry_component"
 
 @export var mode:Label
@@ -8,19 +9,8 @@ extends HBoxContainer
 @export var character:Label
 
 func _ready() -> void:
-	add_to_group(group)
-
-func set_mode(to:String) -> void:
-	mode.text = to + ":"
-
-func set_username(to:String) -> void:
-	username.text = to
-
-func set_character(to:String) -> void:
-	character.text = " (playing as " + to + ")"
-
-func get_username() -> String:
-	return username.text
+	add_to_group(client_data_listener_group)
+	add_to_group(server_listener_group)
 
 func export() -> Dictionary:
 	var data := {}
@@ -49,3 +39,9 @@ func _export_component(node: Node) -> Variant:
 func _import_component(node: Node, value: Variant) -> void:
 	if node is Label:
 		node.text = value
+
+func _on_client_data_changed(to:Dictionary[int, Dictionary]):
+	import(to.get(get_multiplayer_authority(), {}))
+
+func _on_server_created(_port:int):
+	_on_client_data_changed(NetworkLayer.client_data)

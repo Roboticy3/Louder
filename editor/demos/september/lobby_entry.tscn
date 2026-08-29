@@ -2,17 +2,6 @@
 
 [ext_resource type="Script" uid="uid://fpt44n6qts2f" path="res://demos/september/lobby_entry.gd" id="1_wychw"]
 
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_wychw"]
-properties/0/path = NodePath("Mode:text")
-properties/0/spawn = true
-properties/0/replication_mode = 2
-properties/1/path = NodePath("Username:text")
-properties/1/spawn = true
-properties/1/replication_mode = 2
-properties/2/path = NodePath("Character:text")
-properties/2/spawn = true
-properties/2/replication_mode = 2
-
 [node name="LobbyEntry" type="HBoxContainer" unique_id=2039149480 node_paths=PackedStringArray("mode", "username", "character")]
 anchors_preset = 15
 anchor_right = 1.0
@@ -20,15 +9,19 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_wychw")
-mode = NodePath("Mode")
-username = NodePath("Username")
-character = NodePath("Character")
+mode = NodePath("mode")
+username = NodePath("username")
+character = NodePath("play_as")
 
-[node name="Mode" type="Label" parent="." unique_id=1495872731 groups=["lobby_entry_component"]]
+[node name="mode" type="Label" parent="." unique_id=1495872731 groups=["lobby_entry_component"]]
 layout_mode = 2
 text = "Host:"
 
-[node name="Username" type="Label" parent="." unique_id=81628059 groups=["lobby_entry_component"]]
+[node name="Separator" type="Label" parent="." unique_id=1497246004]
+layout_mode = 2
+text = ":"
+
+[node name="username" type="Label" parent="." unique_id=81628059 groups=["lobby_entry_component"]]
 layout_mode = 2
 text = "Username"
 
@@ -36,9 +29,13 @@ text = "Username"
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Character" type="Label" parent="." unique_id=196072513 groups=["lobby_entry_component"]]
+[node name="Separator2" type="Label" parent="." unique_id=1533360932]
 layout_mode = 2
-text = "(playing as Character)"
+text = "( playing as"
 
-[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=101196191]
-replication_config = SubResource("SceneReplicationConfig_wychw")
+[node name="play_as" type="Label" parent="." unique_id=196072513 groups=["lobby_entry_component"]]
+layout_mode = 2
+
+[node name="Separator3" type="Label" parent="." unique_id=2076511493]
+layout_mode = 2
+text = ")"

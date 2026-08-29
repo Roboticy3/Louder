@@ -1,4 +1,4 @@
-extends Node
+extends Node #extending MultiplayerSpawner seems to cause a bug(?) here. 2spooky4
 
 @export var server_listener_group := &"server_listener"
 @export var spawnable_packed:PackedScene
