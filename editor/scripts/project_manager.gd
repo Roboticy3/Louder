@@ -257,4 +257,6 @@ func has_current_project() -> bool:
 	return current_project_path.is_absolute_path()
 
 func _on_conversation_changed(new_path:String):
+	if new_path == current_project_path:
+		save_current_project()
 	load_project_from_file(new_path)

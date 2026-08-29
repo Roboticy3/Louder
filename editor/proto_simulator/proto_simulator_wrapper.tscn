@@ -85,6 +85,12 @@ layout_mode = 2
 [node name="File" parent="CanvasLayer/HSplitContainer/Editor/Control/GridContainer/FileBar" parent_id_path=PackedInt32Array(1835673697, 810829967) index="0" unique_id=853677447 groups=["conversation_changed_listener"]]
 disable_load = true
 
+[node name="branch" parent="CanvasLayer/HSplitContainer/Editor/Control/GridContainer/GraphEdit/Hub/TextSectionWrapper/TextSection/HBoxContainer" parent_id_path=PackedInt32Array(1835673697, 1992437552, 1509009445) index="2" unique_id=1664207967]
+delimiter_strings = Array[String](["' '", "\" \""])
+
+[node name="callbacks" parent="CanvasLayer/HSplitContainer/Editor/Control/GridContainer/GraphEdit/Hub/OtherSection/VBoxContainer" parent_id_path=PackedInt32Array(1835673697, 1992437552, 72269939) index="3" unique_id=312146840]
+delimiter_strings = Array[String](["\" \"", "' '"])
+
 [node name="VSplitContainer" type="VSplitContainer" parent="CanvasLayer/HSplitContainer" unique_id=1806478269]
 layout_mode = 2
 
@@ -144,7 +150,6 @@ size_flags_vertical = 3
 
 [node name="Control" parent="CanvasLayer/HSplitContainer/VSplitContainer/FlowContainer/Panel" unique_id=644629500 node_paths=PackedStringArray("controller") groups=["conversation_changed_listener"] instance=ExtResource("4_hwksk")]
 layout_mode = 1
-size_flags_horizontal = 3
 controller = NodePath("../../../../../../PSSimulator/PSControllerGeno")
 
 [node name="Panel4" type="Panel" parent="CanvasLayer/HSplitContainer/VSplitContainer/FlowContainer" unique_id=171754033]
@@ -154,7 +159,6 @@ size_flags_vertical = 3
 
 [node name="Control" parent="CanvasLayer/HSplitContainer/VSplitContainer/FlowContainer/Panel4" unique_id=1108421565 node_paths=PackedStringArray("controller") groups=["conversation_changed_listener"] instance=ExtResource("4_hwksk")]
 layout_mode = 1
-size_flags_horizontal = 3
 controller = NodePath("../../../../../../PSSimulator/PSControllerReka")
 
 [node name="Panel2" type="Panel" parent="CanvasLayer/HSplitContainer/VSplitContainer/FlowContainer" unique_id=991561153]
@@ -164,7 +168,6 @@ size_flags_vertical = 3
 
 [node name="Control" parent="CanvasLayer/HSplitContainer/VSplitContainer/FlowContainer/Panel2" unique_id=865123221 node_paths=PackedStringArray("controller") groups=["conversation_changed_listener"] instance=ExtResource("4_hwksk")]
 layout_mode = 1
-size_flags_horizontal = 3
 controller = NodePath("../../../../../../PSSimulator/PSControllerFreya")
 
 [node name="Panel3" type="Panel" parent="CanvasLayer/HSplitContainer/VSplitContainer/FlowContainer" unique_id=208183035]
@@ -174,7 +177,6 @@ size_flags_vertical = 3
 
 [node name="Control" parent="CanvasLayer/HSplitContainer/VSplitContainer/FlowContainer/Panel3" unique_id=785671189 node_paths=PackedStringArray("controller") groups=["conversation_changed_listener"] instance=ExtResource("4_hwksk")]
 layout_mode = 1
-size_flags_horizontal = 3
 controller = NodePath("../../../../../../PSSimulator/PSControllerBenjamin")
 
 [node name="Button" type="Button" parent="CanvasLayer" unique_id=677696188]

@@ -111,7 +111,7 @@ func start():
 		
 	warp(h_start)
 	
-	update_controllers()
+	update_controllers(true, "", "", true)
 
 func _reset_state():
 	state = PSDialogueState.new()
@@ -372,5 +372,5 @@ func _fill_branch_traversal(h:Dictionary, position:int, branch:="") ->String:
 	
 	return working_branch
 
-func update_controllers(branch_changed:=false, from_branch:="", to_branch:=""):
-	get_tree().call_group(controller_group, &"update", branch_changed, from_branch, to_branch)
+func update_controllers(branch_changed:=false, from_branch:="", to_branch:="", hard:=false):
+	get_tree().call_group(controller_group, &"update", branch_changed, from_branch, to_branch, hard)

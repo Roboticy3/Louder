@@ -22,12 +22,12 @@ func _ready() -> void:
 
 signal updated()
 signal show_end()
-func update(branch_changed:=false, old_branch:="", new_branch:=""):
+func update(branch_changed:=false, old_branch:="", new_branch:="", hard:=false):
 	if !is_instance_valid(simulator):
 		push_error("Updated PSController ", self, " with no simulator.")
 		return
 	
-	if old_branch != branch:
+	if !hard and old_branch != branch:
 		return
 	
 	var temp_branch := branch

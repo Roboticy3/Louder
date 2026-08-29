@@ -233,6 +233,7 @@
 		"type": "hub"
 	},
 	{
+		"branch": "reka2",
 		"conversation_id": "32",
 		"position_offset:x": "5100.0",
 		"position_offset:y": "1380.0",
@@ -241,6 +242,7 @@
 		"type": "hub"
 	},
 	{
+		"branch": "shop",
 		"conversation_id": "33",
 		"position_offset:x": "5520.0",
 		"position_offset:y": "1480.0",
@@ -272,6 +274,20 @@
 		"position_offset:y": "780.0",
 		"speaker": "Rhetoric",
 		"text": "There's a mask behind you. Shift your weight aside and let the decorations do the work. He doesn't like you. Have him focus on something else, then say something that sounds like a reason. I have a perfect spool of nonsense fresh and ready.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "35",
+		"position_offset:x": "5240.0",
+		"position_offset:y": "1760.0",
+		"speaker": "Note",
+		"text": "This pattern is a little unweildy.. Making a new branch just for a single node. ",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "36",
+		"position_offset:x": "5474.5556640625",
+		"position_offset:y": "1248.99072265625",
 		"type": "hub"
 	},
 	{
@@ -449,9 +465,9 @@
 		"type": "connection"
 	},
 	{
-		"position:x": "48.7744140625",
-		"position:y": "-245.847778320313",
+		"position:x": "3979.142578125",
+		"position:y": "912.799560546875",
 		"type": "camera",
-		"zoom": "0.23256795108318"
+		"zoom": "0.80288791656494"
 	}
 ]
