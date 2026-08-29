@@ -78,4 +78,7 @@ func start():
 	if get_progress_disabled():
 		push_error("MainMenuStarter::start tried to start game after get_progress_disabled() returned true")
 	
-	NetworkLayer.start(character, username)
+	NetworkLayer.start(mode, ip_address, port, {
+		"username": username,
+		"play_as": play_as
+	})

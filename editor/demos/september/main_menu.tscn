@@ -185,9 +185,6 @@ text = "      GO      "
 
 [node name="MainMenuStarter" type="Node" parent="." unique_id=1882237254]
 script = ExtResource("1_cv508")
-progress_message_listener_group = null
-progress_status_listener_group = null
-start_listener_group = null
 
 [connection signal="pressed" from="VBoxContainer/MultiplayerOptions/Button" to="VBoxContainer/CharacterSelect" method="show"]
 [connection signal="pressed" from="VBoxContainer/MultiplayerOptions/Button" to="MainMenuStarter" method="set_mode" binds= [1]]
@@ -198,3 +195,4 @@ start_listener_group = null
 [connection signal="text_changed" from="VBoxContainer/CharacterSelect/VBoxContainer/HBoxContainer/LineEdit" to="MainMenuStarter" method="set_username"]
 [connection signal="text_changed" from="VBoxContainer/CharacterSelect/VBoxContainer/HBoxContainer2/LineEdit" to="MainMenuStarter" method="set_server_ip"]
 [connection signal="value_changed" from="VBoxContainer/CharacterSelect/VBoxContainer/HBoxContainer2/LineEdit2" to="MainMenuStarter" method="set_server_port"]
+[connection signal="pressed" from="VBoxContainer/Confirmation/Button" to="MainMenuStarter" method="start"]
