@@ -22,13 +22,13 @@ func set_mode(to:NetworkLayer.ClientMode):
 func set_play_as(to:String):
 	play_as = to
 	if mode == NetworkLayer.ClientMode.NONE:
-		mode = NetworkLayer.ClientMode.JOIN
+		mode = NetworkLayer.ClientMode.Client
 	validate()
 
 func set_username(to:String):
 	username = to
 	if mode == NetworkLayer.ClientMode.NONE:
-		mode = NetworkLayer.ClientMode.JOIN
+		mode = NetworkLayer.ClientMode.Client
 	validate()
 
 func validate():
@@ -38,7 +38,7 @@ func validate():
 func get_progress_disabled() -> bool:
 	if mode == NetworkLayer.ClientMode.NONE:
 		return true
-	if mode == NetworkLayer.ClientMode.JOIN:
+	if mode == NetworkLayer.ClientMode.Client:
 		if ip_address == "":
 			return true
 	if play_as.is_empty():
@@ -58,9 +58,9 @@ func get_progress_text() -> String:
 	match mode:
 		NetworkLayer.ClientMode.NONE:
 			part1 = "Awaiting command"
-		NetworkLayer.ClientMode.JOIN:
+		NetworkLayer.ClientMode.Client:
 			part1 = "Press to join game"
-		NetworkLayer.ClientMode.HOST:
+		NetworkLayer.ClientMode.Host:
 			part1 = "Press to host game"
 	
 	var part2 := ""
