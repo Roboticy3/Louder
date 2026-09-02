@@ -11,18 +11,30 @@ enum DataError {
 	INVALID_AUTHORITY
 }
 
-signal data_error(authority: int, error: DataError)
-
+signal data_error(error: DataError)
 signal data_updated(authority: int, data: Dictionary)
+signal character_selected(authority: int, character: String)
 
 var client_data:Dictionary[int, Dictionary]
 var characters:Dictionary[String, int]
 
-@rpc("authority", "call_local", "reliable")
+@rpc("authority", "call_remote", "reliable")
 func sync_client_data(authority: int, data: Dictionary, new_characters:Dictionary):
-	client_data[authority] = data
+	var old_character := ""
+	if authority in client_data:
+		old_character = client_data[authority].get(ClientProperties.character)
+	
+	var new_character = data.get(ClientProperties.character, "")
+	
+	if authority in client_data:
+		client_data[authority].merge(data, true)
+	else:
+		client_data[authority] = data
 	characters = new_characters
+	
 	data_updated.emit(authority, data)
+	if !new_character.is_empty() and new_character != old_character:
+		character_selected.emit(authority, new_character)
 
 @rpc("authority", "call_local", "reliable")
 func sync_data_error(error: DataError):
@@ -38,7 +50,7 @@ func update_client_data(data:Dictionary):
 	var new_character:String = data.get(ClientProperties.character, "")
 	var given_authority = data.get(ClientProperties.authority, null)
 	
-	if new_character:
+	if !new_character.is_empty():
 		var c_authority = characters.get(new_character)
 		if c_authority != null and c_authority != authority:
 			sync_data_error.rpc_id(authority, DataError.CHARACTER_ALREADY_IN_USE)
@@ -48,10 +60,12 @@ func update_client_data(data:Dictionary):
 		sync_data_error.rpc_id(authority,  DataError.INVALID_AUTHORITY)
 		return
 	
+	var old_character := ""
 	if !client_data.has(authority):
 		client_data[authority] = data
+		pass
 	else:
-		var old_character = client_data[authority].get(ClientProperties.character, "")
+		old_character = client_data[authority].get(ClientProperties.character, "")
 		if !old_character.is_empty():
 			characters.erase(old_character)
 		client_data[authority].merge(data, true)
@@ -59,6 +73,10 @@ func update_client_data(data:Dictionary):
 	var confirmed_character = client_data[authority].get(ClientProperties.character, "")
 	if !confirmed_character.is_empty():
 		characters[confirmed_character] = authority
+	
+	data_updated.emit(authority, data)
+	if !confirmed_character.is_empty() and confirmed_character != old_character:
+		character_selected.emit(authority, new_character)
 	
 	sync_client_data.rpc(authority, data, characters)
 

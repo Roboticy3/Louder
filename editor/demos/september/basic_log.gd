@@ -18,6 +18,8 @@ func _ready() -> void:
 	NetworkLayer.client_mode_error.connect(_on_client_mode_error)
 
 	ClientDataLayer.data_updated.connect(_on_data_updated)
+	ClientDataLayer.data_error.connect(_on_data_error)
+	ClientDataLayer.character_selected.connect(_on_character_selected)
 
 func _on_decay_timeout() -> void:
 	if feed.get_child_count() > 0:
@@ -63,3 +65,9 @@ func _on_data_updated(peer_id: int, data: Dictionary) -> void:
 		values.append_array([ClientDataLayer.ClientProperties.find_key(key), data[key]])
 	
 	_add_message(message % values)
+
+func _on_data_error(error: ClientDataLayer.DataError) -> void:
+	_add_message("Data error: %s" % ClientDataLayer.DataError.find_key(error))
+
+func _on_character_selected(peer_id: int, character: String) -> void:
+	_add_message("Peer %d selected character: %s" % [peer_id, character])
