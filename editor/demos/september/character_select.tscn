@@ -1,0 +1,128 @@
+[gd_scene format=3 uid="uid://dhii2e6mc7t81"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_nunj6"]
+size = Vector2(128, 256)
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_rhy6e"]
+
+[sub_resource type="Gradient" id="Gradient_wnrnk"]
+colors = PackedColorArray(0.09167641, 0.23872939, 0.094743915, 0.6039216, 0.35989198, 0.729787, 0.9102842, 0.54901963)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_ybclp"]
+gradient = SubResource("Gradient_wnrnk")
+
+[sub_resource type="Gradient" id="Gradient_rhy6e"]
+colors = PackedColorArray(0, 0, 0, 0.6039216, 0.48179054, 0.48178917, 0.48178917, 0.54901963)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_aeouo"]
+gradient = SubResource("Gradient_rhy6e")
+
+[sub_resource type="Gradient" id="Gradient_cv508"]
+colors = PackedColorArray(0, 0, 0, 0.6039216, 1, 1, 1, 0.54901963)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_cv508"]
+gradient = SubResource("Gradient_cv508")
+
+[sub_resource type="Gradient" id="Gradient_aeouo"]
+colors = PackedColorArray(0.6344339, 0.58320415, 0.15541378, 0.6039216, 0.9361496, 0.4612704, 0.44252193, 0.54901963)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_wnrnk"]
+gradient = SubResource("Gradient_aeouo")
+
+[node name="CharacterSelect" type="VBoxContainer" unique_id=851426068]
+visible = false
+
+[node name="Label" type="Label" parent="." unique_id=1192537315]
+layout_mode = 2
+text = "Click to select a character!"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1798839729]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer" unique_id=1981488774]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Panel" type="HBoxContainer" parent="HBoxContainer/MarginContainer" unique_id=530011541]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RichTextLabel" type="RichTextLabel" parent="HBoxContainer/MarginContainer/Panel" unique_id=438760948]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Character description: Geno"
+
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer/MarginContainer/Panel" unique_id=1928844132]
+layout_mode = 2
+texture = SubResource("PlaceholderTexture2D_nunj6")
+
+[node name="TextureButton" type="TextureButton" parent="HBoxContainer/MarginContainer" unique_id=993803920]
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+button_group = SubResource("ButtonGroup_rhy6e")
+texture_pressed = SubResource("GradientTexture2D_ybclp")
+texture_hover = SubResource("GradientTexture2D_aeouo")
+texture_disabled = SubResource("GradientTexture2D_cv508")
+stretch_mode = 6
+
+[node name="MarginContainer2" type="MarginContainer" parent="HBoxContainer" unique_id=1234747347]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Panel" type="HBoxContainer" parent="HBoxContainer/MarginContainer2" unique_id=1901625363]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer/MarginContainer2/Panel" unique_id=373549417]
+layout_mode = 2
+texture = SubResource("PlaceholderTexture2D_nunj6")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="HBoxContainer/MarginContainer2/Panel" unique_id=1217956002]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Character description: Reka"
+
+[node name="TextureButton" type="TextureButton" parent="HBoxContainer/MarginContainer2" unique_id=1691128057]
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+button_group = SubResource("ButtonGroup_rhy6e")
+texture_pressed = SubResource("GradientTexture2D_wnrnk")
+texture_hover = SubResource("GradientTexture2D_aeouo")
+texture_disabled = SubResource("GradientTexture2D_cv508")
+stretch_mode = 6
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1690433464]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=1567297766]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer" unique_id=1412020572]
+layout_mode = 2
+text = "Username: "
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/HBoxContainer" unique_id=796844242]
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer" unique_id=511679734]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer2" unique_id=1202018889]
+layout_mode = 2
+text = "Ip: "
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/HBoxContainer2" unique_id=1863868310]
+layout_mode = 2
+text = "localhost"
+expand_to_text_length = true
+
+[node name="Label2" type="Label" parent="VBoxContainer/HBoxContainer2" unique_id=1769473200]
+layout_mode = 2
+text = "Port:"
+
+[node name="LineEdit2" type="SpinBox" parent="VBoxContainer/HBoxContainer2" unique_id=936459851]
+layout_mode = 2
+max_value = 65535.0
+value = 45678.0

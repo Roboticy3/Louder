@@ -20,6 +20,8 @@ config/icon="res://icon.svg"
 IdSystem="*uid://emcgvjw2xenp"
 NetworkEntityDefaults="*uid://bttyhihvjbpso"
 NetworkLayer="*uid://bxjm62v0fahhs"
+PsEventSystem="*uid://blrnmb1wooqwc"
+ClientDataLayer="*uid://4tjo2itl4enh"
 
 [gui]
 

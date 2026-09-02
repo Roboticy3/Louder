@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://b2x65pfmghwq5"]
+
+[ext_resource type="Script" uid="uid://c3mwlunur3atv" path="res://demos/september/basic_log.gd" id="1_xlwlw"]
+
+[node name="BasicLog" type="Control" unique_id=128730021]
+layout_mode = 3
+anchor_top = 0.418
+anchor_right = 0.418
+anchor_bottom = 1.0
+offset_top = 0.13598633
+offset_right = -0.53601074
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_xlwlw")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=425234597]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2

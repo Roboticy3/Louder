@@ -52,9 +52,7 @@ script = ExtResource("2_j6hxa")
 
 [node name="PSSimulator" type="Node" parent="Louder" unique_id=1384491718 node_paths=PackedStringArray("conversation") groups=["conversation_changed_listener"]]
 script = ExtResource("3_yxm24")
-conversation_path = "res://demos/conversations/merchant.json"
 conversation = NodePath("../PSConversation")
-reset_state_on_ready = true
 
 [node name="PSControllerGeno" type="Node" parent="Louder/PSSimulator" unique_id=1253143326 node_paths=PackedStringArray("simulator", "config")]
 script = ExtResource("4_e0tjo")
