@@ -82,6 +82,12 @@ layout_mode = 2
 [node name="File" parent="CanvasLayer/HSplitContainer/Editor/Control/GridContainer/FileBar" parent_id_path=PackedInt32Array(1835673697, 810829967) index="0" unique_id=853677447 groups=["conversation_changed_listener"]]
 disable_load = true
 
+[node name="branch" parent="CanvasLayer/HSplitContainer/Editor/Control/GridContainer/GraphEdit/Hub/TextSectionWrapper/TextSection/HBoxContainer" parent_id_path=PackedInt32Array(1835673697, 1992437552, 1509009445) index="2" unique_id=1664207967]
+delimiter_strings = Array[String](["' '", "\" \""])
+
+[node name="callbacks" parent="CanvasLayer/HSplitContainer/Editor/Control/GridContainer/GraphEdit/Hub/OtherSection/VBoxContainer" parent_id_path=PackedInt32Array(1835673697, 1992437552, 72269939) index="3" unique_id=312146840]
+delimiter_strings = Array[String](["\" \"", "' '"])
+
 [node name="VSplitContainer" type="VSplitContainer" parent="CanvasLayer/HSplitContainer" unique_id=1806478269]
 layout_mode = 2
 

@@ -13,8 +13,10 @@ const SpeakerProperties := PSObjects.SpeakerProperties
 func get_property(position: int, property: HubProperties, default=null):
 	return default
 
-#default filter for choice objects
-func no_filter(_choice_data:Dictionary) -> bool: return true
+#default filter for objects
+func no_filter(_data:Dictionary) -> bool: return true
+
+func has_property_or_flag(data:Dictionary, property:String): return true if data.get(property, false) else false
 
 #list choice objects from a position
 func list(position: int, filter:=no_filter) -> Array[Dictionary]:
@@ -35,3 +37,33 @@ func align(body: Dictionary[BodyProperties, Variant], filter:=no_filter) -> Dict
 	return {
 		BodyProperties.success: false
 	}
+
+func get_destination(position: int, choice: String) -> int:
+	return -1
+
+#search iterator.
+#
+#given a filter, finds the first node that passes that filter.
+#if `from` is passed as nonnegative, the filter won't start looking for
+#matches until from is passed.
+#basic usage is a loop that updates the start point and calls search repeatedly. 
+func search(filter=no_filter, from:=-1) -> int:
+	var from_passed := from < 0
+	for id in conversation.hubs_by_id:
+		if from >= 0 and id == from:
+			from_passed = true
+			continue
+		
+		if from_passed:
+			if filter.call(conversation.hubs_by_id[id]):
+				return id
+	
+	return -1
+
+func find_start(from:=-1) -> int:
+	return search(
+		has_property_or_flag.bind(
+			HubProperties.start
+		), 
+		from
+	)
