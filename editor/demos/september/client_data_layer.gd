@@ -12,6 +12,7 @@ enum DataError {
 }
 
 signal data_error(error: DataError)
+
 signal data_updated(authority: int, data: Dictionary)
 signal character_selected(authority: int, character: String)
 

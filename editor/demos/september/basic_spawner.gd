@@ -1,30 +1,41 @@
-extends Node
+extends MultiplayerSpawner
 
-@export var server_listener_group := &"server_listener"
+enum SpawnMode {
+	SPAWN_ON_PEER_CONNECTED = 0,
+	SPAWN_ON_CHARACTER_SELECTED,
+}
+@export var spawn_mode:SpawnMode
+
 @export var spawnable_packed:PackedScene
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	add_to_group(server_listener_group)
-	multiplayer.peer_connected.connect(_on_peer_connected)
+	match spawn_mode:
+		SpawnMode.SPAWN_ON_PEER_CONNECTED:
+			multiplayer.peer_connected.connect(_on_spawn_trigger)
+		SpawnMode.SPAWN_ON_CHARACTER_SELECTED:
+			ClientDataLayer.character_selected.connect(_on_spawn_trigger)
 	
+	add_spawnable_scene(spawnable_packed.resource_path)
 
-func _on_peer_connected(authority:int) -> void:
+var server_highest_id := 0
+var server_spawn_registry:Dictionary[int, Node]
+func _on_spawn_trigger(authority:int, _dump=null) -> void:
 	if !multiplayer.is_server(): return
 	
 	var spawn_root = get_node(get("spawn_path"))
 	var spawnable_instance := spawnable_packed.instantiate()
 	
-	spawn_root.add_child.call_deferred(spawnable_instance)
-	spawnable_instance.name = produce_name(spawn_root)
-	spawnable_instance.set_multiplayer_authority(authority)
-
-func produce_name(on:Node) -> String:
-	if on.get_child_count() == 0:
-		return "0"
+	if authority in server_spawn_registry:
+		var marked := server_spawn_registry[authority]
+		if is_instance_valid(marked):
+			marked.process_mode = Node.PROCESS_MODE_DISABLED
+			marked.queue_free()
 	
-	var last := on.get_child(-1)
-	return str(int(last.name) + 1)
-
-func _on_server_created(_port:int) -> void:
-	_on_peer_connected(get_multiplayer_authority())
+	spawnable_instance.set_meta("authority", authority)
+	server_spawn_registry[authority] = spawnable_instance
+	
+	spawnable_instance.name = str(server_highest_id)
+	server_highest_id += 1
+	
+	spawn_root.add_child.call_deferred(spawnable_instance)

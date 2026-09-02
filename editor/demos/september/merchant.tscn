@@ -1,10 +1,20 @@
 [gd_scene format=3 uid="uid://cj44xlqqbvgwd"]
 
 [ext_resource type="PackedScene" uid="uid://dhii2e6mc7t81" path="res://demos/september/character_select.tscn" id="1_s2skt"]
+[ext_resource type="Script" uid="uid://bj7q7bsrcvdrl" path="res://demos/september/basic_spawner.gd" id="2_8jkri"]
+[ext_resource type="PackedScene" uid="uid://fn48n343cb16" path="res://demos/september/merchant_dialogue_avatar.tscn" id="3_nriho"]
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_nunj6"]
 
 [node name="Merchant" type="Node2D" unique_id=438456980]
 
 [node name="Background" type="Sprite2D" parent="." unique_id=2097716038]
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1918040241]
+position = Vector2(583, 510)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=969255664]
+shape = SubResource("WorldBoundaryShape2D_nunj6")
 
 [node name="CharacterSelect" type="CanvasLayer" parent="." unique_id=1991834384]
 
@@ -17,3 +27,11 @@ offset_top = -171.5
 offset_bottom = 171.5
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="Louder" type="Node" parent="." unique_id=220019652]
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="Louder" unique_id=728369049]
+spawn_path = NodePath("..")
+script = ExtResource("2_8jkri")
+spawn_mode = 1
+spawnable_packed = ExtResource("3_nriho")

@@ -3,6 +3,18 @@ extends Control
 @export var feed: Container
 @export var decay: Timer
 
+@export var mute_server_created: bool
+@export var mute_connected_to_server: bool
+@export var mute_server_disconnected: bool
+@export var mute_peer_connected: bool
+@export var mute_peer_disconnected: bool
+@export var mute_create_server_error: bool
+@export var mute_create_client_error: bool
+@export var mute_client_mode_error: bool
+@export var mute_data_updated: bool = true
+@export var mute_data_error: bool = true
+@export var mute_character_selected: bool
+
 func _ready() -> void:
 	decay.timeout.connect(_on_decay_timeout)
 
@@ -34,30 +46,39 @@ func _add_message(text: String) -> void:
 	decay.start()
 
 func _on_server_created() -> void:
+	if mute_server_created: return
 	_add_message("Server created")
 
 func _on_connected_to_server() -> void:
+	if mute_connected_to_server: return
 	_add_message("Connected to server")
 
 func _on_server_disconnected() -> void:
+	if mute_server_disconnected: return
 	_add_message("Disconnected from server")
 
 func _on_peer_connected(id: int) -> void:
+	if mute_peer_connected: return
 	_add_message("Peer connected: %d" % id)
 
 func _on_peer_disconnected(id: int) -> void:
+	if mute_peer_disconnected: return
 	_add_message("Peer disconnected: %d" % id)
 
 func _on_create_server_error(error: Error) -> void:
+	if mute_create_server_error: return
 	_add_message("Failed to create server: %s" % error_string(error))
 
 func _on_create_client_error(error: Error) -> void:
+	if mute_create_client_error: return
 	_add_message("Failed to connect: %s" % error_string(error))
 
 func _on_client_mode_error(error: Error) -> void:
+	if mute_client_mode_error: return
 	_add_message("Invalid client mode: %s" % error_string(error))
 
 func _on_data_updated(peer_id: int, data: Dictionary) -> void:
+	if mute_data_updated: return
 	var message := "Data updated for peer %d:"
 	var values := [peer_id]
 	for key in data:
@@ -67,7 +88,9 @@ func _on_data_updated(peer_id: int, data: Dictionary) -> void:
 	_add_message(message % values)
 
 func _on_data_error(error: ClientDataLayer.DataError) -> void:
+	if mute_data_error: return
 	_add_message("Data error: %s" % ClientDataLayer.DataError.find_key(error))
 
 func _on_character_selected(peer_id: int, character: String) -> void:
+	if mute_character_selected: return
 	_add_message("Peer %d selected character: %s" % [peer_id, character])
