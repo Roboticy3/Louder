@@ -33,6 +33,7 @@ func start(mode:ClientMode, ip_address:String, port:int):
 			if error != OK:
 				create_server_error.emit(error)
 				return
+			multiplayer.multiplayer_peer = peer
 			server_created.emit()
 		ClientMode.CLIENT:
 			peer = ENetMultiplayerPeer.new()
@@ -40,3 +41,4 @@ func start(mode:ClientMode, ip_address:String, port:int):
 			if error != OK:
 				create_client_error.emit(error)
 				return
+			multiplayer.multiplayer_peer = peer

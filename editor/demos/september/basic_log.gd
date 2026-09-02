@@ -17,9 +17,13 @@ func _ready() -> void:
 	NetworkLayer.create_client_error.connect(_on_create_client_error)
 	NetworkLayer.client_mode_error.connect(_on_client_mode_error)
 
+	ClientDataLayer.data_updated.connect(_on_data_updated)
+
 func _on_decay_timeout() -> void:
-	for child in feed.get_children():
-		child.queue_free()
+	if feed.get_child_count() > 0:
+		decay.wait_time = 1.0 / (log(feed.get_child_count()) / log(2) + 1)
+		feed.get_child(0).queue_free()
+		decay.start()
 
 func _add_message(text: String) -> void:
 	var label = Label.new()
@@ -50,3 +54,12 @@ func _on_create_client_error(error: Error) -> void:
 
 func _on_client_mode_error(error: Error) -> void:
 	_add_message("Invalid client mode: %s" % error_string(error))
+
+func _on_data_updated(peer_id: int, data: Dictionary) -> void:
+	var message := "Data updated for peer %d:"
+	var values := [peer_id]
+	for key in data:
+		message += "\n  %s: %s"
+		values.append_array([ClientDataLayer.ClientProperties.find_key(key), data[key]])
+	
+	_add_message(message % values)

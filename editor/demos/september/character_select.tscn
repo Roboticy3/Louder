@@ -1,9 +1,13 @@
 [gd_scene format=3 uid="uid://dhii2e6mc7t81"]
 
+[ext_resource type="Script" uid="uid://knxiu6mpw6dg" path="res://demos/september/character_select.gd" id="1_htgyx"]
+[ext_resource type="Script" uid="uid://g2q2pxgcsrco" path="res://demos/september/character_select_button.gd" id="2_1ra4k"]
+
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_nunj6"]
 size = Vector2(128, 256)
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_rhy6e"]
+allow_unpress = true
 
 [sub_resource type="Gradient" id="Gradient_wnrnk"]
 colors = PackedColorArray(0.09167641, 0.23872939, 0.094743915, 0.6039216, 0.35989198, 0.729787, 0.9102842, 0.54901963)
@@ -30,6 +34,7 @@ colors = PackedColorArray(0.6344339, 0.58320415, 0.15541378, 0.6039216, 0.936149
 gradient = SubResource("Gradient_aeouo")
 
 [node name="CharacterSelect" type="VBoxContainer" unique_id=851426068]
+script = ExtResource("1_htgyx")
 
 [node name="Label" type="Label" parent="." unique_id=1192537315]
 layout_mode = 2
@@ -64,6 +69,8 @@ texture_pressed = SubResource("GradientTexture2D_ybclp")
 texture_hover = SubResource("GradientTexture2D_aeouo")
 texture_disabled = SubResource("GradientTexture2D_cv508")
 stretch_mode = 6
+script = ExtResource("2_1ra4k")
+character = "Geno"
 
 [node name="MarginContainer2" type="MarginContainer" parent="HBoxContainer" unique_id=1234747347]
 layout_mode = 2
@@ -91,3 +98,5 @@ texture_pressed = SubResource("GradientTexture2D_wnrnk")
 texture_hover = SubResource("GradientTexture2D_aeouo")
 texture_disabled = SubResource("GradientTexture2D_cv508")
 stretch_mode = 6
+script = ExtResource("2_1ra4k")
+character = "Reka"
