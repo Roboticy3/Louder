@@ -30,7 +30,6 @@ colors = PackedColorArray(0.6344339, 0.58320415, 0.15541378, 0.6039216, 0.936149
 gradient = SubResource("Gradient_aeouo")
 
 [node name="CharacterSelect" type="VBoxContainer" unique_id=851426068]
-visible = false
 
 [node name="Label" type="Label" parent="." unique_id=1192537315]
 layout_mode = 2
@@ -92,37 +91,3 @@ texture_pressed = SubResource("GradientTexture2D_wnrnk")
 texture_hover = SubResource("GradientTexture2D_aeouo")
 texture_disabled = SubResource("GradientTexture2D_cv508")
 stretch_mode = 6
-
-[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1690433464]
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=1567297766]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer" unique_id=1412020572]
-layout_mode = 2
-text = "Username: "
-
-[node name="LineEdit" type="LineEdit" parent="VBoxContainer/HBoxContainer" unique_id=796844242]
-layout_mode = 2
-
-[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer" unique_id=511679734]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer2" unique_id=1202018889]
-layout_mode = 2
-text = "Ip: "
-
-[node name="LineEdit" type="LineEdit" parent="VBoxContainer/HBoxContainer2" unique_id=1863868310]
-layout_mode = 2
-text = "localhost"
-expand_to_text_length = true
-
-[node name="Label2" type="Label" parent="VBoxContainer/HBoxContainer2" unique_id=1769473200]
-layout_mode = 2
-text = "Port:"
-
-[node name="LineEdit2" type="SpinBox" parent="VBoxContainer/HBoxContainer2" unique_id=936459851]
-layout_mode = 2
-max_value = 65535.0
-value = 45678.0
