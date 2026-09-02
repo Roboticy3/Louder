@@ -18,7 +18,7 @@ func _ready() -> void:
 	
 	if debug_speaker_label:
 		if controller:
-			debug_speaker_label.text = ",".join(controller.speak_as) + ((" (branch: %s)" % controller.branch))
+			debug_speaker_label.text = ",".join(controller.speak_as) + ((" (branch: %s)" % controller.get_branch()))
 		else:
 			debug_speaker_label.text = "(no controller connected)"
 	
@@ -37,4 +37,4 @@ func update() -> void:
 			if text is String:
 				component.text = text
 		elif component is PSChoicesContainer:
-			component.set_choices(controller.get_choices(), controller.get_thinking())
+			component.set_choices(controller.get_choices())

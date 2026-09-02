@@ -1,6 +1,8 @@
 class_name PSController extends Node
 
-const CTRL_THNK := "thinking"
+const BodyProperties = PSObjects.BodyProperties
+const ChoiceProperties = PSObjects.ChoiceProperties
+const HubProperties = PSObjects.HubProperties
 
 @export var group := &"ps_controller"
 @export var simulator:PSSimulator
@@ -9,52 +11,11 @@ const CTRL_THNK := "thinking"
 @export var listen_to:PackedStringArray
 @export var mute:bool
 
-var data:Dictionary
-var branch:String
+#state of the controller.
+var data:Dictionary[BodyProperties, Variant]
 
 func _ready() -> void:
 	add_to_group(group)
-	
-	await get_tree().process_frame
-	
-	if simulator.is_node_ready():
-		update()
-
-signal updated()
-signal show_end()
-func update(branch_changed:=false, old_branch:="", new_branch:=""):
-	if !is_instance_valid(simulator):
-		push_error("Updated PSController ", self, " with no simulator.")
-		return
-	
-	if old_branch != branch:
-		return
-	
-	var temp_branch := branch
-	if branch_changed:
-		branch = simulator.last_branch_traversal
-	
-	var text_visible := _filter_visible_node(simulator.get_position(branch))
-	
-	if !text_visible:
-		if branch_changed:
-			branch = temp_branch #undo branching if we tried to follow branching to a place we can't see
-			text_visible = _filter_visible_node(simulator.get_position(branch))
-	
-	if text_visible:
-		simulator.merge_current_into(data, branch)
-		
-	data[PSSimulator.HUB_CHCS] = simulator.list_choices_data(_filter_valid_choice, branch) if text_visible else []
-	
-	#sync with the rest of the controllers getting their choices
-	await get_tree().process_frame
-	
-	#now we have enough info to see who's thinking
-	data[CTRL_THNK] = _filter_thinking()
-	
-	updated.emit()
-	if get_thinking().is_empty() and get_choices().is_empty():
-		show_end.emit()
 	
 func is_active():
 	return !data.is_empty()
@@ -63,7 +24,9 @@ func is_active():
 #1. Hide choices pointing to speakers not owned in `my_speakers`
 func _filter_valid_choice(c:Dictionary) -> bool:
 	if mute: return false
-	var c_speaker := str(simulator.get_property(int(c["to_id"]), PSSimulator.HUB_SPKR))
+	
+	var c_position := int(c.get(ChoiceProperties.to_id, -1))
+	var c_speaker := str(simulator.get_property(c_position, HubProperties.speaker))
 	if !(c_speaker in config.speakers_by_name):
 		return true
 	if c_speaker in speak_as:
@@ -75,7 +38,7 @@ func _filter_valid_choice(c:Dictionary) -> bool:
 	return false
 
 func _filter_visible_node(position:int) -> bool:
-	var n_speaker := str(simulator.get_property(position, PSSimulator.HUB_SPKR))
+	var n_speaker := str(simulator.get_property(position, HubProperties.speaker))
 	if !(n_speaker in config.speakers_by_name):
 		return true
 	if n_speaker in listen_to:
@@ -85,17 +48,15 @@ func _filter_visible_node(position:int) -> bool:
 	return false
 
 func traverse(choice:String) -> bool:
-	var result := simulator.traverse(choice, _filter_valid_choice, branch)
-	return result
+	data[BodyProperties.choice] = choice
+	data = simulator.align(data, _filter_valid_choice)
+	return data.get(BodyProperties.success, false)
 
 func get_text(property:String) -> String:
 	return str(data.get(property))
 
 func get_choices() -> Array:
-	var choices = data.get(PSSimulator.HUB_CHCS)
-	if choices is Array:
-		return choices
-	return []
+	return data.get(BodyProperties.choices, [])
 
 func _filter_thinking() -> Array:
 	var thinking := {}
@@ -106,15 +67,11 @@ func _filter_thinking() -> Array:
 				thinking[speaker] = true
 	return thinking.keys()
 
-func get_thinking() -> Array:
-	var thinking = data.get(CTRL_THNK)
-	if thinking is Array:
-		return thinking
-	return []
+func get_position() -> int:
+	return data.get(BodyProperties.position, -1)
 
 func get_branch() -> String:
-	return data.get(PSSimulator.HUB_BRCH, "")
+	return data.get(BodyProperties.branch, "")
 
-func end():
-	#TODO Disconnect from the simulator
-	pass
+func _get_property(property:HubProperties, default=null) -> Variant:
+	return simulator.get_property(get_position(), property, default)

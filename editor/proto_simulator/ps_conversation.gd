@@ -1,5 +1,8 @@
 class_name PSConversation extends Node
 
+const HubProperties = PSObjects.HubProperties
+const ChoiceProperties = PSObjects.ChoiceProperties
+
 const OBJECT_TYPE := "type"
 const TYPE_HUB := "hub"
 const TYPE_CONNECTION := "connection"
@@ -35,9 +38,11 @@ func unroll(objects: Array) -> void:
 			continue
 		match object.get(OBJECT_TYPE):
 			TYPE_HUB:
-				hubs_by_id[int(object.get("conversation_id", ""))] = object
+				object = dict_to_ps_object(HubProperties, object)
+				hubs_by_id[int(object.get(HubProperties.conversation_id, -1))] = object
 			TYPE_CONNECTION:
-				var from_id := int(object.get("from_id", ""))
+				object = dict_to_ps_object(ChoiceProperties, object)
+				var from_id := int(object.get(ChoiceProperties.from_id, -1))
 				if not connections_by_from.has(from_id):
 					connections_by_from[from_id] = []
 				connections_by_from[from_id].append(object)
@@ -50,3 +55,10 @@ func get_hub(conversation_id) -> Dictionary:
 func get_connections_from(from_id) -> Array:
 	var connections = connections_by_from.get(int(from_id), [])
 	return connections
+
+func dict_to_ps_object(enum_d:Dictionary, o_d:Dictionary) -> Dictionary:
+	var result_d:Dictionary
+	for k in enum_d:
+		result_d[enum_d[k]] = o_d[k]
+	
+	return result_d

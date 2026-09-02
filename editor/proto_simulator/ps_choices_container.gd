@@ -1,15 +1,17 @@
 class_name PSChoicesContainer
 extends VBoxContainer
 
+const ChoiceProperties := PSObjects.ChoiceProperties
+
 signal choice_pressed(choice: String)
 
-func set_choices(choices: Array, thinking:Array) -> void:
+func set_choices(choices: Array) -> void:
 	for child in get_children():
 		child.queue_free()
 
 	for i in choices.size():
 		var button := Button.new()
-		var choice := str(choices[i].get(PSSimulator.CON_FCHC, ""))
+		var choice := str(choices[i].get(ChoiceProperties.from_id, ""))
 		if choice.is_empty():
 			button.text = "CONTINUE"
 		else:
@@ -19,7 +21,8 @@ func set_choices(choices: Array, thinking:Array) -> void:
 		button.pressed.connect(_on_choice_pressed.bind(choice))
 		add_child(button)
 	
-	
+
+func set_thinking(thinking:Array) -> void:
 	if !thinking.is_empty():
 		var thinking_label := Label.new()
 		thinking_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
