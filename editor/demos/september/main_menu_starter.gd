@@ -1,6 +1,5 @@
 extends Node
 
-
 var mode := NetworkLayer.ClientMode.NONE
 
 var play_as := ""

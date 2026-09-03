@@ -15,6 +15,9 @@ func _ready() -> void:
 			multiplayer.peer_connected.connect(_on_spawn_trigger)
 		SpawnMode.SPAWN_ON_CHARACTER_SELECTED:
 			ClientDataLayer.character_selected.connect(_on_spawn_trigger)
+		
+		
+	spawned.connect(_on_remote_peer_spawned)
 	
 	add_spawnable_scene(spawnable_packed.resource_path)
 
@@ -32,10 +35,14 @@ func _on_spawn_trigger(authority:int, _dump=null) -> void:
 			marked.process_mode = Node.PROCESS_MODE_DISABLED
 			marked.queue_free()
 	
-	spawnable_instance.set_meta("authority", authority)
+	spawnable_instance.set("authority", authority)
 	server_spawn_registry[authority] = spawnable_instance
 	
-	spawnable_instance.name = str(server_highest_id)
+	spawnable_instance.name = str(authority)
 	server_highest_id += 1
 	
 	spawn_root.add_child.call_deferred(spawnable_instance)
+	_on_remote_peer_spawned(spawnable_instance)
+
+func _on_remote_peer_spawned(spawnable_instance:Node):
+	spawnable_instance.set_multiplayer_authority(int(spawnable_instance.name))

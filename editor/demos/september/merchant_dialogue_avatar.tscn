@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://fn48n343cb16"]
 
+[ext_resource type="Script" uid="uid://17k5d4ekskvj" path="res://demos/september/merchant_dialogue_avatar.gd" id="1_4ow0u"]
 [ext_resource type="Texture2D" uid="uid://cehn1pamkib1t" path="res://icon.svg" id="1_mkixu"]
 [ext_resource type="Script" uid="uid://dsgjhpv7kaisj" path="res://demos/september/character_body_2d.gd" id="1_vlnjk"]
 
@@ -12,6 +13,7 @@ properties/0/spawn = true
 properties/0/replication_mode = 1
 
 [node name="MerchantDialogueAvatar" type="Node" unique_id=996170675]
+script = ExtResource("1_4ow0u")
 
 [node name="CharacterBody2D" type="CharacterBody2D" parent="." unique_id=1815256936]
 script = ExtResource("1_vlnjk")
