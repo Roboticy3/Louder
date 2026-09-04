@@ -14,6 +14,7 @@ extends Control
 @export var mute_data_updated: bool = true
 @export var mute_data_error: bool = true
 @export var mute_character_selected: bool
+@export var mute_controller_event: bool
 
 func _ready() -> void:
 	decay.timeout.connect(_on_decay_timeout)
@@ -32,6 +33,8 @@ func _ready() -> void:
 	ClientDataLayer.data_updated.connect(_on_data_updated)
 	ClientDataLayer.data_error.connect(_on_data_error)
 	ClientDataLayer.character_selected.connect(_on_character_selected)
+
+	ControllerEventLayer.event.connect(_on_controller_event)
 
 func _on_decay_timeout() -> void:
 	if feed.get_child_count() > 0:
@@ -94,3 +97,13 @@ func _on_data_error(error: ClientDataLayer.DataError) -> void:
 func _on_character_selected(peer_id: int, character: String) -> void:
 	if mute_character_selected: return
 	_add_message("Peer %d selected character: %s" % [peer_id, character])
+
+func _on_controller_event(type: ControllerEventLayer.EventType, controller: PSController) -> void:
+	if mute_controller_event: return
+	match type:
+		ControllerEventLayer.EventType.CHOICE:
+			_add_message("Controller %s, %s made a choice" % [controller.speak_as, controller.get_parent().name] )
+		ControllerEventLayer.EventType.CONNECT:
+			_add_message("Controller %s, %s connected" % [controller.speak_as, controller.get_parent().name])
+		ControllerEventLayer.EventType.DISCONNECT:
+			_add_message("Controller %s, %s disconnected" % [controller.speak_as, controller.get_parent().name])

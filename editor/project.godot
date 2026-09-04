@@ -19,7 +19,7 @@ config/icon="res://icon.svg"
 
 IdSystem="*uid://emcgvjw2xenp"
 NetworkEntityDefaults="*uid://bttyhihvjbpso"
-PlayerEventLayer="*uid://blrnmb1wooqwc"
+ControllerEventLayer="*uid://blrnmb1wooqwc"
 ClientDataLayer="*uid://4tjo2itl4enh"
 NetworkLayer="*uid://cmb4d6ennhr0l"
 

@@ -5,6 +5,8 @@
 [ext_resource type="PackedScene" uid="uid://udwexxt1fl5t" path="res://demos/september/ui/reka.tscn" id="3_7fl6c"]
 [ext_resource type="PackedScene" uid="uid://fn48n343cb16" path="res://demos/september/logic/merchant_dialogue_avatar.tscn" id="3_nriho"]
 [ext_resource type="Script" uid="uid://jpgaxooa6ari" path="res://demos/september/network/character_switch.gd" id="4_j8er1"]
+[ext_resource type="Script" uid="uid://dshl0su1su5xe" path="res://proto_simulator/ps_simulator.gd" id="6_602u8"]
+[ext_resource type="Script" uid="uid://inieasxjm4nb" path="res://proto_simulator/ps_conversation.gd" id="7_nbaqi"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_nunj6"]
 
@@ -75,3 +77,13 @@ spawn_path = NodePath("..")
 script = ExtResource("2_8jkri")
 spawn_mode = 1
 spawnable_packed = ExtResource("3_nriho")
+
+[node name="PSSimulator" type="Node" parent="Louder" unique_id=901825318 node_paths=PackedStringArray("conversation")]
+script = ExtResource("6_602u8")
+conversation = NodePath("../PSConversation")
+metadata/_custom_type_script = "uid://dshl0su1su5xe"
+
+[node name="PSConversation" type="Node" parent="Louder" unique_id=1560832398]
+script = ExtResource("7_nbaqi")
+input_path = "res://demos/conversations/merchant.json"
+metadata/_custom_type_script = "uid://inieasxjm4nb"

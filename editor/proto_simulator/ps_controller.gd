@@ -47,6 +47,10 @@ func _filter_visible_node(position:int) -> bool:
 		return true
 	return false
 
+func start() -> bool:
+	data = simulator.align_start()
+	return data.get(BodyProperties.success, false)
+
 func traverse(choice:String) -> bool:
 	data = simulator.align(data, choice, _filter_valid_choice)
 	return data.get(BodyProperties.success, false)

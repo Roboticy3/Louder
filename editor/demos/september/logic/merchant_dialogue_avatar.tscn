@@ -34,11 +34,7 @@ replication_config = SubResource("SceneReplicationConfig_vlnjk")
 
 [node name="PSController" type="Node" parent="." unique_id=188716590 node_paths=PackedStringArray("config")]
 script = ExtResource("4_2ymaw")
-group = null
 config = NodePath("../PSConfig")
-speak_as = null
-listen_to = null
-mute = null
 metadata/_custom_type_script = "uid://cbiclxd6bqxa4"
 
 [node name="PSConfig" type="Node" parent="." unique_id=1705864715]

@@ -58,7 +58,9 @@ func get_connections_from(from_id) -> Array:
 
 func dict_to_ps_object(enum_d:Dictionary, o_d:Dictionary) -> Dictionary:
 	var result_d:Dictionary
-	for k in enum_d:
+	for k in o_d:
+		if !(k in enum_d):
+			continue
 		result_d[enum_d[k]] = o_d[k]
 	
 	return result_d

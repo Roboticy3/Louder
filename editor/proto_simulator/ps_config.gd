@@ -6,6 +6,7 @@ const OBJECT_SPEAKER := "speaker"
 const SPK_NAME := "speaker"
 const SPK_PBLC := "public"
 const SPK_OWND := "ownable"
+const SPK_RLTN := "relationships"
 
 var speakers_by_name:Dictionary[String, Dictionary]
 
@@ -49,6 +50,9 @@ func is_public(speaker:String):
 	if s is Dictionary:
 		return true if s.get(SPK_PBLC, false) else false
 	return true
+
+func get_relationships(speaker:String) -> Array:
+	return speakers_by_name.get(speaker, {}).get(SPK_RLTN, [])
 
 func _on_conversation_changed(_path:String):
 	_ready()

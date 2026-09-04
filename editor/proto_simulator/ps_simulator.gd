@@ -36,8 +36,12 @@ const CANNED_STATE_1: Dictionary[BodyProperties, Variant] = {
 	BodyProperties.choices: CANNED_CHOICES,
 }
 
+@export var group := &"ps_simulator"
 @export var conversation:PSConversation
 @export var state:PSDialogueState
+
+func _ready():
+	add_to_group(group)
 
 func get_property(position: int, property: HubProperties, default=null) -> Variant:
 	match position:
@@ -51,7 +55,7 @@ func get_property(position: int, property: HubProperties, default=null) -> Varia
 #default filter for objects
 func no_filter(_data:Dictionary) -> bool: return true
 
-func has_property_or_flag(data:Dictionary, property:String): return true if data.get(property, false) else false
+func has_property_or_flag(data:Dictionary, property): return true if data.get(property, false) else false
 
 #list choice objects from a position
 func list(position: int, filter:=no_filter) -> Array[Dictionary]:
