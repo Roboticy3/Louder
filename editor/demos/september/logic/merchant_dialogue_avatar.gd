@@ -27,9 +27,9 @@ func update_controller_speakers():
 		controller.speak_as = [character]
 		var relationships := config.get_relationships(character)
 		controller.listen_to = relationships
-		ControllerEventLayer.connect_controller(controller.get_path())
+		ControllerEventLayer.connect_controller(controller)
 	else:
-		ControllerEventLayer.disconnect_controller(controller.get_path())
+		ControllerEventLayer.disconnect_controller(controller)
 
 func get_faux_authority():
 	return int(name)

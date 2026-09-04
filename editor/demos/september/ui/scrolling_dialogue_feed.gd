@@ -18,7 +18,6 @@ func push_item(body:Dictionary[BodyProperties, Variant]):
 		remove_child(child)
 		child.queue_free()
 		item_count -= 1
-		
 	
 	var item := dialogue_item.instantiate()
 	if item.has_method("import"):

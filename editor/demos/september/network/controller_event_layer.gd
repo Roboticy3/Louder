@@ -17,15 +17,11 @@ signal event(type:EventType, controller:PSController)
 #the server computes the move on that controller, then repeats the update down
 #to all peers.
 @rpc("any_peer", "call_local", "reliable")
-func send_choice_to_server(controller_path:NodePath, choice: String) -> void:
-	if !multiplayer.is_server():
+func send_choice_to_server(controller:PSController, choice: String) -> void:
+	if !is_instance_valid(controller):
 		return
+	var controller_path := controller.get_path()
 	
-	var node := get_node_or_null(controller_path)
-	if !(node is PSController):
-		invalid_path_error(controller_path, node)
-	
-	var controller:PSController = node
 	controller.traverse(choice)
 	
 	#other controllers in the same branch should be marked to follow this one
@@ -39,6 +35,7 @@ func send_choice_to_server(controller_path:NodePath, choice: String) -> void:
 	
 	sync_controller_data.rpc(controller_path, sync_paths)
 
+#sync uses paths because they are able to transmit over a network, unlike actual references
 @rpc("authority", "call_local", "reliable")
 func sync_controller_data(controller_path_leader:NodePath, controller_paths:Array):
 	var node_leader := get_node_or_null(controller_path_leader)
@@ -68,33 +65,29 @@ func invalid_path_error(path, result):
 #Eventually would want this to result in a sync pattern like above, since technically the
 #server should be in charge of where controllers enter dialogue as well as how
 #they traverse it.
-var peer_controller:PSController
-func connect_controller(controller_path:NodePath):
-	var node := get_node_or_null(controller_path)
-	if !(node is PSController):
-		invalid_path_error(controller_path, node)
-	
-	var controller:PSController = node
+var connected_controller:PSController
+func connect_controller(controller:PSController):
+	if !is_instance_valid(controller):
+		return
+		
 	if controller.is_active():
 		return
 	
 	var result := controller.start()
 	
 	if !result:
-		push_error("Failed to start simulation on controller ", controller_path, "!")
+		push_error("Failed to start simulation on controller ", controller.get_path(), "!")
 		return
 	
-	if peer_controller:
-		event.emit(EventType.DISCONNECT, peer_controller)
-	peer_controller = controller
+	if connected_controller:
+		event.emit(EventType.DISCONNECT, connected_controller)
+	connected_controller = controller
 	event.emit(EventType.CONNECT, controller)
 
-func disconnect_controller(controller_path:NodePath):
-	var node := get_node_or_null(controller_path)
-	if !(node is PSController):
-		invalid_path_error(controller_path, node)
-	
-	var controller:PSController = node
-	if peer_controller == controller:
-		peer_controller = null
+func disconnect_controller(controller:PSController):
+	if connected_controller == controller:
+		connected_controller = null
 		event.emit(EventType.DISCONNECT, controller)
+
+func get_connected_controller() -> PSController:
+	return connected_controller
