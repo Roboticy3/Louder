@@ -30,8 +30,8 @@ const CANNED_STATE_0: Dictionary[BodyProperties, Variant] = {
 }
 const CANNED_STATE_1: Dictionary[BodyProperties, Variant] = {
 	BodyProperties.speaker: "Canned State 1",
-	BodyProperties.text: "You've moved to Canned State 1! If you choice (Branch: breakout), any choice now should return to the main branch.",
-	BodyProperties.position: 0,
+	BodyProperties.text: "You've moved to Canned State 1! If you choice (Branch: breakout). Any choice goes back to position 0 and choice 1 or 2 will go back to (Branch: main)",
+	BodyProperties.position: 1,
 	BodyProperties.success: true,
 	BodyProperties.choices: CANNED_CHOICES,
 }
@@ -77,11 +77,10 @@ func align(body: Dictionary[BodyProperties, Variant], choice: String, filter:=no
 	var from_position: int = body.get(BodyProperties.position, -1)
 	var choices := list(from_position)
 	
-	var to_position: int = -1
+	var to_position := get_destination(from_position, choice)
 	var canned_branch := ""
 	for c in choices:
 		if c.get(ChoiceProperties.from_choice, "") == choice:
-			to_position = c.get(ChoiceProperties.to_id, -1)
 			canned_branch = c.get("branch", "")
 	
 	body = body.duplicate()
