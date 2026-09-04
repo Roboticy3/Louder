@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cb4dwvxtmavmn"]
 
-[ext_resource type="Script" uid="uid://fpt44n6qts2f" path="res://demos/september/lobby_entry.gd" id="1_wychw"]
+[ext_resource type="Script" uid="uid://fpt44n6qts2f" path="res://demos/september/network/lobby_entry.gd" id="1_si6gt"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_wychw"]
 properties/0/path = NodePath("Mode:text")
@@ -19,16 +19,16 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_wychw")
-mode = NodePath("Mode")
-username = NodePath("Username")
-character = NodePath("Character")
+script = ExtResource("1_si6gt")
+mode = NodePath("mode")
+username = NodePath("username")
+character = NodePath("character")
 
-[node name="Mode" type="Label" parent="." unique_id=1495872731 groups=["lobby_entry_component"]]
+[node name="mode" type="Label" parent="." unique_id=1495872731 groups=["lobby_entry_component"]]
 layout_mode = 2
 text = "Host:"
 
-[node name="Username" type="Label" parent="." unique_id=81628059 groups=["lobby_entry_component"]]
+[node name="username" type="Label" parent="." unique_id=81628059 groups=["lobby_entry_component"]]
 layout_mode = 2
 text = "Username"
 
@@ -36,7 +36,7 @@ text = "Username"
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Character" type="Label" parent="." unique_id=196072513 groups=["lobby_entry_component"]]
+[node name="character" type="Label" parent="." unique_id=196072513 groups=["lobby_entry_component"]]
 layout_mode = 2
 text = "(playing as Character)"
 

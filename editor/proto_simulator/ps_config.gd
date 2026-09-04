@@ -33,7 +33,7 @@ func unroll(objects:Array):
 		match (o.get(OBJECT_TYPE)):
 			OBJECT_SPEAKER:
 				if o.get(SPK_NAME): 
-					print("registering speaker ", o.get(SPK_NAME))
+					#print("registering speaker ", o.get(SPK_NAME))
 					speakers_by_name[o.get(SPK_NAME)] = o
 	
 	print("registered speakers: ", speakers_by_name.keys())

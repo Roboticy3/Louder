@@ -1,5 +1,7 @@
 extends HBoxContainer
 
+const ClientProperties := ClientDataLayer.ClientProperties
+
 @export var group := &"lobby_entry"
 @export var component_group := &"lobby_entry_component"
 
@@ -9,6 +11,9 @@ extends HBoxContainer
 
 func _ready() -> void:
 	add_to_group(group)
+	ClientDataLayer.data_updated.connect(_on_client_data_updated)
+	var us := multiplayer.get_unique_id()
+	_on_client_data_updated(us, ClientDataLayer.get_data(us))
 
 func set_mode(to:String) -> void:
 	mode.text = to + ":"
@@ -36,8 +41,9 @@ func export() -> Dictionary:
 
 func import(data: Dictionary) -> void:
 	for key in data:
-		if key is String:
-			var node := find_child(key, true, false)
+		if key is ClientProperties:
+			var key_name := str(ClientProperties.find_key(key))
+			var node := find_child(key_name, true, false)
 			if node:
 				_import_component(node, data[key])
 
@@ -49,3 +55,7 @@ func _export_component(node: Node) -> Variant:
 func _import_component(node: Node, value: Variant) -> void:
 	if node is Label:
 		node.text = value
+
+func _on_client_data_updated(authority:int, _data:Dictionary) -> void:
+	if authority == multiplayer.get_unique_id():
+		import(ClientDataLayer.get_data(authority))

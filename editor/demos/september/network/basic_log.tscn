@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://b2x65pfmghwq5"]
 
-[ext_resource type="Script" uid="uid://c3mwlunur3atv" path="res://demos/september/basic_log.gd" id="1_xlwlw"]
+[ext_resource type="Script" uid="uid://c3mwlunur3atv" path="res://demos/september/network/basic_log.gd" id="1_xlwlw"]
 
 [node name="BasicLog" type="Control" unique_id=128730021 node_paths=PackedStringArray("feed", "decay")]
 layout_mode = 3

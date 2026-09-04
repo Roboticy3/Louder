@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://cj44xlqqbvgwd"]
 
-[ext_resource type="PackedScene" uid="uid://dhii2e6mc7t81" path="res://demos/september/character_select.tscn" id="1_s2skt"]
-[ext_resource type="Script" uid="uid://bj7q7bsrcvdrl" path="res://demos/september/basic_spawner.gd" id="2_8jkri"]
-[ext_resource type="PackedScene" uid="uid://fn48n343cb16" path="res://demos/september/merchant_dialogue_avatar.tscn" id="3_nriho"]
+[ext_resource type="PackedScene" uid="uid://dhii2e6mc7t81" path="res://demos/september/logic/character_select.tscn" id="1_s2skt"]
+[ext_resource type="Script" uid="uid://bj7q7bsrcvdrl" path="res://demos/september/logic/basic_spawner.gd" id="2_8jkri"]
+[ext_resource type="PackedScene" uid="uid://fn48n343cb16" path="res://demos/september/logic/merchant_dialogue_avatar.tscn" id="3_nriho"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_nunj6"]
 

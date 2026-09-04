@@ -83,3 +83,6 @@ func update_client_data(data:Dictionary):
 
 func is_character_available(character:String):
 	return !character.is_empty() and !(character in characters)
+
+func get_data(authority:int) -> Dictionary:
+	return client_data.get(authority, {})

@@ -14,8 +14,11 @@ signal create_client_error(error:Error)
 signal peer_already_configured_error
 signal server_created
 
-const LOG := preload("res://demos/september/basic_log.tscn")
+const LOG := preload("res://demos/september/network/basic_log.tscn")
+const LOBBY := preload("res://demos/september/network/lobby_menu.tscn")
+
 func _ready() -> void:
+	add_child(LOBBY.instantiate())
 	add_child(LOG.instantiate())
 
 func start(mode:ClientMode, ip_address:String, port:int):

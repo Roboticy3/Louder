@@ -1,0 +1,41 @@
+[gd_scene format=3 uid="uid://fn48n343cb16"]
+
+[ext_resource type="Script" uid="uid://17k5d4ekskvj" path="res://demos/september/logic/merchant_dialogue_avatar.gd" id="1_dq217"]
+[ext_resource type="Script" uid="uid://dsgjhpv7kaisj" path="res://demos/september/logic/character_body_2d.gd" id="2_iayt7"]
+[ext_resource type="Texture2D" uid="uid://cehn1pamkib1t" path="res://icon.svg" id="3_l1ovi"]
+[ext_resource type="Script" uid="uid://cbiclxd6bqxa4" path="res://proto_simulator/ps_controller.gd" id="4_2ymaw"]
+[ext_resource type="Script" uid="uid://b8jjbbtjemx6g" path="res://proto_simulator/ps_config.gd" id="5_xp8xg"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_nunj6"]
+radius = 26.019224
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_vlnjk"]
+properties/0/path = NodePath("CharacterBody2D:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+
+[node name="MerchantDialogueAvatar" type="Node" unique_id=996170675 node_paths=PackedStringArray("config")]
+script = ExtResource("1_dq217")
+config = NodePath("PSConfig")
+
+[node name="CharacterBody2D" type="CharacterBody2D" parent="." unique_id=1815256936]
+script = ExtResource("2_iayt7")
+
+[node name="Sprite2D" type="Sprite2D" parent="CharacterBody2D" unique_id=753549657]
+scale = Vector2(0.421875, 0.421875)
+texture = ExtResource("3_l1ovi")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D" unique_id=661315700]
+shape = SubResource("CircleShape2D_nunj6")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=348848438]
+replication_config = SubResource("SceneReplicationConfig_vlnjk")
+
+[node name="PSController" type="Node" parent="." unique_id=188716590 node_paths=PackedStringArray("config")]
+script = ExtResource("4_2ymaw")
+config = NodePath("../PSConfig")
+metadata/_custom_type_script = "uid://cbiclxd6bqxa4"
+
+[node name="PSConfig" type="Node" parent="." unique_id=1705864715]
+script = ExtResource("5_xp8xg")
+metadata/_custom_type_script = "uid://b8jjbbtjemx6g"

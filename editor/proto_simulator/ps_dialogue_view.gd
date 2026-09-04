@@ -8,6 +8,7 @@ extends Node
 var _components: Array[Node] = []
 
 func _ready() -> void:
+	add_to_group(group)
 	_collect_ui_components(self, _components)
 	
 	#is simulator ready to feed choices?

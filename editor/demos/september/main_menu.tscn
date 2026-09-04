@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://262tuwnn0nqs"]
 
 [ext_resource type="Script" uid="uid://ybu0cnnjqu7b" path="res://demos/september/main_menu_starter.gd" id="1_cv508"]
-[ext_resource type="PackedScene" uid="uid://cj44xlqqbvgwd" path="res://demos/september/merchant.tscn" id="2_rhy6e"]
+[ext_resource type="PackedScene" uid="uid://cj44xlqqbvgwd" path="res://demos/september/logic/merchant.tscn" id="2_rhy6e"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_cv508"]
 

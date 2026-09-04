@@ -52,6 +52,12 @@ func traverse(choice:String) -> bool:
 	data = simulator.align(data, _filter_valid_choice)
 	return data.get(BodyProperties.success, false)
 
+func follow(other:PSController) -> bool:
+	if _filter_visible_node(other.get_position()):
+		data = other.data.duplicate()
+		return true
+	return false
+
 func get_text(property:String) -> String:
 	return str(data.get(property))
 
