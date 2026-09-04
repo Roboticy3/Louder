@@ -28,7 +28,7 @@ func send_choice_to_server(controller:PSController, choice: String) -> void:
 	var sync_paths:Array = []
 	for c in get_tree().get_nodes_in_group(controller_group):
 		if c is PSController:
-			if c.get_branch() == controller.get_branch():
+			if c != controller and c.get_branch() == controller.get_branch():
 				#don't sync the controllers yet. 
 				#sync_controller_data will call locally too and handle that
 				sync_paths.append(c.get_path())

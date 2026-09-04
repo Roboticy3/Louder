@@ -2,19 +2,17 @@ class_name ScrollingDialogueFeed extends Node
 
 const BodyProperties := PSObjects.BodyProperties
 
-@export var insert_index := 1
+@export var insert_index := -2
+@export var remove_index := 1
 @export var dialogue_item:PackedScene
 @export var max_items := 100
+@export var scroll_container:ScrollContainer
 
 var item_count := 0
-var last_item = null
 
 func push_item(body:Dictionary[BodyProperties, Variant]):
-	if last_item and last_item.has_method("clear_choices"):
-		last_item.clear_choices()
-	
 	while item_count >= max_items:
-		var child := get_child(insert_index)
+		var child := get_child(remove_index)
 		remove_child(child)
 		child.queue_free()
 		item_count -= 1
@@ -22,8 +20,20 @@ func push_item(body:Dictionary[BodyProperties, Variant]):
 	var item := dialogue_item.instantiate()
 	if item.has_method("import"):
 		item.import(body)
+	if item.has_signal("choice_pressed"):
+		item.choice_pressed.connect(_on_item_choice_pressed)
 	add_child(item)
-	move_child(item, insert_index + item_count)
+	move_child(item, insert_index)
+	
+	var tween := create_tween()
+	var vscrollbar := scroll_container.get_v_scroll_bar()
+	tween.tween_property(vscrollbar, "value", vscrollbar.max_value, 0.5).set_ease(Tween.EASE_IN_OUT)
+	
+
+func _on_item_choice_pressed(choice: String) -> void:
+	var controller := ControllerEventLayer.get_connected_controller()
+	if is_instance_valid(controller):
+		ControllerEventLayer.send_choice_to_server(controller, choice)
 
 func clear():
 	for c in get_children():

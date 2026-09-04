@@ -13,6 +13,10 @@ func import(data:Dictionary[BodyProperties, Variant]):
 		element_container.remove_child(c)
 		c.queue_free()
 	
+	var index := get_index()
+	var index_label := Label.new()
+	index_label.text = str(index)
+	
 	var speaker := str(data.get(BodyProperties.speaker, ""))
 	if !speaker.is_empty():
 		var speaker_label := Label.new()
@@ -33,6 +37,7 @@ func import(data:Dictionary[BodyProperties, Variant]):
 		button.text = str(choice.get(ChoiceProperties.from_choice, ""))
 		button.pressed.connect(_on_choice_pressed.bind(button.text))
 		element_container.add_child(button)
+	
 
 func clear_choices() -> void:
 	for c in element_container.get_children():
@@ -41,4 +46,5 @@ func clear_choices() -> void:
 			c.queue_free()
 
 func _on_choice_pressed(choice: String) -> void:
+	clear_choices()
 	choice_pressed.emit(choice)
