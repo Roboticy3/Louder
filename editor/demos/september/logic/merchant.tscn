@@ -3,6 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://dhii2e6mc7t81" path="res://demos/september/logic/character_select.tscn" id="1_s2skt"]
 [ext_resource type="Script" uid="uid://bj7q7bsrcvdrl" path="res://demos/september/logic/basic_spawner.gd" id="2_8jkri"]
 [ext_resource type="PackedScene" uid="uid://fn48n343cb16" path="res://demos/september/logic/merchant_dialogue_avatar.tscn" id="3_nriho"]
+[ext_resource type="Script" uid="uid://jpgaxooa6ari" path="res://demos/september/network/character_switch.gd" id="4_j8er1"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_nunj6"]
 
@@ -27,6 +28,42 @@ offset_top = -171.5
 offset_bottom = 171.5
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="Geno" type="CanvasLayer" parent="." unique_id=1540345953]
+script = ExtResource("4_j8er1")
+character = "Geno"
+
+[node name="Label" type="Label" parent="Geno" unique_id=1320348178]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -32.0
+offset_top = -11.5
+offset_right = 32.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Geno TV"
+
+[node name="Reka" type="CanvasLayer" parent="." unique_id=789903151]
+script = ExtResource("4_j8er1")
+character = "Reka"
+
+[node name="Label" type="Label" parent="Reka" unique_id=663246174]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -32.0
+offset_top = -11.5
+offset_right = 32.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Reka Vision :)"
 
 [node name="Louder" type="Node" parent="." unique_id=220019652]
 

@@ -86,3 +86,6 @@ func is_character_available(character:String):
 
 func get_data(authority:int) -> Dictionary:
 	return client_data.get(authority, {})
+
+func get_local_data() -> Dictionary:
+	return client_data.get(multiplayer.get_unique_id(), {})
