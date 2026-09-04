@@ -13,4 +13,4 @@ func shrink():
 	var new_size := minf(inner_container.size.y, max_size_reference.size.y)
 	scroll_container.size = Vector2(scroll_container.size.x, new_size)
 	if new_size < max_size_reference.size.y:
-		scroll_container.position = Vector2(scroll_container.position.x,max_size_reference.size.y - new_size)
+		scroll_container.position = Vector2(scroll_container.position.x,(max_size_reference.size.y - new_size) * 0.5)

@@ -6,7 +6,7 @@
 [ext_resource type="Script" uid="uid://bt5qiks6r8rsq" path="res://demos/september/ui/scroll_margin.gd" id="4_gt1ev"]
 [ext_resource type="Script" uid="uid://bk5bowxpxjfu3" path="res://demos/september/ui/scroll_shrinker.gd" id="5_6tn8e"]
 
-[node name="MainDialogueView" type="Control" unique_id=2033588754]
+[node name="MainDialogueView" type="Control" unique_id=2033588754 node_paths=PackedStringArray("scrolling_dialogue_feed")]
 layout_mode = 3
 anchor_left = 0.66800004
 anchor_right = 1.0
@@ -15,6 +15,7 @@ offset_left = 0.46392822
 grow_horizontal = 0
 grow_vertical = 2
 script = ExtResource("1_qjalj")
+scrolling_dialogue_feed = NodePath("ScrollContainer/Feed")
 
 [node name="ScrollContainerMaxFit" type="Control" parent="." unique_id=2011777731]
 layout_mode = 1

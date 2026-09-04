@@ -1,5 +1,16 @@
 extends Control
 
-# Called when the node enters the scene tree for the first time.
+@export var scrolling_dialogue_feed:ScrollingDialogueFeed
+var current_controller:PSController
+
 func _ready() -> void:
-	pass # Replace with function body.
+	ControllerEventLayer.event.connect(_on_controller_event)
+
+func _on_controller_event(type: ControllerEventLayer.EventType, controller: PSController) -> void:
+	match type:
+		ControllerEventLayer.EventType.CONNECT:
+			scrolling_dialogue_feed.push_item(controller.data)
+		ControllerEventLayer.EventType.CHOICE:
+			scrolling_dialogue_feed.push_item(controller.data)
+		ControllerEventLayer.EventType.DISCONNECT:
+			scrolling_dialogue_feed.clear()

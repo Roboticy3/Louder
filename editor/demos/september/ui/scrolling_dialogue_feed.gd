@@ -1,4 +1,4 @@
-extends Node
+class_name ScrollingDialogueFeed extends Node
 
 const BodyProperties := PSObjects.BodyProperties
 
@@ -18,5 +18,16 @@ func push_item(body:Dictionary[BodyProperties, Variant]):
 		remove_child(child)
 		child.queue_free()
 		item_count -= 1
+		
 	
-	dialogue_item.instantiate()
+	var item := dialogue_item.instantiate()
+	if item.has_method("import"):
+		item.import(body)
+	add_child(item)
+	move_child(item, insert_index + item_count)
+
+func clear():
+	for c in get_children():
+		remove_child(c)
+		c.queue_free()
+	item_count = 0
