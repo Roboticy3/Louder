@@ -1,6 +1,8 @@
 extends Node
 
 @export var config:PSConfig
+@export var controller:PSController
+@export var group := &"merchant_dialogue_avatar"
 
-func get_faux_authority() -> int:
-	return int(name)
+func _ready():
+	add_to_group(group)

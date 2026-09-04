@@ -61,7 +61,6 @@ func sync_controller_data(controller_path_leader:NodePath, controller_paths:Arra
 		else:
 			invalid_path_error(c, controller)
 			continue
-		
 
 func invalid_path_error(path, result):
 	push_error("Path ", path, " not a valid controller! Found ", result, " instead.")

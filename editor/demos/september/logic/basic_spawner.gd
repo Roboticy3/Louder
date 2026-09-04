@@ -36,6 +36,7 @@ func _on_spawn_trigger(authority:int, _dump=null) -> void:
 		var marked := server_spawn_registry[authority]
 		if is_instance_valid(marked):
 			marked.process_mode = Node.PROCESS_MODE_DISABLED
+			spawn_root.remove_child(marked)
 			marked.queue_free()
 	
 	spawnable_instance.set("authority", authority)

@@ -4,9 +4,6 @@ extends CharacterBody2D
 const SPEED = 300.0
 const JUMP_VELOCITY = -400.0
 
-func _ready() -> void:
-	set_multiplayer_authority(get_meta("authority", 1))
-
 func _physics_process(delta: float) -> void:
 	if !is_multiplayer_authority():
 		return

@@ -3,15 +3,9 @@
 [ext_resource type="Script" uid="uid://fpt44n6qts2f" path="res://demos/september/network/lobby_entry.gd" id="1_si6gt"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_wychw"]
-properties/0/path = NodePath("Mode:text")
+properties/0/path = NodePath(".:alignment")
 properties/0/spawn = true
 properties/0/replication_mode = 2
-properties/1/path = NodePath("Username:text")
-properties/1/spawn = true
-properties/1/replication_mode = 2
-properties/2/path = NodePath("Character:text")
-properties/2/spawn = true
-properties/2/replication_mode = 2
 
 [node name="LobbyEntry" type="HBoxContainer" unique_id=2039149480 node_paths=PackedStringArray("mode", "username", "character")]
 anchors_preset = 15

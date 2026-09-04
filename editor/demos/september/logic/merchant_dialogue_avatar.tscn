@@ -14,9 +14,10 @@ properties/0/path = NodePath("CharacterBody2D:position")
 properties/0/spawn = true
 properties/0/replication_mode = 1
 
-[node name="MerchantDialogueAvatar" type="Node" unique_id=996170675 node_paths=PackedStringArray("config")]
+[node name="MerchantDialogueAvatar" type="Node" unique_id=996170675 node_paths=PackedStringArray("config", "controller")]
 script = ExtResource("1_dq217")
 config = NodePath("PSConfig")
+controller = NodePath("PSController")
 
 [node name="CharacterBody2D" type="CharacterBody2D" parent="." unique_id=1815256936]
 script = ExtResource("2_iayt7")
@@ -33,7 +34,11 @@ replication_config = SubResource("SceneReplicationConfig_vlnjk")
 
 [node name="PSController" type="Node" parent="." unique_id=188716590 node_paths=PackedStringArray("config")]
 script = ExtResource("4_2ymaw")
+group = null
 config = NodePath("../PSConfig")
+speak_as = null
+listen_to = null
+mute = null
 metadata/_custom_type_script = "uid://cbiclxd6bqxa4"
 
 [node name="PSConfig" type="Node" parent="." unique_id=1705864715]

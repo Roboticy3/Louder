@@ -2,6 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://dhii2e6mc7t81" path="res://demos/september/logic/character_select.tscn" id="1_s2skt"]
 [ext_resource type="Script" uid="uid://bj7q7bsrcvdrl" path="res://demos/september/logic/basic_spawner.gd" id="2_8jkri"]
+[ext_resource type="PackedScene" uid="uid://udwexxt1fl5t" path="res://demos/september/ui/reka.tscn" id="3_7fl6c"]
 [ext_resource type="PackedScene" uid="uid://fn48n343cb16" path="res://demos/september/logic/merchant_dialogue_avatar.tscn" id="3_nriho"]
 [ext_resource type="Script" uid="uid://jpgaxooa6ari" path="res://demos/september/network/character_switch.gd" id="4_j8er1"]
 
@@ -16,18 +17,6 @@ position = Vector2(583, 510)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=969255664]
 shape = SubResource("WorldBoundaryShape2D_nunj6")
-
-[node name="CharacterSelect" type="CanvasLayer" parent="." unique_id=1991834384]
-
-[node name="CharacterSelect" parent="CharacterSelect" unique_id=851426068 instance=ExtResource("1_s2skt")]
-anchors_preset = 14
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-offset_top = -171.5
-offset_bottom = 171.5
-grow_horizontal = 2
-grow_vertical = 2
 
 [node name="Geno" type="CanvasLayer" parent="." unique_id=1540345953]
 script = ExtResource("4_j8er1")
@@ -64,6 +53,20 @@ offset_bottom = 11.5
 grow_horizontal = 2
 grow_vertical = 2
 text = "Reka Vision :)"
+
+[node name="Control" parent="Reka" unique_id=1123156141 instance=ExtResource("3_7fl6c")]
+
+[node name="CharacterSelect" type="CanvasLayer" parent="." unique_id=1991834384]
+
+[node name="CharacterSelect" parent="CharacterSelect" unique_id=851426068 instance=ExtResource("1_s2skt")]
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -171.5
+offset_bottom = 171.5
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="Louder" type="Node" parent="." unique_id=220019652]
 
