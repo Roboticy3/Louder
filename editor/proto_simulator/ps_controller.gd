@@ -48,8 +48,7 @@ func _filter_visible_node(position:int) -> bool:
 	return false
 
 func traverse(choice:String) -> bool:
-	data[BodyProperties.choice] = choice
-	data = simulator.align(data, _filter_valid_choice)
+	data = simulator.align(data, choice, _filter_valid_choice)
 	return data.get(BodyProperties.success, false)
 
 func follow(other:PSController) -> bool:

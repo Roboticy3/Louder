@@ -7,11 +7,46 @@ const BodyProperties := PSObjects.BodyProperties
 const ChoiceProperties := PSObjects.ChoiceProperties
 const SpeakerProperties := PSObjects.SpeakerProperties
 
+const DEFAULT_BRANCH := "main"
+const CANNED_CHOICES: Array[Dictionary] = [
+	{
+		ChoiceProperties.from_choice: "Choice 1",
+	},
+	{
+		ChoiceProperties.from_choice: "Choice 2",
+	},
+	{
+		ChoiceProperties.from_choice: "Choice 3 (Branch: breakout)",
+		"branch": "breakout"
+	},
+]
+const CANNED_STATE_0: Dictionary[BodyProperties, Variant] = {
+	BodyProperties.speaker: "Canned State 0",
+	BodyProperties.text: "Welcome to Canned State 0!",
+	BodyProperties.position: 0,
+	BodyProperties.success: true,
+	BodyProperties.branch: DEFAULT_BRANCH,
+	BodyProperties.choices: CANNED_CHOICES,
+}
+const CANNED_STATE_1: Dictionary[BodyProperties, Variant] = {
+	BodyProperties.speaker: "Canned State 1",
+	BodyProperties.text: "You've moved to Canned State 1! If you choice (Branch: breakout), any choice now should return to the main branch.",
+	BodyProperties.position: 0,
+	BodyProperties.success: true,
+	BodyProperties.choices: CANNED_CHOICES,
+}
+
 @export var conversation:PSConversation
 @export var state:PSDialogueState
 
-func get_property(position: int, property: HubProperties, default=null):
-	return default
+func get_property(position: int, property: HubProperties, default=null) -> Variant:
+	match position:
+		0:
+			return CANNED_STATE_0.get(property, default)
+		1:
+			return CANNED_STATE_1.get(property, default)
+		_:
+			return default
 
 #default filter for objects
 func no_filter(_data:Dictionary) -> bool: return true
@@ -20,11 +55,12 @@ func has_property_or_flag(data:Dictionary, property:String): return true if data
 
 #list choice objects from a position
 func list(position: int, filter:=no_filter) -> Array[Dictionary]:
-	return []
+	return CANNED_CHOICES
 
 #align a "moving" body with the BodyProperties.choice field filled to the conversation.
 #
 #the list of choices is computed from `list` and the given choice must be contained within it.
+#user provided filter is *not* passed here.
 #
 #if the destination of the body has the HubProperties.auto field set to true, 
 #the first valid choice is found, set to the body's choice, and taken as its motion
@@ -33,13 +69,33 @@ func list(position: int, filter:=no_filter) -> Array[Dictionary]:
 #
 #returns a copy of the body with BodyProperties.success filled, and the position,
 #branch, and choices updated to the body's current position in the conversation.
-func align(body: Dictionary[BodyProperties, Variant], filter:=no_filter) -> Dictionary[BodyProperties, Variant]:
-	return {
-		BodyProperties.success: false
-	}
+func align(body: Dictionary[BodyProperties, Variant], choice: String, filter:=no_filter) -> Dictionary[BodyProperties, Variant]:
+	var from_position: int = body.get(BodyProperties.position, -1)
+	var choices := list(from_position)
+	
+	var to_position: int = -1
+	var canned_branch := ""
+	for c in choices:
+		if c.get(ChoiceProperties.from_choice, "") == choice:
+			to_position = c.get(ChoiceProperties.to_id, -1)
+			canned_branch = c.get("branch", "")
+	
+	body = body.duplicate()
+	if to_position >= 0:
+		match to_position:
+			0:
+				body = CANNED_STATE_0.duplicate()
+			1:
+				body = CANNED_STATE_1.duplicate()
+		if !canned_branch.is_empty():
+			body[BodyProperties.branch] = canned_branch
+	else:
+		body[BodyProperties.success] = false
+	
+	return body
 
 func get_destination(position: int, choice: String) -> int:
-	return -1
+	return (position + 1) % 2
 
 #search iterator.
 #
@@ -67,3 +123,14 @@ func find_start(from:=-1) -> int:
 		), 
 		from
 	)
+
+func align_start(from:=-1) -> Dictionary[BodyProperties, Variant]:
+	var start := find_start(from)
+	if start == -1:
+		return {
+			BodyProperties.success: false
+		}
+	else:
+		var data := CANNED_STATE_0.duplicate()
+		data[BodyProperties.success] = true
+		return data
