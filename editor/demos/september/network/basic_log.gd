@@ -3,6 +3,8 @@ extends Control
 @export var feed: Container
 @export var decay: Timer
 
+@export var time_scale := 5.0
+
 @export var mute_server_created: bool
 @export var mute_connected_to_server: bool
 @export var mute_server_disconnected: bool
@@ -38,7 +40,7 @@ func _ready() -> void:
 
 func _on_decay_timeout() -> void:
 	if feed.get_child_count() > 0:
-		decay.wait_time = 1.0 / (log(feed.get_child_count()) / log(2) + 1)
+		decay.wait_time = time_scale / (log(feed.get_child_count()) / log(2) + 1)
 		feed.get_child(0).queue_free()
 		decay.start()
 

@@ -33,7 +33,7 @@ func push_item(body:Dictionary[BodyProperties, Variant]):
 func _on_item_choice_pressed(choice: String) -> void:
 	var controller := ControllerEventLayer.get_connected_controller()
 	if is_instance_valid(controller):
-		ControllerEventLayer.send_choice_to_server(controller, choice)
+		ControllerEventLayer.request_choice(controller, choice)
 
 func clear():
 	for c in get_children():

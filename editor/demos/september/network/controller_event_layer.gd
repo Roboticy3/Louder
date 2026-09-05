@@ -21,7 +21,10 @@ var connected_controller:PSController
 #the server computes the move on that controller, then repeats the update down
 #to all peers.
 @rpc("any_peer", "call_local", "reliable")
-func send_choice_to_server(controller:PSController, choice: String) -> void:
+func request_choice(controller:PSController, choice: String) -> void:
+	if !multiplayer.is_server():
+		return
+	
 	if !is_instance_valid(controller):
 		return
 	var controller_path := controller.get_path()
@@ -37,7 +40,7 @@ func send_choice_to_server(controller:PSController, choice: String) -> void:
 				sync_controller_data.rpc(EventType.CHOICE, remote_authority, c.get_path(), c.data)
 
 @rpc("any_peer", "call_local", "reliable")
-func send_controller_to_server(controller_path:NodePath):
+func request_controller(controller_path:NodePath):
 	if !multiplayer.is_server():
 		return
 	
@@ -46,14 +49,13 @@ func send_controller_to_server(controller_path:NodePath):
 	var node := get_node_or_null(controller_path)
 	if !(node is PSController):
 		invalid_path_error(controller_path, node)
+		return
 	
 	var controller:PSController = node
 	
 	if controller.is_active():
 		sync_controller_data.rpc(EventType.CONNECT, remote_authority, controller_path, controller.data)
 		return
-	
-	controller.find_simulator()
 	
 	#look for active controllers to sync to
 	for c in get_tree().get_nodes_in_group(controller_group):
@@ -83,13 +85,13 @@ func sync_controller_data(event_type:EventType, original_authority:int, controll
 	var node := get_node_or_null(controller_path)
 	if !(node is PSController):
 		invalid_path_error(controller_path, node)
+		return
 	
 	var controller:PSController = node
 	controller.data = data
 	
 	if event_type == EventType.CONNECT or event_type == EventType.DISCONNECT:
 		if multiplayer.get_unique_id() == original_authority:
-			controller.find_simulator()
 			connected_controller = controller
 			event.emit(event_type, controller)
 	else:

@@ -1,0 +1,179 @@
+extends Node
+
+enum EventType {
+	CHOICE = 0,
+	CONNECT,
+	DISCONNECT,
+}
+
+signal event(type:EventType, controller:PSController)
+
+@export var controller_group := &"ps_controller"
+
+var connected_controller:PSController
+
+func _ready() -> void:
+	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
+
+func get_connected_controller() -> PSController:
+	return connected_controller
+
+# --- UI entry points ---------------------------------------------------
+#
+# These are the only methods the rest of the game talks to. They figure out
+# whether this peer is the server and either handle the request locally or
+# forward it to the server via RPC. All state is computed on the server and
+# replicated down through `sync_controller_data`.
+
+func request_connect(controller:PSController) -> void:
+	if !is_instance_valid(controller):
+		return
+	if !multiplayer.has_multiplayer_peer():
+		return
+	var path := controller.get_path()
+	if multiplayer.is_server():
+		_on_connect_requested(path, controller.speak_as, controller.listen_to)
+	else:
+		_on_connect_requested.rpc_id(1, path, controller.speak_as, controller.listen_to)
+
+func request_choice(controller:PSController, choice:String) -> void:
+	if !is_instance_valid(controller) or choice.is_empty():
+		return
+	if !multiplayer.has_multiplayer_peer():
+		return
+	var path := controller.get_path()
+	if multiplayer.is_server():
+		_on_choice_requested(path, choice)
+	else:
+		_on_choice_requested.rpc_id(1, path, choice)
+
+func request_disconnect(controller:PSController) -> void:
+	if !is_instance_valid(controller):
+		return
+	if !multiplayer.has_multiplayer_peer():
+		return
+	var path := controller.get_path()
+	if multiplayer.is_server():
+		_on_disconnect_requested(path)
+	else:
+		_on_disconnect_requested.rpc_id(1, path)
+
+# --- server-side handlers ----------------------------------------------
+#
+# Only run on the server. The server is authoritative: it owns the simulator,
+# so it decides what a connect/choice actually does to state, then broadcasts
+# the resulting controller data to every peer exactly once.
+
+@rpc("any_peer", "reliable")
+func _on_connect_requested(controller_path:NodePath, speak_as:PackedStringArray, listen_to:PackedStringArray) -> void:
+	if !multiplayer.is_server():
+		return
+	var controller := get_node_or_null(controller_path) as PSController
+	if controller == null:
+		invalid_path_error(controller_path, get_node_or_null(controller_path))
+		return
+	if get_requester_id() != controller.get_multiplayer_authority():
+		push_warning("Controller ", controller_path, " not owned by requesting peer!")
+		return
+	controller.speak_as = speak_as
+	controller.listen_to = listen_to
+	if controller.is_active():
+		share_state(EventType.CONNECT, controller)
+		return
+	controller.find_simulator()
+	if controller.simulator == null:
+		push_error("Failed to find simulator for controller ", controller_path, "!")
+		return
+	for c in get_tree().get_nodes_in_group(controller_group):
+		if c is PSController and c != controller and c.is_active() and c.simulator != null:
+			if controller.follow(c):
+				share_state(EventType.CONNECT, controller)
+				return
+	if !controller.start():
+		push_error("Failed to start simulation on controller ", controller_path, "!")
+		return
+	share_state(EventType.CONNECT, controller)
+
+@rpc("any_peer", "reliable")
+func _on_choice_requested(controller_path:NodePath, choice:String) -> void:
+	if !multiplayer.is_server():
+		return
+	var controller := get_node_or_null(controller_path) as PSController
+	if controller == null:
+		invalid_path_error(controller_path, get_node_or_null(controller_path))
+		return
+	if get_requester_id() != controller.get_multiplayer_authority():
+		push_warning("Controller ", controller_path, " not owned by requesting peer!")
+		return
+	if !controller.is_active():
+		return
+	if !controller.traverse(choice):
+		push_error("Invalid choice ", choice, " on controller ", controller_path, "!")
+		return
+	share_state(EventType.CHOICE, controller)
+
+@rpc("any_peer", "reliable")
+func _on_disconnect_requested(controller_path:NodePath) -> void:
+	if !multiplayer.is_server():
+		return
+	var controller := get_node_or_null(controller_path) as PSController
+	if controller == null:
+		return
+	if get_requester_id() != controller.get_multiplayer_authority():
+		push_warning("Controller ", controller_path, " not owned by requesting peer!")
+		return
+	if !controller.is_active():
+		return
+	controller.data = {}
+	share_state(EventType.DISCONNECT, controller, {})
+
+func _on_peer_disconnected(peer_id:int) -> void:
+	if !multiplayer.is_server():
+		return
+	for c in get_tree().get_nodes_in_group(controller_group):
+		if c is PSController and c.get_multiplayer_authority() == peer_id and c.is_active():
+			share_state(EventType.DISCONNECT, c, {})
+
+# --- replication ---------------------------------------------------------
+
+# Broadcasts the authoritative state of a controller to every peer. `state`
+# is the full controller data to apply. Paths are used because they survive
+# the network, unlike object references.
+@rpc("authority", "call_local", "reliable")
+func sync_controller_data(event_type:EventType, controller_path:NodePath, state: Dictionary) -> void:
+	var node := get_node_or_null(controller_path)
+	if !(node is PSController):
+		return
+	var controller:PSController = node
+	controller.data = state
+	var owner := controller.get_multiplayer_authority()
+	match event_type:
+		EventType.CONNECT:
+			if multiplayer.get_unique_id() == owner:
+				controller.find_simulator()
+				connected_controller = controller
+			event.emit(EventType.CONNECT, controller)
+		EventType.DISCONNECT:
+			if multiplayer.get_unique_id() == owner:
+				connected_controller = null
+			event.emit(EventType.DISCONNECT, controller)
+		EventType.CHOICE:
+			event.emit(EventType.CHOICE, controller)
+
+# Sends the given controller's state out once. When `state` is omitted the
+# controller's current data is used. This is the single gatekeeper for the
+# state replication RPC, so every event is broadcast exactly once.
+func share_state(event_type:EventType, controller:PSController, state=null) -> void:
+	var data:Dictionary = controller.data.duplicate(true) if state == null else state
+	sync_controller_data.rpc(event_type, controller.get_path(), data)
+
+# --- helpers --------------------------------------------------------------
+
+func get_requester_id() -> int:
+	var id := multiplayer.get_remote_sender_id()
+	if id == 0:
+		id = multiplayer.get_unique_id()
+	return id
+
+func invalid_path_error(path:NodePath, result) -> void:
+	push_error("Path ", path, " not a valid controller! Found ", result, " instead.")
