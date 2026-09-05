@@ -1,5 +1,8 @@
 extends Node
 
+#interface with controllers through this script to make PSController's traverse
+#and follow methods into a server-authoritative choice interface.
+
 enum EventType {
 	CHOICE = 0,
 	CONNECT,
@@ -20,11 +23,12 @@ func get_connected_controller() -> PSController:
 # --- connecting / disconnecting ------------------------------------------
 #
 # Connecting and disconnecting are local concepts: they manage which
-# controller THIS peer's UI drives (`connected_controller`). The only thing
-# a connection can do that needs the server is *start* a brand new
-# conversation, because that runs on the authoritative simulator. Following
-# an active conversation, or failing to find one, works entirely on state
-# that every peer already has, so those cases never touch the network.
+# controller THIS peer's UI drives (`connected_controller`). The only things
+# a connection can do that need the server are *starting* a brand new
+# conversation and *joining* an active one, because both decide the
+# controller's state where the authoritative simulator lives. Failing to find
+# an active conversation works entirely on state every peer already has, so
+# that case never touches the network.
 
 func request_controller(controller:PSController) -> void:
 	if !is_instance_valid(controller):
@@ -36,10 +40,9 @@ func request_controller(controller:PSController) -> void:
 		return
 	
 	for c in get_tree().get_nodes_in_group(controller_group):
-		if c is PSController and c != controller and c.is_active() and c.simulator != null:
-			if controller.follow(c):
-				connect_local(controller)
-				return
+		if c is PSController and c != controller and c.is_active() and c.simulator != null and controller.can_follow(c):
+			_request_join.rpc_id(1, controller.get_path(), c.get_path(), controller.speak_as, controller.listen_to)
+			return
 	
 	_request_start.rpc_id(1, controller.get_path(), controller.speak_as, controller.listen_to)
 
@@ -108,6 +111,29 @@ func _request_start(controller_path:NodePath, speak_as:PackedStringArray, listen
 		return
 	if !controller.start():
 		push_error("Failed to start simulation on controller ", controller_path, "!")
+		return
+	sync_controller_data.rpc(EventType.CONNECT, remote_authority, controller_path, controller.data)
+
+#computes a join on the authoritative simulator: the controller tailgates an
+#active conversation instead of starting its own, then replicates like a start.
+@rpc("any_peer", "call_local", "reliable")
+func _request_join(controller_path:NodePath, followed_path:NodePath, speak_as:PackedStringArray, listen_to:PackedStringArray) -> void:
+	if !multiplayer.is_server():
+		return
+	var controller := get_node_or_null(controller_path) as PSController
+	if controller == null:
+		invalid_path_error(controller_path, get_node_or_null(controller_path))
+		return
+	var followed := get_node_or_null(followed_path) as PSController
+	if followed == null:
+		invalid_path_error(followed_path, get_node_or_null(followed_path))
+		return
+	controller.speak_as = speak_as
+	controller.listen_to = listen_to
+	
+	var remote_authority := get_requester_id()
+	if !controller.follow(followed):
+		push_warning("Failed to join controller ", controller_path, " to conversation on ", followed_path)
 		return
 	sync_controller_data.rpc(EventType.CONNECT, remote_authority, controller_path, controller.data)
 
