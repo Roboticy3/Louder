@@ -2,6 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://dhii2e6mc7t81" path="res://demos/september/logic/character_select.tscn" id="1_s2skt"]
 [ext_resource type="Script" uid="uid://bj7q7bsrcvdrl" path="res://demos/september/logic/basic_spawner.gd" id="2_8jkri"]
+[ext_resource type="PackedScene" uid="uid://cor0bmbbvv2l5" path="res://demos/september/ui/geno.tscn" id="2_e0tjo"]
 [ext_resource type="PackedScene" uid="uid://udwexxt1fl5t" path="res://demos/september/ui/reka.tscn" id="3_7fl6c"]
 [ext_resource type="PackedScene" uid="uid://fn48n343cb16" path="res://demos/september/logic/merchant_dialogue_avatar.tscn" id="3_nriho"]
 [ext_resource type="Script" uid="uid://jpgaxooa6ari" path="res://demos/september/network/character_switch.gd" id="4_j8er1"]
@@ -38,6 +39,8 @@ grow_horizontal = 2
 grow_vertical = 2
 text = "Geno TV"
 
+[node name="Control" parent="Geno" unique_id=1123156141 instance=ExtResource("2_e0tjo")]
+
 [node name="Reka" type="CanvasLayer" parent="." unique_id=789903151]
 script = ExtResource("4_j8er1")
 character = "Reka"
@@ -56,7 +59,7 @@ grow_horizontal = 2
 grow_vertical = 2
 text = "Reka Vision :)"
 
-[node name="Control" parent="Reka" unique_id=1123156141 instance=ExtResource("3_7fl6c")]
+[node name="Control" parent="Reka" unique_id=824433713 instance=ExtResource("3_7fl6c")]
 
 [node name="CharacterSelect" type="CanvasLayer" parent="." unique_id=1991834384]
 
@@ -72,16 +75,16 @@ grow_vertical = 2
 
 [node name="Louder" type="Node" parent="." unique_id=220019652]
 
-[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="Louder" unique_id=728369049]
-spawn_path = NodePath("..")
-script = ExtResource("2_8jkri")
-spawn_mode = 1
-spawnable_packed = ExtResource("3_nriho")
-
 [node name="PSSimulator" type="Node" parent="Louder" unique_id=901825318 node_paths=PackedStringArray("conversation")]
 script = ExtResource("6_602u8")
 conversation = NodePath("../PSConversation")
 metadata/_custom_type_script = "uid://dshl0su1su5xe"
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="Louder/PSSimulator" unique_id=728369049]
+spawn_path = NodePath("..")
+script = ExtResource("2_8jkri")
+spawn_mode = 1
+spawnable_packed = ExtResource("3_nriho")
 
 [node name="PSConversation" type="Node" parent="Louder" unique_id=1560832398]
 script = ExtResource("7_nbaqi")

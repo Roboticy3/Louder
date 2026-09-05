@@ -6,9 +6,6 @@ const ClientProperties := ClientDataLayer.ClientProperties
 @export var controller:PSController
 @export var group := &"merchant_dialogue_avatar"
 
-#eventually want to replace this with more intentional selection of simulators based on user input in the world
-@export var simulator_group := &"ps_simulator"
-
 func _ready():
 	add_to_group(group)
 	
@@ -22,12 +19,11 @@ func update_controller_speakers():
 		return
 	
 	var character: String = ClientDataLayer.get_local_data().get(ClientProperties.character, "")
-	if !character.is_empty():
-		controller.simulator = get_tree().get_first_node_in_group(simulator_group)
+	if !character.is_empty() and !controller.is_active():
 		controller.speak_as = [character]
 		var relationships := config.get_relationships(character)
 		controller.listen_to = relationships
-		ControllerEventLayer.connect_controller(controller)
+		ControllerEventLayer.send_controller_to_server.rpc_id(1, controller.get_path())
 	else:
 		ControllerEventLayer.disconnect_controller(controller)
 

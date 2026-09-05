@@ -38,6 +38,8 @@ func _filter_valid_choice(c:Dictionary) -> bool:
 	return false
 
 func _filter_visible_node(position:int) -> bool:
+	if position == -1:
+		return false
 	var n_speaker := str(simulator.get_property(position, HubProperties.speaker))
 	if !(n_speaker in config.speakers_by_name):
 		return true
@@ -56,10 +58,14 @@ func traverse(choice:String) -> bool:
 	return data.get(BodyProperties.success, false)
 
 func follow(other:PSController) -> bool:
-	if _filter_visible_node(other.get_position()):
+	if can_follow(other):
 		data = other.data.duplicate()
 		return true
 	return false
+
+func can_follow(other:PSController) -> bool:
+	var other_position := other.get_position()
+	return _filter_visible_node(other_position)
 
 func get_text(property:String) -> String:
 	return str(data.get(property))
@@ -84,3 +90,12 @@ func get_branch() -> String:
 
 func _get_property(property:HubProperties, default=null) -> Variant:
 	return simulator.get_property(get_position(), property, default)
+
+func find_simulator() -> PSSimulator:
+	var node := get_parent()
+	while node:
+		if node is PSSimulator:
+			simulator = node
+			return node
+		node = node.get_parent()
+	return null
