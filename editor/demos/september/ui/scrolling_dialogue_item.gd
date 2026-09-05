@@ -46,5 +46,4 @@ func clear_choices() -> void:
 			c.queue_free()
 
 func _on_choice_pressed(choice: String) -> void:
-	clear_choices()
 	choice_pressed.emit(choice)

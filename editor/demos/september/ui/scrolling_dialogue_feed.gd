@@ -9,8 +9,12 @@ const BodyProperties := PSObjects.BodyProperties
 @export var scroll_container:ScrollContainer
 
 var item_count := 0
+var top:Node = null
 
 func push_item(body:Dictionary[BodyProperties, Variant]):
+	if top and top.has_method("clear_choices"):
+		top.clear_choices()
+	
 	while item_count >= max_items:
 		var child := get_child(remove_index)
 		remove_child(child)
@@ -24,6 +28,7 @@ func push_item(body:Dictionary[BodyProperties, Variant]):
 		item.choice_pressed.connect(_on_item_choice_pressed)
 	add_child(item)
 	move_child(item, insert_index)
+	top = item
 	
 	var tween := create_tween()
 	var vscrollbar := scroll_container.get_v_scroll_bar()

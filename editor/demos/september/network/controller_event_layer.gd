@@ -34,20 +34,19 @@ func request_controller(controller:PSController) -> void:
 	if controller.is_active():
 		connect_local(controller)
 		return
+	
 	for c in get_tree().get_nodes_in_group(controller_group):
 		if c is PSController and c != controller and c.is_active() and c.simulator != null:
 			if controller.follow(c):
 				connect_local(controller)
 				return
-	if multiplayer.is_server():
-		_request_start(controller.get_path(), controller.speak_as, controller.listen_to)
-	else:
-		_request_start.rpc_id(1, controller.get_path(), controller.speak_as, controller.listen_to)
+	
+	_request_start.rpc_id(1, controller.get_path(), controller.speak_as, controller.listen_to)
 
 func connect_local(controller:PSController) -> void:
 	if connected_controller == controller:
 		return
-	controller.find_simulator()
+	
 	connected_controller = controller
 	event.emit(EventType.CONNECT, controller)
 
@@ -92,7 +91,7 @@ func _request_choice(controller_path:NodePath, choice: String) -> void:
 
 #computes the start of a conversation on the authoritative simulator and
 #replicates it, so the requesting peer can connect to the result.
-@rpc("any_peer", "reliable")
+@rpc("any_peer", "call_local", "reliable")
 func _request_start(controller_path:NodePath, speak_as:PackedStringArray, listen_to:PackedStringArray) -> void:
 	if !multiplayer.is_server():
 		return
@@ -102,7 +101,7 @@ func _request_start(controller_path:NodePath, speak_as:PackedStringArray, listen
 		return
 	controller.speak_as = speak_as
 	controller.listen_to = listen_to
-	controller.find_simulator()
+	
 	var remote_authority := get_requester_id()
 	if controller.is_active():
 		sync_controller_data.rpc(EventType.CONNECT, remote_authority, controller_path, controller.data)
@@ -124,7 +123,7 @@ func sync_controller_data(event_type:EventType, original_authority:int, controll
 		EventType.CONNECT:
 			if multiplayer.get_unique_id() == original_authority:
 				if connected_controller != controller:
-					controller.find_simulator()
+					
 					connected_controller = controller
 					event.emit(EventType.CONNECT, controller)
 		EventType.DISCONNECT:
