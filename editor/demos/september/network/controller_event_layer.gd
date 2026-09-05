@@ -14,91 +14,132 @@ signal event(type:EventType, controller:PSController)
 
 var connected_controller:PSController
 
-#send a choice to the server
-#the server then uses the `authority` and `conversation_path` to find a matching
-#controller.
-#if found, the resulting controller makes the choice, if available
-#the server computes the move on that controller, then repeats the update down
-#to all peers.
-@rpc("any_peer", "call_local", "reliable")
-func request_choice(controller:PSController, choice: String) -> void:
-	if !multiplayer.is_server():
-		return
-	
+func get_connected_controller() -> PSController:
+	return connected_controller
+
+# --- connecting / disconnecting ------------------------------------------
+#
+# Connecting and disconnecting are local concepts: they manage which
+# controller THIS peer's UI drives (`connected_controller`). The only thing
+# a connection can do that needs the server is *start* a brand new
+# conversation, because that runs on the authoritative simulator. Following
+# an active conversation, or failing to find one, works entirely on state
+# that every peer already has, so those cases never touch the network.
+
+func request_controller(controller:PSController) -> void:
 	if !is_instance_valid(controller):
 		return
-	var controller_path := controller.get_path()
-	var remote_authority := multiplayer.get_remote_sender_id()
-	
-	controller.traverse(choice)
-	sync_controller_data.rpc(EventType.CHOICE, remote_authority, controller_path, controller.data)
-	
-	#other controllers in the same branch should be marked to follow this one
-	for c in get_tree().get_nodes_in_group(controller_group):
-		if c is PSController:
-			if c != controller and c.follow(controller):
-				sync_controller_data.rpc(EventType.CHOICE, remote_authority, c.get_path(), c.data)
-
-@rpc("any_peer", "call_local", "reliable")
-func request_controller(controller_path:NodePath):
-	if !multiplayer.is_server():
+	if !multiplayer.has_multiplayer_peer():
 		return
-	
-	var remote_authority := multiplayer.get_remote_sender_id()
-	
-	var node := get_node_or_null(controller_path)
-	if !(node is PSController):
-		invalid_path_error(controller_path, node)
-		return
-	
-	var controller:PSController = node
-	
 	if controller.is_active():
-		sync_controller_data.rpc(EventType.CONNECT, remote_authority, controller_path, controller.data)
+		connect_local(controller)
 		return
-	
-	#look for active controllers to sync to
 	for c in get_tree().get_nodes_in_group(controller_group):
-		if c is PSController:
+		if c is PSController and c != controller and c.is_active() and c.simulator != null:
 			if controller.follow(c):
-				sync_controller_data.rpc(EventType.CONNECT, remote_authority, controller_path, controller.data)
-				break
+				connect_local(controller)
+				return
+	if multiplayer.is_server():
+		_request_start(controller.get_path(), controller.speak_as, controller.listen_to)
+	else:
+		_request_start.rpc_id(1, controller.get_path(), controller.speak_as, controller.listen_to)
 
-	#no sync target found => compute the start of the conversation on the server
-	#and replicate that.
-	var result := controller.start()
-	
-	if !result:
-		push_error("Failed to start simulation on controller ", controller.get_path(), "!")
+func connect_local(controller:PSController) -> void:
+	if connected_controller == controller:
 		return
-	
-	sync_controller_data.rpc(EventType.CONNECT, remote_authority, controller_path, controller.data)
+	controller.find_simulator()
+	connected_controller = controller
+	event.emit(EventType.CONNECT, controller)
 
-func disconnect_controller(controller:PSController):
+func disconnect_controller(controller:PSController) -> void:
 	if connected_controller == controller:
 		connected_controller = null
 		event.emit(EventType.DISCONNECT, controller)
 
+# --- choices -------------------------------------------------------------
+
+func request_choice(controller:PSController, choice: String) -> void:
+	if !is_instance_valid(controller) or choice.is_empty():
+		return
+	if !multiplayer.has_multiplayer_peer():
+		return
+	if multiplayer.is_server():
+		_request_choice(controller.get_path(), choice)
+	else:
+		_request_choice.rpc_id(1, controller.get_path(), choice)
+
+#the server is authoritative over the conversation, so it computes the move
+#here, then repeats the update down to all peers. other controllers in the
+#same branch are marked to follow this one.
+@rpc("any_peer", "reliable")
+func _request_choice(controller_path:NodePath, choice: String) -> void:
+	if !multiplayer.is_server():
+		return
+	var controller := get_node_or_null(controller_path) as PSController
+	if controller == null:
+		invalid_path_error(controller_path, get_node_or_null(controller_path))
+		return
+	if !controller.traverse(choice):
+		push_warning("Choice ", choice, " ignored for controller ", controller_path, " (not in a conversation yet)")
+		return
+	var remote_authority := get_requester_id()
+	sync_controller_data.rpc(EventType.CHOICE, remote_authority, controller_path, controller.data)
+	for c in get_tree().get_nodes_in_group(controller_group):
+		if c is PSController and c != controller and c.simulator != null and c.follow(controller):
+			sync_controller_data.rpc(EventType.CHOICE, remote_authority, c.get_path(), c.data)
+
+# --- starting ------------------------------------------------------------
+
+#computes the start of a conversation on the authoritative simulator and
+#replicates it, so the requesting peer can connect to the result.
+@rpc("any_peer", "reliable")
+func _request_start(controller_path:NodePath, speak_as:PackedStringArray, listen_to:PackedStringArray) -> void:
+	if !multiplayer.is_server():
+		return
+	var controller := get_node_or_null(controller_path) as PSController
+	if controller == null:
+		invalid_path_error(controller_path, get_node_or_null(controller_path))
+		return
+	controller.speak_as = speak_as
+	controller.listen_to = listen_to
+	controller.find_simulator()
+	var remote_authority := get_requester_id()
+	if controller.is_active():
+		sync_controller_data.rpc(EventType.CONNECT, remote_authority, controller_path, controller.data)
+		return
+	if !controller.start():
+		push_error("Failed to start simulation on controller ", controller_path, "!")
+		return
+	sync_controller_data.rpc(EventType.CONNECT, remote_authority, controller_path, controller.data)
+
 #sync uses paths because they are able to transmit over a network, unlike actual references
 @rpc("authority", "call_local", "reliable")
-func sync_controller_data(event_type:EventType, original_authority:int, controller_path: NodePath, data: Dictionary):
+func sync_controller_data(event_type:EventType, original_authority:int, controller_path: NodePath, data: Dictionary) -> void:
 	var node := get_node_or_null(controller_path)
 	if !(node is PSController):
-		invalid_path_error(controller_path, node)
 		return
-	
 	var controller:PSController = node
 	controller.data = data
-	
-	if event_type == EventType.CONNECT or event_type == EventType.DISCONNECT:
-		if multiplayer.get_unique_id() == original_authority:
-			connected_controller = controller
-			event.emit(event_type, controller)
-	else:
-		event.emit(event_type, controller)
+	match event_type:
+		EventType.CONNECT:
+			if multiplayer.get_unique_id() == original_authority:
+				if connected_controller != controller:
+					controller.find_simulator()
+					connected_controller = controller
+					event.emit(EventType.CONNECT, controller)
+		EventType.DISCONNECT:
+			if multiplayer.get_unique_id() == original_authority:
+				if connected_controller == controller:
+					connected_controller = null
+					event.emit(EventType.DISCONNECT, controller)
+		EventType.CHOICE:
+			event.emit(EventType.CHOICE, controller)
 
-func get_connected_controller() -> PSController:
-	return connected_controller
+func get_requester_id() -> int:
+	var id := multiplayer.get_remote_sender_id()
+	if id == 0:
+		id = multiplayer.get_unique_id()
+	return id
 
-func invalid_path_error(path, result):
+func invalid_path_error(path:NodePath, result) -> void:
 	push_error("Path ", path, " not a valid controller! Found ", result, " instead.")

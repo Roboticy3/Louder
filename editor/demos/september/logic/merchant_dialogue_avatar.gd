@@ -27,7 +27,7 @@ func update_controller_speakers():
 		controller.speak_as = [character]
 		var relationships := config.get_relationships(character)
 		controller.listen_to = relationships
-		ControllerEventLayer.request_controller.rpc_id(1, controller.get_path())
+		ControllerEventLayer.request_controller(controller)
 	elif character.is_empty() and controller == current_controller:
 		ControllerEventLayer.disconnect_controller(controller)
 
