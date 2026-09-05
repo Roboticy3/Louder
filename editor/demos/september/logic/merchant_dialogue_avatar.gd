@@ -9,12 +9,10 @@ const ClientProperties := ClientDataLayer.ClientProperties
 func _ready():
 	add_to_group(group)
 	
-	update_controller_speakers()
-	ClientDataLayer.data_updated.connect(func (_a, _b):
-		update_controller_speakers()
-	)
+	_on_client_data_updated()
+	ClientDataLayer.data_updated.connect(_on_client_data_updated)
 
-func update_controller_speakers():
+func _on_client_data_updated(_authority=null, _data=null):
 	if !controller.simulator:
 		controller.find_simulator()
 	
@@ -30,6 +28,8 @@ func update_controller_speakers():
 		ControllerEventLayer.request_controller(controller)
 	elif character.is_empty() and controller == current_controller:
 		ControllerEventLayer.disconnect_controller(controller)
+
+
 
 func get_faux_authority():
 	return int(name)
