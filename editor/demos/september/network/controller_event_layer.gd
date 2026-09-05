@@ -39,12 +39,9 @@ func request_controller(controller:PSController) -> void:
 		connect_local(controller)
 		return
 	
-	for c in get_tree().get_nodes_in_group(controller_group):
-		if c is PSController and c != controller and c.is_active() and c.simulator != null and controller.can_follow(c):
-			_request_join.rpc_id(1, controller.get_path(), c.get_path(), controller.speak_as, controller.listen_to)
-			return
-	
 	_request_start.rpc_id(1, controller.get_path(), controller.speak_as, controller.listen_to)
+	if !multiplayer.is_server():
+		_request_catch_up.rpc_id(1, controller.get_path())
 
 func connect_local(controller:PSController) -> void:
 	if connected_controller == controller:
@@ -98,12 +95,17 @@ func _request_choice(controller_path:NodePath, choice: String) -> void:
 func _request_start(controller_path:NodePath, speak_as:PackedStringArray, listen_to:PackedStringArray) -> void:
 	if !multiplayer.is_server():
 		return
+	
 	var controller := get_node_or_null(controller_path) as PSController
 	if controller == null:
 		invalid_path_error(controller_path, get_node_or_null(controller_path))
 		return
 	controller.speak_as = speak_as
 	controller.listen_to = listen_to
+	
+	for c in get_tree().get_nodes_in_group(controller_group):
+		if c is PSController and c != controller and c.is_active() and c.simulator != null and controller.can_follow(c):
+			controller.data = c.data
 	
 	var remote_authority := get_requester_id()
 	if controller.is_active():
@@ -111,29 +113,6 @@ func _request_start(controller_path:NodePath, speak_as:PackedStringArray, listen
 		return
 	if !controller.start():
 		push_error("Failed to start simulation on controller ", controller_path, "!")
-		return
-	sync_controller_data.rpc(EventType.CONNECT, remote_authority, controller_path, controller.data)
-
-#computes a join on the authoritative simulator: the controller tailgates an
-#active conversation instead of starting its own, then replicates like a start.
-@rpc("any_peer", "call_local", "reliable")
-func _request_join(controller_path:NodePath, followed_path:NodePath, speak_as:PackedStringArray, listen_to:PackedStringArray) -> void:
-	if !multiplayer.is_server():
-		return
-	var controller := get_node_or_null(controller_path) as PSController
-	if controller == null:
-		invalid_path_error(controller_path, get_node_or_null(controller_path))
-		return
-	var followed := get_node_or_null(followed_path) as PSController
-	if followed == null:
-		invalid_path_error(followed_path, get_node_or_null(followed_path))
-		return
-	controller.speak_as = speak_as
-	controller.listen_to = listen_to
-	
-	var remote_authority := get_requester_id()
-	if !controller.follow(followed):
-		push_warning("Failed to join controller ", controller_path, " to conversation on ", followed_path)
 		return
 	sync_controller_data.rpc(EventType.CONNECT, remote_authority, controller_path, controller.data)
 
@@ -159,6 +138,29 @@ func sync_controller_data(event_type:EventType, original_authority:int, controll
 					event.emit(EventType.DISCONNECT, controller)
 		EventType.CHOICE:
 			event.emit(EventType.CHOICE, controller)
+
+#late-to-join peers might have missed out on updates
+@rpc("any_peer", "call_remote", "reliable")
+func _request_catch_up(exclude_path:NodePath):
+	var remote_authority := get_requester_id()
+	for c in get_tree().get_nodes_in_group(controller_group):
+		if c is PSController:
+			var c_path := c.get_path()
+			if c_path == exclude_path:
+				continue
+			
+			_sync_catch_up.rpc_id(remote_authority, c_path, c.data, c.speak_as, c.listen_to)
+	
+
+@rpc("authority", "call_remote", "reliable")
+func _sync_catch_up(controller_path:NodePath, data:Dictionary, speak_as:Array, listen_to:Array) -> void:
+	var node := get_node_or_null(controller_path)
+	if !(node is PSController):
+		return
+	var controller:PSController = node
+	controller.data = data
+	controller.speak_as = speak_as
+	controller.listen_to = listen_to
 
 func get_requester_id() -> int:
 	var id := multiplayer.get_remote_sender_id()
