@@ -68,6 +68,7 @@ func list(position: int, filter:=no_filter) -> Array[Dictionary]:
 #properties of the input body are copied into the duplicate body unless other-
 #wise stated).
 func align(body: Dictionary[BodyProperties, Variant], choice: String, filter:=no_filter) -> Dictionary[BodyProperties, Variant]:
+	var from_branch: String = body.get(BodyProperties.branch, DEFAULT_BRANCH)
 	var from_position: int = body.get(BodyProperties.position, -1)
 	var result := body.duplicate()
 	
@@ -80,13 +81,16 @@ func align(body: Dictionary[BodyProperties, Variant], choice: String, filter:=no
 		result[BodyProperties.success] = false
 		return result
 	
-	return _traverse(result, get_destination(from_position, choice), choice, filter)
+	result = _traverse(result, get_destination(from_position, choice), choice, filter)
+	if result.get(BodyProperties.branch, DEFAULT_BRANCH) != from_branch:
+		result[BodyProperties.branch_changed] = true
+	return result
 
 #Move `body` to `position`, then auto-advance through any auto hubs until a
 #non-auto hub is reached, or the conversation runs dry. `taken_choice` is the
 #choice that moved the body here ("" when starting a conversation).
 func _traverse(body: Dictionary[BodyProperties, Variant], position: int, choice: String, filter: Callable) -> Dictionary[BodyProperties, Variant]:
-	if position == 4:
+	if position == 8:
 		pass
 	
 	var visited := {}

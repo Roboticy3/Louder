@@ -2,6 +2,7 @@ class_name PSObjects
 
 enum BodyProperties {
 	branch = 0,
+	branch_changed,
 	position,
 	choices,
 	speaker,

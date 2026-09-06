@@ -94,7 +94,7 @@ func _request_choice(controller_path:NodePath, choice: String) -> void:
 		push_warning("Choice ", choice, " ignored for controller ", controller_path, " (not in a conversation yet)")
 		return
 	
-	for nf in nonfollowers:
+	if controller.branch_changed(): for nf in nonfollowers:
 		if controller.should_follow(nf):
 			controller.follow(nf)
 			break

@@ -91,6 +91,9 @@ func get_position() -> int:
 func get_branch() -> String:
 	return data.get(BodyProperties.branch, PSSimulator.DEFAULT_BRANCH)
 
+func branch_changed() -> bool:
+	return data.get(BodyProperties.branch_changed, false)
+
 func _get_property(property:HubProperties, default=null) -> Variant:
 	return simulator.get_property(get_position(), property, default)
 
