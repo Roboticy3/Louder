@@ -7,6 +7,7 @@ enum EventType {
 	CHOICE = 0,
 	CONNECT,
 	DISCONNECT,
+	CATCH_UP,
 }
 
 signal event(type:EventType, controller:PSController)
@@ -58,7 +59,7 @@ func disconnect_controller(controller:PSController) -> void:
 # --- choices -------------------------------------------------------------
 
 func request_choice(controller:PSController, choice: String) -> void:
-	if !is_instance_valid(controller) or choice.is_empty():
+	if !is_instance_valid(controller):
 		return
 	if !multiplayer.has_multiplayer_peer():
 		return
@@ -78,14 +79,39 @@ func _request_choice(controller_path:NodePath, choice: String) -> void:
 	if controller == null:
 		invalid_path_error(controller_path, get_node_or_null(controller_path))
 		return
+	
+	#var followers:Array[PSController]
+	var nonfollowers:Array[PSController]
+	for c in get_tree().get_nodes_in_group(controller_group):
+		if c is PSController and c != controller and c.is_active():
+			if c.should_follow(controller):
+				#followers.push_back(c)
+				pass
+			else:
+				nonfollowers.push_back(c)
+	
 	if !controller.traverse(choice):
 		push_warning("Choice ", choice, " ignored for controller ", controller_path, " (not in a conversation yet)")
 		return
+	
+	if controller.branch_changed(): for nf in nonfollowers:
+		if controller.should_follow(nf):
+			controller.follow(nf)
+			break
+	
 	var remote_authority := get_requester_id()
-	sync_controller_data.rpc(EventType.CHOICE, remote_authority, controller_path, controller.data)
+	
+	#precomputed followers doesn't account for unforseen details about the new dialogue state which can affect visibility
+	#for f in followers:
+		#f.follow(controller)
+		#sync_controller_data.rpc(EventType.CHOICE, remote_authority, f.get_path(), f.data)
+	
 	for c in get_tree().get_nodes_in_group(controller_group):
-		if c is PSController and c != controller and c.simulator != null and c.follow(controller):
+		if c is PSController and c != controller and c.is_active() and c.should_follow(controller):
+			c.follow(controller)
 			sync_controller_data.rpc(EventType.CHOICE, remote_authority, c.get_path(), c.data)
+	
+	sync_controller_data.rpc(EventType.CHOICE, remote_authority, controller_path, controller.data)
 
 # --- starting ------------------------------------------------------------
 
@@ -104,8 +130,9 @@ func _request_start(controller_path:NodePath, speak_as:PackedStringArray, listen
 	controller.listen_to = listen_to
 	
 	for c in get_tree().get_nodes_in_group(controller_group):
-		if c is PSController and c != controller and c.is_active() and c.simulator != null and controller.can_follow(c):
+		if c is PSController and c.is_active() and controller.should_follow(c):
 			controller.data = c.data
+			break
 	
 	var remote_authority := get_requester_id()
 	if controller.is_active():
@@ -140,6 +167,9 @@ func sync_controller_data(event_type:EventType, original_authority:int, controll
 			event.emit(EventType.CHOICE, controller)
 
 #late-to-join peers might have missed out on updates
+func request_catch_up(controller: PSController):
+	_request_catch_up.rpc_id(1, controller.get_path())
+
 @rpc("any_peer", "call_remote", "reliable")
 func _request_catch_up(exclude_path:NodePath):
 	var remote_authority := get_requester_id()
@@ -161,6 +191,7 @@ func _sync_catch_up(controller_path:NodePath, data:Dictionary, speak_as:Array, l
 	controller.data = data
 	controller.speak_as = speak_as
 	controller.listen_to = listen_to
+	event.emit(EventType.CATCH_UP, controller)
 
 func get_requester_id() -> int:
 	var id := multiplayer.get_remote_sender_id()

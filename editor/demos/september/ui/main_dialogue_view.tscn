@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://ds0uapcn5b5v5" path="res://demos/september/ui/scrolling_dialogue_feed.gd" id="2_wqg5q"]
 [ext_resource type="PackedScene" uid="uid://d3scduqubuvrq" path="res://demos/september/ui/scrolling_dialogue_item.tscn" id="3_lqc4t"]
 [ext_resource type="Script" uid="uid://bk5bowxpxjfu3" path="res://demos/september/ui/scroll_shrinker.gd" id="5_6tn8e"]
+[ext_resource type="PackedScene" uid="uid://ctpltkbarsbjg" path="res://demos/september/ui/main_dialogue_debug.tscn" id="5_qjalj"]
 
 [node name="MainDialogueView" type="Control" unique_id=2033588754 node_paths=PackedStringArray("scrolling_dialogue_feed")]
 layout_mode = 3
@@ -42,9 +43,10 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
+vertical_scroll_mode = 4
 scroll_hint_mode = 3
 
-[node name="Feed" type="VBoxContainer" parent="Control/ScrollContainer" unique_id=233767170 node_paths=PackedStringArray("scroll_container")]
+[node name="Feed" type="VBoxContainer" parent="Control/ScrollContainer" unique_id=233767170 node_paths=PackedStringArray("scroll_container", "debug_display")]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
@@ -54,9 +56,13 @@ insert_index = -1
 remove_index = 0
 dialogue_item = ExtResource("3_lqc4t")
 scroll_container = NodePath("..")
+debug_display = NodePath("../../../MainDialogueDebug")
 
 [node name="ScrollShrinker" type="Node" parent="." unique_id=296895966 node_paths=PackedStringArray("scroll_container", "inner_container", "max_size_reference")]
 script = ExtResource("5_6tn8e")
 scroll_container = NodePath("../Control/ScrollContainer")
 inner_container = NodePath("../Control/ScrollContainer/Feed")
 max_size_reference = NodePath("../Control/ScrollContainerMaxFit")
+
+[node name="MainDialogueDebug" parent="." unique_id=2025365747 instance=ExtResource("5_qjalj")]
+layout_mode = 1

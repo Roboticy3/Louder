@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://cip56nadhhph1"]
+
+[ext_resource type="Script" uid="uid://dgjn3dbmgbgis" path="res://demos/september/ui/secondary_dialogue_view.gd" id="1_v28xb"]
+[ext_resource type="Script" uid="uid://ds0uapcn5b5v5" path="res://demos/september/ui/scrolling_dialogue_feed.gd" id="2_tyx6j"]
+[ext_resource type="PackedScene" uid="uid://d3scduqubuvrq" path="res://demos/september/ui/scrolling_dialogue_item.tscn" id="3_dw3q4"]
+
+[node name="SecondaryDialogueView" type="Control" unique_id=2033588754 node_paths=PackedStringArray("scrolling_dialogue_feed")]
+custom_minimum_size = Vector2(256, 256)
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_v28xb")
+scrolling_dialogue_feed = NodePath("Feed")
+
+[node name="Feed" type="VBoxContainer" parent="." unique_id=233767170]
+layout_mode = 0
+offset_right = 256.0
+offset_bottom = 256.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 2
+script = ExtResource("2_tyx6j")
+insert_index = -1
+remove_index = 0
+dialogue_item = ExtResource("3_dw3q4")
+max_items = 1
+spectator = true

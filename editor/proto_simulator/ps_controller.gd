@@ -57,15 +57,18 @@ func traverse(choice:String) -> bool:
 	data = simulator.align(data, choice, _filter_valid_choice)
 	return data.get(BodyProperties.success, false)
 
-func follow(other:PSController) -> bool:
-	if can_follow(other):
-		data = other.data.duplicate()
-		return true
-	return false
+func follow(other:PSController) -> void:
+	data = other.data.duplicate()
 
-func can_follow(other:PSController) -> bool:
+func should_follow(other:PSController) -> bool:
+	if !other or !other.simulator or other == self: return false
 	var other_position := other.get_position()
-	return _filter_visible_node(other_position)
+	return other.get_branch() == get_branch() and _filter_visible_node(other_position)
+
+func can_spectate(other:PSController) -> bool:
+	if !other or !other.simulator or other == self: return false
+	var other_position := other.get_position()
+	return other.get_branch() != get_branch() and _filter_visible_node(other_position)
 
 func get_text(property:String) -> String:
 	return str(data.get(property))
@@ -86,7 +89,10 @@ func get_position() -> int:
 	return data.get(BodyProperties.position, -1)
 
 func get_branch() -> String:
-	return data.get(BodyProperties.branch, "")
+	return data.get(BodyProperties.branch, PSSimulator.DEFAULT_BRANCH)
+
+func branch_changed() -> bool:
+	return data.get(BodyProperties.branch_changed, false)
 
 func _get_property(property:HubProperties, default=null) -> Variant:
 	return simulator.get_property(get_position(), property, default)
