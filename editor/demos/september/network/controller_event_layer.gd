@@ -79,14 +79,30 @@ func _request_choice(controller_path:NodePath, choice: String) -> void:
 	if controller == null:
 		invalid_path_error(controller_path, get_node_or_null(controller_path))
 		return
+	
+	var followers:Array[PSController]
+	var nonfollowers:Array[PSController]
+	for c in get_tree().get_nodes_in_group(controller_group):
+		if c is PSController and c != controller and c.is_active():
+			if c.should_follow(controller):
+				followers.push_back(c)
+			else:
+				nonfollowers.push_back(c)
+	
 	if !controller.traverse(choice):
 		push_warning("Choice ", choice, " ignored for controller ", controller_path, " (not in a conversation yet)")
 		return
+	
+	for nf in nonfollowers:
+		if controller.should_follow(nf):
+			controller.follow(nf)
+			break
+	
 	var remote_authority := get_requester_id()
+	for f in followers:
+		f.follow(controller)
+		sync_controller_data.rpc(EventType.CHOICE, remote_authority, f.get_path(), f.data)
 	sync_controller_data.rpc(EventType.CHOICE, remote_authority, controller_path, controller.data)
-	for c in get_tree().get_nodes_in_group(controller_group):
-		if c is PSController and c != controller and c.follow(controller):
-			sync_controller_data.rpc(EventType.CHOICE, remote_authority, c.get_path(), c.data)
 
 # --- starting ------------------------------------------------------------
 
@@ -105,7 +121,7 @@ func _request_start(controller_path:NodePath, speak_as:PackedStringArray, listen
 	controller.listen_to = listen_to
 	
 	for c in get_tree().get_nodes_in_group(controller_group):
-		if c is PSController and c.is_active() and controller.can_follow(c):
+		if c is PSController and c.is_active() and controller.should_follow(c):
 			controller.data = c.data
 			break
 	
