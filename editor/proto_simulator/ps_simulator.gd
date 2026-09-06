@@ -24,8 +24,8 @@ const CANNED_STATE_0: Dictionary[BodyProperties, Variant] = {
 	BodyProperties.speaker: "Canned State 0",
 	BodyProperties.text: "Welcome to Canned State 0!",
 	BodyProperties.position: 0,
-	BodyProperties.success: true,
 	BodyProperties.branch: DEFAULT_BRANCH,
+	BodyProperties.success: true,
 	BodyProperties.choices: CANNED_CHOICES,
 }
 const CANNED_STATE_1: Dictionary[BodyProperties, Variant] = {
@@ -92,8 +92,10 @@ func align(body: Dictionary[BodyProperties, Variant], choice: String, filter:=no
 				body = CANNED_STATE_0.duplicate()
 			1:
 				body = CANNED_STATE_1.duplicate()
+		
 		if !canned_branch.is_empty():
 			body[BodyProperties.branch] = canned_branch
+		pass
 	else:
 		body[BodyProperties.success] = false
 	

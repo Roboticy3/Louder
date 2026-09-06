@@ -43,6 +43,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
+vertical_scroll_mode = 4
 scroll_hint_mode = 3
 
 [node name="Feed" type="VBoxContainer" parent="Control/ScrollContainer" unique_id=233767170 node_paths=PackedStringArray("scroll_container", "debug_display")]

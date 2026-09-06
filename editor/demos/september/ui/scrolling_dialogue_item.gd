@@ -4,6 +4,7 @@ const BodyProperties := PSObjects.BodyProperties
 const ChoiceProperties := PSObjects.ChoiceProperties
 
 @export var element_container:Container
+@export var disabled := false
 
 signal choice_pressed(choice: String)
 
@@ -31,7 +32,7 @@ func import(data:Dictionary[BodyProperties, Variant]):
 		text_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		element_container.add_child(text_label)
 	
-	for choice in data.get(BodyProperties.choices, []):
+	if !disabled: for choice in data.get(BodyProperties.choices, []):
 		if !(choice is Dictionary): continue
 		var button := Button.new()
 		button.text = str(choice.get(ChoiceProperties.from_choice, ""))

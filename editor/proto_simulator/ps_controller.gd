@@ -64,8 +64,14 @@ func follow(other:PSController) -> bool:
 	return false
 
 func can_follow(other:PSController) -> bool:
+	if !other or !other.simulator or other == self: return false
 	var other_position := other.get_position()
 	return other.get_branch() == get_branch() and _filter_visible_node(other_position)
+
+func can_spectate(other:PSController) -> bool:
+	if !other or !other.simulator or other == self: return false
+	var other_position := other.get_position()
+	return other.get_branch() != get_branch() and _filter_visible_node(other_position)
 
 func get_text(property:String) -> String:
 	return str(data.get(property))

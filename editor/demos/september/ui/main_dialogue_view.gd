@@ -1,12 +1,14 @@
 extends Control
 
+const EventType := ControllerEventLayer.EventType
+
 @export var scrolling_dialogue_feed:ScrollingDialogueFeed
 var current_controller:PSController
 
 func _ready() -> void:
 	ControllerEventLayer.event.connect(_on_controller_event)
 
-func _on_controller_event(type: ControllerEventLayer.EventType, controller: PSController) -> void:
+func _on_controller_event(type: EventType, controller: PSController) -> void:
 	if controller != ControllerEventLayer.get_connected_controller():
 		return
 	match type:
