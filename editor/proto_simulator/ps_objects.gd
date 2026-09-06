@@ -17,6 +17,7 @@ enum HubProperties {
 	recipient,
 	auto,
 	start,
+	once,
 	choices,
 	branch,
 	conversation_id,
