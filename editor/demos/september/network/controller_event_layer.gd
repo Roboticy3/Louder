@@ -59,7 +59,7 @@ func disconnect_controller(controller:PSController) -> void:
 # --- choices -------------------------------------------------------------
 
 func request_choice(controller:PSController, choice: String) -> void:
-	if !is_instance_valid(controller) or choice.is_empty():
+	if !is_instance_valid(controller):
 		return
 	if !multiplayer.has_multiplayer_peer():
 		return

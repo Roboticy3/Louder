@@ -7,15 +7,12 @@ const BodyProperties := PSObjects.BodyProperties
 @export var dialogue_item:PackedScene
 @export var max_items := 100
 @export var scroll_container:ScrollContainer
-@export var debug_display:Node
 @export var spectator:=false
 
 var item_count := 0
 var top:Node = null
 
 func push_item(body:Dictionary[BodyProperties, Variant]):
-	if debug_display and debug_display.has_method("set_body"):
-		debug_display.set_body(body)
 	
 	if top and top.has_method("clear_choices"):
 		top.clear_choices.call_deferred()

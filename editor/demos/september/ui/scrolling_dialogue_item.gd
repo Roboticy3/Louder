@@ -35,8 +35,13 @@ func import(data:Dictionary[BodyProperties, Variant]):
 	if !disabled: for choice in data.get(BodyProperties.choices, []):
 		if !(choice is Dictionary): continue
 		var button := Button.new()
-		button.text = str(choice.get(ChoiceProperties.from_choice, ""))
-		button.pressed.connect(_on_choice_pressed.bind(button.text))
+		var choice_text := str(choice.get(ChoiceProperties.from_choice, ""))
+		if choice_text.is_empty():
+			button.text = "CONTINUE"
+		else:
+			button.text = choice_text
+		
+		button.pressed.connect(_on_choice_pressed.bind(choice_text))
 		element_container.add_child(button)
 	
 
