@@ -88,7 +88,7 @@ func get_position() -> int:
 func get_branch() -> String:
 	return data.get(BodyProperties.branch, PSSimulator.DEFAULT_BRANCH)
 
-func get_choices():
+func get_choices() -> Array[Dictionary]:
 	return simulator.list(get_position(), _filter_valid_choice)
 
 func branch_changed() -> bool:

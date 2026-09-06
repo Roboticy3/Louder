@@ -34,17 +34,29 @@ func set_controller(controller:PSController):
 		text_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		element_container.add_child(text_label)
 	
-	if !disabled: for choice in controller.get_choices():
-		if !(choice is Dictionary): continue
-		var button := Button.new()
-		var choice_text := str(choice.get(ChoiceProperties.from_choice, ""))
-		if choice_text.is_empty():
-			button.text = "CONTINUE"
-		else:
-			button.text = choice_text
-		
-		button.pressed.connect(_on_choice_pressed.bind(choice_text))
-		choice_container.add_child(button)
+	if !disabled: 
+		var choices := controller.get_choices()
+		for i in choices.size():
+			var choice := choices[i]
+			if !(choice is Dictionary): continue
+			var button := Button.new()
+			
+			var choice_text := str(choice.get(ChoiceProperties.from_choice, ""))
+			if choice_text.is_empty():
+				button.text = "CONTINUE"
+			else:
+				button.text = choice_text
+			
+			if i <= 10:
+				var selection_index := i + 1
+				var input_event := InputEventAction.new()
+				input_event.action = StringName("dialogue_%d" % selection_index)
+				button.shortcut = Shortcut.new()
+				button.shortcut.events.append(input_event)
+				button.text = ("%d. %s" % [selection_index, button.text]) 
+			
+			button.pressed.connect(_on_choice_pressed.bind(choice_text))
+			choice_container.add_child(button)
 	
 
 func clear_choices() -> void:
