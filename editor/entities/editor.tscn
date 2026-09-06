@@ -105,7 +105,7 @@ hub_data = {
 NodePath("ChoicesSection/CheckBox"): true
 }
 
-[node name="branch" parent="Control/GridContainer/GraphEdit/Hub/TextSectionWrapper/TextSection/HBoxContainer" parent_id_path=PackedInt32Array(1992437552, 1509009445) index="2" unique_id=1664207967]
+[node name="callbacks" parent="Control/GridContainer/GraphEdit/Hub/OtherSection/VBoxContainer" parent_id_path=PackedInt32Array(1992437552, 72269939) index="3" unique_id=312146840]
 delimiter_strings = Array[String](["' '", "\" \""])
 
 [node name="start" parent="Control/GridContainer/GraphEdit/Hub/ChoicesSection" parent_id_path=PackedInt32Array(1992437552, 255423357) index="0" unique_id=628973272]
@@ -125,14 +125,12 @@ script = ExtResource("9_n5ixm")
 [node name="NodeColorsPopup" type="PopupPanel" parent="." unique_id=372021348 groups=["node_colors"]]
 oversampling_override = 1.0
 initial_position = 1
-visible = true
 unresizable = false
 borderless = false
 
 [node name="KnowledgeGraphPopup" type="PopupPanel" parent="." unique_id=1796554176 groups=["knowledge_graph"]]
 oversampling_override = 1.0
 initial_position = 1
-visible = true
 unresizable = false
 borderless = false
 

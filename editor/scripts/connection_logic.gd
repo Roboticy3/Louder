@@ -37,13 +37,15 @@ func _on_disconnection_request(from_node: String, from_port: int, to_node: Strin
 
 func _on_connection_to_empty(from_node: String, from_port: int, release_position: Vector2) -> void:
 	var source = editor.get_node_or_null(from_node)
-	var is_choice_previous := false
+	var make_next_choice := false
 	if source is CustomGraphHub:
-		is_choice_previous = source.get_data("is_choice", false) or source.get_data("auto", false)
+		var choices:Array[TextEdit] = source.choices_section_logic.choices
+		var audible:bool = choices.size() > 0 and choices[from_port].text.find("\"") != -1
+		make_next_choice = audible and !source.get_data("is_choice", false) and !source.get_data("auto", false)
 	
 	var hub:CustomGraphHub = NetworkEntityDefaults.ENTITY_SOURCES["hub"].instantiate()
 	hub.import({
-		"is_choice": !is_choice_previous
+		"is_choice": make_next_choice
 	})
 	editor.add_child(hub)
 	hub.owner = editor.owner
