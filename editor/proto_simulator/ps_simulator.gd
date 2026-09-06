@@ -8,33 +8,6 @@ const ChoiceProperties := PSObjects.ChoiceProperties
 const SpeakerProperties := PSObjects.SpeakerProperties
 
 const DEFAULT_BRANCH := "main"
-const CANNED_CHOICES: Array[Dictionary] = [
-	{
-		ChoiceProperties.from_choice: "Choice 1",
-	},
-	{
-		ChoiceProperties.from_choice: "Choice 2",
-	},
-	{
-		ChoiceProperties.from_choice: "Choice 3 (Branch: breakout)",
-		"branch": "breakout"
-	},
-]
-const CANNED_STATE_0: Dictionary[BodyProperties, Variant] = {
-	BodyProperties.speaker: "Canned State 0",
-	BodyProperties.text: "Welcome to Canned State 0!",
-	BodyProperties.position: 0,
-	BodyProperties.branch: DEFAULT_BRANCH,
-	BodyProperties.success: true,
-	BodyProperties.choices: CANNED_CHOICES,
-}
-const CANNED_STATE_1: Dictionary[BodyProperties, Variant] = {
-	BodyProperties.speaker: "Canned State 1",
-	BodyProperties.text: "You've moved to Canned State 1! If you choice (Branch: breakout). Any choice goes back to position 0 and choice 1 or 2 will go back to (Branch: main)",
-	BodyProperties.position: 1,
-	BodyProperties.success: true,
-	BodyProperties.choices: CANNED_CHOICES,
-}
 
 @export var group := &"ps_simulator"
 @export var conversation:PSConversation
@@ -43,25 +16,33 @@ const CANNED_STATE_1: Dictionary[BodyProperties, Variant] = {
 func _ready():
 	add_to_group(group)
 
-#TODO Get a property from a position in the conversation.
+#Get a property from a position in the conversation.
 func get_property(position: int, property: HubProperties, default=null) -> Variant:
-	match position:
-		0:
-			return CANNED_STATE_0.get(property, default)
-		1:
-			return CANNED_STATE_1.get(property, default)
-		_:
-			return default
+	return _hub(position).get(property, default)
+
+func _hub(position: int) -> Dictionary:
+	if conversation == null:
+		return {}
+	return conversation.get_hub(position)
 
 #Filters
 func no_filter(_data:Dictionary) -> bool: return true
 func has_property_or_flag(data:Dictionary, property): return true if data.get(property, false) else false
 
-#TODO List choices available at a certain position based on a given filter.
+#List choices available at a certain position based on a given filter.
 func list(position: int, filter:=no_filter) -> Array[Dictionary]:
-	return CANNED_CHOICES
+	var result: Array[Dictionary] = []
+	if conversation == null:
+		return result
+	for connection in conversation.get_connections_from(position):
+		var choice := {
+			ChoiceProperties.from_choice: str(connection.get(ChoiceProperties.from_choice, "")),
+			ChoiceProperties.to_id: int(connection.get(ChoiceProperties.to_id, -1)),
+		}
+		if filter.call(choice):
+			result.append(choice)
+	return result
 
-#TODO
 #align a body with the conversation according to a choice. The body represents
 #a position in the conversation. The choice + the body's position will result in
 #the same position as using `get_destination`.
@@ -73,7 +54,10 @@ func list(position: int, filter:=no_filter) -> Array[Dictionary]:
 #`filter` is *not* used. The user's filter represents visibility, so the user
 #should simply not see choices that are not available to them specifically. 
 #
-#The `filter` argument is relevant when the choice leads to a hub with
+#The `filter` argument is used to fill the BodyProperties.choices field in the
+#resulting body.
+#
+#`filter` is also relevant when the choice leads to a hub with
 #HubProperties.auto set to true. At this point, the first choice that passes
 #the filter will be taken. align will repeat this until either it has found a
 #non-auto hub, or no choices remain, in which case the body is tagged with
@@ -85,36 +69,64 @@ func list(position: int, filter:=no_filter) -> Array[Dictionary]:
 #wise stated).
 func align(body: Dictionary[BodyProperties, Variant], choice: String, filter:=no_filter) -> Dictionary[BodyProperties, Variant]:
 	var from_position: int = body.get(BodyProperties.position, -1)
-	var choices := list(from_position)
+	var result := body.duplicate()
 	
-	var to_position := get_destination(from_position, choice)
-	var canned_branch := "main"
-	for c in choices:
-		if c.get(ChoiceProperties.from_choice, "") == choice:
-			canned_branch = c.get("branch", "")
-			if !canned_branch.is_empty():
-				print("PSSimulator branching!")
+	var valid := false
+	for c in list(from_position):
+		if str(c.get(ChoiceProperties.from_choice, "")) == choice:
+			valid = true
+			break
+	if not valid:
+		result[BodyProperties.success] = false
+		return result
 	
-	body = body.duplicate()
-	if to_position >= 0:
-		match to_position:
-			0:
-				body = CANNED_STATE_0.duplicate()
-			1:
-				body = CANNED_STATE_1.duplicate()
+	return _traverse(result, get_destination(from_position, choice), filter)
+
+#Move `body` to `position`, then auto-advance through any auto hubs until a
+#non-auto hub is reached, or the conversation runs dry. `taken_choice` is the
+#choice that moved the body here ("" when starting a conversation).
+func _traverse(body: Dictionary[BodyProperties, Variant], position: int, filter: Callable) -> Dictionary[BodyProperties, Variant]:
+	var visited := {}
+	var current := position
+	while true:
+		if current < 0 or current in visited:
+			body[BodyProperties.success] = false
+			break
+		visited[current] = true
 		
-		if !canned_branch.is_empty():
-			body[BodyProperties.branch] = canned_branch
-		pass
-	else:
-		body[BodyProperties.success] = false
+		var hub := _hub(current)
+		body[BodyProperties.position] = current
+		if hub.has(HubProperties.speaker):
+			body[BodyProperties.speaker] = hub[HubProperties.speaker]
+		if hub.has(HubProperties.text):
+			body[BodyProperties.text] = hub[HubProperties.text]
+		var branch := str(hub.get(HubProperties.branch, ""))
+		if not branch.is_empty():
+			body[BodyProperties.branch] = branch
+		
+		if not (hub.get(HubProperties.auto, false) as bool):
+			body[BodyProperties.choices] = list(current, filter)
+			body[BodyProperties.success] = true
+			break
+		
+		var available := list(current, filter)
+		if available.is_empty():
+			body[BodyProperties.choices] = []
+			body[BodyProperties.success] = false
+			break
+		current = int(available[0].get(ChoiceProperties.to_id, -1))
 	
 	return body
 
-#TODO Return the position that would result from making choice `choice` from
+#Return the position that would result from making choice `choice` from
 #position `position`.
 func get_destination(position: int, choice: String) -> int:
-	return (position + 1) % 2
+	if conversation == null:
+		return -1
+	for connection in conversation.get_connections_from(position):
+		if str(connection.get(ChoiceProperties.from_choice, "")) == choice:
+			return int(connection.get(ChoiceProperties.to_id, -1))
+	return -1
 
 #search iterator.
 #
@@ -144,14 +156,15 @@ func find_start(from:=-1) -> int:
 		from
 	)
 
-#TODO Creates a body at a starting node in the conversation.
-func align_start(from:=-1) -> Dictionary[BodyProperties, Variant]:
+#Creates a body at a starting node in the conversation.
+#
+#This comes with all the expected behavior of align as well. If start is an
+#auto node, align_start will align out of it
+func align_start(from:=-1, filter:=no_filter) -> Dictionary[BodyProperties, Variant]:
 	var start := find_start(from)
 	if start == -1:
 		return {
 			BodyProperties.success: false
 		}
-	else:
-		var data := CANNED_STATE_0.duplicate()
-		data[BodyProperties.success] = true
-		return data
+	var body: Dictionary[BodyProperties, Variant] = {}
+	return _traverse(body, start, filter)

@@ -6,7 +6,6 @@ enum BodyProperties {
 	choices,
 	speaker,
 	text,
-	choice,
 	success,
 }
 
