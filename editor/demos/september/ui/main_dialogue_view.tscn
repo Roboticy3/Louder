@@ -19,10 +19,9 @@ scrolling_dialogue_feed = NodePath("Control/ScrollContainer/Feed")
 
 [node name="Control" type="Control" parent="." unique_id=1630732809]
 layout_mode = 1
-anchors_preset = 15
 anchor_right = 1.0
-anchor_bottom = 1.0
-offset_bottom = -130.0
+anchor_bottom = 0.799
+offset_bottom = 0.24798584
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -49,7 +48,7 @@ scroll_hint_mode = 3
 [node name="Feed" type="VBoxContainer" parent="Control/ScrollContainer" unique_id=233767170 node_paths=PackedStringArray("scroll_container")]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 4
+size_flags_vertical = 3
 alignment = 2
 script = ExtResource("2_wqg5q")
 insert_index = -1
@@ -64,4 +63,5 @@ inner_container = NodePath("../Control/ScrollContainer/Feed")
 max_size_reference = NodePath("../Control/ScrollContainerMaxFit")
 
 [node name="MainDialogueDebug" parent="." unique_id=2025365747 instance=ExtResource("5_qjalj")]
+visible = false
 layout_mode = 1

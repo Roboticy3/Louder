@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://bt5qiks6r8rsq" path="res://demos/september/ui/scroll_margin.gd" id="1_0sccc"]
 [ext_resource type="Script" uid="uid://dqgsy05dmmkko" path="res://demos/september/ui/scrolling_dialogue_item.gd" id="1_ll1a4"]
 
-[node name="ScrollingDialogueItem" type="VBoxContainer" unique_id=489570033 node_paths=PackedStringArray("element_container")]
+[node name="ScrollingDialogueItem" type="VBoxContainer" unique_id=489570033 node_paths=PackedStringArray("element_container", "choice_container")]
 anchors_preset = 14
 anchor_top = 0.5
 anchor_right = 1.0
@@ -12,11 +12,15 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ll1a4")
 element_container = NodePath("DialogueElements")
+choice_container = NodePath("ChoiceElements")
 
 [node name="DialogueElements" type="VBoxContainer" parent="." unique_id=1141869158]
 layout_mode = 2
 
-[node name="Spacer" type="Control" parent="." unique_id=1699966593 node_paths=PackedStringArray("container")]
+[node name="ChoiceElements" type="VBoxContainer" parent="." unique_id=316933347]
 layout_mode = 2
 script = ExtResource("1_0sccc")
-container = NodePath("../DialogueElements")
+
+[node name="Spacer" type="Control" parent="." unique_id=1699966593]
+layout_mode = 2
+script = ExtResource("1_0sccc")

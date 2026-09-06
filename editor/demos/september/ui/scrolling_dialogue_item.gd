@@ -4,6 +4,7 @@ const BodyProperties := PSObjects.BodyProperties
 const ChoiceProperties := PSObjects.ChoiceProperties
 
 @export var element_container:Container
+@export var choice_container:Container
 @export var disabled := false
 
 signal choice_pressed(choice: String)
@@ -43,7 +44,7 @@ func set_controller(controller:PSController):
 			button.text = choice_text
 		
 		button.pressed.connect(_on_choice_pressed.bind(choice_text))
-		element_container.add_child(button)
+		choice_container.add_child(button)
 	
 
 func clear_choices() -> void:

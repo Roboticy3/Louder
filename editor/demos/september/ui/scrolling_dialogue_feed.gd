@@ -36,6 +36,9 @@ func push_item(controller:PSController):
 	move_child(item, insert_index)
 	top = item
 	
+	_auto_scroll_down.call_deferred()
+
+func _auto_scroll_down():
 	if scroll_container:
 		var tween := create_tween()
 		var vscrollbar := scroll_container.get_v_scroll_bar()
@@ -44,7 +47,6 @@ func push_item(controller:PSController):
 		#slowly and painfully crashes: https://github.com/godotengine/godot/issues/108407
 		#
 		#two days of my life!
-		
 
 func _on_item_choice_pressed(choice: String) -> void:
 	print(multiplayer.get_unique_id(), ": pressed choice ", choice, "!")
