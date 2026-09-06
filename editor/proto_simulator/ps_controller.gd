@@ -18,7 +18,7 @@ func _ready() -> void:
 	add_to_group(group)
 	
 func is_active():
-	return !data.is_empty()
+	return (simulator is PSSimulator) and !data.is_empty()
 
 #Asynchronous Multiple Speakers
 #1. Hide choices pointing to speakers not owned in `my_speakers`

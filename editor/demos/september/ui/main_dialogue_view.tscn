@@ -3,10 +3,12 @@
 [ext_resource type="Script" uid="uid://dfqcncrxeb2sj" path="res://demos/september/ui/main_dialogue_view.gd" id="1_qjalj"]
 [ext_resource type="Script" uid="uid://ds0uapcn5b5v5" path="res://demos/september/ui/scrolling_dialogue_feed.gd" id="2_wqg5q"]
 [ext_resource type="PackedScene" uid="uid://d3scduqubuvrq" path="res://demos/september/ui/scrolling_dialogue_item.tscn" id="3_lqc4t"]
+[ext_resource type="PackedScene" uid="uid://cdckqsifi5wle" path="res://demos/september/ui/scrolling_dialogue_thinking.tscn" id="4_wqg5q"]
 [ext_resource type="Script" uid="uid://bk5bowxpxjfu3" path="res://demos/september/ui/scroll_shrinker.gd" id="5_6tn8e"]
+[ext_resource type="Script" uid="uid://bt5qiks6r8rsq" path="res://demos/september/ui/scroll_margin.gd" id="5_lqc4t"]
 [ext_resource type="PackedScene" uid="uid://ctpltkbarsbjg" path="res://demos/september/ui/main_dialogue_debug.tscn" id="5_qjalj"]
 
-[node name="MainDialogueView" type="Control" unique_id=2033588754 node_paths=PackedStringArray("scrolling_dialogue_feed")]
+[node name="MainDialogueView" type="Control" unique_id=2033588754 node_paths=PackedStringArray("scrolling_dialogue_feed", "scrolling_dialogue_thinking")]
 layout_mode = 3
 anchor_left = 0.66800004
 anchor_right = 1.0
@@ -15,17 +17,10 @@ offset_left = 0.46392822
 grow_horizontal = 0
 grow_vertical = 2
 script = ExtResource("1_qjalj")
-scrolling_dialogue_feed = NodePath("Control/ScrollContainer/Feed")
+scrolling_dialogue_feed = NodePath("VBoxContainer/Control/ScrollContainer/Feed")
+scrolling_dialogue_thinking = NodePath("VBoxContainer/Control/ScrollContainer/Feed/ThinkingView")
 
-[node name="Control" type="Control" parent="." unique_id=1630732809]
-layout_mode = 1
-anchor_right = 1.0
-anchor_bottom = 0.799
-offset_bottom = 0.24798584
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="ScrollContainerMaxFit" type="Control" parent="Control" unique_id=2011777731]
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=750293429]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -33,7 +28,19 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ScrollContainer" type="ScrollContainer" parent="Control" unique_id=902509730]
+[node name="Control" type="Control" parent="VBoxContainer" unique_id=1630732809]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ScrollContainerMaxFit" type="Control" parent="VBoxContainer/Control" unique_id=2011777731]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/Control" unique_id=902509730]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -45,22 +52,31 @@ horizontal_scroll_mode = 0
 vertical_scroll_mode = 4
 scroll_hint_mode = 3
 
-[node name="Feed" type="VBoxContainer" parent="Control/ScrollContainer" unique_id=233767170 node_paths=PackedStringArray("scroll_container")]
+[node name="Feed" type="VBoxContainer" parent="VBoxContainer/Control/ScrollContainer" unique_id=233767170 node_paths=PackedStringArray("scroll_container")]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 alignment = 2
 script = ExtResource("2_wqg5q")
-insert_index = -1
+insert_index = -3
 remove_index = 0
 dialogue_item = ExtResource("3_lqc4t")
 scroll_container = NodePath("..")
 
+[node name="ThinkingView" parent="VBoxContainer/Control/ScrollContainer/Feed" unique_id=415213 instance=ExtResource("4_wqg5q")]
+layout_mode = 2
+size_flags_vertical = 0
+size_flags_stretch_ratio = 0.2
+
+[node name="Spacer" type="Control" parent="VBoxContainer/Control/ScrollContainer/Feed" unique_id=1974072471]
+layout_mode = 2
+script = ExtResource("5_lqc4t")
+
 [node name="ScrollShrinker" type="Node" parent="." unique_id=296895966 node_paths=PackedStringArray("scroll_container", "inner_container", "max_size_reference")]
 script = ExtResource("5_6tn8e")
-scroll_container = NodePath("../Control/ScrollContainer")
-inner_container = NodePath("../Control/ScrollContainer/Feed")
-max_size_reference = NodePath("../Control/ScrollContainerMaxFit")
+scroll_container = NodePath("../VBoxContainer/Control/ScrollContainer")
+inner_container = NodePath("../VBoxContainer/Control/ScrollContainer/Feed")
+max_size_reference = NodePath("../VBoxContainer/Control/ScrollContainerMaxFit")
 
 [node name="MainDialogueDebug" parent="." unique_id=2025365747 instance=ExtResource("5_qjalj")]
 visible = false

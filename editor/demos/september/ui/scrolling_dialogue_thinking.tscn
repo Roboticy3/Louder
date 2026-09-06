@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://cdckqsifi5wle"]
+
+[ext_resource type="Script" uid="uid://boc6gl0lgpeqi" path="res://demos/september/ui/scrolling_dialogue_thinking.gd" id="1_ikd68"]
+
+[node name="ThinkingView" type="HBoxContainer" unique_id=366323247 node_paths=PackedStringArray("thinking_label")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ikd68")
+thinking_label = NodePath("Label")
+
+[node name="Label" type="Label" parent="." unique_id=1171526121]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+horizontal_alignment = 2

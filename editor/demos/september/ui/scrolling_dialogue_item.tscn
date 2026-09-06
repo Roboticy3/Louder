@@ -15,13 +15,13 @@ element_container = NodePath("DialogueElements")
 choice_container = NodePath("ChoiceElements")
 disabled = null
 
+[node name="Spacer" type="Control" parent="." unique_id=1699966593]
+layout_mode = 2
+script = ExtResource("1_0sccc")
+
 [node name="DialogueElements" type="VBoxContainer" parent="." unique_id=1141869158]
 layout_mode = 2
 
 [node name="ChoiceElements" type="VBoxContainer" parent="." unique_id=316933347]
-layout_mode = 2
-script = ExtResource("1_0sccc")
-
-[node name="Spacer" type="Control" parent="." unique_id=1699966593]
 layout_mode = 2
 script = ExtResource("1_0sccc")
