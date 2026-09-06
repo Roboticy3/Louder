@@ -65,7 +65,7 @@ func follow(other:PSController) -> bool:
 
 func can_follow(other:PSController) -> bool:
 	var other_position := other.get_position()
-	return _filter_visible_node(other_position)
+	return other.get_branch() == get_branch() and _filter_visible_node(other_position)
 
 func get_text(property:String) -> String:
 	return str(data.get(property))
@@ -86,7 +86,7 @@ func get_position() -> int:
 	return data.get(BodyProperties.position, -1)
 
 func get_branch() -> String:
-	return data.get(BodyProperties.branch, "")
+	return data.get(BodyProperties.branch, PSSimulator.DEFAULT_BRANCH)
 
 func _get_property(property:HubProperties, default=null) -> Variant:
 	return simulator.get_property(get_position(), property, default)

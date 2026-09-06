@@ -7,11 +7,15 @@ const BodyProperties := PSObjects.BodyProperties
 @export var dialogue_item:PackedScene
 @export var max_items := 100
 @export var scroll_container:ScrollContainer
+@export var debug_display:Node
 
 var item_count := 0
 var top:Node = null
 
 func push_item(body:Dictionary[BodyProperties, Variant]):
+	if debug_display and debug_display.has_method("set_body"):
+		debug_display.set_body(body)
+	
 	if top and top.has_method("clear_choices"):
 		top.clear_choices()
 	
@@ -26,6 +30,8 @@ func push_item(body:Dictionary[BodyProperties, Variant]):
 		item.import(body)
 	if item.has_signal("choice_pressed"):
 		item.choice_pressed.connect(_on_item_choice_pressed)
+	item.name = str(body.get(BodyProperties.position, -1))
+	print("MainDialogueView: displaying position ", item.name)
 	add_child(item)
 	move_child(item, insert_index)
 	top = item

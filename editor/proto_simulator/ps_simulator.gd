@@ -78,10 +78,12 @@ func align(body: Dictionary[BodyProperties, Variant], choice: String, filter:=no
 	var choices := list(from_position)
 	
 	var to_position := get_destination(from_position, choice)
-	var canned_branch := ""
+	var canned_branch := "main"
 	for c in choices:
 		if c.get(ChoiceProperties.from_choice, "") == choice:
 			canned_branch = c.get("branch", "")
+			if !canned_branch.is_empty():
+				print("PSSimulator branching!")
 	
 	body = body.duplicate()
 	if to_position >= 0:
