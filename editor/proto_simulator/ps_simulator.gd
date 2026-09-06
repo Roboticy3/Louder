@@ -43,6 +43,7 @@ const CANNED_STATE_1: Dictionary[BodyProperties, Variant] = {
 func _ready():
 	add_to_group(group)
 
+#TODO Get a property from a position in the conversation.
 func get_property(position: int, property: HubProperties, default=null) -> Variant:
 	match position:
 		0:
@@ -52,27 +53,36 @@ func get_property(position: int, property: HubProperties, default=null) -> Varia
 		_:
 			return default
 
-#default filter for objects
+#Filters
 func no_filter(_data:Dictionary) -> bool: return true
-
 func has_property_or_flag(data:Dictionary, property): return true if data.get(property, false) else false
 
-#list choice objects from a position
+#TODO List choices available at a certain position based on a given filter.
 func list(position: int, filter:=no_filter) -> Array[Dictionary]:
 	return CANNED_CHOICES
 
-#align a "moving" body with the BodyProperties.choice field filled to the conversation.
-#
-#the list of choices is computed from `list` and the given choice must be contained within it.
-#user provided filter is *not* passed here.
-#
-#if the destination of the body has the HubProperties.auto field set to true, 
-#the first valid choice is found, set to the body's choice, and taken as its motion
-#recursively. Getting stuck in an auto hub with no path forward is treated the same
-#as the original choice being invalid.
+#TODO
+#align a body with the conversation according to a choice. The body represents
+#a position in the conversation. The choice + the body's position will result in
+#the same position as using `get_destination`.
 #
 #returns a copy of the body with BodyProperties.success filled, and the position,
 #branch, and choices updated to the body's current position in the conversation.
+#
+#`choice` is validated against `list` on the body's position, but the user's
+#`filter` is *not* used. The user's filter represents visibility, so the user
+#should simply not see choices that are not available to them specifically. 
+#
+#The `filter` argument is relevant when the choice leads to a hub with
+#HubProperties.auto set to true. At this point, the first choice that passes
+#the filter will be taken. align will repeat this until either it has found a
+#non-auto hub, or no choices remain, in which case the body is tagged with
+#BodyProperties.success: false.
+#
+#If HubProperties.branch is not an empty string, BodyProperties.branch will
+#change. Otherwise, BodyProperties.branch is preserved (and, generally,
+#properties of the input body are copied into the duplicate body unless other-
+#wise stated).
 func align(body: Dictionary[BodyProperties, Variant], choice: String, filter:=no_filter) -> Dictionary[BodyProperties, Variant]:
 	var from_position: int = body.get(BodyProperties.position, -1)
 	var choices := list(from_position)
@@ -101,6 +111,8 @@ func align(body: Dictionary[BodyProperties, Variant], choice: String, filter:=no
 	
 	return body
 
+#TODO Return the position that would result from making choice `choice` from
+#position `position`.
 func get_destination(position: int, choice: String) -> int:
 	return (position + 1) % 2
 
@@ -123,6 +135,7 @@ func search(filter=no_filter, from:=-1) -> int:
 	
 	return -1
 
+#Finds a start node in the conversation
 func find_start(from:=-1) -> int:
 	return search(
 		has_property_or_flag.bind(
@@ -131,6 +144,7 @@ func find_start(from:=-1) -> int:
 		from
 	)
 
+#TODO Creates a body at a starting node in the conversation.
 func align_start(from:=-1) -> Dictionary[BodyProperties, Variant]:
 	var start := find_start(from)
 	if start == -1:
