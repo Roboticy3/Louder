@@ -46,7 +46,7 @@ horizontal_scroll_mode = 0
 vertical_scroll_mode = 4
 scroll_hint_mode = 3
 
-[node name="Feed" type="VBoxContainer" parent="Control/ScrollContainer" unique_id=233767170 node_paths=PackedStringArray("scroll_container", "debug_display")]
+[node name="Feed" type="VBoxContainer" parent="Control/ScrollContainer" unique_id=233767170 node_paths=PackedStringArray("scroll_container")]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
@@ -56,7 +56,6 @@ insert_index = -1
 remove_index = 0
 dialogue_item = ExtResource("3_lqc4t")
 scroll_container = NodePath("..")
-debug_display = NodePath("../../../MainDialogueDebug")
 
 [node name="ScrollShrinker" type="Node" parent="." unique_id=296895966 node_paths=PackedStringArray("scroll_container", "inner_container", "max_size_reference")]
 script = ExtResource("5_6tn8e")

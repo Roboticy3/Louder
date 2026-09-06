@@ -13,8 +13,8 @@ func _on_controller_event(type: EventType, controller: PSController) -> void:
 		return
 	match type:
 		ControllerEventLayer.EventType.CONNECT:
-			scrolling_dialogue_feed.push_item(controller.data)
+			scrolling_dialogue_feed.push_item(controller)
 		ControllerEventLayer.EventType.CHOICE:
-			scrolling_dialogue_feed.push_item(controller.data)
+			scrolling_dialogue_feed.push_item(controller)
 		ControllerEventLayer.EventType.DISCONNECT:
 			scrolling_dialogue_feed.clear()

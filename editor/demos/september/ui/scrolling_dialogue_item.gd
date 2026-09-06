@@ -9,7 +9,7 @@ const ChoiceProperties := PSObjects.ChoiceProperties
 signal choice_pressed(choice: String)
 
 #replace children in the element container with the body's speaker, text, and choices
-func import(data:Dictionary[BodyProperties, Variant]):
+func set_controller(controller:PSController):
 	for c in element_container.get_children():
 		element_container.remove_child(c)
 		c.queue_free()
@@ -18,6 +18,7 @@ func import(data:Dictionary[BodyProperties, Variant]):
 	var index_label := Label.new()
 	index_label.text = str(index)
 	
+	var data := controller.data
 	var speaker := str(data.get(BodyProperties.speaker, ""))
 	if !speaker.is_empty():
 		var speaker_label := Label.new()
@@ -32,7 +33,7 @@ func import(data:Dictionary[BodyProperties, Variant]):
 		text_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		element_container.add_child(text_label)
 	
-	if !disabled: for choice in data.get(BodyProperties.choices, []):
+	if !disabled: for choice in controller.get_choices():
 		if !(choice is Dictionary): continue
 		var button := Button.new()
 		var choice_text := str(choice.get(ChoiceProperties.from_choice, ""))

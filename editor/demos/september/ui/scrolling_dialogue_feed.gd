@@ -12,8 +12,7 @@ const BodyProperties := PSObjects.BodyProperties
 var item_count := 0
 var top:Node = null
 
-func push_item(body:Dictionary[BodyProperties, Variant]):
-	
+func push_item(controller:PSController):
 	if top and top.has_method("clear_choices"):
 		top.clear_choices.call_deferred()
 	
@@ -26,11 +25,11 @@ func push_item(body:Dictionary[BodyProperties, Variant]):
 	var item := dialogue_item.instantiate()
 	if spectator:
 		item.set("disabled", true)
-	if item.has_method("import"):
-		item.import(body)
+	if item.has_method("set_controller"):
+		item.set_controller(controller)
 	if item.has_signal("choice_pressed"):
 		item.choice_pressed.connect(_on_item_choice_pressed)
-	item.name = str(body.get(BodyProperties.position, -1))
+	item.name = str(controller.get_position())
 	item_count += 1
 	print("MainDialogueView: displaying position ", item.name)
 	add_child(item)

@@ -73,9 +73,6 @@ func can_spectate(other:PSController) -> bool:
 func get_text(property:String) -> String:
 	return str(data.get(property))
 
-func get_choices() -> Array:
-	return data.get(BodyProperties.choices, [])
-
 func _filter_thinking() -> Array:
 	var thinking := {}
 	for controller in get_tree().get_nodes_in_group(group):
@@ -90,6 +87,9 @@ func get_position() -> int:
 
 func get_branch() -> String:
 	return data.get(BodyProperties.branch, PSSimulator.DEFAULT_BRANCH)
+
+func get_choices():
+	return simulator.list(get_position(), _filter_valid_choice)
 
 func branch_changed() -> bool:
 	return data.get(BodyProperties.branch_changed, false)

@@ -65,9 +65,6 @@ func list(position: int, filter:=no_filter) -> Array[Dictionary]:
 #`filter` is *not* used. The user's filter represents visibility, so the user
 #should simply not see choices that are not available to them specifically. 
 #
-#The `filter` argument is used to fill the BodyProperties.choices field in the
-#resulting body.
-#
 #`filter` is also relevant when the choice leads to a hub with
 #HubProperties.auto set to true. At this point, the first choice that passes
 #the filter will be taken. align will repeat this until either it has found a
@@ -131,13 +128,11 @@ func _traverse(body: Dictionary[BodyProperties, Variant], position: int, choice:
 			body[BodyProperties.branch] = branch
 		
 		if not (hub.get(HubProperties.auto, false) as bool):
-			body[BodyProperties.choices] = list(current, filter)
 			body[BodyProperties.success] = true
 			break
 		
 		var available := list(current, filter)
 		if available.is_empty():
-			body[BodyProperties.choices] = []
 			body[BodyProperties.success] = false
 			break
 		current = int(available[0].get(ChoiceProperties.to_id, -1))
