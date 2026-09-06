@@ -9,12 +9,21 @@ func _ready() -> void:
 	ControllerEventLayer.event.connect(_on_controller_event)
 
 func _on_controller_event(type: EventType, controller: PSController) -> void:
+	update_thinking()
+	
 	if controller != ControllerEventLayer.get_connected_controller():
 		return
-	match type:
-		ControllerEventLayer.EventType.CONNECT:
-			scrolling_dialogue_feed.push_item(controller)
-		ControllerEventLayer.EventType.CHOICE:
-			scrolling_dialogue_feed.push_item(controller)
-		ControllerEventLayer.EventType.DISCONNECT:
-			scrolling_dialogue_feed.clear()
+	
+	update_feed()
+
+func update_feed():
+	var connected_controller := ControllerEventLayer.get_connected_controller()
+	
+	if connected_controller == null:
+		scrolling_dialogue_feed.clear()
+		return
+	
+	scrolling_dialogue_feed.push_item(connected_controller)
+
+func update_thinking():
+	pass

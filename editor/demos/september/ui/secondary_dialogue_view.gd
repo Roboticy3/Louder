@@ -25,3 +25,11 @@ func _on_controller_event(type: EventType, controller: PSController) -> void:
 			scrolling_dialogue_feed.push_item(controller)
 		ControllerEventLayer.EventType.DISCONNECT:
 			scrolling_dialogue_feed.clear()
+
+func update_feed(controller:PSController):
+	if controller == null:
+		scrolling_dialogue_feed.clear()
+		visible = false
+		return
+	
+	scrolling_dialogue_feed.push_item(controller)

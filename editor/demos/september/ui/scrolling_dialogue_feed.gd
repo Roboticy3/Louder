@@ -15,6 +15,9 @@ var top:Node = null
 func push_item(controller:PSController):
 	if top and top.has_method("clear_choices"):
 		top.clear_choices.call_deferred()
+		
+		if int(top.name) == controller.get_position():
+			return
 	
 	while item_count >= max_items:
 		var child := get_child(remove_index)
