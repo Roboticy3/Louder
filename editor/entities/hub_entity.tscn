@@ -105,7 +105,6 @@ size_flags_vertical = 0
 placeholder_text = "Branch"
 wrap_mode = 0
 scroll_fit_content_width = true
-delimiter_strings = Array[String](["\" \"", "' '"])
 oneliner = true
 inliner = true
 
@@ -116,6 +115,12 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
 text = "Is Choice"
 script = ExtResource("2_6jgyt")
 mutual_exclusive = [NodePath("../../../../ChoicesSection")]
+
+[node name="once" type="CheckBox" parent="TextSectionWrapper/TextSection/HBoxContainer" unique_id=622107123 groups=["hub_component"]]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
+text = "Once"
 
 [node name="private" type="CheckBox" parent="TextSectionWrapper/TextSection/HBoxContainer" unique_id=1575580911 node_paths=PackedStringArray("mutual_exclusive") groups=["hub_component"]]
 visible = false
@@ -204,7 +209,6 @@ placeholder_text = "Statements"
 [node name="callbacks" parent="OtherSection/VBoxContainer" unique_id=312146840 groups=["autocomplete_expression", "hub_component"] instance=ExtResource("3_f5yrs")]
 layout_mode = 2
 placeholder_text = "callback arg1 arg2 ..."
-delimiter_strings = Array[String](["\" \"", "' '"])
 
 [node name="ChoicesSection" type="GridContainer" parent="." unique_id=255423357]
 layout_mode = 2

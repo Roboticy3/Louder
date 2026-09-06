@@ -12,10 +12,12 @@ const BodyProperties := PSObjects.BodyProperties
 var item_count := 0
 var top:Node = null
 
-func push_item(body:Dictionary[BodyProperties, Variant]):
-	
+func push_item(controller:PSController):
 	if top and top.has_method("clear_choices"):
 		top.clear_choices.call_deferred()
+		
+		if int(top.name) == controller.get_position():
+			return
 	
 	while item_count >= max_items:
 		var child := get_child(remove_index)
@@ -26,17 +28,20 @@ func push_item(body:Dictionary[BodyProperties, Variant]):
 	var item := dialogue_item.instantiate()
 	if spectator:
 		item.set("disabled", true)
-	if item.has_method("import"):
-		item.import(body)
+	if item.has_method("set_controller"):
+		item.set_controller(controller)
 	if item.has_signal("choice_pressed"):
 		item.choice_pressed.connect(_on_item_choice_pressed)
-	item.name = str(body.get(BodyProperties.position, -1))
+	item.name = str(controller.get_position())
 	item_count += 1
 	print("MainDialogueView: displaying position ", item.name)
 	add_child(item)
 	move_child(item, insert_index)
 	top = item
 	
+	_auto_scroll_down.call_deferred()
+
+func _auto_scroll_down():
 	if scroll_container:
 		var tween := create_tween()
 		var vscrollbar := scroll_container.get_v_scroll_bar()
@@ -45,7 +50,6 @@ func push_item(body:Dictionary[BodyProperties, Variant]):
 		#slowly and painfully crashes: https://github.com/godotengine/godot/issues/108407
 		#
 		#two days of my life!
-		
 
 func _on_item_choice_pressed(choice: String) -> void:
 	print(multiplayer.get_unique_id(), ": pressed choice ", choice, "!")

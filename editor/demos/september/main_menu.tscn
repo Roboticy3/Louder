@@ -1,7 +1,9 @@
 [gd_scene format=3 uid="uid://262tuwnn0nqs"]
 
+[ext_resource type="Script" uid="uid://xkm1psypo8hm" path="res://demos/september/to_editor.gd" id="1_aeouo"]
 [ext_resource type="Script" uid="uid://ybu0cnnjqu7b" path="res://demos/september/main_menu_starter.gd" id="1_cv508"]
 [ext_resource type="PackedScene" uid="uid://cj44xlqqbvgwd" path="res://demos/september/merchant.tscn" id="2_rhy6e"]
+[ext_resource type="PackedScene" uid="uid://d1xnbir365a7q" path="res://entities/editor.tscn" id="2_wnrnk"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_cv508"]
 
@@ -90,6 +92,13 @@ horizontal_alignment = 1
 layout_mode = 2
 size_flags_horizontal = 4
 text = "      GO      "
+
+[node name="Button2" type="Button" parent="VBoxContainer/Confirmation" unique_id=317394501]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "To Editor"
+script = ExtResource("1_aeouo")
+level = ExtResource("2_wnrnk")
 
 [node name="MainMenuStarter" type="Node" parent="." unique_id=1882237254]
 script = ExtResource("1_cv508")

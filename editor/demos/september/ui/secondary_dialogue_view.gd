@@ -20,8 +20,16 @@ func _on_controller_event(type: EventType, controller: PSController) -> void:
 	
 	match type:
 		ControllerEventLayer.EventType.CATCH_UP:
-			scrolling_dialogue_feed.push_item(controller.data)
+			scrolling_dialogue_feed.push_item(controller)
 		ControllerEventLayer.EventType.CHOICE:
-			scrolling_dialogue_feed.push_item(controller.data)
+			scrolling_dialogue_feed.push_item(controller)
 		ControllerEventLayer.EventType.DISCONNECT:
 			scrolling_dialogue_feed.clear()
+
+func update_feed(controller:PSController):
+	if controller == null:
+		scrolling_dialogue_feed.clear()
+		visible = false
+		return
+	
+	scrolling_dialogue_feed.push_item(controller)

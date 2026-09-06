@@ -15,6 +15,8 @@ const DEFAULT_BRANCH := "main"
 
 func _ready():
 	add_to_group(group)
+	if !state:
+		state = PSDialogueState.new()
 
 #Get a property from a position in the conversation.
 func get_property(position: int, property: HubProperties, default=null) -> Variant:
@@ -30,15 +32,24 @@ func no_filter(_data:Dictionary) -> bool: return true
 func has_property_or_flag(data:Dictionary, property): return true if data.get(property, false) else false
 
 #List choices available at a certain position based on a given filter.
+#Choices linking to hubs flagged with HubProperties.once will not be accessible
+#if they have been visited in `align`. This history can be controlled through the
+#`state.covered` variable.
 func list(position: int, filter:=no_filter) -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
 	if conversation == null:
 		return result
 	for connection in conversation.get_connections_from(position):
+		var to_id: int = int(connection.get(ChoiceProperties.to_id, -1))
+		
+		if get_property(to_id, HubProperties.once) and to_id in state.covered:
+			continue
+		
 		var choice := {
 			ChoiceProperties.from_choice: str(connection.get(ChoiceProperties.from_choice, "")),
-			ChoiceProperties.to_id: int(connection.get(ChoiceProperties.to_id, -1)),
+			ChoiceProperties.to_id: to_id,
 		}
+		
 		if filter.call(choice):
 			result.append(choice)
 	return result
@@ -54,9 +65,6 @@ func list(position: int, filter:=no_filter) -> Array[Dictionary]:
 #`filter` is *not* used. The user's filter represents visibility, so the user
 #should simply not see choices that are not available to them specifically. 
 #
-#The `filter` argument is used to fill the BodyProperties.choices field in the
-#resulting body.
-#
 #`filter` is also relevant when the choice leads to a hub with
 #HubProperties.auto set to true. At this point, the first choice that passes
 #the filter will be taken. align will repeat this until either it has found a
@@ -68,6 +76,7 @@ func list(position: int, filter:=no_filter) -> Array[Dictionary]:
 #properties of the input body are copied into the duplicate body unless other-
 #wise stated).
 func align(body: Dictionary[BodyProperties, Variant], choice: String, filter:=no_filter) -> Dictionary[BodyProperties, Variant]:
+	
 	var from_branch: String = body.get(BodyProperties.branch, DEFAULT_BRANCH)
 	var from_position: int = body.get(BodyProperties.position, -1)
 	var result := body.duplicate()
@@ -84,13 +93,16 @@ func align(body: Dictionary[BodyProperties, Variant], choice: String, filter:=no
 	result = _traverse(result, get_destination(from_position, choice), choice, filter)
 	if result.get(BodyProperties.branch, DEFAULT_BRANCH) != from_branch:
 		result[BodyProperties.branch_changed] = true
+	
+	state.covered[result.get(BodyProperties.position, -1)] = true
+	
 	return result
 
 #Move `body` to `position`, then auto-advance through any auto hubs until a
 #non-auto hub is reached, or the conversation runs dry. `taken_choice` is the
 #choice that moved the body here ("" when starting a conversation).
 func _traverse(body: Dictionary[BodyProperties, Variant], position: int, choice: String, filter: Callable) -> Dictionary[BodyProperties, Variant]:
-	if position == 8:
+	if position == 21:
 		pass
 	
 	var visited := {}
@@ -116,13 +128,11 @@ func _traverse(body: Dictionary[BodyProperties, Variant], position: int, choice:
 			body[BodyProperties.branch] = branch
 		
 		if not (hub.get(HubProperties.auto, false) as bool):
-			body[BodyProperties.choices] = list(current, filter)
 			body[BodyProperties.success] = true
 			break
 		
 		var available := list(current, filter)
 		if available.is_empty():
-			body[BodyProperties.choices] = []
 			body[BodyProperties.success] = false
 			break
 		current = int(available[0].get(ChoiceProperties.to_id, -1))

@@ -145,6 +145,7 @@
 			"(Eavesdrop)"
 		],
 		"conversation_id": "2",
+		"once": true,
 		"position_offset:x": "700.0",
 		"position_offset:y": "-380.0",
 		"speaker": "Integumetary System",
@@ -449,9 +450,9 @@
 		"type": "connection"
 	},
 	{
-		"position:x": "48.7744140625",
-		"position:y": "-245.847778320313",
+		"position:x": "-65.1889343261719",
+		"position:y": "-385.215148925781",
 		"type": "camera",
-		"zoom": "0.23256795108318"
+		"zoom": "0.80288791656494"
 	}
 ]
