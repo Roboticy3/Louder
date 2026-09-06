@@ -80,12 +80,13 @@ func _request_choice(controller_path:NodePath, choice: String) -> void:
 		invalid_path_error(controller_path, get_node_or_null(controller_path))
 		return
 	
-	var followers:Array[PSController]
+	#var followers:Array[PSController]
 	var nonfollowers:Array[PSController]
 	for c in get_tree().get_nodes_in_group(controller_group):
 		if c is PSController and c != controller and c.is_active():
 			if c.should_follow(controller):
-				followers.push_back(c)
+				#followers.push_back(c)
+				pass
 			else:
 				nonfollowers.push_back(c)
 	
@@ -99,9 +100,17 @@ func _request_choice(controller_path:NodePath, choice: String) -> void:
 			break
 	
 	var remote_authority := get_requester_id()
-	for f in followers:
-		f.follow(controller)
-		sync_controller_data.rpc(EventType.CHOICE, remote_authority, f.get_path(), f.data)
+	
+	#precomputed followers doesn't account for unforseen details about the new dialogue state which can affect visibility
+	#for f in followers:
+		#f.follow(controller)
+		#sync_controller_data.rpc(EventType.CHOICE, remote_authority, f.get_path(), f.data)
+	
+	for c in get_tree().get_nodes_in_group(controller_group):
+		if c is PSController and c != controller and c.is_active() and c.should_follow(controller):
+			c.follow(controller)
+			sync_controller_data.rpc(EventType.CHOICE, remote_authority, c.get_path(), c.data)
+	
 	sync_controller_data.rpc(EventType.CHOICE, remote_authority, controller_path, controller.data)
 
 # --- starting ------------------------------------------------------------
