@@ -80,12 +80,15 @@ func align(body: Dictionary[BodyProperties, Variant], choice: String, filter:=no
 		result[BodyProperties.success] = false
 		return result
 	
-	return _traverse(result, get_destination(from_position, choice), filter)
+	return _traverse(result, get_destination(from_position, choice), choice, filter)
 
 #Move `body` to `position`, then auto-advance through any auto hubs until a
 #non-auto hub is reached, or the conversation runs dry. `taken_choice` is the
 #choice that moved the body here ("" when starting a conversation).
-func _traverse(body: Dictionary[BodyProperties, Variant], position: int, filter: Callable) -> Dictionary[BodyProperties, Variant]:
+func _traverse(body: Dictionary[BodyProperties, Variant], position: int, choice: String, filter: Callable) -> Dictionary[BodyProperties, Variant]:
+	if position == 4:
+		pass
+	
 	var visited := {}
 	var current := position
 	while true:
@@ -98,8 +101,12 @@ func _traverse(body: Dictionary[BodyProperties, Variant], position: int, filter:
 		body[BodyProperties.position] = current
 		if hub.has(HubProperties.speaker):
 			body[BodyProperties.speaker] = hub[HubProperties.speaker]
+		
 		if hub.has(HubProperties.text):
 			body[BodyProperties.text] = hub[HubProperties.text]
+		elif !choice.is_empty():
+			body[BodyProperties.text] = choice
+		
 		var branch := str(hub.get(HubProperties.branch, ""))
 		if not branch.is_empty():
 			body[BodyProperties.branch] = branch
@@ -167,4 +174,4 @@ func align_start(from:=-1, filter:=no_filter) -> Dictionary[BodyProperties, Vari
 			BodyProperties.success: false
 		}
 	var body: Dictionary[BodyProperties, Variant] = {}
-	return _traverse(body, start, filter)
+	return _traverse(body, start, "", filter)

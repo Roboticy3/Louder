@@ -3,7 +3,6 @@
 [ext_resource type="Script" uid="uid://dgjn3dbmgbgis" path="res://demos/september/ui/secondary_dialogue_view.gd" id="1_v28xb"]
 [ext_resource type="Script" uid="uid://ds0uapcn5b5v5" path="res://demos/september/ui/scrolling_dialogue_feed.gd" id="2_tyx6j"]
 [ext_resource type="PackedScene" uid="uid://d3scduqubuvrq" path="res://demos/september/ui/scrolling_dialogue_item.tscn" id="3_dw3q4"]
-[ext_resource type="PackedScene" uid="uid://ctpltkbarsbjg" path="res://demos/september/ui/main_dialogue_debug.tscn" id="5_gix7f"]
 
 [node name="SecondaryDialogueView" type="Control" unique_id=2033588754 node_paths=PackedStringArray("scrolling_dialogue_feed")]
 custom_minimum_size = Vector2(256, 256)
@@ -18,7 +17,7 @@ grow_vertical = 2
 script = ExtResource("1_v28xb")
 scrolling_dialogue_feed = NodePath("Feed")
 
-[node name="Feed" type="VBoxContainer" parent="." unique_id=233767170 node_paths=PackedStringArray("debug_display")]
+[node name="Feed" type="VBoxContainer" parent="." unique_id=233767170]
 layout_mode = 0
 offset_right = 256.0
 offset_bottom = 256.0
@@ -30,8 +29,4 @@ insert_index = -1
 remove_index = 0
 dialogue_item = ExtResource("3_dw3q4")
 max_items = 1
-debug_display = NodePath("../MainDialogueDebug")
 spectator = true
-
-[node name="MainDialogueDebug" parent="." unique_id=2025365747 instance=ExtResource("5_gix7f")]
-layout_mode = 1
