@@ -151,7 +151,7 @@ func _traverse(body: Dictionary[BodyProperties, Variant], position: int, choice:
 	
 	return body
 
-signal state_variable_changed(variable:String, value)
+signal state_variable_changed(simulator:PSSimulator, variable:String, value)
 const ASSIGNMENTS:PackedStringArray = [
 	"=",
 	"+=",
@@ -198,13 +198,13 @@ func _evaluate_statements(statements:String) -> void:
 		
 		if value_right != value_left:
 			state.scope.set(partial_left, value_right)
-			state_variable_changed.emit(partial_left, value_right)
+			state_variable_changed.emit(self, partial_left, value_right)
 
-signal callback(args:PackedStringArray)
+signal callback(simulator:PSSimulator, args:PackedStringArray)
 func _evaluate_callbacks(callbacks:String) -> void:
 	var callbacks_arr := callbacks.split("\n", false)
 	for c in callbacks_arr:
-		callback.emit(PackedStringArray(c.split(" ", false)))
+		callback.emit(self, PackedStringArray(c.split(" ", false)))
 
 func check_conditions(position:int) -> bool:
 	var hub := _hub(position)

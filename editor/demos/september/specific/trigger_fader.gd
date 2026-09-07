@@ -1,6 +1,6 @@
 extends CanvasItem
 
-@export var group := &"trigger_listener"
+@export var group := &"state_listener"
 @export var show_trigger:String
 @export var hide_trigger:String
 @export var hide_by_default := true

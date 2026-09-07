@@ -8,7 +8,7 @@
 [ext_resource type="Script" uid="uid://jpgaxooa6ari" path="res://demos/september/network/character_switch.gd" id="4_j8er1"]
 [ext_resource type="Script" uid="uid://dshl0su1su5xe" path="res://proto_simulator/ps_simulator.gd" id="6_602u8"]
 [ext_resource type="Script" uid="uid://inieasxjm4nb" path="res://proto_simulator/ps_conversation.gd" id="7_nbaqi"]
-[ext_resource type="Script" uid="uid://cpa1hv77k8m77" path="res://demos/september/specific/simulator_callback_listener.gd" id="9_cwy78"]
+[ext_resource type="Script" uid="uid://cpa1hv77k8m77" path="res://demos/september/specific/simulator_state_synchronizer.gd" id="9_cwy78"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_nunj6"]
 
@@ -61,7 +61,6 @@ grow_vertical = 2
 text = "Reka Vision :)"
 
 [node name="Control" parent="Reka" unique_id=824433713 instance=ExtResource("3_7fl6c")]
-group = null
 
 [node name="CharacterSelect" type="CanvasLayer" parent="." unique_id=1991834384]
 
@@ -95,5 +94,6 @@ metadata/_custom_type_script = "uid://inieasxjm4nb"
 
 [node name="SimulatorCallbackListener" type="Node" parent="." unique_id=523254008]
 script = ExtResource("9_cwy78")
+trigger_listener_group = null
 
 [connection signal="callback" from="Louder/PSSimulator" to="SimulatorCallbackListener" method="_on_ps_simulator_callback"]
