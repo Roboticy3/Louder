@@ -13,7 +13,10 @@ const DEFAULT_BRANCH := "main"
 @export var conversation:PSConversation
 @export var state:PSDialogueState
 
+var expression:Expression
+
 func _ready():
+	expression = Expression.new()
 	add_to_group(group)
 	if !state:
 		state = PSDialogueState.new()
@@ -43,6 +46,9 @@ func list(position: int, filter:=no_filter) -> Array[Dictionary]:
 		var to_id: int = int(connection.get(ChoiceProperties.to_id, -1))
 		
 		if get_property(to_id, HubProperties.once) and to_id in state.covered:
+			continue
+		
+		if !check_conditions(to_id):
 			continue
 		
 		var choice := {
@@ -127,6 +133,9 @@ func _traverse(body: Dictionary[BodyProperties, Variant], position: int, choice:
 		if not branch.is_empty():
 			body[BodyProperties.branch] = branch
 		
+		_evaluate_statements(hub.get(HubProperties.statements, ""))
+		_evaluate_callbacks(hub.get(HubProperties.callbacks, ""))
+		
 		if not (hub.get(HubProperties.auto, false) as bool):
 			body[BodyProperties.success] = true
 			break
@@ -138,6 +147,66 @@ func _traverse(body: Dictionary[BodyProperties, Variant], position: int, choice:
 		current = int(available[0].get(ChoiceProperties.to_id, -1))
 	
 	return body
+
+const ASSIGNMENTS:PackedStringArray = [
+	"=",
+	"+=",
+	"-=",
+	"++",
+	"--"
+]
+func _evaluate_statements(statements:String) -> void:
+	var statements_arr := statements.split("\n", true)
+	
+	for s in statements_arr:
+		var partial_left:String
+		var partial_assignment:String
+		var partial_right:String
+		for a in ASSIGNMENTS:
+			var index := s.find(a)
+			if index == -1: continue
+			partial_left = s.substr(0, index)
+			partial_assignment = s.substr(index, a.length())
+			partial_right = s.substr(index + a.length())
+		
+		if partial_assignment.is_empty():
+			push_error("Could not locate assignment in statement: ", s)
+			continue
+		
+		var value_right = 0
+		if !partial_right.is_empty():
+			expression.parse(partial_right, state.scope.get_names())
+			value_right = expression.execute([], state.scope, true, false)
+		
+		var value_left = state.scope.get(partial_left)
+		match partial_assignment:
+			"=":
+				state.scope.set(partial_left, value_right)
+			"+=":
+				state.scope.set(partial_left, value_left + value_right)
+			"-=":
+				state.scope.set(partial_left, value_left - value_right)
+			"++":
+				state.scope.set(partial_left, value_left + 1)
+			"--":
+				state.scope.set(partial_left, value_left - 1)
+
+signal callback(args:PackedStringArray)
+func _evaluate_callbacks(callbacks:String) -> void:
+	var callbacks_arr := callbacks.split("\n", false)
+	for c in callbacks_arr:
+		callback.emit(PackedStringArray(c.split(" ", false)))
+
+func check_conditions(position:int) -> bool:
+	var hub := _hub(position)
+	var passing := true
+	var conditions := str(hub.get(HubProperties.conditions, "")).split("\n", false)
+	
+	for c in conditions:
+		expression.parse(c, state.scope.get_names())
+		passing = passing and expression.execute([], state.scope, true, true)
+	
+	return passing
 
 #Return the position that would result from making choice `choice` from
 #position `position`.

@@ -11,6 +11,8 @@
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_nunj6"]
 
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_e0tjo"]
+
 [node name="Merchant" type="Node2D" unique_id=438456980]
 
 [node name="Background" type="Sprite2D" parent="." unique_id=2097716038]
@@ -85,6 +87,9 @@ spawn_path = NodePath("..")
 script = ExtResource("2_8jkri")
 spawn_mode = 1
 spawnable_packed = ExtResource("3_nriho")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="Louder/PSSimulator" unique_id=382979257]
+replication_config = SubResource("SceneReplicationConfig_e0tjo")
 
 [node name="PSConversation" type="Node" parent="Louder" unique_id=1560832398]
 script = ExtResource("7_nbaqi")

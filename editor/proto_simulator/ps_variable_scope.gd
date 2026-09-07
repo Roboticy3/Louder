@@ -19,3 +19,6 @@ func _set(property: StringName, value: Variant) -> bool:
 
 func _to_string():
 	return str(variables)
+
+func get_names() -> Array:
+	return variables.keys()
