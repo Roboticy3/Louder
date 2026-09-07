@@ -266,27 +266,6 @@
 		"type": "hub"
 	},
 	{
-		"auto": true,
-		"choices": [
-			"(Choice 0)",
-			"(Choice 1)"
-		],
-		"conversation_id": "35",
-		"position_offset:x": "-200.0",
-		"position_offset:y": "2080.0",
-		"speaker": "Demo Start",
-		"start": true,
-		"type": "hub"
-	},
-	{
-		"branch": "geno",
-		"conversation_id": "37",
-		"position_offset:x": "318.830688476563",
-		"position_offset:y": "2491.31079101563",
-		"speaker": "Cage",
-		"type": "hub"
-	},
-	{
 		"branch": "shop",
 		"conversation_id": "0",
 		"position_offset:x": "160.0",
@@ -329,14 +308,6 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "39",
-		"position_offset:x": "3980.0",
-		"position_offset:y": "1920.0",
-		"speaker": "Body",
-		"text": "You are a tourist, however. You are too young to be here, but most importantly, you look too young to be here. Someone might ask if you got lost from your parents.",
-		"type": "hub"
-	},
-	{
 		"conversation_id": "42",
 		"position_offset:x": "1480.0",
 		"position_offset:y": "1980.0",
@@ -357,10 +328,11 @@
 		"position_offset:x": "2260.0",
 		"position_offset:y": "1960.0",
 		"speaker": "Nervous System",
-		"text": "Right. After that, you found a place to stay in the center of East Breach, a hostel in one of the old towers. You have enough money to stay there for 5 days plus food.",
+		"text": "Doesn't matter. After that, you found a place to stay in the center of East Breach, a hostel in one of the old towers. You have enough money to stay there for 5 days plus food.",
 		"type": "hub"
 	},
 	{
+		"callbacks": "trigger reka_appears",
 		"conversation_id": "38",
 		"position_offset:x": "3100.0",
 		"position_offset:y": "1860.0",
@@ -376,6 +348,95 @@
 		"position_offset:y": "2000.0",
 		"speaker": "Nervous System",
 		"text": "Then, late last night, you resolved to find a replacement for your stolen dagger here, the \"Lower Side\" of the breach.",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"choices": [
+			"(Choice 0)"
+		],
+		"conversation_id": "35",
+		"position_offset:x": "-780.0",
+		"position_offset:y": "2160.0",
+		"speaker": "Demo Start",
+		"start": true,
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"choices": [
+			"(Choice 0)",
+			"(Choice 1)"
+		],
+		"conversation_id": "47",
+		"position_offset:x": "-280.0",
+		"position_offset:y": "2060.0",
+		"statements": "is_demo",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "39",
+		"position_offset:x": "3960.0",
+		"position_offset:y": "1920.0",
+		"speaker": "Body",
+		"text": "You are a tourist, however. You are too young to be here, more importantly, you look too young to be here. Someone might ask if you got lost from your parents.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "48",
+		"position_offset:x": "4380.0",
+		"position_offset:y": "1920.0",
+		"speaker": "Power",
+		"text": "You will be fine as long as you assert what you need. ",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "49",
+		"position_offset:x": "-800.0",
+		"position_offset:y": "1780.0",
+		"speaker": "Note",
+		"text": "Trying a more expository style for the demo.",
+		"type": "hub"
+	},
+	{
+		"branch": "geno",
+		"conversation_id": "37",
+		"position_offset:x": "300.0",
+		"position_offset:y": "2500.0",
+		"speaker": "Cage",
+		"text": "Beneath me, there is a desire to go home. I'm sorry, I just thought I should say that.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "52",
+		"position_offset:x": "700.0",
+		"position_offset:y": "2900.0",
+		"speaker": "Note",
+		"text": "Trying out some different persons for Geno's skills. Evil does \"we\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "51",
+		"position_offset:x": "1140.0",
+		"position_offset:y": "2500.0",
+		"speaker": "Rhetoric",
+		"text": "But that's only 1 4th of the debt I took on to get here. Rigby comes to collect in a month. I've been here one month.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "50",
+		"position_offset:x": "700.0",
+		"position_offset:y": "2500.0",
+		"speaker": "Evil",
+		"text": "But business is going good! Don't get in the way of a good thing. Since opening this stand we've made 110 gold!",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "53",
+		"position_offset:x": "1560.0",
+		"position_offset:y": "2520.0",
+		"speaker": "Evil",
+		"text": "And last month we made nothing! So, more greed, more operations, more underground connections, I don't see the problem.",
 		"type": "hub"
 	},
 	{
@@ -553,18 +614,6 @@
 		"type": "connection"
 	},
 	{
-		"from_choice": "(Choice 0)",
-		"from_id": "35",
-		"to_id": "36",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Choice 1)",
-		"from_id": "35",
-		"to_id": "37",
-		"type": "connection"
-	},
-	{
 		"from_choice": "",
 		"from_id": "36",
 		"to_id": "40",
@@ -619,9 +668,51 @@
 		"type": "connection"
 	},
 	{
-		"position:x": "3055.09399414063",
-		"position:y": "2354.53051757813",
+		"from_choice": "(Choice 0)",
+		"from_id": "35",
+		"to_id": "47",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 0)",
+		"from_id": "47",
+		"to_id": "36",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 1)",
+		"from_id": "47",
+		"to_id": "37",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "39",
+		"to_id": "48",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "37",
+		"to_id": "50",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "50",
+		"to_id": "51",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "51",
+		"to_id": "53",
+		"type": "connection"
+	},
+	{
+		"position:x": "461.079895019531",
+		"position:y": "1851.6162109375",
 		"type": "camera",
-		"zoom": "1.29305922985077"
+		"zoom": "0.80288791656494"
 	}
 ]

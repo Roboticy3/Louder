@@ -54,9 +54,10 @@ editor = NodePath("../Control/GridContainer/GraphEdit")
 [node name="UserConfig" type="Node" parent="." unique_id=296610046]
 script = ExtResource("10_07l17")
 
-[node name="CopyPasteLogic" type="Node" parent="." unique_id=1814474678 node_paths=PackedStringArray("editor")]
+[node name="CopyPasteLogic" type="Node" parent="." unique_id=1814474678 node_paths=PackedStringArray("editor", "pointer")]
 script = ExtResource("8_4go3f")
 editor = NodePath("../Control/GridContainer/GraphEdit")
+pointer = NodePath("../PointerLogic")
 
 [node name="Control" type="Control" parent="." unique_id=2092511738]
 layout_mode = 1

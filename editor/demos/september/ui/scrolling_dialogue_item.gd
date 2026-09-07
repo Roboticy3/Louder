@@ -29,7 +29,9 @@ func set_controller(controller:PSController):
 	
 	var text := str(data.get(BodyProperties.text, ""))
 	if !text.is_empty():
-		var text_label := Label.new()
+		var text_label := RichTextLabel.new()
+		text_label.bbcode_enabled = true
+		text_label.fit_content = true
 		text_label.text = text
 		text_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		element_container.add_child(text_label)
@@ -60,9 +62,9 @@ func set_controller(controller:PSController):
 	
 
 func clear_choices() -> void:
-	for c in element_container.get_children():
+	for c in choice_container.get_children():
 		if c is Button:
-			element_container.remove_child(c)
+			choice_container.remove_child(c)
 			c.queue_free()
 
 func _on_choice_pressed(choice: String) -> void:
