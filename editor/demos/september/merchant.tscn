@@ -61,6 +61,7 @@ grow_vertical = 2
 text = "Reka Vision :)"
 
 [node name="Control" parent="Reka" unique_id=824433713 instance=ExtResource("3_7fl6c")]
+group = null
 
 [node name="CharacterSelect" type="CanvasLayer" parent="." unique_id=1991834384]
 

@@ -2,7 +2,14 @@
 
 [ext_resource type="Script" uid="uid://c3s3wg88ndoib" path="res://demos/september/specific/reka.gd" id="1_l48c1"]
 [ext_resource type="PackedScene" uid="uid://dnwmrvllc2101" path="res://demos/september/ui/main_dialogue_view.tscn" id="2_1bhkb"]
+[ext_resource type="Texture2D" uid="uid://b8al01yx5jq1o" path="res://demos/september/sprite/Reka View 1.png" id="2_be0wp"]
+[ext_resource type="Texture2D" uid="uid://bkhql6b61uqwg" path="res://demos/september/sprite/black.tres" id="2_ewuah"]
+[ext_resource type="Script" uid="uid://dut12f744fc2s" path="res://demos/september/specific/trigger_fader.gd" id="3_17usu"]
 [ext_resource type="PackedScene" uid="uid://cip56nadhhph1" path="res://demos/september/ui/secondary_dialogue_view.tscn" id="3_be0wp"]
+[ext_resource type="Texture2D" uid="uid://7opd06klhxt6" path="res://demos/september/sprite/Reka View 1 Bandit.png" id="3_xxbk7"]
+[ext_resource type="Texture2D" uid="uid://c1tfnjsoi78q2" path="res://demos/september/sprite/Reka View 1 Geno.png" id="4_17usu"]
+[ext_resource type="Texture2D" uid="uid://dal1076wdhlrb" path="res://demos/september/sprite/Reka View 2.png" id="5_ewuah"]
+[ext_resource type="Texture2D" uid="uid://bruhbpbvomhx7" path="res://demos/september/sprite/Reka View 2 Geno.png" id="6_654kt"]
 
 [node name="Control" type="Control" unique_id=1123156141]
 layout_mode = 3
@@ -13,10 +20,86 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_l48c1")
 
-[node name="Background" type="CanvasLayer" parent="." unique_id=367100988]
+[node name="Black" type="TextureRect" parent="." unique_id=1678997231]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -3.0
+offset_bottom = -3.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_ewuah")
+
+[node name="Reka View 1" type="TextureRect" parent="." unique_id=1078003390]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_be0wp")
+expand_mode = 1
+stretch_mode = 6
+script = ExtResource("3_17usu")
+show_trigger = "reka_appears"
+hide_trigger = "reka_enters_shop"
+
+[node name="Reka View 1 Bandit" type="TextureRect" parent="Reka View 1" unique_id=963220423]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_xxbk7")
+expand_mode = 1
+stretch_mode = 6
+script = ExtResource("3_17usu")
+show_trigger = "bandit_appears"
+hide_trigger = "bandit_leaves"
+
+[node name="Reka View 1 Geno" type="TextureRect" parent="Reka View 1" unique_id=1184510832]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_17usu")
+expand_mode = 1
+stretch_mode = 6
+script = ExtResource("3_17usu")
+show_trigger = "geno_appears"
+
+[node name="Reka View 2" type="TextureRect" parent="." unique_id=591384832]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("5_ewuah")
+expand_mode = 1
+stretch_mode = 6
+script = ExtResource("3_17usu")
+show_trigger = "reka_enters_shop"
+
+[node name="Reka View 2 Geno" type="TextureRect" parent="Reka View 2" unique_id=382540219]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("6_654kt")
+expand_mode = 1
+stretch_mode = 6
+script = ExtResource("3_17usu")
 
 [node name="MainDialogueView" parent="." unique_id=2033588754 instance=ExtResource("2_1bhkb")]
 layout_mode = 1
+offset_right = -0.00012207031
 
 [node name="SecondaryDialogueView" parent="." unique_id=902305658 instance=ExtResource("3_be0wp")]
 layout_mode = 1

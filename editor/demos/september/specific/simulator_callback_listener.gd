@@ -1,5 +1,6 @@
 extends Node
 
+@export var trigger_listener_group := &"trigger_listener"
 
 func _on_ps_simulator_callback(args: PackedStringArray) -> void:
 	if args.is_empty(): return
@@ -13,9 +14,4 @@ func _on_trigger(args:PackedStringArray) -> void:
 		push_error("Expected two arguments for callback 'trigger': ", " ".join(args))
 		return
 	
-	match args[1]:
-		"reka_appears": _on_reka_appears.rpc()
-
-@rpc("authority", "call_local", "reliable")
-func _on_reka_appears():
-	pass
+	get_tree().call_group(trigger_listener_group, &"_on_trigger", args[1])
