@@ -31,6 +31,12 @@ func _filter_valid_choice(c:Dictionary) -> bool:
 		return true
 	if c_speaker in speak_as:
 		return true
+	
+	var n_private := bool(simulator.get_property(c_position, HubProperties.private, false))
+	var n_recipient := str(simulator.get_property(c_position, HubProperties.recipient, ""))
+	if n_private:
+		return n_recipient in speak_as
+	
 	if !config.is_ownable(c_speaker):
 		if !config.is_public(c_speaker) and !(c_speaker in listen_to):
 			return false
@@ -42,8 +48,8 @@ func _filter_visible_node(position:int) -> bool:
 		return false
 	var n_private := bool(simulator.get_property(position, HubProperties.private, false))
 	var n_recipient := str(simulator.get_property(position, HubProperties.recipient, ""))
-	if n_private and !(n_recipient in speak_as):
-		return false
+	if n_private:
+		return n_recipient in speak_as
 	
 	var n_speaker := str(simulator.get_property(position, HubProperties.speaker))
 	if !(n_speaker in config.speakers_by_name):
@@ -94,7 +100,7 @@ func get_branch() -> String:
 	return data.get(BodyProperties.branch, PSSimulator.DEFAULT_BRANCH)
 
 func get_choices() -> Array[Dictionary]:
-	return simulator.list(get_position(), _filter_valid_choice)
+	return simulator.list_choices(get_position(), _filter_valid_choice)
 
 func branch_changed() -> bool:
 	return data.get(BodyProperties.branch_changed, false)

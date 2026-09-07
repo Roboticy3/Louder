@@ -304,7 +304,7 @@
 		"position_offset:x": "3540.0",
 		"position_offset:y": "1900.0",
 		"speaker": "Integumetary System",
-		"text": "You are not with your family and had no trouble with the path. Wind drafts in from the desert and through your hair. Early morning dew from the forest above drips down. If you weren't in such a hurry, the quiet market square before you would be a safe spot to reflect.",
+		"text": "You heard a small child's voice chant \"silent square, don't go there\" twice over yesterday. Their mother taught them. You are not with your family and had no trouble with the path. Wind drafts in from the desert and through your hair. Early morning dew from the forest above drips down. If you weren't in such a hurry, the quiet market square before you would be a safe spot to reflect.",
 		"type": "hub"
 	},
 	{
@@ -338,8 +338,8 @@
 		"position_offset:y": "1860.0",
 		"private": true,
 		"recipient": "Reka",
-		"speaker": "Geno",
-		"text": "This area of the palace is still a public area, but an array crumbling stone steps separate it from the tourism section. So, why are there shops? Well, there's a tacit a agreement between a merchant guild and the palace guard to not interfere in this area. No tourists means no public risk.",
+		"speaker": "The Silent Square",
+		"text": "This area of the palace is still a public area, but an array crumbling stone steps separate it from the tourism section. So, why are there shops? Well, there's a tacit a agreement between a merchant guild and the palace guard to not interfere in this area. No tourists means no public risk. And so, it's known as the silent square. ",
 		"type": "hub"
 	},
 	{
@@ -710,9 +710,9 @@
 		"type": "connection"
 	},
 	{
-		"position:x": "461.079895019531",
-		"position:y": "1851.6162109375",
+		"position:x": "1726.77270507813",
+		"position:y": "1269.81213378906",
 		"type": "camera",
-		"zoom": "0.80288791656494"
+		"zoom": "0.72989809513092"
 	}
 ]

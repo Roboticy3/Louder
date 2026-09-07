@@ -38,12 +38,15 @@ func has_property_or_flag(data:Dictionary, property): return true if data.get(pr
 #Choices linking to hubs flagged with HubProperties.once will not be accessible
 #if they have been visited in `align`. This history can be controlled through the
 #`state.covered` variable.
-func list(position: int, filter:=no_filter) -> Array[Dictionary]:
+func list_choices(position: int, filter:=no_filter) -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
 	if conversation == null:
 		return result
 	for connection in conversation.get_connections_from(position):
 		var to_id: int = int(connection.get(ChoiceProperties.to_id, -1))
+		
+		if to_id == 38:
+			pass
 		
 		if get_property(to_id, HubProperties.once) and to_id in state.covered:
 			continue
@@ -67,7 +70,7 @@ func list(position: int, filter:=no_filter) -> Array[Dictionary]:
 #returns a copy of the body with BodyProperties.success filled, and the position,
 #branch, and choices updated to the body's current position in the conversation.
 #
-#`choice` is validated against `list` on the body's position, but the user's
+#`choice` is validated against `list_choices` on the body's position, but the user's
 #`filter` is *not* used. The user's filter represents visibility, so the user
 #should simply not see choices that are not available to them specifically. 
 #
@@ -88,7 +91,7 @@ func align(body: Dictionary[BodyProperties, Variant], choice: String, filter:=no
 	var result := body.duplicate()
 	
 	var valid := false
-	for c in list(from_position):
+	for c in list_choices(from_position):
 		if str(c.get(ChoiceProperties.from_choice, "")) == choice:
 			valid = true
 			break
@@ -140,7 +143,7 @@ func _traverse(body: Dictionary[BodyProperties, Variant], position: int, choice:
 			body[BodyProperties.success] = true
 			break
 		
-		var available := list(current, filter)
+		var available := list_choices(current, filter)
 		if available.is_empty():
 			body[BodyProperties.success] = false
 			break
