@@ -148,6 +148,7 @@ func _traverse(body: Dictionary[BodyProperties, Variant], position: int, choice:
 	
 	return body
 
+signal state_variable_changed(variable:String, value)
 const ASSIGNMENTS:PackedStringArray = [
 	"=",
 	"+=",
@@ -156,7 +157,7 @@ const ASSIGNMENTS:PackedStringArray = [
 	"--"
 ]
 func _evaluate_statements(statements:String) -> void:
-	var statements_arr := statements.split("\n", true)
+	var statements_arr := statements.split("\n", false)
 	
 	for s in statements_arr:
 		var partial_left:String
@@ -165,7 +166,7 @@ func _evaluate_statements(statements:String) -> void:
 		for a in ASSIGNMENTS:
 			var index := s.find(a)
 			if index == -1: continue
-			partial_left = s.substr(0, index)
+			partial_left = s.substr(0, index).strip_edges()
 			partial_assignment = s.substr(index, a.length())
 			partial_right = s.substr(index + a.length())
 		
@@ -179,17 +180,22 @@ func _evaluate_statements(statements:String) -> void:
 			value_right = expression.execute([], state.scope, true, false)
 		
 		var value_left = state.scope.get(partial_left)
+		
 		match partial_assignment:
 			"=":
-				state.scope.set(partial_left, value_right)
+				pass
 			"+=":
-				state.scope.set(partial_left, value_left + value_right)
+				value_right = value_left + value_right
 			"-=":
-				state.scope.set(partial_left, value_left - value_right)
+				value_right = value_left - value_right
 			"++":
-				state.scope.set(partial_left, value_left + 1)
+				value_right = value_left + 1
 			"--":
-				state.scope.set(partial_left, value_left - 1)
+				value_right = value_left - 1
+		
+		if value_right != value_left:
+			state.scope.set(partial_left, value_right)
+			state_variable_changed.emit(partial_left, value_right)
 
 signal callback(args:PackedStringArray)
 func _evaluate_callbacks(callbacks:String) -> void:

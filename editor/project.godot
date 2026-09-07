@@ -23,6 +23,7 @@ ControllerEventLayer="*uid://blrnmb1wooqwc"
 ClientDataLayer="*uid://4tjo2itl4enh"
 NetworkLayer="*uid://cmb4d6ennhr0l"
 ProjectManagerHelpers="*uid://edmw44iljr42"
+SimulatorEventLayer="*uid://da81e32yt8e0t"
 
 [gui]
 

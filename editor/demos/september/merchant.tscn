@@ -2,16 +2,15 @@
 
 [ext_resource type="PackedScene" uid="uid://dhii2e6mc7t81" path="res://demos/september/logic/character_select.tscn" id="1_s2skt"]
 [ext_resource type="Script" uid="uid://bj7q7bsrcvdrl" path="res://demos/september/logic/basic_spawner.gd" id="2_8jkri"]
-[ext_resource type="PackedScene" uid="uid://cor0bmbbvv2l5" path="res://demos/september/ui/geno.tscn" id="2_e0tjo"]
-[ext_resource type="PackedScene" uid="uid://udwexxt1fl5t" path="res://demos/september/ui/reka.tscn" id="3_7fl6c"]
+[ext_resource type="PackedScene" uid="uid://cor0bmbbvv2l5" path="res://demos/september/specific/geno.tscn" id="2_e0tjo"]
+[ext_resource type="PackedScene" uid="uid://udwexxt1fl5t" path="res://demos/september/specific/reka.tscn" id="3_7fl6c"]
 [ext_resource type="PackedScene" uid="uid://fn48n343cb16" path="res://demos/september/logic/merchant_dialogue_avatar.tscn" id="3_nriho"]
 [ext_resource type="Script" uid="uid://jpgaxooa6ari" path="res://demos/september/network/character_switch.gd" id="4_j8er1"]
 [ext_resource type="Script" uid="uid://dshl0su1su5xe" path="res://proto_simulator/ps_simulator.gd" id="6_602u8"]
 [ext_resource type="Script" uid="uid://inieasxjm4nb" path="res://proto_simulator/ps_conversation.gd" id="7_nbaqi"]
+[ext_resource type="Script" uid="uid://cpa1hv77k8m77" path="res://demos/september/specific/simulator_callback_listener.gd" id="9_cwy78"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_nunj6"]
-
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_e0tjo"]
 
 [node name="Merchant" type="Node2D" unique_id=438456980]
 
@@ -88,10 +87,12 @@ script = ExtResource("2_8jkri")
 spawn_mode = 1
 spawnable_packed = ExtResource("3_nriho")
 
-[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="Louder/PSSimulator" unique_id=382979257]
-replication_config = SubResource("SceneReplicationConfig_e0tjo")
-
 [node name="PSConversation" type="Node" parent="Louder" unique_id=1560832398]
 script = ExtResource("7_nbaqi")
 input_path = "res://demos/conversations/merchant.json"
 metadata/_custom_type_script = "uid://inieasxjm4nb"
+
+[node name="SimulatorCallbackListener" type="Node" parent="." unique_id=523254008]
+script = ExtResource("9_cwy78")
+
+[connection signal="callback" from="Louder/PSSimulator" to="SimulatorCallbackListener" method="_on_ps_simulator_callback"]

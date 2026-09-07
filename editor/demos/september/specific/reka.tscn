@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://udwexxt1fl5t"]
+
+[ext_resource type="Script" uid="uid://c3s3wg88ndoib" path="res://demos/september/specific/reka.gd" id="1_l48c1"]
+[ext_resource type="PackedScene" uid="uid://dnwmrvllc2101" path="res://demos/september/ui/main_dialogue_view.tscn" id="2_1bhkb"]
+[ext_resource type="PackedScene" uid="uid://cip56nadhhph1" path="res://demos/september/ui/secondary_dialogue_view.tscn" id="3_be0wp"]
+
+[node name="Control" type="Control" unique_id=1123156141]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_l48c1")
+
+[node name="Background" type="CanvasLayer" parent="." unique_id=367100988]
+
+[node name="MainDialogueView" parent="." unique_id=2033588754 instance=ExtResource("2_1bhkb")]
+layout_mode = 1
+
+[node name="SecondaryDialogueView" parent="." unique_id=902305658 instance=ExtResource("3_be0wp")]
+layout_mode = 1
+offset_left = -416.0
+offset_top = -159.0
+offset_right = -160.0
+offset_bottom = 97.0

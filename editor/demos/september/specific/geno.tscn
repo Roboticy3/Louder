@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://cor0bmbbvv2l5"]
 
+[ext_resource type="Script" uid="uid://2x5tvoc4rfd4" path="res://demos/september/specific/geno.gd" id="1_admxb"]
 [ext_resource type="PackedScene" uid="uid://dnwmrvllc2101" path="res://demos/september/ui/main_dialogue_view.tscn" id="1_grqos"]
 
 [node name="Control" type="Control" unique_id=1123156141]
@@ -9,6 +10,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_admxb")
 
 [node name="Background" type="CanvasLayer" parent="." unique_id=367100988]
 
