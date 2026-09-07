@@ -14,4 +14,8 @@ func _on_trigger(args:PackedStringArray) -> void:
 		push_error("Expected two arguments for callback 'trigger': ", " ".join(args))
 		return
 	
-	get_tree().call_group(trigger_listener_group, &"_on_trigger", args[1])
+	trigger_rpc.rpc(args[1])
+
+@rpc("authority", "call_local", "reliable")
+func trigger_rpc(trigger:String) -> void:
+	get_tree().call_group(trigger_listener_group, &"_on_trigger", trigger)
