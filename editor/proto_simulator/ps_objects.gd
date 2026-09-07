@@ -19,6 +19,9 @@ enum HubProperties {
 	once,
 	choices,
 	branch,
+	callbacks,
+	conditions,
+	statements,
 	conversation_id,
 }
 

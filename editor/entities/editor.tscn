@@ -98,7 +98,7 @@ layout_mode = 0
 offset_left = -1.0
 offset_top = 139.0
 offset_right = 391.0
-offset_bottom = 598.0
+offset_bottom = 626.0
 position_offset = Vector2(-1, 139)
 selected = true
 hub_data = {
@@ -106,7 +106,7 @@ NodePath("ChoicesSection/CheckBox"): true
 }
 
 [node name="callbacks" parent="Control/GridContainer/GraphEdit/Hub/OtherSection/VBoxContainer" parent_id_path=PackedInt32Array(1992437552, 72269939) index="3" unique_id=312146840]
-delimiter_strings = Array[String](["' '", "\" \""])
+delimiter_strings = Array[String](["\" \"", "' '"])
 
 [node name="start" parent="Control/GridContainer/GraphEdit/Hub/ChoicesSection" parent_id_path=PackedInt32Array(1992437552, 255423357) index="0" unique_id=628973272]
 button_pressed = true

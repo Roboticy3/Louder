@@ -118,15 +118,6 @@
 		"type": "hub"
 	},
 	{
-		"branch": "shop",
-		"conversation_id": "0",
-		"position_offset:x": "160.0",
-		"position_offset:y": "60.0",
-		"speaker": "Geno",
-		"text": "Small crystals and rusted metal sit on temporary shelving. The most prized possession in the shop is an account book behind the front desk. Though only under an awning, the inside of the shop feels like the inside of a building. 2 men on opposite sides of the counter are haggling over an ornate dagger. Both are rough an sandy. ",
-		"type": "hub"
-	},
-	{
 		"choices": [
 			"\"I found it in the desert.\"",
 			"\"I bought it off someone else.\" (Lie)"
@@ -184,7 +175,6 @@
 		"conversation_id": "22",
 		"position_offset:x": "-240.0",
 		"position_offset:y": "220.0",
-		"start": true,
 		"type": "hub"
 	},
 	{
@@ -273,6 +263,44 @@
 		"position_offset:y": "780.0",
 		"speaker": "Rhetoric",
 		"text": "There's a mask behind you. Shift your weight aside and let the decorations do the work. He doesn't like you. Have him focus on something else, then say something that sounds like a reason. I have a perfect spool of nonsense fresh and ready.",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"choices": [
+			"(Choice 0)",
+			"(Choice 1)"
+		],
+		"conversation_id": "35",
+		"position_offset:x": "-200.0",
+		"position_offset:y": "2080.0",
+		"speaker": "Demo Start",
+		"start": true,
+		"type": "hub"
+	},
+	{
+		"branch": "geno",
+		"conversation_id": "37",
+		"position_offset:x": "318.830688476563",
+		"position_offset:y": "2491.31079101563",
+		"speaker": "Cage",
+		"type": "hub"
+	},
+	{
+		"branch": "reka",
+		"conversation_id": "36",
+		"position_offset:x": "300.0",
+		"position_offset:y": "1880.0",
+		"speaker": "Skeletal System",
+		"type": "hub"
+	},
+	{
+		"branch": "shop",
+		"conversation_id": "0",
+		"position_offset:x": "160.0",
+		"position_offset:y": "60.0",
+		"speaker": "Geno",
+		"text": "Small crystals and rusted metal sit on temporary shelving. The most prized possession in the shop is an account book behind the front desk. Though only under an awning, the inside of the shop feels like the inside of a building. 2 men on opposite sides of the counter are haggling over an ornate dagger. Both are rough an sandy. ",
 		"type": "hub"
 	},
 	{
@@ -450,9 +478,21 @@
 		"type": "connection"
 	},
 	{
-		"position:x": "-65.1889343261719",
-		"position:y": "-385.215148925781",
+		"from_choice": "(Choice 0)",
+		"from_id": "35",
+		"to_id": "36",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 1)",
+		"from_id": "35",
+		"to_id": "37",
+		"type": "connection"
+	},
+	{
+		"position:x": "-295.866027832031",
+		"position:y": "937.581909179688",
 		"type": "camera",
-		"zoom": "0.80288791656494"
+		"zoom": "0.60322153568268"
 	}
 ]

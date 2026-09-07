@@ -108,7 +108,10 @@ scroll_fit_content_width = true
 oneliner = true
 inliner = true
 
-[node name="is_choice" type="CheckBox" parent="TextSectionWrapper/TextSection/HBoxContainer" unique_id=1659837714 node_paths=PackedStringArray("mutual_exclusive") groups=["hub_component"]]
+[node name="HBoxContainer2" type="HBoxContainer" parent="TextSectionWrapper/TextSection" unique_id=1219292361]
+layout_mode = 2
+
+[node name="is_choice" type="CheckBox" parent="TextSectionWrapper/TextSection/HBoxContainer2" unique_id=1659837714 node_paths=PackedStringArray("mutual_exclusive") groups=["hub_component"]]
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
@@ -116,14 +119,13 @@ text = "Is Choice"
 script = ExtResource("2_6jgyt")
 mutual_exclusive = [NodePath("../../../../ChoicesSection")]
 
-[node name="once" type="CheckBox" parent="TextSectionWrapper/TextSection/HBoxContainer" unique_id=622107123 groups=["hub_component"]]
+[node name="once" type="CheckBox" parent="TextSectionWrapper/TextSection/HBoxContainer2" unique_id=622107123 groups=["hub_component"]]
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
 text = "Once"
 
-[node name="private" type="CheckBox" parent="TextSectionWrapper/TextSection/HBoxContainer" unique_id=1575580911 node_paths=PackedStringArray("mutual_exclusive") groups=["hub_component"]]
-visible = false
+[node name="private" type="CheckBox" parent="TextSectionWrapper/TextSection/HBoxContainer2" unique_id=1575580911 node_paths=PackedStringArray("mutual_exclusive") groups=["hub_component"]]
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
@@ -247,6 +249,6 @@ spin_box = NodePath("../ChoicesSpinBox")
 start_check = NodePath("../start")
 spoke_child_index = 1
 
-[connection signal="pressed" from="TextSectionWrapper/TextSection/HBoxContainer/is_choice" to="." method="reset_size" flags=3]
+[connection signal="pressed" from="TextSectionWrapper/TextSection/HBoxContainer2/is_choice" to="." method="reset_size" flags=3]
 [connection signal="folding_changed" from="OtherSection" to="." method="reset_size" flags=3 unbinds=1]
 [connection signal="choices_changed" from="ChoicesSection/choices" to="." method="reset_size" flags=3]

@@ -10,12 +10,6 @@ const NEW := 3
 var current_project_path:String
 signal current_project_changed()
 
-const OBJECT_TYPE := "type"
-const TYPE_HUB := CustomGraphHub.TYPE
-const TYPE_SPEAKER := SpeakerEntity.TYPE
-const TYPE_CONNECTION := "connection"
-const TYPE_CAMERA := "camera"
-
 var save_as_dialog:FileDialog
 var load_dialog:FileDialog
 
@@ -92,7 +86,7 @@ func save_project_to_file(path:String) -> bool:
 
 	for child in editor.get_children():
 		if child is NetworkEntity:
-			objects.append(_export_network_entity(child))
+			objects.append(ProjectManagerHelpers.export_network_entity(child))
 
 	for c in editor.connections:
 		var from_hub = editor.get_node(NodePath(c["from_node"]))
@@ -100,14 +94,17 @@ func save_project_to_file(path:String) -> bool:
 		if not (from_hub is NetworkEntity and to_hub is NetworkEntity):
 			continue
 		objects.append({
-			OBJECT_TYPE: TYPE_CONNECTION,
+			ProjectManagerHelpers.OBJECT_TYPE: ProjectManagerHelpers.TYPE_CONNECTION,
 			"from_id": str(from_hub.id),
 			"from_choice": from_hub.get_choices_logic().port_out_to_choice(c["from_port"]),
 			"to_id": str(to_hub.id),
 		})
 
-	var camera := {OBJECT_TYPE: TYPE_CAMERA, "zoom": str(editor.zoom)}
-	_split_vector(camera, "position", editor.scroll_offset)
+	var camera := {
+		ProjectManagerHelpers.OBJECT_TYPE: ProjectManagerHelpers.TYPE_CAMERA, 
+		"zoom": str(editor.zoom)
+	}
+	ProjectManagerHelpers.split_vector(camera, "position", editor.scroll_offset)
 	objects.append(camera)
 
 	current_project_path = path
@@ -149,19 +146,19 @@ func load_project_from_file(path:String, make_current:=true) -> bool:
 		if not (object is Dictionary):
 			continue
 		
-		var ot := str(object.get(OBJECT_TYPE))
+		var ot := str(object.get(ProjectManagerHelpers.OBJECT_TYPE))
 		
 		if ot in NetworkEntityDefaults.ENTITY_SOURCES:
 			var entity:NetworkEntity = NetworkEntityDefaults.ENTITY_SOURCES[ot].instantiate()
-			entity.hub_data = _import_network_entity(object, entity)
+			entity.hub_data = ProjectManagerHelpers.import_network_entity(object, entity)
 			editor.add_child(entity)
 			hubs_created.append(entity)
 			
 		match ot:
-			TYPE_CONNECTION:
+			ProjectManagerHelpers.TYPE_CONNECTION:
 				connections.append(object)
-			TYPE_CAMERA:
-				camera_position = _join_vector(object, "position")
+			ProjectManagerHelpers.TYPE_CAMERA:
+				camera_position = ProjectManagerHelpers.join_vector(object, "position")
 				camera_zoom = float(object.get("zoom", "1"))
 
 	var new_connections:Array[Dictionary] = []
@@ -202,51 +199,6 @@ func clear_project():
 	current_project_path = ""
 
 	await get_tree().process_frame # wait for the editor to process the removal of nodes
-
-func _export_network_entity(hub: NetworkEntity) -> Dictionary:
-	var data := {OBJECT_TYPE: hub.get_entity_type()}
-	var exported := hub.export()
-	for key in exported:
-		var value = exported[key]
-		if value == null:
-			continue
-		match key:
-			"position_offset":
-				_split_vector(data, "position_offset", value)
-			"conversation_id":
-				data[key] = str(value)
-			_:
-				data[key] = value if (value is bool or value is PackedStringArray) else str(value)
-	return data
-
-func _import_network_entity(data: Dictionary, hub: NetworkEntity) -> Dictionary:
-	var restored := {"position_offset": _join_vector(data, "position_offset")}
-	for key in data:
-		match key:
-			"conversation_id":
-				restored[key] = int(data[key])
-			"position_offset:x", "position_offset:y":
-				continue
-			_:
-				var node := hub.get_node_or_null(NodePath(key))
-				var value = data[key]
-				if node is ChoicesSectionLogic:
-					restored[key] = PackedStringArray(value)
-				elif node is SpinBox:
-					restored[key] = float(value)
-				else:
-					restored[key] = value
-	return restored
-
-func _split_vector(data: Dictionary, prefix: String, value: Vector2) -> void:
-	data[prefix + ":x"] = str(value.x)
-	data[prefix + ":y"] = str(value.y)
-
-func _join_vector(data: Dictionary, prefix: String) -> Vector2:
-	return Vector2(
-		float(data.get(prefix + ":x", "0")),
-		float(data.get(prefix + ":y", "0"))
-	)
 
 func save_current_project() -> bool:
 	if has_current_project():

@@ -40,6 +40,11 @@ func _filter_valid_choice(c:Dictionary) -> bool:
 func _filter_visible_node(position:int) -> bool:
 	if position == -1:
 		return false
+	var n_private := bool(simulator.get_property(position, HubProperties.private, false))
+	var n_recipient := str(simulator.get_property(position, HubProperties.recipient, ""))
+	if n_private and !(n_recipient in speak_as):
+		return false
+	
 	var n_speaker := str(simulator.get_property(position, HubProperties.speaker))
 	if !(n_speaker in config.speakers_by_name):
 		return true
@@ -50,7 +55,7 @@ func _filter_visible_node(position:int) -> bool:
 	return false
 
 func start() -> bool:
-	data = simulator.align_start()
+	data = simulator.align_start(-1, _filter_valid_choice)
 	return data.get(BodyProperties.success, false)
 
 func traverse(choice:String) -> bool:
