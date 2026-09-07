@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://o0sx5q87o113" path="res://scripts/walker_logic.gd" id="5_o1q8q"]
 [ext_resource type="PackedScene" uid="uid://5auivb6rkpb8" path="res://entities/menus/view_menu.tscn" id="5_vumenu"]
 [ext_resource type="Script" uid="uid://b3jvwrspygwuc" path="res://scripts/pointer_logic.gd" id="6_qdkfl"]
+[ext_resource type="Script" uid="uid://ce2pghmljnbj6" path="res://scripts/copy_paste_logic.gd" id="8_4go3f"]
 [ext_resource type="Script" uid="uid://bboylqujoaqru" path="res://scripts/on_screen_debug.gd" id="9_n5ixm"]
 [ext_resource type="Script" uid="uid://dfhadrloniwdc" path="res://scripts/user_config.gd" id="10_07l17"]
 [ext_resource type="PackedScene" uid="uid://dr7rs8c2sfbde" path="res://entities/menus/edit_menu.tscn" id="10_vvcdv"]
@@ -52,6 +53,10 @@ editor = NodePath("../Control/GridContainer/GraphEdit")
 
 [node name="UserConfig" type="Node" parent="." unique_id=296610046]
 script = ExtResource("10_07l17")
+
+[node name="CopyPasteLogic" type="Node" parent="." unique_id=1814474678 node_paths=PackedStringArray("editor")]
+script = ExtResource("8_4go3f")
+editor = NodePath("../Control/GridContainer/GraphEdit")
 
 [node name="Control" type="Control" parent="." unique_id=2092511738]
 layout_mode = 1

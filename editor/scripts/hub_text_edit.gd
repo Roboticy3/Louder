@@ -26,3 +26,8 @@ func _gui_input(event: InputEvent) -> void:
 		if n:
 			n.grab_focus()
 			return
+	if not has_selection():
+		for action in InputMap.get_actions():
+			if action.begins_with("graph_") and event.is_action_pressed(action):
+				accept_event()
+				return

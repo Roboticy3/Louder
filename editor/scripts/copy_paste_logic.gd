@@ -17,6 +17,7 @@ func serialize_selection() -> String:
 		if n is NetworkEntity:
 			if n.selected:
 				selected.append(ProjectManagerHelpers.export_network_entity(n))
+	print("copied ", selected.size(), " objects")
 	return JSON.stringify(selected)
 
 func deserialize_selection(clipboard:String) -> bool:
@@ -37,5 +38,7 @@ func deserialize_selection(clipboard:String) -> bool:
 				var entity:NetworkEntity = NetworkEntityDefaults.ENTITY_SOURCES[type].instantiate()
 				entity.hub_data = ProjectManagerHelpers.import_network_entity(s, entity)
 				editor.add_child(entity)
+				entity.selected = true
 				hubs_created.append(entity) 
+	print("pasted ", hubs_created.size(), " objects")
 	return !hubs_created.is_empty()
