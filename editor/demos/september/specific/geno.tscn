@@ -1,0 +1,85 @@
+[gd_scene format=3 uid="uid://cor0bmbbvv2l5"]
+
+[ext_resource type="Script" uid="uid://2x5tvoc4rfd4" path="res://demos/september/specific/geno.gd" id="1_fgoqf"]
+[ext_resource type="Texture2D" uid="uid://bkhql6b61uqwg" path="res://demos/september/sprite/black.tres" id="2_exxv7"]
+[ext_resource type="PackedScene" uid="uid://dnwmrvllc2101" path="res://demos/september/ui/main_dialogue_view.tscn" id="2_if7ko"]
+[ext_resource type="Texture2D" uid="uid://bqkth6diqnmtu" path="res://demos/september/sprite/Geno View.png" id="3_avyjx"]
+[ext_resource type="Script" uid="uid://dut12f744fc2s" path="res://demos/september/specific/trigger_fader.gd" id="3_exxv7"]
+[ext_resource type="Texture2D" uid="uid://csyfqjrs6cq2y" path="res://demos/september/sprite/Geno View Bandit.png" id="5_cl5uo"]
+[ext_resource type="Texture2D" uid="uid://d1w5f80ssvy4v" path="res://demos/september/sprite/Geno View Reka 1.png" id="6_q1hvi"]
+[ext_resource type="Texture2D" uid="uid://5bx7hebrp0qu" path="res://demos/september/sprite/Geno View Reka 2.png" id="7_tampr"]
+
+[node name="Control" type="Control" unique_id=1123156141]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_fgoqf")
+
+[node name="Black" type="TextureRect" parent="." unique_id=1624664861]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_exxv7")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Geno View" type="TextureRect" parent="." unique_id=1606361945]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_avyjx")
+expand_mode = 1
+stretch_mode = 6
+script = ExtResource("3_exxv7")
+show_trigger = PackedStringArray("geno_shop")
+
+[node name="Geno View Bandit" type="TextureRect" parent="Geno View" unique_id=1878467490]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("5_cl5uo")
+expand_mode = 1
+stretch_mode = 6
+script = ExtResource("3_exxv7")
+show_trigger = PackedStringArray("bandit_shop")
+
+[node name="Geno View Reka 1" type="TextureRect" parent="Geno View" unique_id=1327856689]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("6_q1hvi")
+expand_mode = 1
+stretch_mode = 6
+script = ExtResource("3_exxv7")
+show_trigger = PackedStringArray("reka_square")
+
+[node name="Geno View Reka 2" type="TextureRect" parent="Geno View" unique_id=1516038556]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("7_tampr")
+expand_mode = 1
+stretch_mode = 6
+script = ExtResource("3_exxv7")
+show_trigger = PackedStringArray("reka_shop")
+
+[node name="MainDialogueView" parent="." unique_id=2033588754 instance=ExtResource("2_if7ko")]
+layout_mode = 1

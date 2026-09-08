@@ -13,7 +13,10 @@ const DEFAULT_BRANCH := "main"
 @export var conversation:PSConversation
 @export var state:PSDialogueState
 
+var expression:Expression
+
 func _ready():
+	expression = Expression.new()
 	add_to_group(group)
 	if !state:
 		state = PSDialogueState.new()
@@ -35,14 +38,20 @@ func has_property_or_flag(data:Dictionary, property): return true if data.get(pr
 #Choices linking to hubs flagged with HubProperties.once will not be accessible
 #if they have been visited in `align`. This history can be controlled through the
 #`state.covered` variable.
-func list(position: int, filter:=no_filter) -> Array[Dictionary]:
+func list_choices(position: int, filter:=no_filter) -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
 	if conversation == null:
 		return result
 	for connection in conversation.get_connections_from(position):
 		var to_id: int = int(connection.get(ChoiceProperties.to_id, -1))
 		
+		if to_id == 38:
+			pass
+		
 		if get_property(to_id, HubProperties.once) and to_id in state.covered:
+			continue
+		
+		if !check_conditions(to_id):
 			continue
 		
 		var choice := {
@@ -61,7 +70,7 @@ func list(position: int, filter:=no_filter) -> Array[Dictionary]:
 #returns a copy of the body with BodyProperties.success filled, and the position,
 #branch, and choices updated to the body's current position in the conversation.
 #
-#`choice` is validated against `list` on the body's position, but the user's
+#`choice` is validated against `list_choices` on the body's position, but the user's
 #`filter` is *not* used. The user's filter represents visibility, so the user
 #should simply not see choices that are not available to them specifically. 
 #
@@ -82,7 +91,7 @@ func align(body: Dictionary[BodyProperties, Variant], choice: String, filter:=no
 	var result := body.duplicate()
 	
 	var valid := false
-	for c in list(from_position):
+	for c in list_choices(from_position):
 		if str(c.get(ChoiceProperties.from_choice, "")) == choice:
 			valid = true
 			break
@@ -127,17 +136,86 @@ func _traverse(body: Dictionary[BodyProperties, Variant], position: int, choice:
 		if not branch.is_empty():
 			body[BodyProperties.branch] = branch
 		
+		_evaluate_statements(hub.get(HubProperties.statements, ""))
+		_evaluate_callbacks(hub.get(HubProperties.callbacks, ""))
+		
 		if not (hub.get(HubProperties.auto, false) as bool):
 			body[BodyProperties.success] = true
 			break
 		
-		var available := list(current, filter)
+		var available := list_choices(current, filter)
 		if available.is_empty():
 			body[BodyProperties.success] = false
 			break
 		current = int(available[0].get(ChoiceProperties.to_id, -1))
 	
 	return body
+
+signal state_variable_changed(simulator:PSSimulator, variable:String, value)
+const ASSIGNMENTS:PackedStringArray = [
+	"=",
+	"+=",
+	"-=",
+	"++",
+	"--"
+]
+func _evaluate_statements(statements:String) -> void:
+	var statements_arr := statements.split("\n", false)
+	
+	for s in statements_arr:
+		var partial_left:String
+		var partial_assignment:String
+		var partial_right:String
+		for a in ASSIGNMENTS:
+			var index := s.find(a)
+			if index == -1: continue
+			partial_left = s.substr(0, index).strip_edges()
+			partial_assignment = s.substr(index, a.length())
+			partial_right = s.substr(index + a.length())
+		
+		if partial_assignment.is_empty():
+			push_error("Could not locate assignment in statement: ", s)
+			continue
+		
+		var value_right = 0
+		if !partial_right.is_empty():
+			expression.parse(partial_right, state.scope.get_names())
+			value_right = expression.execute([], state.scope, true, false)
+		
+		var value_left = state.scope.get(partial_left)
+		
+		match partial_assignment:
+			"=":
+				pass
+			"+=":
+				value_right = value_left + value_right
+			"-=":
+				value_right = value_left - value_right
+			"++":
+				value_right = value_left + 1
+			"--":
+				value_right = value_left - 1
+		
+		if value_right != value_left:
+			state.scope.set(partial_left, value_right)
+			state_variable_changed.emit(self, partial_left, value_right)
+
+signal callback(simulator:PSSimulator, args:PackedStringArray)
+func _evaluate_callbacks(callbacks:String) -> void:
+	var callbacks_arr := callbacks.split("\n", false)
+	for c in callbacks_arr:
+		callback.emit(self, PackedStringArray(c.split(" ", false)))
+
+func check_conditions(position:int) -> bool:
+	var hub := _hub(position)
+	var passing := true
+	var conditions := str(hub.get(HubProperties.conditions, "")).split("\n", false)
+	
+	for c in conditions:
+		expression.parse(c, state.scope.get_names())
+		passing = passing and expression.execute([], state.scope, true, true)
+	
+	return passing
 
 #Return the position that would result from making choice `choice` from
 #position `position`.

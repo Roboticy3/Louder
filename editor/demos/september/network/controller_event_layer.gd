@@ -10,7 +10,10 @@ enum EventType {
 	CATCH_UP,
 }
 
-signal event(type:EventType, controller:PSController)
+signal choice_event(controller:PSController)
+signal connect_event(controller:PSController)
+signal disconnect_event(controller:PSController)
+signal catch_up_event(controller:PSController)
 
 #eventually want to replace this with more intentional selection of simulators based on user input in the world
 @export var simulator_group := &"ps_simulator"
@@ -49,12 +52,12 @@ func connect_local(controller:PSController) -> void:
 		return
 	
 	connected_controller = controller
-	event.emit(EventType.CONNECT, controller)
+	connect_event.emit(controller)
 
 func disconnect_controller(controller:PSController) -> void:
 	if connected_controller == controller:
 		connected_controller = null
-		event.emit(EventType.DISCONNECT, controller)
+		disconnect_event.emit(controller)
 
 # --- choices -------------------------------------------------------------
 
@@ -157,14 +160,14 @@ func sync_controller_data(event_type:EventType, original_authority:int, controll
 				if connected_controller != controller:
 					
 					connected_controller = controller
-					event.emit(EventType.CONNECT, controller)
+					connect_event.emit(controller)
 		EventType.DISCONNECT:
 			if multiplayer.get_unique_id() == original_authority:
 				if connected_controller == controller:
 					connected_controller = null
-					event.emit(EventType.DISCONNECT, controller)
+					disconnect_event.emit(controller)
 		EventType.CHOICE:
-			event.emit(EventType.CHOICE, controller)
+			choice_event.emit(controller)
 
 #late-to-join peers might have missed out on updates
 func request_catch_up(controller: PSController):
@@ -191,7 +194,7 @@ func _sync_catch_up(controller_path:NodePath, data:Dictionary, speak_as:Array, l
 	controller.data = data
 	controller.speak_as = speak_as
 	controller.listen_to = listen_to
-	event.emit(EventType.CATCH_UP, controller)
+	catch_up_event.emit(controller)
 
 func get_requester_id() -> int:
 	var id := multiplayer.get_remote_sender_id()

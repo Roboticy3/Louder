@@ -13,7 +13,6 @@ grow_vertical = 2
 script = ExtResource("1_ll1a4")
 element_container = NodePath("DialogueElements")
 choice_container = NodePath("ChoiceElements")
-disabled = null
 
 [node name="Spacer" type="Control" parent="." unique_id=1699966593]
 layout_mode = 2

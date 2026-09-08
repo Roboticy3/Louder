@@ -11,10 +11,13 @@ const FILTER:Dictionary[BodyProperties, bool] = {
 @export var speaker_text:RichTextLabel
 
 func _ready() -> void:
-	ControllerEventLayer.event.connect(_on_controller_event)
-	_on_controller_event(0, ControllerEventLayer.get_connected_controller())
+	ControllerEventLayer.choice_event.connect(_on_controller_event)
+	ControllerEventLayer.connect_event.connect(_on_controller_event)
+	ControllerEventLayer.disconnect_event.connect(_on_controller_event)
+	ControllerEventLayer.catch_up_event.connect(_on_controller_event)
+	_on_controller_event(ControllerEventLayer.get_connected_controller())
 
-func _on_controller_event(_type, controller:PSController) -> void:
+func _on_controller_event(controller:PSController) -> void:
 	
 	var current_controller := ControllerEventLayer.get_connected_controller()
 	if !current_controller or current_controller != controller:
