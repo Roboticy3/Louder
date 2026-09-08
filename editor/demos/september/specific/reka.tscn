@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://dnwmrvllc2101" path="res://demos/september/ui/main_dialogue_view.tscn" id="2_1bhkb"]
 [ext_resource type="Texture2D" uid="uid://b8al01yx5jq1o" path="res://demos/september/sprite/Reka View 1.png" id="2_be0wp"]
 [ext_resource type="Texture2D" uid="uid://bkhql6b61uqwg" path="res://demos/september/sprite/black.tres" id="2_ewuah"]
-[ext_resource type="Script" uid="uid://dut12f744fc2s" path="res://demos/september/specific/trigger_fader.gd" id="3_17usu"]
+[ext_resource type="Script" uid="uid://dut12f744fc2s" path="res://demos/september/specific/variable_fader_canvas.gd" id="3_17usu"]
 [ext_resource type="PackedScene" uid="uid://cip56nadhhph1" path="res://demos/september/ui/secondary_dialogue_view.tscn" id="3_be0wp"]
 [ext_resource type="Texture2D" uid="uid://7opd06klhxt6" path="res://demos/september/sprite/Reka View 1 Bandit.png" id="3_xxbk7"]
 [ext_resource type="Texture2D" uid="uid://c1tfnjsoi78q2" path="res://demos/september/sprite/Reka View 1 Geno.png" id="4_17usu"]
@@ -31,7 +31,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_ewuah")
 
-[node name="Reka View 1" type="TextureRect" parent="." unique_id=1078003390]
+[node name="reka_square" type="TextureRect" parent="." unique_id=1078003390]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -42,9 +42,8 @@ texture = ExtResource("2_be0wp")
 expand_mode = 1
 stretch_mode = 6
 script = ExtResource("3_17usu")
-show_trigger = PackedStringArray("reka_square")
 
-[node name="Reka View 1 Bandit" type="TextureRect" parent="Reka View 1" unique_id=963220423]
+[node name="bandit_shop" type="TextureRect" parent="reka_square" unique_id=963220423]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -55,9 +54,8 @@ texture = ExtResource("3_xxbk7")
 expand_mode = 1
 stretch_mode = 6
 script = ExtResource("3_17usu")
-show_trigger = PackedStringArray("bandit_shop")
 
-[node name="Reka View 1 Geno" type="TextureRect" parent="Reka View 1" unique_id=1184510832]
+[node name="geno_shop" type="TextureRect" parent="reka_square" unique_id=1184510832]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -68,9 +66,8 @@ texture = ExtResource("4_17usu")
 expand_mode = 1
 stretch_mode = 6
 script = ExtResource("3_17usu")
-show_trigger = PackedStringArray("geno_shop")
 
-[node name="Reka View 2" type="TextureRect" parent="." unique_id=591384832]
+[node name="reka_shop" type="TextureRect" parent="." unique_id=591384832]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -81,9 +78,8 @@ texture = ExtResource("5_ewuah")
 expand_mode = 1
 stretch_mode = 6
 script = ExtResource("3_17usu")
-show_trigger = PackedStringArray("reka_shop")
 
-[node name="Reka View 2 Geno" type="TextureRect" parent="Reka View 2" unique_id=382540219]
+[node name="geno_shop" type="TextureRect" parent="reka_shop" unique_id=382540219]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -94,7 +90,6 @@ texture = ExtResource("6_654kt")
 expand_mode = 1
 stretch_mode = 6
 script = ExtResource("3_17usu")
-show_trigger = PackedStringArray("geno_shop")
 
 [node name="MainDialogueView" parent="." unique_id=2033588754 instance=ExtResource("2_1bhkb")]
 layout_mode = 1

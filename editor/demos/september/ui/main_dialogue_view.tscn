@@ -7,6 +7,32 @@
 [ext_resource type="Script" uid="uid://bk5bowxpxjfu3" path="res://demos/september/ui/scroll_shrinker.gd" id="5_6tn8e"]
 [ext_resource type="Script" uid="uid://bt5qiks6r8rsq" path="res://demos/september/ui/scroll_margin.gd" id="5_lqc4t"]
 [ext_resource type="PackedScene" uid="uid://ctpltkbarsbjg" path="res://demos/september/ui/main_dialogue_debug.tscn" id="5_qjalj"]
+[ext_resource type="Script" uid="uid://pdtwpxufvewd" path="res://demos/september/ui/main_dialogue_audio.gd" id="8_gt1ev"]
+[ext_resource type="AudioStream" uid="uid://c6w30j88ibuoq" path="res://demos/september/audio/dialogue_slides_1.wav" id="9_gaoq2"]
+[ext_resource type="AudioStream" uid="uid://b1435ghe4mrhk" path="res://demos/september/audio/dialogue_pop.wav" id="9_k0wq2"]
+[ext_resource type="AudioStream" uid="uid://b36qqp54ki8n" path="res://demos/september/audio/dialogue_pop_2.wav" id="10_kx0k5"]
+[ext_resource type="AudioStream" uid="uid://cwj5eb15uergp" path="res://demos/september/audio/dialogue_slides_1-2.wav" id="10_ol7pl"]
+[ext_resource type="AudioStream" uid="uid://b11st272ie4la" path="res://demos/september/audio/dialogue_slides_1-3.wav" id="11_c7nc5"]
+[ext_resource type="AudioStream" uid="uid://duy28reubb035" path="res://demos/september/audio/dialogue_slides_1-4.wav" id="12_tmfol"]
+[ext_resource type="AudioStream" uid="uid://cq261rqp3xpaq" path="res://demos/september/audio/dialogue_slide_6.wav" id="13_gaoq2"]
+[ext_resource type="AudioStream" uid="uid://d3dmebns4tecq" path="res://demos/september/audio/dialogue_slide_5.wav" id="13_sob2b"]
+[ext_resource type="AudioStream" uid="uid://dre6qyec4pbw2" path="res://demos/september/audio/dialogue_slide_7.wav" id="14_58ll1"]
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_gt1ev"]
+random_pitch = 1.0594631
+streams_count = 7
+stream_0/stream = ExtResource("9_gaoq2")
+stream_1/stream = ExtResource("10_ol7pl")
+stream_2/stream = ExtResource("11_c7nc5")
+stream_3/stream = ExtResource("12_tmfol")
+stream_4/stream = ExtResource("13_sob2b")
+stream_5/stream = ExtResource("13_gaoq2")
+stream_6/stream = ExtResource("14_58ll1")
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_6tn8e"]
+streams_count = 2
+stream_0/stream = ExtResource("9_k0wq2")
+stream_1/stream = ExtResource("10_kx0k5")
 
 [node name="MainDialogueView" type="Control" unique_id=2033588754 node_paths=PackedStringArray("scrolling_dialogue_feed", "scrolling_dialogue_thinking")]
 layout_mode = 3
@@ -81,3 +107,14 @@ max_size_reference = NodePath("../VBoxContainer/Control/ScrollContainerMaxFit")
 [node name="MainDialogueDebug" parent="." unique_id=2025365747 instance=ExtResource("5_qjalj")]
 visible = false
 layout_mode = 1
+
+[node name="MainDialogueAudio" type="Node" parent="." unique_id=835454825 node_paths=PackedStringArray("basic_choice", "special_choice")]
+script = ExtResource("8_gt1ev")
+basic_choice = NodePath("AudioStreamPlayer")
+special_choice = NodePath("AudioStreamPlayer2")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="MainDialogueAudio" unique_id=817877844]
+stream = SubResource("AudioStreamRandomizer_gt1ev")
+
+[node name="AudioStreamPlayer2" type="AudioStreamPlayer" parent="MainDialogueAudio" unique_id=1065397571]
+stream = SubResource("AudioStreamRandomizer_6tn8e")

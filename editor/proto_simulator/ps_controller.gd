@@ -99,6 +99,15 @@ func get_position() -> int:
 func get_branch() -> String:
 	return data.get(BodyProperties.branch, PSSimulator.DEFAULT_BRANCH)
 
+func get_success() -> bool:
+	return data.get(BodyProperties.success, true)
+
+func get_speaker() -> String:
+	return data.get(BodyProperties.speaker, "")
+
+func is_listen_to():
+	return get_speaker() in listen_to
+
 func get_choices() -> Array[Dictionary]:
 	return simulator.list_choices(get_position(), _filter_valid_choice)
 
