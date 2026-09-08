@@ -4,12 +4,13 @@
 [ext_resource type="Script" uid="uid://dqgsy05dmmkko" path="res://demos/september/ui/scrolling_dialogue_item.gd" id="1_ll1a4"]
 
 [node name="ScrollingDialogueItem" type="VBoxContainer" unique_id=489570033 node_paths=PackedStringArray("element_container", "choice_container")]
-anchors_preset = 14
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = -1
+anchor_right = 0.372
+anchor_bottom = 0.108
+offset_left = 0.22393799
+offset_right = -0.54400635
+offset_bottom = 0.01599884
+size_flags_horizontal = 3
 script = ExtResource("1_ll1a4")
 element_container = NodePath("DialogueElements")
 choice_container = NodePath("ChoiceElements")

@@ -103,33 +103,41 @@ func align(body: Dictionary[BodyProperties, Variant], choice: String, filter:=no
 	if result.get(BodyProperties.branch, DEFAULT_BRANCH) != from_branch:
 		result[BodyProperties.branch_changed] = true
 	
-	state.covered[result.get(BodyProperties.position, -1)] = true
-	
 	return result
 
 #Move `body` to `position`, then auto-advance through any auto hubs until a
 #non-auto hub is reached, or the conversation runs dry. `taken_choice` is the
 #choice that moved the body here ("" when starting a conversation).
 func _traverse(body: Dictionary[BodyProperties, Variant], position: int, choice: String, filter: Callable) -> Dictionary[BodyProperties, Variant]:
-	if position == 21:
+	if position == 79:
 		pass
 	
 	var visited := {}
 	var current := position
+	var dominating: Dictionary
 	while true:
 		if current < 0 or current in visited:
 			body[BodyProperties.success] = false
 			break
+		state.covered[current] = true
 		visited[current] = true
 		
 		var hub := _hub(current)
 		body[BodyProperties.position] = current
-		if hub.has(HubProperties.speaker):
-			body[BodyProperties.speaker] = hub[HubProperties.speaker]
 		
-		if hub.has(HubProperties.text):
-			body[BodyProperties.text] = hub[HubProperties.text]
-		elif !choice.is_empty():
+		var auto := bool(hub.get(HubProperties.auto, false))
+		
+		_project_hub_to_body(hub, body)
+		
+		var text_changed := !str(hub.get(HubProperties.text, "")).is_empty()
+		if !auto and !dominating.is_empty():
+			
+			_project_hub_to_body(dominating, body, true)
+			
+			if !text_changed:
+				text_changed = !str(hub.get(HubProperties.text, "")).is_empty()
+		
+		if !text_changed and !choice.is_empty():
 			body[BodyProperties.text] = choice
 		
 		var branch := str(hub.get(HubProperties.branch, ""))
@@ -139,7 +147,10 @@ func _traverse(body: Dictionary[BodyProperties, Variant], position: int, choice:
 		_evaluate_statements(hub.get(HubProperties.statements, ""))
 		_evaluate_callbacks(hub.get(HubProperties.callbacks, ""))
 		
-		if not (hub.get(HubProperties.auto, false) as bool):
+		if auto:
+			dominating = hub
+		else:
+			dominating = {}
 			body[BodyProperties.success] = true
 			break
 		
@@ -150,6 +161,19 @@ func _traverse(body: Dictionary[BodyProperties, Variant], position: int, choice:
 		current = int(available[0].get(ChoiceProperties.to_id, -1))
 	
 	return body
+
+func _project_hub_to_body(hub:Dictionary, body:Dictionary[BodyProperties, Variant], is_domination:=false) -> void:
+	var dominated = false
+	if hub.has(HubProperties.speaker):
+		body[BodyProperties.speaker] = hub[HubProperties.speaker]
+		dominated = is_domination
+	
+	if hub.has(HubProperties.text):
+		body[BodyProperties.text] = hub[HubProperties.text]
+		dominated = is_domination
+	
+	if dominated:
+		body[BodyProperties.dominated] = true
 
 signal state_variable_changed(simulator:PSSimulator, variable:String, value)
 const ASSIGNMENTS:PackedStringArray = [

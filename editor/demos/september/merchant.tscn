@@ -9,17 +9,8 @@
 [ext_resource type="Script" uid="uid://dshl0su1su5xe" path="res://proto_simulator/ps_simulator.gd" id="6_602u8"]
 [ext_resource type="Script" uid="uid://inieasxjm4nb" path="res://proto_simulator/ps_conversation.gd" id="7_nbaqi"]
 [ext_resource type="Script" uid="uid://cpa1hv77k8m77" path="res://demos/september/specific/simulator_state_synchronizer.gd" id="9_cwy78"]
-[ext_resource type="AudioStream" uid="uid://b2ocyt7xs7wvk" path="res://demos/september/audio/Demo-loop.mp3" id="10_xrcy2"]
-[ext_resource type="Script" uid="uid://p3etscd8wcvl" path="res://demos/september/specific/constructed_playlist.gd" id="11_ae3ac"]
-[ext_resource type="AudioStream" uid="uid://bp5msktcgvpl4" path="res://demos/september/audio/Demo-main.mp3" id="12_l06m1"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_nunj6"]
-
-[sub_resource type="AudioStreamInteractive" id="AudioStreamInteractive_pkv0p"]
-clip_count = 1
-clip_0/name = &"Demo Loop"
-clip_0/stream = ExtResource("10_xrcy2")
-clip_0/auto_advance = 0
 
 [node name="Merchant" type="Node2D" unique_id=438456980]
 
@@ -103,15 +94,5 @@ metadata/_custom_type_script = "uid://inieasxjm4nb"
 
 [node name="SimulatorCallbackListener" type="Node" parent="." unique_id=523254008]
 script = ExtResource("9_cwy78")
-
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1334392335 node_paths=PackedStringArray("player")]
-stream = SubResource("AudioStreamInteractive_pkv0p")
-autoplay = true
-script = ExtResource("11_ae3ac")
-player = NodePath(".")
-components = Dictionary[String, AudioStream]({
-"geno_shop": ExtResource("12_l06m1"),
-"reka_square": ExtResource("12_l06m1")
-})
 
 [connection signal="state_variable_changed" from="Louder/PSSimulator" to="SimulatorCallbackListener" method="_on_state_changed_server"]

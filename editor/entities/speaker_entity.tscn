@@ -78,6 +78,15 @@ wrap_mode = 0
 oneliner = true
 inliner = true
 
+[node name="voice" parent="TextSectionWrapper" unique_id=1551135441 groups=["autocomplete_speaker", "hub_component"] instance=ExtResource("2_kglcw")]
+layout_mode = 2
+size_flags_vertical = 0
+placeholder_text = "Voice (audio stream path)"
+wrap_mode = 0
+delimiter_strings = Array[String](["\" \"", "' '"])
+oneliner = true
+inliner = true
+
 [node name="HBoxContainer" type="HBoxContainer" parent="TextSectionWrapper" unique_id=350594]
 layout_mode = 2
 

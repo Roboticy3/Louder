@@ -93,7 +93,6 @@
 	},
 	{
 		"branch": "shop",
-		"callbacks": "kick Reka",
 		"conversation_id": "15",
 		"position_offset:x": "1640.0",
 		"position_offset:y": "-1240.0",
@@ -264,6 +263,7 @@
 		"position_offset:x": "-420.0",
 		"position_offset:y": "-580.0",
 		"speaker": "Geno",
+		"statements": "geno_blank = 1\nreka_blank = 1",
 		"text": "Small crystals and rusted metal sit on temporary shelving. The most prized possession in the shop is an account book behind the front desk. Though only under an awning, the inside of the shop feels like the inside of a building. 2 men on opposite sides of the counter are haggling over an ornate dagger. Both are rough an sandy. ",
 		"type": "hub"
 	},
@@ -426,6 +426,7 @@
 		"conversation_id": "47",
 		"position_offset:x": "-400.0",
 		"position_offset:y": "2700.0",
+		"statements": "geno_blank = 1\nreka_blank = 1",
 		"type": "hub"
 	},
 	{
@@ -464,7 +465,7 @@
 		"private": true,
 		"recipient": "Reka",
 		"speaker": "The Silent Square",
-		"statements": "reka_square = 1",
+		"statements": "reka_square = 1\nreka_blank = 0",
 		"text": "This area of the palace is still a public area, but an array crumbling stone steps separate it from the tourism section. So, why are there shops? Well, there's a tacit a agreement between a merchant guild and the palace guard to not interfere in this area. No tourists means no public risk. And so, it's known as the silent square. ",
 		"type": "hub"
 	},
@@ -566,7 +567,7 @@
 		"position_offset:x": "4000.0",
 		"position_offset:y": "3560.0",
 		"speaker": "Speed",
-		"statements": "geno_shop = 1",
+		"statements": "geno_shop = 1\ngeno_blank = 0",
 		"text": "The eyes of a suspicious Bandit peer over the desk of your shop. At the same moment, glare from the desert morning pierces the clouds. Your eyes are forced open. Stay alert.",
 		"type": "hub"
 	},
@@ -600,7 +601,6 @@
 	},
 	{
 		"auto": true,
-		"callbacks": "morale Geno -1",
 		"conversation_id": "73",
 		"position_offset:x": "3600.0",
 		"position_offset:y": "4860.0",
@@ -617,6 +617,105 @@
 		"speaker": "Bandit",
 		"statements": "bandit_shop = 1",
 		"text": "\"Did you get the decorations?\"",
+		"type": "hub"
+	},
+	{
+		"choices": [
+			"(Try to center yourself in the real world.)",
+			"\"So are you buying something or not?\""
+		],
+		"conversation_id": "75",
+		"position_offset:x": "5340.0",
+		"position_offset:y": "3740.0",
+		"speaker": "Bandit",
+		"text": "\"Don't make me spell it out for you.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "74",
+		"is_choice": true,
+		"position_offset:x": "4920.0",
+		"position_offset:y": "3820.0",
+		"speaker": "Geno",
+		"type": "hub"
+	},
+	{
+		"choices": [
+			"Thanks for helping me.",
+			"\"Sorry Ace, I was kidding. The dagger.\""
+		],
+		"conversation_id": "76",
+		"position_offset:x": "5760.0",
+		"position_offset:y": "3560.0",
+		"speaker": "Speed",
+		"statements": "speed_tired = 1\nbandit_recognized = 1",
+		"text": "Last night, I made arrangements with this man. He goes by \"Ace\" at the table and beat you at shoot. This version of him is much more serious.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "79",
+		"is_choice": true,
+		"position_offset:x": "6244.20458984375",
+		"position_offset:y": "4104.7451171875",
+		"speaker": "Geno",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"choices": [
+			"(Choice 0)",
+			"(Choice 1)"
+		],
+		"conversation_id": "80",
+		"position_offset:x": "6695.5634765625",
+		"position_offset:y": "4130.85009765625",
+		"statements": "dagger_shop = 1",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "81",
+		"position_offset:x": "7151.56201171875",
+		"position_offset:y": "4058.7958984375",
+		"private": true,
+		"recipient": "Geno",
+		"speaker": "Geno",
+		"text": "I pull out a dagger with an Elven design. Though I'd bet it's not actually that old.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "82",
+		"position_offset:x": "7180.0",
+		"position_offset:y": "4500.0",
+		"speaker": "Geno",
+		"text": "The merchant pulls out a dull-looking dagger with a hide sheath. Maybe it really is decorational.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "77",
+		"is_choice": true,
+		"once": true,
+		"position_offset:x": "5720.0",
+		"position_offset:y": "4680.0",
+		"speaker": "Geno",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"conversation_id": "83",
+		"position_offset:x": "6140.0",
+		"position_offset:y": "4660.0",
+		"speaker": "Bandit",
+		"text": "Yes. The decorations.",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"conversation_id": "78",
+		"once": true,
+		"position_offset:x": "6220.0",
+		"position_offset:y": "3700.0",
+		"speaker": "Speed",
+		"text": "Don't mention it. Actually, do. I'm not used to working this hard. And I wouldn't have had to if I didn't space out.",
 		"type": "hub"
 	},
 	{
@@ -1070,9 +1169,87 @@
 		"type": "connection"
 	},
 	{
-		"position:x": "2993.10327148438",
-		"position:y": "2320.26953125",
+		"from_choice": "\"Decorations?\"",
+		"from_id": "70",
+		"to_id": "74",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "74",
+		"to_id": "75",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Try to center yourself in the real world.)",
+		"from_id": "75",
+		"to_id": "76",
+		"type": "connection"
+	},
+	{
+		"from_choice": "\"So are you buying something or not?\"",
+		"from_id": "75",
+		"to_id": "77",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Thanks for helping me.",
+		"from_id": "76",
+		"to_id": "78",
+		"type": "connection"
+	},
+	{
+		"from_choice": "\"Sorry Ace, I was kidding. The dagger.\"",
+		"from_id": "76",
+		"to_id": "79",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "79",
+		"to_id": "80",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 0)",
+		"from_id": "80",
+		"to_id": "81",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 1)",
+		"from_id": "80",
+		"to_id": "82",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "77",
+		"to_id": "83",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "83",
+		"to_id": "75",
+		"type": "connection"
+	},
+	{
+		"from_choice": "\"Of course.\"",
+		"from_id": "70",
+		"to_id": "79",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "78",
+		"to_id": "76",
+		"type": "connection"
+	},
+	{
+		"position:x": "3774.48681640625",
+		"position:y": "2558.36254882813",
 		"type": "camera",
-		"zoom": "1.06408441066742"
+		"zoom": "0.72989809513092"
 	}
 ]

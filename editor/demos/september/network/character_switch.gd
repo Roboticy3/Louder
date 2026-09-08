@@ -17,3 +17,4 @@ func toggle_based_on_character():
 	var character_data: String = my_data.get(ClientProperties.character, "")
 	var enable := !character_data.is_empty() and character_data == character
 	set("visible", enable)
+	process_mode = Node.PROCESS_MODE_INHERIT if enable else PROCESS_MODE_DISABLED

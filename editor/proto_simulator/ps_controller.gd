@@ -84,6 +84,31 @@ func can_spectate(other:PSController) -> bool:
 func get_text(property:String) -> String:
 	return str(data.get(property))
 
+func get_position() -> int:
+	return data.get(BodyProperties.position, -1)
+
+func get_branch() -> String:
+	return data.get(BodyProperties.branch, PSSimulator.DEFAULT_BRANCH)
+
+
+func get_speaker() -> String:
+	return data.get(BodyProperties.speaker, "")
+
+func is_listen_to():
+	return get_speaker() in listen_to
+
+func is_successful() -> bool:
+	return data.get(BodyProperties.success, true)
+
+func is_dominated() -> bool:
+	return data.get(BodyProperties.dominated, false)
+
+func get_choices() -> Array[Dictionary]:
+	return simulator.list_choices(get_position(), _filter_valid_choice)
+
+func branch_changed() -> bool:
+	return data.get(BodyProperties.branch_changed, false)
+
 func _filter_thinking() -> Array:
 	var thinking := {}
 	for controller in get_tree().get_nodes_in_group(group):
@@ -92,27 +117,6 @@ func _filter_thinking() -> Array:
 			for speaker in controller.speak_as:
 				thinking[speaker] = true
 	return thinking.keys()
-
-func get_position() -> int:
-	return data.get(BodyProperties.position, -1)
-
-func get_branch() -> String:
-	return data.get(BodyProperties.branch, PSSimulator.DEFAULT_BRANCH)
-
-func get_success() -> bool:
-	return data.get(BodyProperties.success, true)
-
-func get_speaker() -> String:
-	return data.get(BodyProperties.speaker, "")
-
-func is_listen_to():
-	return get_speaker() in listen_to
-
-func get_choices() -> Array[Dictionary]:
-	return simulator.list_choices(get_position(), _filter_valid_choice)
-
-func branch_changed() -> bool:
-	return data.get(BodyProperties.branch_changed, false)
 
 func _get_property(property:HubProperties, default=null) -> Variant:
 	return simulator.get_property(get_position(), property, default)

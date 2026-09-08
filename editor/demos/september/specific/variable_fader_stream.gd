@@ -28,6 +28,8 @@ func _on_state_changed(_s, variable:String, value):
 			fade_out()
 
 func fade_in():
+	if not playing:
+		play()
 	volume_linear = 0.0
 	var t := create_tween()
 	t.tween_property(self, "volume_linear", initial_volume, 0.65)
@@ -35,3 +37,4 @@ func fade_in():
 func fade_out():
 	var t := create_tween()
 	t.tween_property(self, "volume_linear", 0.0, 0.65)
+	t.finished.connect(stop)

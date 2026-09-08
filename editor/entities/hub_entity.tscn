@@ -208,10 +208,6 @@ placeholder_text = "Conditions"
 layout_mode = 2
 placeholder_text = "Statements"
 
-[node name="callbacks" parent="OtherSection/VBoxContainer" unique_id=312146840 groups=["autocomplete_expression", "hub_component"] instance=ExtResource("3_f5yrs")]
-layout_mode = 2
-placeholder_text = "callback arg1 arg2 ..."
-
 [node name="ChoicesSection" type="GridContainer" parent="." unique_id=255423357]
 layout_mode = 2
 columns = 4

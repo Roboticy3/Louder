@@ -56,6 +56,7 @@ func set_controller(controller:PSController):
 				button.shortcut = Shortcut.new()
 				button.shortcut.events.append(input_event)
 				button.text = ("%d. %s" % [selection_index, button.text]) 
+				button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 			
 			button.pressed.connect(_on_choice_pressed.bind(choice_text))
 			choice_container.add_child(button)

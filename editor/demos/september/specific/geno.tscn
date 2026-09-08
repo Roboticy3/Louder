@@ -8,6 +8,33 @@
 [ext_resource type="Texture2D" uid="uid://csyfqjrs6cq2y" path="res://demos/september/sprite/Geno View Bandit.png" id="5_cl5uo"]
 [ext_resource type="Texture2D" uid="uid://d1w5f80ssvy4v" path="res://demos/september/sprite/Geno View Reka 1.png" id="6_q1hvi"]
 [ext_resource type="Texture2D" uid="uid://5bx7hebrp0qu" path="res://demos/september/sprite/Geno View Reka 2.png" id="7_tampr"]
+[ext_resource type="AudioStream" uid="uid://dag7bhs10ap5b" path="res://demos/september/audio/Demo3-loop.mp3" id="9_tampr"]
+[ext_resource type="Script" uid="uid://dwci644iorqlj" path="res://demos/september/specific/variable_fader_stream.gd" id="10_5snrs"]
+[ext_resource type="AudioStream" uid="uid://oxwefiqf24a6" path="res://demos/september/audio/Demo3-main.mp3" id="11_01e0q"]
+[ext_resource type="Script" uid="uid://pdtwpxufvewd" path="res://demos/september/ui/main_dialogue_audio.gd" id="12_uuvyx"]
+[ext_resource type="AudioStream" uid="uid://c6w30j88ibuoq" path="res://demos/september/audio/dialogue_slides_1.wav" id="13_8sve8"]
+[ext_resource type="AudioStream" uid="uid://cwj5eb15uergp" path="res://demos/september/audio/dialogue_slides_1-2.wav" id="14_hfdov"]
+[ext_resource type="AudioStream" uid="uid://b11st272ie4la" path="res://demos/september/audio/dialogue_slides_1-3.wav" id="15_r0if7"]
+[ext_resource type="AudioStream" uid="uid://duy28reubb035" path="res://demos/september/audio/dialogue_slides_1-4.wav" id="16_ovk7e"]
+[ext_resource type="AudioStream" uid="uid://d3dmebns4tecq" path="res://demos/september/audio/dialogue_slide_5.wav" id="17_xaxpp"]
+[ext_resource type="AudioStream" uid="uid://cq261rqp3xpaq" path="res://demos/september/audio/dialogue_slide_6.wav" id="18_j2u2i"]
+[ext_resource type="AudioStream" uid="uid://dre6qyec4pbw2" path="res://demos/september/audio/dialogue_slide_7.wav" id="19_ttvgv"]
+[ext_resource type="AudioStream" uid="uid://b1435ghe4mrhk" path="res://demos/september/audio/dialogue_pop.wav" id="20_cdvv2"]
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_ntx1s"]
+random_pitch = 1.0594631
+streams_count = 7
+stream_0/stream = ExtResource("13_8sve8")
+stream_1/stream = ExtResource("14_hfdov")
+stream_2/stream = ExtResource("15_r0if7")
+stream_3/stream = ExtResource("16_ovk7e")
+stream_4/stream = ExtResource("17_xaxpp")
+stream_5/stream = ExtResource("18_j2u2i")
+stream_6/stream = ExtResource("19_ttvgv")
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_ip3j6"]
+streams_count = 1
+stream_0/stream = ExtResource("20_cdvv2")
 
 [node name="Control" type="Control" unique_id=1123156141]
 layout_mode = 3
@@ -77,5 +104,27 @@ expand_mode = 1
 stretch_mode = 6
 script = ExtResource("3_exxv7")
 
-[node name="MainDialogueView" parent="." unique_id=2033588754 instance=ExtResource("2_if7ko")]
-layout_mode = 1
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1387162157]
+
+[node name="MainDialogueView" parent="CanvasLayer" unique_id=2033588754 instance=ExtResource("2_if7ko")]
+
+[node name="BackgroundAudio" type="Node" parent="." unique_id=973718887]
+
+[node name="geno_blank" type="AudioStreamPlayer" parent="BackgroundAudio" unique_id=896838602]
+stream = ExtResource("9_tampr")
+script = ExtResource("10_5snrs")
+
+[node name="geno_shop" type="AudioStreamPlayer" parent="BackgroundAudio" unique_id=1129960654]
+stream = ExtResource("11_01e0q")
+script = ExtResource("10_5snrs")
+
+[node name="MainDialogueAudio" type="Node" parent="." unique_id=1384410909 node_paths=PackedStringArray("outer_voice", "inner_voice")]
+script = ExtResource("12_uuvyx")
+outer_voice = NodePath("Normal Voice")
+inner_voice = NodePath("Inner Voice")
+
+[node name="Inner Voice" type="AudioStreamPlayer" parent="MainDialogueAudio" unique_id=314036440]
+stream = SubResource("AudioStreamRandomizer_ntx1s")
+
+[node name="Normal Voice" type="AudioStreamPlayer" parent="MainDialogueAudio" unique_id=523035550]
+stream = SubResource("AudioStreamRandomizer_ip3j6")

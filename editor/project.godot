@@ -25,6 +25,11 @@ NetworkLayer="*uid://cmb4d6ennhr0l"
 ProjectManagerHelpers="*uid://edmw44iljr42"
 SimulatorEventLayer="*uid://da81e32yt8e0t"
 
+[display]
+
+window/stretch/mode="canvas_items"
+window/stretch/aspect="keep_width"
+
 [gui]
 
 theme/custom="uid://bm3oxomghipcp"
