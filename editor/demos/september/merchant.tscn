@@ -94,6 +94,5 @@ metadata/_custom_type_script = "uid://inieasxjm4nb"
 
 [node name="SimulatorCallbackListener" type="Node" parent="." unique_id=523254008]
 script = ExtResource("9_cwy78")
-trigger_listener_group = null
 
-[connection signal="callback" from="Louder/PSSimulator" to="SimulatorCallbackListener" method="_on_ps_simulator_callback"]
+[connection signal="state_variable_changed" from="Louder/PSSimulator" to="SimulatorCallbackListener" method="_on_state_changed_server"]

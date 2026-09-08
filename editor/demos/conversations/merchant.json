@@ -458,13 +458,13 @@
 		"type": "hub"
 	},
 	{
-		"callbacks": "trigger reka_appears",
 		"conversation_id": "38",
 		"position_offset:x": "3100.0",
 		"position_offset:y": "1780.0",
 		"private": true,
 		"recipient": "Reka",
 		"speaker": "The Silent Square",
+		"statements": "reka_square = 1",
 		"text": "This area of the palace is still a public area, but an array crumbling stone steps separate it from the tourism section. So, why are there shops? Well, there's a tacit a agreement between a merchant guild and the palace guard to not interfere in this area. No tourists means no public risk. And so, it's known as the silent square. ",
 		"type": "hub"
 	},
@@ -562,11 +562,11 @@
 	},
 	{
 		"branch": "shop",
-		"callbacks": "trigger geno_appears",
 		"conversation_id": "67",
 		"position_offset:x": "4000.0",
 		"position_offset:y": "3560.0",
 		"speaker": "Speed",
+		"statements": "geno_shop = 1",
 		"text": "The eyes of a suspicious Bandit peer over the desk of your shop. At the same moment, glare from the desert morning pierces the clouds. Your eyes are forced open. Stay alert.",
 		"type": "hub"
 	},
@@ -607,7 +607,6 @@
 		"type": "hub"
 	},
 	{
-		"callbacks": "trigger bandit_appears",
 		"choices": [
 			"\"Decorations?\"",
 			"\"Of course.\""
@@ -616,6 +615,7 @@
 		"position_offset:x": "4489.94970703125",
 		"position_offset:y": "3683.87109375",
 		"speaker": "Bandit",
+		"statements": "bandit_shop = 1",
 		"text": "\"Did you get the decorations?\"",
 		"type": "hub"
 	},
@@ -1070,9 +1070,9 @@
 		"type": "connection"
 	},
 	{
-		"position:x": "4146.9736328125",
-		"position:y": "2181.7783203125",
+		"position:x": "2993.10327148438",
+		"position:y": "2320.26953125",
 		"type": "camera",
-		"zoom": "1.17550837993622"
+		"zoom": "1.06408441066742"
 	}
 ]

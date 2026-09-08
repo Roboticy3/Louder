@@ -40,7 +40,7 @@ texture = ExtResource("3_avyjx")
 expand_mode = 1
 stretch_mode = 6
 script = ExtResource("3_exxv7")
-show_trigger = "geno_appears"
+show_trigger = PackedStringArray("geno_shop")
 
 [node name="Geno View Bandit" type="TextureRect" parent="Geno View" unique_id=1878467490]
 layout_mode = 1
@@ -53,7 +53,7 @@ texture = ExtResource("5_cl5uo")
 expand_mode = 1
 stretch_mode = 6
 script = ExtResource("3_exxv7")
-show_trigger = "bandit_appears"
+show_trigger = PackedStringArray("bandit_shop")
 
 [node name="Geno View Reka 1" type="TextureRect" parent="Geno View" unique_id=1327856689]
 layout_mode = 1
@@ -66,8 +66,7 @@ texture = ExtResource("6_q1hvi")
 expand_mode = 1
 stretch_mode = 6
 script = ExtResource("3_exxv7")
-show_trigger = "reka_appears"
-hide_trigger = "reka_enters_shop"
+show_trigger = PackedStringArray("reka_square")
 
 [node name="Geno View Reka 2" type="TextureRect" parent="Geno View" unique_id=1516038556]
 layout_mode = 1
@@ -80,7 +79,7 @@ texture = ExtResource("7_tampr")
 expand_mode = 1
 stretch_mode = 6
 script = ExtResource("3_exxv7")
-show_trigger = "reka_enters_shop"
+show_trigger = PackedStringArray("reka_shop")
 
 [node name="MainDialogueView" parent="." unique_id=2033588754 instance=ExtResource("2_if7ko")]
 layout_mode = 1

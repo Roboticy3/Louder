@@ -42,8 +42,7 @@ texture = ExtResource("2_be0wp")
 expand_mode = 1
 stretch_mode = 6
 script = ExtResource("3_17usu")
-show_trigger = "reka_appears"
-hide_trigger = "reka_enters_shop"
+show_trigger = PackedStringArray("reka_square")
 
 [node name="Reka View 1 Bandit" type="TextureRect" parent="Reka View 1" unique_id=963220423]
 layout_mode = 1
@@ -56,8 +55,7 @@ texture = ExtResource("3_xxbk7")
 expand_mode = 1
 stretch_mode = 6
 script = ExtResource("3_17usu")
-show_trigger = "bandit_appears"
-hide_trigger = "bandit_leaves"
+show_trigger = PackedStringArray("bandit_shop")
 
 [node name="Reka View 1 Geno" type="TextureRect" parent="Reka View 1" unique_id=1184510832]
 layout_mode = 1
@@ -70,7 +68,7 @@ texture = ExtResource("4_17usu")
 expand_mode = 1
 stretch_mode = 6
 script = ExtResource("3_17usu")
-show_trigger = "geno_appears"
+show_trigger = PackedStringArray("geno_shop")
 
 [node name="Reka View 2" type="TextureRect" parent="." unique_id=591384832]
 layout_mode = 1
@@ -83,7 +81,7 @@ texture = ExtResource("5_ewuah")
 expand_mode = 1
 stretch_mode = 6
 script = ExtResource("3_17usu")
-show_trigger = "reka_enters_shop"
+show_trigger = PackedStringArray("reka_shop")
 
 [node name="Reka View 2 Geno" type="TextureRect" parent="Reka View 2" unique_id=382540219]
 layout_mode = 1
@@ -96,6 +94,7 @@ texture = ExtResource("6_654kt")
 expand_mode = 1
 stretch_mode = 6
 script = ExtResource("3_17usu")
+show_trigger = PackedStringArray("geno_shop")
 
 [node name="MainDialogueView" parent="." unique_id=2033588754 instance=ExtResource("2_1bhkb")]
 layout_mode = 1
