@@ -73,3 +73,7 @@ func _input(event:InputEvent):
 
 func set_texture(to:Texture):
 	if background: background.texture = to
+
+func set_text_color(to:Color):
+	default_color = to
+	_on_exited()

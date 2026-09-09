@@ -11,11 +11,18 @@ const ChoiceProperties := PSObjects.ChoiceProperties
 
 @export var textures:Array[Texture]
 
+var text_color := Color.WHITE
+
 signal choice_pressed(choice: String)
 
 func set_textures(to:Array[Texture]):
 	textures = to
 	if element_background: element_background.texture = get_random_texture()
+
+func set_text_color(to:Color):
+	text_color = to
+	for c in element_container.get_children():
+		_colorize(c)
 
 #replace children in the element container with the body's speaker, text, and choices
 func set_controller(controller:PSController):
@@ -33,6 +40,7 @@ func set_controller(controller:PSController):
 		var speaker_label := Label.new()
 		speaker_label.text = speaker
 		speaker_label.add_theme_font_size_override("font_size", 18)
+		_colorize(speaker_label)
 		element_container.add_child(speaker_label)
 	
 	var text := str(data.get(BodyProperties.text, ""))
@@ -42,6 +50,7 @@ func set_controller(controller:PSController):
 		text_label.fit_content = true
 		text_label.text = text
 		text_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		_colorize(text_label)
 		element_container.add_child(text_label)
 	
 	if !disabled: 
@@ -58,6 +67,7 @@ func set_controller(controller:PSController):
 			var choice_text := str(choice.get(ChoiceProperties.from_choice, ""))
 			choice_instance.set_choice(choice_text)
 			choice_instance.set_texture(get_random_texture())
+			choice_instance.set_text_color(text_color)
 			
 			if i < 10:
 				choice_instance.set_index(i + 1)
@@ -76,6 +86,12 @@ func get_random_texture() -> Texture:
 		return Texture.new()
 	var i := randi_range(0, textures.size() - 1)
 	return textures[i]
+
+func _colorize(c:Control) -> void:
+	if c is Label:
+		c.add_theme_color_override("font_color", text_color)
+	elif c is RichTextLabel:
+		c.add_theme_color_override("default_color", text_color)
 
 func _on_choice_pressed(choice: String) -> void:
 	choice_pressed.emit(choice)

@@ -33,6 +33,8 @@ func push_item(controller:PSController):
 		item.set("disabled", true)
 	if item_backgrounds and item.has_method("set_textures"):
 		item.set_textures(item_backgrounds)
+	if item.has_method("set_text_color"):
+		item.set_text_color(text_color_main)
 	if item.has_method("set_controller"):
 		item.set_controller(controller)
 	if item.has_signal("choice_pressed"):

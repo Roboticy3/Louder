@@ -138,6 +138,12 @@ script = ExtResource("3_17usu")
 layout_mode = 1
 offset_right = -0.00012207031
 
+[node name="ScrollContainer" parent="MainDialogueView/VBoxContainer/Control" parent_id_path=PackedInt32Array(2033588754, 1630732809) index="1" unique_id=902509730]
+offset_right = 39.0
+
+[node name="ThinkingView" parent="MainDialogueView/VBoxContainer/Control/ScrollContainer/Feed" parent_id_path=PackedInt32Array(2033588754, 233767170) index="0" unique_id=415213]
+alignment = 2
+
 [node name="SecondaryDialogueView" parent="." unique_id=902305658 instance=ExtResource("3_be0wp")]
 layout_mode = 1
 offset_left = -416.0
@@ -165,3 +171,5 @@ stream = SubResource("AudioStreamRandomizer_skou3")
 
 [node name="AudioStreamPlayer2" type="AudioStreamPlayer" parent="MainDialogueAudio" unique_id=1558507617]
 stream = SubResource("AudioStreamRandomizer_t3lbj")
+
+[editable path="MainDialogueView"]
