@@ -79,17 +79,6 @@ script = ExtResource("1_fgoqf")
 view = NodePath("CanvasLayer/MainDialogueView")
 item_backgrounds = Array[Texture]([SubResource("AtlasTexture_uuvyx"), SubResource("AtlasTexture_r0if7"), SubResource("AtlasTexture_xaxpp"), SubResource("AtlasTexture_ttvgv")])
 
-[node name="Black" type="TextureRect" parent="." unique_id=1624664861]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("2_exxv7")
-expand_mode = 1
-stretch_mode = 6
-
 [node name="geno_shop" type="TextureRect" parent="." unique_id=1606361945]
 layout_mode = 1
 anchors_preset = 15
@@ -179,6 +168,18 @@ rotation = -2.6529005
 scale = Vector2(0.5865726, 0.794387)
 skew = 0.91629785
 texture = SubResource("AtlasTexture_j2u2i")
+
+[node name="geno_blank" type="TextureRect" parent="." unique_id=1624664861]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_exxv7")
+expand_mode = 1
+stretch_mode = 6
+script = ExtResource("3_exxv7")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1387162157]
 
