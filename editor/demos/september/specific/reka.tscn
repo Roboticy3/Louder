@@ -10,7 +10,9 @@
 [ext_resource type="Texture2D" uid="uid://c1tfnjsoi78q2" path="res://demos/september/sprite/Reka View 1 Geno.png" id="4_17usu"]
 [ext_resource type="Texture2D" uid="uid://dal1076wdhlrb" path="res://demos/september/sprite/Reka View 2.png" id="5_ewuah"]
 [ext_resource type="Texture2D" uid="uid://bruhbpbvomhx7" path="res://demos/september/sprite/Reka View 2 Geno.png" id="6_654kt"]
+[ext_resource type="Texture2D" uid="uid://dmpmrbyq6wkao" path="res://demos/september/sprite/Reka View 1 Geno 2.png" id="7_rdpkc"]
 [ext_resource type="Texture2D" uid="uid://c01taujqg44uv" path="res://demos/september/sprite/items.png" id="9_ck8bg"]
+[ext_resource type="Texture2D" uid="uid://chomgol3ljjk0" path="res://demos/september/sprite/Reka View 2 Geno 2.png" id="9_tmy2p"]
 [ext_resource type="AudioStream" uid="uid://ci5ph6lk8itkk" path="res://demos/september/audio/Demo3-loop.mp3" id="11_xofov"]
 [ext_resource type="Script" uid="uid://dwci644iorqlj" path="res://demos/september/specific/variable_fader_stream.gd" id="12_u6bov"]
 [ext_resource type="AudioStream" uid="uid://dovvgc2j78tyf" path="res://demos/september/audio/Demo3-main.mp3" id="13_u6bov"]
@@ -119,6 +121,18 @@ expand_mode = 1
 stretch_mode = 6
 script = ExtResource("3_17usu")
 
+[node name="geno_blank" type="TextureRect" parent="reka_square" unique_id=130174102]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("7_rdpkc")
+expand_mode = 1
+stretch_mode = 6
+script = ExtResource("3_17usu")
+
 [node name="reka_shop" type="TextureRect" parent="." unique_id=591384832]
 layout_mode = 1
 anchors_preset = 15
@@ -139,6 +153,18 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("6_654kt")
+expand_mode = 1
+stretch_mode = 6
+script = ExtResource("3_17usu")
+
+[node name="geno_blank" type="TextureRect" parent="reka_shop" unique_id=580483964]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("9_tmy2p")
 expand_mode = 1
 stretch_mode = 6
 script = ExtResource("3_17usu")
@@ -188,7 +214,7 @@ offset_right = -0.00012207031
 [node name="ScrollContainer" parent="MainDialogueView/VBoxContainer/Control" parent_id_path=PackedInt32Array(2033588754, 1630732809) index="1" unique_id=902509730]
 offset_right = 39.0
 
-[node name="ThinkingView" parent="MainDialogueView/VBoxContainer/Control/ScrollContainer/Feed" parent_id_path=PackedInt32Array(2033588754, 233767170) index="0" unique_id=415213]
+[node name="ThinkingView" parent="MainDialogueView/VBoxContainer/Control" parent_id_path=PackedInt32Array(2033588754, 1630732809) index="2" unique_id=415213]
 alignment = 2
 
 [node name="SecondaryDialogueView" parent="." unique_id=902305658 instance=ExtResource("3_be0wp")]
