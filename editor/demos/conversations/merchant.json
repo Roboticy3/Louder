@@ -840,7 +840,7 @@
 		"position_offset:y": "5601.60693359375",
 		"speaker": "Bandit",
 		"statements": "bandit_haggling = -1000",
-		"text": "The bandit leans closer and lowers his voice. \"You're a laundromat. You make laundromat money. Are you ok with that?\"",
+		"text": "The bandit lowers his voice. \"Here's the deal. Right now, you're a laundromat. You make laundromat money. Are you ok with that?\"",
 		"type": "hub"
 	},
 	{
@@ -2629,9 +2629,9 @@
 		"type": "connection"
 	},
 	{
-		"position:x": "3462.27978515625",
-		"position:y": "1900.7880859375",
+		"position:x": "7772.732421875",
+		"position:y": "3842.97509765625",
 		"type": "camera",
-		"zoom": "0.49853014945984"
+		"zoom": "0.72989809513092"
 	}
 ]

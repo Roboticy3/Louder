@@ -9,9 +9,8 @@ func _init(variables_source:Dictionary[StringName, Variant]):
 func _get(property: StringName) -> Variant:
 	if property in variables:
 		return variables[property]
-	else:
-		variables[property] = DEFAULT_VALUE
-		return DEFAULT_VALUE
+	variables[property] = DEFAULT_VALUE
+	return DEFAULT_VALUE
 
 func _set(property: StringName, value: Variant) -> bool:
 	variables[property] = value
@@ -20,5 +19,8 @@ func _set(property: StringName, value: Variant) -> bool:
 func _to_string():
 	return str(variables)
 
-func get_names() -> Array:
-	return variables.keys()
+func get_names() -> PackedStringArray:
+	var names: PackedStringArray
+	for k in variables:
+		names.append(String(k))
+	return names

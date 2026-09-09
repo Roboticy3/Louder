@@ -215,8 +215,7 @@ func _evaluate_statements(statements:String) -> void:
 		
 		var value_right = 0
 		if !partial_right.is_empty():
-			expression.parse(partial_right, state.scope.get_names())
-			value_right = expression.execute([], state.scope, true, false)
+			value_right = _evaluate_string(partial_right)
 		
 		var value_left = state.scope.get(partial_left)
 		
@@ -244,17 +243,26 @@ func _evaluate_callbacks(callbacks:String) -> void:
 
 func check_conditions(position:int) -> bool:
 	var hub := _hub(position)
-	var passing := true
+	
 	var conditions := str(hub.get(HubProperties.conditions, "")).split("\n", false)
-	
 	for c in conditions:
-		var names := names_to_trick_parser(c)
-		expression.parse(c, names)
-		passing = passing and expression.execute([], state.scope, true)
-		if expression.has_execute_failed():
-			pass
+		if !_evaluate_string(c):
+			return false
+		
+	return true
+
+func _evaluate_string(e:String) -> Variant:
+	var result = null
 	
-	return passing
+	var names := names_to_trick_parser(e)
+	for n in names:
+		e.replace(n, str(state.scope.get(n)))
+	expression.parse(e)
+	result = expression.execute([], state.scope, true)
+	if expression.has_execute_failed():
+		pass
+	
+	return result
 
 func names_to_trick_parser(e:String) -> PackedStringArray:
 	#trick the expression parser into allowing names that haven't been declared yet
