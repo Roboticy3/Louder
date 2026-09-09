@@ -28,7 +28,7 @@ SimulatorEventLayer="*uid://da81e32yt8e0t"
 [display]
 
 window/stretch/mode="canvas_items"
-window/stretch/aspect="keep_width"
+window/stretch/aspect="expand"
 
 [gui]
 

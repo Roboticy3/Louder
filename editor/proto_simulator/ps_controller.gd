@@ -68,6 +68,10 @@ func traverse(choice:String) -> bool:
 	data = simulator.align(data, choice, _filter_valid_choice)
 	return data.get(BodyProperties.success, false)
 
+func warp(position:int) -> bool:
+	data = simulator.warp(data, position, _filter_valid_choice)
+	return data.get(BodyProperties.success, false)
+
 func follow(other:PSController) -> void:
 	data = other.data.duplicate()
 

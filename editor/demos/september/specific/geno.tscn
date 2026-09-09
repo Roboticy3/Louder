@@ -10,9 +10,11 @@
 [ext_resource type="Texture2D" uid="uid://csyfqjrs6cq2y" path="res://demos/september/sprite/Geno View Bandit.png" id="5_cl5uo"]
 [ext_resource type="Texture2D" uid="uid://d1w5f80ssvy4v" path="res://demos/september/sprite/Geno View Reka 1.png" id="6_q1hvi"]
 [ext_resource type="Texture2D" uid="uid://5bx7hebrp0qu" path="res://demos/september/sprite/Geno View Reka 2.png" id="7_tampr"]
-[ext_resource type="AudioStream" uid="uid://dag7bhs10ap5b" path="res://demos/september/audio/Demo3-loop.mp3" id="9_tampr"]
+[ext_resource type="AudioStream" uid="uid://ci5ph6lk8itkk" path="res://demos/september/audio/Demo3-loop.mp3" id="9_tampr"]
 [ext_resource type="Script" uid="uid://dwci644iorqlj" path="res://demos/september/specific/variable_fader_stream.gd" id="10_5snrs"]
-[ext_resource type="AudioStream" uid="uid://ccxwubgwg3mdv" path="res://demos/september/audio/Demo3-main.mp3" id="11_01e0q"]
+[ext_resource type="Texture2D" uid="uid://c01taujqg44uv" path="res://demos/september/sprite/items.png" id="10_hfdov"]
+[ext_resource type="AudioStream" uid="uid://dovvgc2j78tyf" path="res://demos/september/audio/Demo3-main.mp3" id="11_01e0q"]
+[ext_resource type="PackedScene" uid="uid://ctpltkbarsbjg" path="res://demos/september/ui/main_dialogue_debug.tscn" id="12_r0if7"]
 [ext_resource type="Script" uid="uid://pdtwpxufvewd" path="res://demos/september/ui/main_dialogue_audio.gd" id="12_uuvyx"]
 [ext_resource type="AudioStream" uid="uid://c6w30j88ibuoq" path="res://demos/september/audio/dialogue_slides_1.wav" id="13_8sve8"]
 [ext_resource type="AudioStream" uid="uid://cwj5eb15uergp" path="res://demos/september/audio/dialogue_slides_1-2.wav" id="14_hfdov"]
@@ -42,6 +44,14 @@ margin = Rect2(-14, -19, -15, -32)
 atlas = ExtResource("3_8sve8")
 region = Rect2(256, 256, 256, 256)
 margin = Rect2(-20, -14, -28, -21)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ovk7e"]
+atlas = ExtResource("10_hfdov")
+region = Rect2(184, 0, 561, 810)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j2u2i"]
+atlas = ExtResource("10_hfdov")
+region = Rect2(900, 8, 317, 810)
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_ntx1s"]
 random_pitch = 1.0594631
@@ -129,9 +139,53 @@ expand_mode = 1
 stretch_mode = 6
 script = ExtResource("3_exxv7")
 
+[node name="dagger_shop" type="Control" parent="geno_shop" unique_id=1960482762]
+layout_mode = 1
+anchor_left = 0.786
+anchor_top = 0.67700005
+anchor_right = 0.786
+anchor_bottom = 0.67700005
+offset_left = 72.527954
+offset_top = -7.696045
+offset_right = 72.527954
+offset_bottom = -7.696045
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_exxv7")
+
+[node name="Sprite2D" type="Sprite2D" parent="geno_shop/dagger_shop" unique_id=1882534871]
+position = Vector2(-80.999985, 9.000001)
+rotation = 0.40317106
+scale = Vector2(0.29884273, 0.31775633)
+skew = 1.0210177
+texture = SubResource("AtlasTexture_ovk7e")
+
+[node name="sabre_shop" type="Control" parent="geno_shop" unique_id=1577479070]
+layout_mode = 1
+anchor_left = 0.587
+anchor_top = 0.81600004
+anchor_right = 0.587
+anchor_bottom = 0.81600004
+offset_left = -0.22399902
+offset_top = 0.23199463
+offset_right = -0.22399902
+offset_bottom = 0.23199463
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_exxv7")
+
+[node name="Sprite2D" type="Sprite2D" parent="geno_shop/sabre_shop" unique_id=417483852]
+position = Vector2(-252.00002, -31)
+rotation = -2.6529005
+scale = Vector2(0.5865726, 0.794387)
+skew = 0.91629785
+texture = SubResource("AtlasTexture_j2u2i")
+
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1387162157]
 
 [node name="MainDialogueView" parent="CanvasLayer" unique_id=2033588754 instance=ExtResource("2_if7ko")]
+
+[node name="MainDialogueDebug" parent="CanvasLayer" unique_id=2025365747 instance=ExtResource("12_r0if7")]
 
 [node name="BackgroundAudio" type="Node" parent="." unique_id=973718887]
 

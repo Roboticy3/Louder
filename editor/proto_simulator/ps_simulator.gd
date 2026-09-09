@@ -105,6 +105,16 @@ func align(body: Dictionary[BodyProperties, Variant], choice: String, filter:=no
 	
 	return result
 
+#Warp `body` directly to `position`, bypassing choice validation. Like align,
+#auto hubs are traversed after landing. `taken_choice` is left empty.
+func warp(body: Dictionary[BodyProperties, Variant], position: int, filter:=no_filter) -> Dictionary[BodyProperties, Variant]:
+	var from_branch: String = body.get(BodyProperties.branch, DEFAULT_BRANCH)
+	var result := body.duplicate()
+	result = _traverse(result, position, "", filter)
+	if result.get(BodyProperties.branch, DEFAULT_BRANCH) != from_branch:
+		result[BodyProperties.branch_changed] = true
+	return result
+
 #Move `body` to `position`, then auto-advance through any auto hubs until a
 #non-auto hub is reached, or the conversation runs dry. `taken_choice` is the
 #choice that moved the body here ("" when starting a conversation).
@@ -120,7 +130,6 @@ func _traverse(body: Dictionary[BodyProperties, Variant], position: int, choice:
 		if current < 0 or current in visited:
 			body[BodyProperties.success] = false
 			break
-		state.covered[current] = true
 		visited[current] = true
 		
 		var hub := _hub(current)
@@ -145,8 +154,10 @@ func _traverse(body: Dictionary[BodyProperties, Variant], position: int, choice:
 		if not branch.is_empty():
 			body[BodyProperties.branch] = branch
 		
-		_evaluate_statements(hub.get(HubProperties.statements, ""))
-		_evaluate_callbacks(hub.get(HubProperties.callbacks, ""))
+		if !state.covered.get(current):
+			_evaluate_statements(hub.get(HubProperties.statements, ""))
+			_evaluate_callbacks(hub.get(HubProperties.callbacks, ""))
+		state.covered[current] = true
 		
 		if auto:
 			dominating = hub

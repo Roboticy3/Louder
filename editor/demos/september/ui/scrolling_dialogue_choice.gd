@@ -9,7 +9,6 @@ class_name ScrollingDialogueChoice extends VBoxContainer
 @export var default_color := Color.WHITE
 @export var mouse_color := Color.BROWN
 
-
 signal choice_pressed(choice:String)
 
 # Called when the node enters the scene tree for the first time.

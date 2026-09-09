@@ -9,6 +9,7 @@ const TYPE_CONNECTION := "connection"
 const TYPE_CAMERA := "camera"
 
 @export var input_path: String = ""
+@export var enable_reloading := true
 
 var hubs_by_id:Dictionary[int, Dictionary] = {}
 var connections_by_from:Dictionary[int, Array] = {}
@@ -17,6 +18,8 @@ var camera := {}
 func _ready() -> void:
 	if not input_path.is_empty():
 		load_from_json(input_path)
+	
+	
 
 func load_from_json(path: String) -> bool:
 	var parsed := JSONSceneLoader.load_from_json(path)
@@ -64,3 +67,8 @@ func dict_to_ps_object(enum_d:Dictionary, o_d:Dictionary) -> Dictionary:
 		result_d[enum_d[k]] = o_d[k]
 	
 	return result_d
+
+func _input(event: InputEvent) -> void:
+	if enable_reloading and event.is_action_pressed("simulator_reset"):
+		print("reloading conversation!")
+		_ready()

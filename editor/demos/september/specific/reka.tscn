@@ -10,9 +10,10 @@
 [ext_resource type="Texture2D" uid="uid://c1tfnjsoi78q2" path="res://demos/september/sprite/Reka View 1 Geno.png" id="4_17usu"]
 [ext_resource type="Texture2D" uid="uid://dal1076wdhlrb" path="res://demos/september/sprite/Reka View 2.png" id="5_ewuah"]
 [ext_resource type="Texture2D" uid="uid://bruhbpbvomhx7" path="res://demos/september/sprite/Reka View 2 Geno.png" id="6_654kt"]
+[ext_resource type="Texture2D" uid="uid://c01taujqg44uv" path="res://demos/september/sprite/items.png" id="9_ck8bg"]
 [ext_resource type="AudioStream" uid="uid://ci5ph6lk8itkk" path="res://demos/september/audio/Demo3-loop.mp3" id="11_xofov"]
 [ext_resource type="Script" uid="uid://dwci644iorqlj" path="res://demos/september/specific/variable_fader_stream.gd" id="12_u6bov"]
-[ext_resource type="AudioStream" uid="uid://ccxwubgwg3mdv" path="res://demos/september/audio/Demo3-main.mp3" id="13_u6bov"]
+[ext_resource type="AudioStream" uid="uid://dovvgc2j78tyf" path="res://demos/september/audio/Demo3-main.mp3" id="13_u6bov"]
 [ext_resource type="Script" uid="uid://pdtwpxufvewd" path="res://demos/september/ui/main_dialogue_audio.gd" id="14_tmy2p"]
 [ext_resource type="AudioStream" uid="uid://c6w30j88ibuoq" path="res://demos/september/audio/dialogue_slides_1.wav" id="15_rdpkc"]
 [ext_resource type="AudioStream" uid="uid://cwj5eb15uergp" path="res://demos/september/audio/dialogue_slides_1-2.wav" id="16_lvml4"]
@@ -37,6 +38,14 @@ load_path = "res://.godot/imported/UI elements-export.png-367d6879a5084192da1335
 atlas = SubResource("CompressedTexture2D_tmy2p")
 region = Rect2(512, 0, 256, 256)
 margin = Rect2(-16, -1, -16, -14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nunj6"]
+atlas = ExtResource("9_ck8bg")
+region = Rect2(184, 0, 561, 810)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tmy2p"]
+atlas = ExtResource("9_ck8bg")
+region = Rect2(900, 8, 317, 810)
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_skou3"]
 random_pitch = 1.0594631
@@ -133,6 +142,44 @@ texture = ExtResource("6_654kt")
 expand_mode = 1
 stretch_mode = 6
 script = ExtResource("3_17usu")
+
+[node name="dagger_shop" type="Control" parent="reka_shop" unique_id=1242683493]
+layout_mode = 1
+anchor_left = 0.29500002
+anchor_top = 0.80600005
+anchor_right = 0.29500002
+anchor_bottom = 0.80600005
+offset_left = -62.840027
+offset_top = 37.711975
+offset_right = -62.840027
+offset_bottom = 37.711975
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_17usu")
+
+[node name="Sprite2D" type="Sprite2D" parent="reka_shop/dagger_shop" unique_id=942013424]
+rotation = 1.5805573
+scale = Vector2(0.3493761, 0.31111112)
+texture = SubResource("AtlasTexture_nunj6")
+
+[node name="sabre_shop" type="Control" parent="reka_shop" unique_id=2043553318]
+layout_mode = 1
+anchor_left = 0.637
+anchor_top = 0.827
+anchor_right = 0.637
+anchor_bottom = 0.827
+offset_left = -93.824036
+offset_top = -1.8959961
+offset_right = -93.824036
+offset_bottom = -1.8959961
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_17usu")
+
+[node name="Sprite2D" type="Sprite2D" parent="reka_shop/sabre_shop" unique_id=1041635420]
+rotation = -1.5707964
+scale = Vector2(0.9228033, 0.82173437)
+texture = SubResource("AtlasTexture_tmy2p")
 
 [node name="MainDialogueView" parent="." unique_id=2033588754 instance=ExtResource("2_1bhkb")]
 layout_mode = 1
