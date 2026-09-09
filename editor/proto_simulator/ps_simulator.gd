@@ -248,10 +248,26 @@ func check_conditions(position:int) -> bool:
 	var conditions := str(hub.get(HubProperties.conditions, "")).split("\n", false)
 	
 	for c in conditions:
-		expression.parse(c, state.scope.get_names())
-		passing = passing and expression.execute([], state.scope, true, true)
+		var names := names_to_trick_parser(c)
+		expression.parse(c, names)
+		passing = passing and expression.execute([], state.scope, true)
+		if expression.has_execute_failed():
+			pass
 	
 	return passing
+
+func names_to_trick_parser(e:String) -> PackedStringArray:
+	#trick the expression parser into allowing names that haven't been declared yet
+	#state.scope is a special type that fills in missing variables, so all valid variable names syntactically are valid names
+	var invalid_name := RegEx.new()
+	invalid_name.compile("[^a-zA-Z_]")
+	var names:PackedStringArray
+	var words := e.split(" ", false)
+	for w in words:
+		if invalid_name.search(w.substr(0, 1)):
+			continue
+		names.append(w)
+	return names
 
 #Return the position that would result from making choice `choice` from
 #position `position`.

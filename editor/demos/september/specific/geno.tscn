@@ -14,7 +14,6 @@
 [ext_resource type="Script" uid="uid://dwci644iorqlj" path="res://demos/september/specific/variable_fader_stream.gd" id="10_5snrs"]
 [ext_resource type="Texture2D" uid="uid://c01taujqg44uv" path="res://demos/september/sprite/items.png" id="10_hfdov"]
 [ext_resource type="AudioStream" uid="uid://dovvgc2j78tyf" path="res://demos/september/audio/Demo3-main.mp3" id="11_01e0q"]
-[ext_resource type="PackedScene" uid="uid://ctpltkbarsbjg" path="res://demos/september/ui/main_dialogue_debug.tscn" id="12_r0if7"]
 [ext_resource type="Script" uid="uid://pdtwpxufvewd" path="res://demos/september/ui/main_dialogue_audio.gd" id="12_uuvyx"]
 [ext_resource type="AudioStream" uid="uid://c6w30j88ibuoq" path="res://demos/september/audio/dialogue_slides_1.wav" id="13_8sve8"]
 [ext_resource type="AudioStream" uid="uid://cwj5eb15uergp" path="res://demos/september/audio/dialogue_slides_1-2.wav" id="14_hfdov"]
@@ -184,8 +183,6 @@ texture = SubResource("AtlasTexture_j2u2i")
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1387162157]
 
 [node name="MainDialogueView" parent="CanvasLayer" unique_id=2033588754 instance=ExtResource("2_if7ko")]
-
-[node name="MainDialogueDebug" parent="CanvasLayer" unique_id=2025365747 instance=ExtResource("12_r0if7")]
 
 [node name="BackgroundAudio" type="Node" parent="." unique_id=973718887]
 

@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://b2x65pfmghwq5"]
 
 [ext_resource type="Script" uid="uid://c3mwlunur3atv" path="res://demos/september/network/basic_log.gd" id="1_xlwlw"]
+[ext_resource type="Script" uid="uid://b27ucw68hr8oi" path="res://demos/september/ui/action_toggle.gd" id="2_m5mdj"]
 
 [node name="BasicLog" type="Control" unique_id=128730021 node_paths=PackedStringArray("feed", "decay")]
 layout_mode = 3
@@ -13,10 +14,24 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_xlwlw")
-feed = NodePath("VBoxContainer")
+feed = NodePath("Control/VBoxContainer")
 decay = NodePath("Timer")
+mute_data_updated = false
 
-[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=425234597]
+[node name="Timer" type="Timer" parent="." unique_id=1114858324]
+
+[node name="Control" type="Control" parent="." unique_id=1366469923]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2_m5mdj")
+action = &"debug_menu_2"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control" unique_id=425234597]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -24,5 +39,3 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 alignment = 2
-
-[node name="Timer" type="Timer" parent="." unique_id=1114858324]

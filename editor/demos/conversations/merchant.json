@@ -1391,1070 +1391,1247 @@
 	},
 	{
 		"from_choice": "",
-		"from_id": "4",
-		"to_id": "7",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "7",
-		"to_id": "8",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "5",
-		"to_id": "9",
+		"from_id": "0",
+		"from_port": 0,
+		"to_id": "19",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
 		"from_id": "10",
+		"from_port": 0,
 		"to_id": "11",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
-		"from_id": "14",
-		"to_id": "16",
+		"from_id": "100",
+		"from_port": 0,
+		"to_id": "105",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
-		"from_id": "0",
-		"to_id": "19",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Choice 0)",
-		"from_id": "19",
-		"to_id": "2",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Choice 1)",
-		"from_id": "19",
-		"to_id": "3",
-		"type": "connection"
-	},
-	{
-		"from_choice": "\"I found it in the desert.\"",
-		"from_id": "3",
-		"to_id": "4",
-		"type": "connection"
-	},
-	{
-		"from_choice": "\"I bought it off someone else.\" (Lie)",
-		"from_id": "3",
-		"to_id": "5",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Leave)",
-		"from_id": "2",
-		"to_id": "14",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Eavesdrop)",
-		"from_id": "2",
-		"to_id": "17",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Leave)",
-		"from_id": "16",
-		"to_id": "15",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Stay)",
-		"from_id": "16",
-		"to_id": "17",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Choice 0)",
-		"from_id": "9",
-		"to_id": "10",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Choice 1)",
-		"from_id": "9",
-		"to_id": "11",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "17",
-		"to_id": "21",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "22",
-		"to_id": "0",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "11",
-		"to_id": "23",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "24",
-		"to_id": "28",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Choice 0)",
-		"from_id": "23",
-		"to_id": "29",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "29",
-		"to_id": "24",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Choice 1)",
-		"from_id": "23",
-		"to_id": "30",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "30",
-		"to_id": "25",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "25",
-		"to_id": "31",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Choice 0)",
-		"from_id": "31",
-		"to_id": "32",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Choice 1)",
-		"from_id": "31",
-		"to_id": "33",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "32",
-		"to_id": "33",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "33",
-		"to_id": "34",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "36",
-		"to_id": "40",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "40",
-		"to_id": "41",
-		"type": "connection"
-	},
-	{
-		"from_choice": "I know, right?",
-		"from_id": "41",
-		"to_id": "42",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "38",
-		"to_id": "43",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "43",
-		"to_id": "39",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "42",
-		"to_id": "44",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "44",
-		"to_id": "45",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "45",
-		"to_id": "46",
-		"type": "connection"
-	},
-	{
-		"from_choice": "Where am I?",
-		"from_id": "46",
-		"to_id": "38",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Choice 0)",
-		"from_id": "35",
-		"to_id": "47",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Choice 0)",
-		"from_id": "47",
-		"to_id": "36",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Choice 1)",
-		"from_id": "47",
-		"to_id": "37",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "39",
-		"to_id": "48",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "37",
-		"to_id": "50",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "50",
-		"to_id": "51",
-		"type": "connection"
-	},
-	{
-		"from_choice": "No, I can do this.",
-		"from_id": "51",
-		"to_id": "53",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "53",
-		"to_id": "54",
-		"type": "connection"
-	},
-	{
-		"from_choice": "Something good?",
-		"from_id": "54",
-		"to_id": "55",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "55",
-		"to_id": "56",
-		"type": "connection"
-	},
-	{
-		"from_choice": "Something bad?",
-		"from_id": "54",
-		"to_id": "58",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "58",
-		"to_id": "56",
-		"type": "connection"
-	},
-	{
-		"from_choice": "Hypothetically, if I did have to quit, where would home be?",
-		"from_id": "51",
-		"to_id": "59",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "59",
-		"to_id": "54",
-		"type": "connection"
-	},
-	{
-		"from_choice": "Is that really how it went down?",
-		"from_id": "41",
-		"to_id": "42",
-		"type": "connection"
-	},
-	{
-		"from_choice": "Maybe I'm not acting in my best judgement.",
-		"from_id": "46",
-		"to_id": "60",
-		"type": "connection"
-	},
-	{
-		"from_choice": "I want to hurt somebody for hurting me.",
-		"from_id": "60",
-		"to_id": "61",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "62",
-		"to_id": "38",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "61",
-		"to_id": "38",
-		"type": "connection"
-	},
-	{
-		"from_choice": "I want the police to handle it.",
-		"from_id": "60",
-		"to_id": "62",
-		"type": "connection"
-	},
-	{
-		"from_choice": "I want to save my friends.",
-		"from_id": "60",
-		"to_id": "62",
-		"type": "connection"
-	},
-	{
-		"from_choice": "I want to go home and get a college degree instead of descending into a world of gang violence.",
-		"from_id": "60",
-		"to_id": "65",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "65",
-		"to_id": "38",
-		"type": "connection"
-	},
-	{
-		"from_choice": "I want to back to the family estate in North Cloverton. I want to go back to the Beneath Me",
-		"from_id": "56",
-		"to_id": "66",
-		"type": "connection"
-	},
-	{
-		"from_choice": "Mom.",
-		"from_id": "66",
-		"to_id": "67",
-		"type": "connection"
-	},
-	{
-		"from_choice": "Dad.",
-		"from_id": "66",
-		"to_id": "67",
-		"type": "connection"
-	},
-	{
-		"from_choice": "Grandma.",
-		"from_id": "66",
-		"to_id": "67",
-		"type": "connection"
-	},
-	{
-		"from_choice": "Winsor, the dog.",
-		"from_id": "66",
-		"to_id": "67",
-		"type": "connection"
-	},
-	{
-		"from_choice": "A.. bird?",
-		"from_id": "66",
-		"to_id": "68",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "68",
-		"to_id": "67",
-		"type": "connection"
-	},
-	{
-		"from_choice": "I want to make enough money to pay off my debt.",
-		"from_id": "56",
-		"to_id": "69",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "69",
-		"to_id": "67",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "67",
-		"to_id": "70",
-		"type": "connection"
-	},
-	{
-		"from_choice": "I want to become the Richest Man Alive and spit in the collector's face.",
-		"from_id": "56",
-		"to_id": "71",
-		"type": "connection"
-	},
-	{
-		"from_choice": "What? I didn't say that.",
-		"from_id": "71",
-		"to_id": "72",
-		"type": "connection"
-	},
-	{
-		"from_choice": "Yeah.. Yeah!",
-		"from_id": "71",
-		"to_id": "73",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "73",
-		"to_id": "67",
-		"type": "connection"
-	},
-	{
-		"from_choice": "\"Decorations?\"",
-		"from_id": "70",
-		"to_id": "74",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "74",
-		"to_id": "75",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Try to center yourself in the real world.)",
-		"from_id": "75",
-		"to_id": "76",
-		"type": "connection"
-	},
-	{
-		"from_choice": "\"So are you buying something or not?\"",
-		"from_id": "75",
-		"to_id": "77",
-		"type": "connection"
-	},
-	{
-		"from_choice": "Thanks for helping me.",
-		"from_id": "76",
-		"to_id": "78",
-		"type": "connection"
-	},
-	{
-		"from_choice": "\"Sorry Ace, I was kidding. The dagger.\"",
-		"from_id": "76",
-		"to_id": "79",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "79",
-		"to_id": "80",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Choice 0)",
-		"from_id": "80",
-		"to_id": "81",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Choice 1)",
-		"from_id": "80",
-		"to_id": "82",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "77",
-		"to_id": "83",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "83",
-		"to_id": "75",
-		"type": "connection"
-	},
-	{
-		"from_choice": "\"Of course.\"",
-		"from_id": "70",
-		"to_id": "79",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "78",
-		"to_id": "76",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "81",
-		"to_id": "84",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "82",
-		"to_id": "84",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "85",
-		"to_id": "86",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "86",
-		"to_id": "87",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "87",
-		"to_id": "88",
-		"type": "connection"
-	},
-	{
-		"from_choice": "\"Cost of labor.\"",
-		"from_id": "88",
-		"to_id": "91",
-		"type": "connection"
-	},
-	{
-		"from_choice": "\"I guess I could just hold onto it then..\"",
-		"from_id": "88",
-		"to_id": "94",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "94",
-		"to_id": "93",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Interrupt)",
-		"from_id": "84",
-		"to_id": "95",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "89",
-		"to_id": "96",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "91",
-		"to_id": "89",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "93",
-		"to_id": "97",
-		"type": "connection"
-	},
-	{
-		"from_choice": "\"Ok, what do you think it's worth.\" (Continue)",
-		"from_id": "88",
-		"to_id": "90",
-		"type": "connection"
-	},
-	{
-		"from_choice": "\"It's antique.\"",
-		"from_id": "88",
-		"to_id": "98",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "98",
-		"to_id": "99",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Interrupt)",
-		"from_id": "88",
-		"to_id": "95",
-		"type": "connection"
-	},
-	{
-		"from_choice": "\"Yes\"",
-		"from_id": "99",
-		"to_id": "100",
-		"type": "connection"
-	},
-	{
-		"from_choice": "\"No\"",
-		"from_id": "99",
-		"to_id": "101",
-		"type": "connection"
-	},
-	{
-		"from_choice": "\"What do you need it for?\"",
-		"from_id": "88",
-		"to_id": "102",
+		"from_id": "101",
+		"from_port": 0,
+		"to_id": "107",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
 		"from_id": "102",
+		"from_port": 0,
 		"to_id": "103",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
 		"from_id": "103",
+		"from_port": 0,
 		"to_id": "104",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
-		"from_id": "100",
-		"to_id": "105",
+		"from_id": "104",
+		"from_port": 0,
+		"to_id": "110",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
 		"from_id": "105",
+		"from_port": 0,
 		"to_id": "106",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
-		"from_id": "101",
-		"to_id": "107",
+		"from_id": "106",
+		"from_port": 0,
+		"to_id": "109",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
 		"from_id": "107",
+		"from_port": 0,
 		"to_id": "108",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
 		"from_id": "108",
+		"from_port": 0,
 		"to_id": "109",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "106",
-		"to_id": "109",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "97",
-		"to_id": "110",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "110",
-		"to_id": "88",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
 		"from_id": "109",
+		"from_port": 0,
 		"to_id": "88",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
-		"from_id": "90",
-		"to_id": "111",
+		"from_id": "11",
+		"from_port": 0,
+		"to_id": "23",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "110",
+		"from_port": 0,
+		"to_id": "88",
 		"type": "connection"
 	},
 	{
 		"from_choice": "(Choice 0)",
 		"from_id": "111",
+		"from_port": 0,
 		"to_id": "112",
 		"type": "connection"
 	},
 	{
 		"from_choice": "(Choice 1)",
 		"from_id": "111",
+		"from_port": 1,
 		"to_id": "113",
 		"type": "connection"
 	},
 	{
 		"from_choice": "(Choice 2)",
 		"from_id": "111",
+		"from_port": 2,
 		"to_id": "114",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
+		"from_id": "112",
+		"from_port": 0,
+		"to_id": "132",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Make the sale)",
+		"from_id": "113",
+		"from_port": 0,
+		"to_id": "127",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Keep trying to negotiate)",
+		"from_id": "113",
+		"from_port": 1,
+		"to_id": "125",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
 		"from_id": "114",
+		"from_port": 0,
 		"to_id": "115",
 		"type": "connection"
 	},
 	{
 		"from_choice": "(Give him the dagger)",
 		"from_id": "115",
-		"to_id": "116",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Keep trying to negotiate)",
-		"from_id": "115",
-		"to_id": "117",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "117",
-		"to_id": "118",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "118",
+		"from_port": 0,
 		"to_id": "116",
 		"type": "connection"
 	},
 	{
 		"from_choice": "(Keep the dagger)",
 		"from_id": "115",
+		"from_port": 1,
 		"to_id": "119",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Keep trying to negotiate)",
+		"from_id": "115",
+		"from_port": 2,
+		"to_id": "117",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "116",
+		"from_port": 0,
+		"to_id": "123",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "117",
+		"from_port": 0,
+		"to_id": "118",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "118",
+		"from_port": 0,
+		"to_id": "116",
 		"type": "connection"
 	},
 	{
 		"from_choice": "(Choice 0)",
 		"from_id": "119",
+		"from_port": 0,
 		"to_id": "120",
 		"type": "connection"
 	},
 	{
 		"from_choice": "(Choice 1)",
 		"from_id": "119",
+		"from_port": 1,
 		"to_id": "121",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
-		"from_id": "116",
-		"to_id": "123",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Keep trying to negotiate)",
-		"from_id": "113",
-		"to_id": "125",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "125",
-		"to_id": "126",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "126",
-		"to_id": "111",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Make the sale)",
-		"from_id": "113",
-		"to_id": "127",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "127",
-		"to_id": "129",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "112",
-		"to_id": "132",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "132",
-		"to_id": "133",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "133",
-		"to_id": "134",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Log the sale)",
-		"from_id": "134",
-		"to_id": "131",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Look around the square for a weapon)",
-		"from_id": "48",
-		"to_id": "135",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Choice 0)",
-		"from_id": "135",
-		"to_id": "136",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Choice 1)",
-		"from_id": "135",
-		"to_id": "137",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Choice 2)",
-		"from_id": "135",
-		"to_id": "138",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Look around the square, but just to gain intel.. or something)",
-		"from_id": "48",
-		"to_id": "135",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "136",
-		"to_id": "139",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "139",
-		"to_id": "140",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Try anyway)",
-		"from_id": "140",
-		"to_id": "142",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "142",
-		"to_id": "143",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Just listen for now)",
-		"from_id": "140",
-		"to_id": "143",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "137",
-		"to_id": "144",
-		"type": "connection"
-	},
-	{
-		"from_choice": "I'm going to go to the shop anyway. Try to get a word in edgewise.",
-		"from_id": "144",
-		"to_id": "142",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Just listen.)",
-		"from_id": "144",
-		"to_id": "143",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Go to the shop)",
-		"from_id": "138",
-		"to_id": "142",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Pitch the sale)",
-		"from_id": "84",
-		"to_id": "147",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Choice 0)",
-		"from_id": "147",
-		"to_id": "85",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Choice 1)",
-		"from_id": "147",
-		"to_id": "148",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "148",
-		"to_id": "149",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "95",
-		"to_id": "150",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "150",
-		"to_id": "151",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Choice 3)",
-		"from_id": "135",
-		"to_id": "152",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "152",
-		"to_id": "153",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "153",
-		"to_id": "154",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "72",
-		"to_id": "155",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "155",
-		"to_id": "67",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "96",
-		"to_id": "156",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "104",
-		"to_id": "110",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Go back)",
-		"from_id": "156",
-		"to_id": "110",
-		"type": "connection"
-	},
-	{
-		"from_choice": "\"Does it need polishing?\"",
-		"from_id": "156",
-		"to_id": "157",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "157",
-		"to_id": "158",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "158",
-		"to_id": "110",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "159",
-		"to_id": "133",
-		"type": "connection"
-	},
-	{
-		"from_choice": "(Log the sale)",
-		"from_id": "129",
-		"to_id": "131",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "131",
-		"to_id": "128",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "128",
-		"to_id": "130",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
 		"from_id": "120",
+		"from_port": 0,
 		"to_id": "123",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
 		"from_id": "121",
+		"from_port": 0,
 		"to_id": "123",
 		"type": "connection"
 	},
 	{
-		"position:x": "6615.54736328125",
-		"position:y": "3809.19653320313",
+		"from_choice": "",
+		"from_id": "125",
+		"from_port": 0,
+		"to_id": "126",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "126",
+		"from_port": 0,
+		"to_id": "111",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "127",
+		"from_port": 0,
+		"to_id": "129",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "128",
+		"from_port": 0,
+		"to_id": "130",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Log the sale)",
+		"from_id": "129",
+		"from_port": 0,
+		"to_id": "131",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "131",
+		"from_port": 0,
+		"to_id": "128",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "132",
+		"from_port": 0,
+		"to_id": "133",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "133",
+		"from_port": 0,
+		"to_id": "134",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Log the sale)",
+		"from_id": "134",
+		"from_port": 0,
+		"to_id": "131",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 0)",
+		"from_id": "135",
+		"from_port": 0,
+		"to_id": "136",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 1)",
+		"from_id": "135",
+		"from_port": 1,
+		"to_id": "137",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 2)",
+		"from_id": "135",
+		"from_port": 2,
+		"to_id": "138",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 3)",
+		"from_id": "135",
+		"from_port": 3,
+		"to_id": "152",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "136",
+		"from_port": 0,
+		"to_id": "139",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "137",
+		"from_port": 0,
+		"to_id": "144",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Go to the shop)",
+		"from_id": "138",
+		"from_port": 0,
+		"to_id": "142",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "139",
+		"from_port": 0,
+		"to_id": "140",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "14",
+		"from_port": 0,
+		"to_id": "16",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Try anyway)",
+		"from_id": "140",
+		"from_port": 0,
+		"to_id": "142",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Just listen for now)",
+		"from_id": "140",
+		"from_port": 1,
+		"to_id": "143",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "142",
+		"from_port": 0,
+		"to_id": "143",
+		"type": "connection"
+	},
+	{
+		"from_choice": "I'm going to go to the shop anyway. Try to get a word in edgewise.",
+		"from_id": "144",
+		"from_port": 0,
+		"to_id": "142",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Just listen.)",
+		"from_id": "144",
+		"from_port": 1,
+		"to_id": "143",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 0)",
+		"from_id": "147",
+		"from_port": 0,
+		"to_id": "85",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 1)",
+		"from_id": "147",
+		"from_port": 1,
+		"to_id": "148",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "148",
+		"from_port": 0,
+		"to_id": "149",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "150",
+		"from_port": 0,
+		"to_id": "151",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "152",
+		"from_port": 0,
+		"to_id": "153",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "153",
+		"from_port": 0,
+		"to_id": "154",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "155",
+		"from_port": 0,
+		"to_id": "67",
+		"type": "connection"
+	},
+	{
+		"from_choice": "\"Does it need polishing?\"",
+		"from_id": "156",
+		"from_port": 0,
+		"to_id": "157",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Go back)",
+		"from_id": "156",
+		"from_port": 1,
+		"to_id": "110",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "157",
+		"from_port": 0,
+		"to_id": "158",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "158",
+		"from_port": 0,
+		"to_id": "110",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "159",
+		"from_port": 0,
+		"to_id": "133",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Leave)",
+		"from_id": "16",
+		"from_port": 0,
+		"to_id": "15",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Stay)",
+		"from_id": "16",
+		"from_port": 1,
+		"to_id": "17",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "17",
+		"from_port": 0,
+		"to_id": "21",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 0)",
+		"from_id": "19",
+		"from_port": 0,
+		"to_id": "2",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 1)",
+		"from_id": "19",
+		"from_port": 1,
+		"to_id": "3",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Leave)",
+		"from_id": "2",
+		"from_port": 0,
+		"to_id": "14",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Eavesdrop)",
+		"from_id": "2",
+		"from_port": 1,
+		"to_id": "17",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "22",
+		"from_port": 0,
+		"to_id": "0",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 0)",
+		"from_id": "23",
+		"from_port": 0,
+		"to_id": "29",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 1)",
+		"from_id": "23",
+		"from_port": 1,
+		"to_id": "30",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "24",
+		"from_port": 0,
+		"to_id": "28",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "25",
+		"from_port": 0,
+		"to_id": "31",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "29",
+		"from_port": 0,
+		"to_id": "24",
+		"type": "connection"
+	},
+	{
+		"from_choice": "\"I found it in the desert.\"",
+		"from_id": "3",
+		"from_port": 0,
+		"to_id": "4",
+		"type": "connection"
+	},
+	{
+		"from_choice": "\"I bought it off someone else.\" (Lie)",
+		"from_id": "3",
+		"from_port": 1,
+		"to_id": "5",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "30",
+		"from_port": 0,
+		"to_id": "25",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 0)",
+		"from_id": "31",
+		"from_port": 0,
+		"to_id": "32",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 1)",
+		"from_id": "31",
+		"from_port": 1,
+		"to_id": "33",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "32",
+		"from_port": 0,
+		"to_id": "33",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "33",
+		"from_port": 0,
+		"to_id": "34",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 0)",
+		"from_id": "35",
+		"from_port": 0,
+		"to_id": "47",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "36",
+		"from_port": 0,
+		"to_id": "40",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "37",
+		"from_port": 0,
+		"to_id": "50",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "38",
+		"from_port": 0,
+		"to_id": "43",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "39",
+		"from_port": 0,
+		"to_id": "48",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "4",
+		"from_port": 0,
+		"to_id": "7",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "40",
+		"from_port": 0,
+		"to_id": "41",
+		"type": "connection"
+	},
+	{
+		"from_choice": "I know, right?",
+		"from_id": "41",
+		"from_port": 0,
+		"to_id": "42",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Is that really how it went down?",
+		"from_id": "41",
+		"from_port": 1,
+		"to_id": "42",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "42",
+		"from_port": 0,
+		"to_id": "44",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "43",
+		"from_port": 0,
+		"to_id": "39",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "44",
+		"from_port": 0,
+		"to_id": "45",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "45",
+		"from_port": 0,
+		"to_id": "46",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Where am I?",
+		"from_id": "46",
+		"from_port": 0,
+		"to_id": "38",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Maybe I'm not acting in my best judgement.",
+		"from_id": "46",
+		"from_port": 1,
+		"to_id": "60",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 0)",
+		"from_id": "47",
+		"from_port": 0,
+		"to_id": "36",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 1)",
+		"from_id": "47",
+		"from_port": 1,
+		"to_id": "37",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Look around the square for a weapon)",
+		"from_id": "48",
+		"from_port": 0,
+		"to_id": "135",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Look around the square, but just to gain intel.. or something)",
+		"from_id": "48",
+		"from_port": 1,
+		"to_id": "135",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "5",
+		"from_port": 0,
+		"to_id": "9",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "50",
+		"from_port": 0,
+		"to_id": "51",
+		"type": "connection"
+	},
+	{
+		"from_choice": "No, I can do this.",
+		"from_id": "51",
+		"from_port": 0,
+		"to_id": "53",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Hypothetically, if I did have to quit, where would home be?",
+		"from_id": "51",
+		"from_port": 1,
+		"to_id": "59",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "53",
+		"from_port": 0,
+		"to_id": "54",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Something good?",
+		"from_id": "54",
+		"from_port": 0,
+		"to_id": "55",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Something bad?",
+		"from_id": "54",
+		"from_port": 1,
+		"to_id": "58",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "55",
+		"from_port": 0,
+		"to_id": "56",
+		"type": "connection"
+	},
+	{
+		"from_choice": "I want to back to the family estate in North Cloverton. I want to go back to the Beneath Me",
+		"from_id": "56",
+		"from_port": 0,
+		"to_id": "66",
+		"type": "connection"
+	},
+	{
+		"from_choice": "I want to make enough money to pay off my debt.",
+		"from_id": "56",
+		"from_port": 1,
+		"to_id": "69",
+		"type": "connection"
+	},
+	{
+		"from_choice": "I want to become the Richest Man Alive and spit in the collector's face.",
+		"from_id": "56",
+		"from_port": 2,
+		"to_id": "71",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "58",
+		"from_port": 0,
+		"to_id": "56",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "59",
+		"from_port": 0,
+		"to_id": "54",
+		"type": "connection"
+	},
+	{
+		"from_choice": "I want to save my friends.",
+		"from_id": "60",
+		"from_port": 0,
+		"to_id": "62",
+		"type": "connection"
+	},
+	{
+		"from_choice": "I want the police to handle it.",
+		"from_id": "60",
+		"from_port": 1,
+		"to_id": "62",
+		"type": "connection"
+	},
+	{
+		"from_choice": "I want to go home and get a college degree instead of descending into a world of gang violence.",
+		"from_id": "60",
+		"from_port": 2,
+		"to_id": "65",
+		"type": "connection"
+	},
+	{
+		"from_choice": "I want to hurt somebody for hurting me.",
+		"from_id": "60",
+		"from_port": 3,
+		"to_id": "61",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "61",
+		"from_port": 0,
+		"to_id": "38",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "62",
+		"from_port": 0,
+		"to_id": "38",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "65",
+		"from_port": 0,
+		"to_id": "38",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Mom.",
+		"from_id": "66",
+		"from_port": 0,
+		"to_id": "67",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Dad.",
+		"from_id": "66",
+		"from_port": 1,
+		"to_id": "67",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Grandma.",
+		"from_id": "66",
+		"from_port": 2,
+		"to_id": "67",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Winsor, the dog.",
+		"from_id": "66",
+		"from_port": 3,
+		"to_id": "67",
+		"type": "connection"
+	},
+	{
+		"from_choice": "A.. bird?",
+		"from_id": "66",
+		"from_port": 4,
+		"to_id": "68",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "67",
+		"from_port": 0,
+		"to_id": "70",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "68",
+		"from_port": 0,
+		"to_id": "67",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "69",
+		"from_port": 0,
+		"to_id": "67",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "7",
+		"from_port": 0,
+		"to_id": "8",
+		"type": "connection"
+	},
+	{
+		"from_choice": "\"Decorations?\"",
+		"from_id": "70",
+		"from_port": 0,
+		"to_id": "74",
+		"type": "connection"
+	},
+	{
+		"from_choice": "\"Of course.\"",
+		"from_id": "70",
+		"from_port": 1,
+		"to_id": "79",
+		"type": "connection"
+	},
+	{
+		"from_choice": "What? I didn't say that.",
+		"from_id": "71",
+		"from_port": 0,
+		"to_id": "72",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Yeah.. Yeah!",
+		"from_id": "71",
+		"from_port": 1,
+		"to_id": "73",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "72",
+		"from_port": 0,
+		"to_id": "155",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "73",
+		"from_port": 0,
+		"to_id": "67",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "74",
+		"from_port": 0,
+		"to_id": "75",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Try to center yourself in the real world.)",
+		"from_id": "75",
+		"from_port": 0,
+		"to_id": "76",
+		"type": "connection"
+	},
+	{
+		"from_choice": "\"So are you buying something or not?\"",
+		"from_id": "75",
+		"from_port": 1,
+		"to_id": "77",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Thanks for helping me.",
+		"from_id": "76",
+		"from_port": 0,
+		"to_id": "78",
+		"type": "connection"
+	},
+	{
+		"from_choice": "\"Sorry Ace, I was kidding. The dagger.\"",
+		"from_id": "76",
+		"from_port": 1,
+		"to_id": "79",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "77",
+		"from_port": 0,
+		"to_id": "83",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "78",
+		"from_port": 0,
+		"to_id": "76",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "79",
+		"from_port": 0,
+		"to_id": "80",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 0)",
+		"from_id": "80",
+		"from_port": 0,
+		"to_id": "81",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 1)",
+		"from_id": "80",
+		"from_port": 1,
+		"to_id": "82",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "81",
+		"from_port": 0,
+		"to_id": "84",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "82",
+		"from_port": 0,
+		"to_id": "84",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "83",
+		"from_port": 0,
+		"to_id": "75",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Pitch the sale)",
+		"from_id": "84",
+		"from_port": 0,
+		"to_id": "147",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Interrupt)",
+		"from_id": "84",
+		"from_port": 1,
+		"to_id": "95",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "85",
+		"from_port": 0,
+		"to_id": "86",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "86",
+		"from_port": 0,
+		"to_id": "87",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "87",
+		"from_port": 0,
+		"to_id": "88",
+		"type": "connection"
+	},
+	{
+		"from_choice": "\"I guess I could just hold onto it then..\"",
+		"from_id": "88",
+		"from_port": 0,
+		"to_id": "94",
+		"type": "connection"
+	},
+	{
+		"from_choice": "\"Cost of labor.\"",
+		"from_id": "88",
+		"from_port": 1,
+		"to_id": "91",
+		"type": "connection"
+	},
+	{
+		"from_choice": "\"It's antique.\"",
+		"from_id": "88",
+		"from_port": 2,
+		"to_id": "98",
+		"type": "connection"
+	},
+	{
+		"from_choice": "\"What do you need it for?\"",
+		"from_id": "88",
+		"from_port": 3,
+		"to_id": "102",
+		"type": "connection"
+	},
+	{
+		"from_choice": "\"Ok, what do you think it's worth.\" (Continue)",
+		"from_id": "88",
+		"from_port": 4,
+		"to_id": "90",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Interrupt)",
+		"from_id": "88",
+		"from_port": 5,
+		"to_id": "95",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "89",
+		"from_port": 0,
+		"to_id": "96",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 0)",
+		"from_id": "9",
+		"from_port": 0,
+		"to_id": "10",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 1)",
+		"from_id": "9",
+		"from_port": 1,
+		"to_id": "11",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "90",
+		"from_port": 0,
+		"to_id": "111",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "91",
+		"from_port": 0,
+		"to_id": "89",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "93",
+		"from_port": 0,
+		"to_id": "97",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "94",
+		"from_port": 0,
+		"to_id": "93",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "95",
+		"from_port": 0,
+		"to_id": "150",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "96",
+		"from_port": 0,
+		"to_id": "156",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "97",
+		"from_port": 0,
+		"to_id": "110",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "98",
+		"from_port": 0,
+		"to_id": "99",
+		"type": "connection"
+	},
+	{
+		"from_choice": "\"Yes\"",
+		"from_id": "99",
+		"from_port": 0,
+		"to_id": "100",
+		"type": "connection"
+	},
+	{
+		"from_choice": "\"No\"",
+		"from_id": "99",
+		"from_port": 1,
+		"to_id": "101",
+		"type": "connection"
+	},
+	{
+		"position:x": "3462.27978515625",
+		"position:y": "1900.7880859375",
 		"type": "camera",
-		"zoom": "0.88317674398422"
+		"zoom": "0.49853014945984"
 	}
 ]
