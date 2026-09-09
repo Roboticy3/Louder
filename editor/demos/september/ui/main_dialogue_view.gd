@@ -1,7 +1,8 @@
-extends Control
+class_name MainDialogueView extends Control
 
 @export var scrolling_dialogue_feed:ScrollingDialogueFeed
 @export var scrolling_dialogue_thinking:ScrollingDialogueThinking
+@export var background_rect:TextureRect
 
 @export var controller_group := &"ps_controller"
 

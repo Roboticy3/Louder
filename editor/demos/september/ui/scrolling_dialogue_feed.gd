@@ -9,6 +9,9 @@ const BodyProperties := PSObjects.BodyProperties
 @export var scroll_container:ScrollContainer
 @export var spectator:=false
 
+@export var item_backgrounds:Array[Texture]
+@export var text_color_main := Color.WHITE
+
 var item_count := 0
 var top:Node = null
 
@@ -28,6 +31,8 @@ func push_item(controller:PSController):
 	var item := dialogue_item.instantiate()
 	if spectator:
 		item.set("disabled", true)
+	if item_backgrounds and item.has_method("set_textures"):
+		item.set_textures(item_backgrounds)
 	if item.has_method("set_controller"):
 		item.set_controller(controller)
 	if item.has_signal("choice_pressed"):

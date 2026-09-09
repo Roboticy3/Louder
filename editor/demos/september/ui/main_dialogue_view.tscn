@@ -8,7 +8,16 @@
 [ext_resource type="Script" uid="uid://bt5qiks6r8rsq" path="res://demos/september/ui/scroll_margin.gd" id="5_lqc4t"]
 [ext_resource type="PackedScene" uid="uid://ctpltkbarsbjg" path="res://demos/september/ui/main_dialogue_debug.tscn" id="5_qjalj"]
 
-[node name="MainDialogueView" type="Control" unique_id=2033588754 node_paths=PackedStringArray("scrolling_dialogue_feed", "scrolling_dialogue_thinking")]
+[sub_resource type="Gradient" id="Gradient_lqc4t"]
+offsets = PackedFloat32Array(0, 0.57326007)
+colors = PackedColorArray(1, 1, 1, 0.6509804, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_nunj6"]
+gradient = SubResource("Gradient_lqc4t")
+fill_from = Vector2(1, 0.9334471)
+fill_to = Vector2(0.10409556, 0.68430036)
+
+[node name="MainDialogueView" type="Control" unique_id=2033588754 node_paths=PackedStringArray("scrolling_dialogue_feed", "scrolling_dialogue_thinking", "background_rect")]
 layout_mode = 3
 anchor_left = 0.66800004
 anchor_right = 1.0
@@ -19,6 +28,16 @@ grow_vertical = 2
 script = ExtResource("1_qjalj")
 scrolling_dialogue_feed = NodePath("VBoxContainer/Control/ScrollContainer/Feed")
 scrolling_dialogue_thinking = NodePath("VBoxContainer/Control/ScrollContainer/Feed/ThinkingView")
+background_rect = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=1374577359]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture2D_nunj6")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=750293429]
 layout_mode = 1

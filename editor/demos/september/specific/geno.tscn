@@ -1,8 +1,10 @@
 [gd_scene format=3 uid="uid://cor0bmbbvv2l5"]
 
 [ext_resource type="Script" uid="uid://2x5tvoc4rfd4" path="res://demos/september/specific/geno.gd" id="1_fgoqf"]
+[ext_resource type="Theme" uid="uid://8guntd0dq8f" path="res://demos/september/specific/geno_theme.tres" id="1_uuvyx"]
 [ext_resource type="Texture2D" uid="uid://bkhql6b61uqwg" path="res://demos/september/sprite/black.tres" id="2_exxv7"]
 [ext_resource type="PackedScene" uid="uid://dnwmrvllc2101" path="res://demos/september/ui/main_dialogue_view.tscn" id="2_if7ko"]
+[ext_resource type="Texture2D" uid="uid://cbw2uv1nltg40" path="res://demos/september/sprite/UI elements-export.png" id="3_8sve8"]
 [ext_resource type="Texture2D" uid="uid://bqkth6diqnmtu" path="res://demos/september/sprite/Geno View.png" id="3_avyjx"]
 [ext_resource type="Script" uid="uid://dut12f744fc2s" path="res://demos/september/specific/variable_fader_canvas.gd" id="3_exxv7"]
 [ext_resource type="Texture2D" uid="uid://csyfqjrs6cq2y" path="res://demos/september/sprite/Geno View Bandit.png" id="5_cl5uo"]
@@ -10,7 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://5bx7hebrp0qu" path="res://demos/september/sprite/Geno View Reka 2.png" id="7_tampr"]
 [ext_resource type="AudioStream" uid="uid://dag7bhs10ap5b" path="res://demos/september/audio/Demo3-loop.mp3" id="9_tampr"]
 [ext_resource type="Script" uid="uid://dwci644iorqlj" path="res://demos/september/specific/variable_fader_stream.gd" id="10_5snrs"]
-[ext_resource type="AudioStream" uid="uid://oxwefiqf24a6" path="res://demos/september/audio/Demo3-main.mp3" id="11_01e0q"]
+[ext_resource type="AudioStream" uid="uid://ccxwubgwg3mdv" path="res://demos/september/audio/Demo3-main.mp3" id="11_01e0q"]
 [ext_resource type="Script" uid="uid://pdtwpxufvewd" path="res://demos/september/ui/main_dialogue_audio.gd" id="12_uuvyx"]
 [ext_resource type="AudioStream" uid="uid://c6w30j88ibuoq" path="res://demos/september/audio/dialogue_slides_1.wav" id="13_8sve8"]
 [ext_resource type="AudioStream" uid="uid://cwj5eb15uergp" path="res://demos/september/audio/dialogue_slides_1-2.wav" id="14_hfdov"]
@@ -20,6 +22,26 @@
 [ext_resource type="AudioStream" uid="uid://cq261rqp3xpaq" path="res://demos/september/audio/dialogue_slide_6.wav" id="18_j2u2i"]
 [ext_resource type="AudioStream" uid="uid://dre6qyec4pbw2" path="res://demos/september/audio/dialogue_slide_7.wav" id="19_ttvgv"]
 [ext_resource type="AudioStream" uid="uid://b1435ghe4mrhk" path="res://demos/september/audio/dialogue_pop.wav" id="20_cdvv2"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uuvyx"]
+atlas = ExtResource("3_8sve8")
+region = Rect2(0, 0, 256, 256)
+margin = Rect2(-13, -15, -26, -29)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r0if7"]
+atlas = ExtResource("3_8sve8")
+region = Rect2(256, 0, 256, 256)
+margin = Rect2(-27, -18, -30, -37)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xaxpp"]
+atlas = ExtResource("3_8sve8")
+region = Rect2(0, 256, 256, 256)
+margin = Rect2(-14, -19, -15, -32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ttvgv"]
+atlas = ExtResource("3_8sve8")
+region = Rect2(256, 256, 256, 256)
+margin = Rect2(-20, -14, -28, -21)
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_ntx1s"]
 random_pitch = 1.0594631
@@ -36,14 +58,17 @@ stream_6/stream = ExtResource("19_ttvgv")
 streams_count = 1
 stream_0/stream = ExtResource("20_cdvv2")
 
-[node name="Control" type="Control" unique_id=1123156141]
+[node name="Control" type="Control" unique_id=1123156141 node_paths=PackedStringArray("view")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("1_uuvyx")
 script = ExtResource("1_fgoqf")
+view = NodePath("CanvasLayer/MainDialogueView")
+item_backgrounds = Array[Texture]([SubResource("AtlasTexture_uuvyx"), SubResource("AtlasTexture_r0if7"), SubResource("AtlasTexture_xaxpp"), SubResource("AtlasTexture_ttvgv")])
 
 [node name="Black" type="TextureRect" parent="." unique_id=1624664861]
 layout_mode = 1

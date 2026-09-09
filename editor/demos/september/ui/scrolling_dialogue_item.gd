@@ -5,9 +5,17 @@ const ChoiceProperties := PSObjects.ChoiceProperties
 
 @export var element_container:Container
 @export var choice_container:Container
+@export var element_background:NinePatchRect
 @export var disabled := false
+@export var choice_packed:PackedScene = load("res://demos/september/ui/scrolling_dialogue_choice.tscn")
+
+@export var textures:Array[Texture]
 
 signal choice_pressed(choice: String)
+
+func set_textures(to:Array[Texture]):
+	textures = to
+	if element_background: element_background.texture = get_random_texture()
 
 #replace children in the element container with the body's speaker, text, and choices
 func set_controller(controller:PSController):
@@ -41,32 +49,33 @@ func set_controller(controller:PSController):
 		for i in choices.size():
 			var choice := choices[i]
 			if !(choice is Dictionary): continue
-			var button := Button.new()
+			
+			var choice_instance = choice_packed.instantiate()
+			if !choice_instance is ScrollingDialogueChoice:
+				push_error("Choice ", choice_instance, " loaded from ", choice_packed.resource_path, ". Expected ScrollingDialogueChoice")
+				break
 			
 			var choice_text := str(choice.get(ChoiceProperties.from_choice, ""))
-			if choice_text.is_empty():
-				button.text = "CONTINUE"
-			else:
-				button.text = choice_text
+			choice_instance.set_choice(choice_text)
+			choice_instance.set_texture(get_random_texture())
 			
-			if i <= 10:
-				var selection_index := i + 1
-				var input_event := InputEventAction.new()
-				input_event.action = StringName("dialogue_%d" % selection_index)
-				button.shortcut = Shortcut.new()
-				button.shortcut.events.append(input_event)
-				button.text = ("%d. %s" % [selection_index, button.text]) 
-				button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			if i < 10:
+				choice_instance.set_index(i + 1)
 			
-			button.pressed.connect(_on_choice_pressed.bind(choice_text))
-			choice_container.add_child(button)
+			choice_instance.choice_pressed.connect(_on_choice_pressed)
+			choice_container.add_child(choice_instance)
 	
 
 func clear_choices() -> void:
 	for c in choice_container.get_children():
-		if c is Button:
-			choice_container.remove_child(c)
-			c.queue_free()
+		choice_container.remove_child(c)
+		c.queue_free()
+
+func get_random_texture() -> Texture:
+	if textures.is_empty():
+		return Texture.new()
+	var i := randi_range(0, textures.size() - 1)
+	return textures[i]
 
 func _on_choice_pressed(choice: String) -> void:
 	choice_pressed.emit(choice)

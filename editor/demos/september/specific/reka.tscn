@@ -10,9 +10,9 @@
 [ext_resource type="Texture2D" uid="uid://c1tfnjsoi78q2" path="res://demos/september/sprite/Reka View 1 Geno.png" id="4_17usu"]
 [ext_resource type="Texture2D" uid="uid://dal1076wdhlrb" path="res://demos/september/sprite/Reka View 2.png" id="5_ewuah"]
 [ext_resource type="Texture2D" uid="uid://bruhbpbvomhx7" path="res://demos/september/sprite/Reka View 2 Geno.png" id="6_654kt"]
-[ext_resource type="AudioStream" uid="uid://dag7bhs10ap5b" path="res://demos/september/audio/Demo3-loop.mp3" id="11_xofov"]
+[ext_resource type="AudioStream" uid="uid://ci5ph6lk8itkk" path="res://demos/september/audio/Demo3-loop.mp3" id="11_xofov"]
 [ext_resource type="Script" uid="uid://dwci644iorqlj" path="res://demos/september/specific/variable_fader_stream.gd" id="12_u6bov"]
-[ext_resource type="AudioStream" uid="uid://oxwefiqf24a6" path="res://demos/september/audio/Demo3-main.mp3" id="13_u6bov"]
+[ext_resource type="AudioStream" uid="uid://ccxwubgwg3mdv" path="res://demos/september/audio/Demo3-main.mp3" id="13_u6bov"]
 [ext_resource type="Script" uid="uid://pdtwpxufvewd" path="res://demos/september/ui/main_dialogue_audio.gd" id="14_tmy2p"]
 [ext_resource type="AudioStream" uid="uid://c6w30j88ibuoq" path="res://demos/september/audio/dialogue_slides_1.wav" id="15_rdpkc"]
 [ext_resource type="AudioStream" uid="uid://cwj5eb15uergp" path="res://demos/september/audio/dialogue_slides_1-2.wav" id="16_lvml4"]
@@ -21,6 +21,22 @@
 [ext_resource type="AudioStream" uid="uid://d3dmebns4tecq" path="res://demos/september/audio/dialogue_slide_5.wav" id="19_scgvh"]
 [ext_resource type="AudioStream" uid="uid://cq261rqp3xpaq" path="res://demos/september/audio/dialogue_slide_6.wav" id="20_wr5gb"]
 [ext_resource type="AudioStream" uid="uid://dre6qyec4pbw2" path="res://demos/september/audio/dialogue_slide_7.wav" id="21_85mwo"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_af4kj"]
+load_path = "res://.godot/imported/UI elements-export.png-367d6879a5084192da133597e035e7ae.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ck8bg"]
+atlas = SubResource("CompressedTexture2D_af4kj")
+region = Rect2(512, 256, 256, 256)
+margin = Rect2(-18, -4, -18, -9)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_tmy2p"]
+load_path = "res://.godot/imported/UI elements-export.png-367d6879a5084192da133597e035e7ae.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rdpkc"]
+atlas = SubResource("CompressedTexture2D_tmy2p")
+region = Rect2(512, 0, 256, 256)
+margin = Rect2(-16, -1, -16, -14)
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_skou3"]
 random_pitch = 1.0594631
@@ -36,7 +52,7 @@ stream_6/stream = ExtResource("21_85mwo")
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_t3lbj"]
 streams_count = 1
 
-[node name="Control" type="Control" unique_id=1123156141]
+[node name="Control" type="Control" unique_id=1123156141 node_paths=PackedStringArray("view")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -44,6 +60,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_l48c1")
+view = NodePath("MainDialogueView")
+item_backgrounds = Array[Texture]([SubResource("AtlasTexture_ck8bg"), SubResource("AtlasTexture_rdpkc")])
 
 [node name="Black" type="TextureRect" parent="." unique_id=1678997231]
 layout_mode = 1

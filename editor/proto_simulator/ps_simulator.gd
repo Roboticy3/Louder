@@ -109,6 +109,7 @@ func align(body: Dictionary[BodyProperties, Variant], choice: String, filter:=no
 #non-auto hub is reached, or the conversation runs dry. `taken_choice` is the
 #choice that moved the body here ("" when starting a conversation).
 func _traverse(body: Dictionary[BodyProperties, Variant], position: int, choice: String, filter: Callable) -> Dictionary[BodyProperties, Variant]:
+	#set breakpoints here to debug specific conversation points
 	if position == 79:
 		pass
 	
