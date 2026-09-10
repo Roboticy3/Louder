@@ -79,7 +79,11 @@ script = ExtResource("1_so4sa")
 grabber = NodePath("TextSectionWrapper/TextSection/speaker")
 start_check = NodePath("ChoicesSection/start")
 auto_check = NodePath("ChoicesSection/auto")
+group = null
+component_group = null
+default_source = null
 choices_section_logic = NodePath("ChoicesSection/choices")
+hub_data = null
 
 [node name="TextSectionWrapper" type="VBoxContainer" parent="." unique_id=175791466]
 layout_mode = 2

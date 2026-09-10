@@ -13,6 +13,7 @@
 [ext_resource type="Script" uid="uid://dascmi4sqyc4e" path="res://scripts/search_logic.gd" id="9_au7bs"]
 [ext_resource type="Script" uid="uid://bboylqujoaqru" path="res://scripts/on_screen_debug.gd" id="9_n5ixm"]
 [ext_resource type="Script" uid="uid://dfhadrloniwdc" path="res://scripts/user_config.gd" id="10_07l17"]
+[ext_resource type="Script" uid="uid://con35qofw6gny" path="res://scripts/goto_logic.gd" id="10_ueupe"]
 [ext_resource type="PackedScene" uid="uid://dr7rs8c2sfbde" path="res://entities/menus/edit_menu.tscn" id="10_vvcdv"]
 [ext_resource type="PackedScene" uid="uid://sc3ddjdaefp1" path="res://entities/knowledge_graph.tscn" id="13_6vlff"]
 
@@ -65,6 +66,11 @@ script = ExtResource("9_au7bs")
 editor = NodePath("../Control/GridContainer/GraphEdit")
 search_bar = NodePath("../Control/Footer/SearchBar")
 search_bar_line_edit = NodePath("../Control/Footer/SearchBar/LineEdit")
+
+[node name="GotoLogic" type="Node" parent="." unique_id=682302511 node_paths=PackedStringArray("go_to_id", "editor")]
+script = ExtResource("10_ueupe")
+go_to_id = NodePath("../Control/Footer/SearchBar/LineEdit2")
+editor = NodePath("../Control/GridContainer/GraphEdit")
 
 [node name="Control" type="Control" parent="." unique_id=2092511738]
 layout_mode = 1
@@ -142,7 +148,6 @@ grow_horizontal = 2
 grow_vertical = 0
 
 [node name="SearchBar" type="HBoxContainer" parent="Control/Footer" unique_id=1715646056]
-visible = false
 layout_mode = 2
 
 [node name="Label" type="Label" parent="Control/Footer/SearchBar" unique_id=286401829]
@@ -150,6 +155,13 @@ layout_mode = 2
 text = "Search: "
 
 [node name="LineEdit" type="LineEdit" parent="Control/Footer/SearchBar" unique_id=759274951]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="Control/Footer/SearchBar" unique_id=1530843007]
+layout_mode = 2
+text = "Go to id:"
+
+[node name="LineEdit2" type="LineEdit" parent="Control/Footer/SearchBar" unique_id=1743416894]
 layout_mode = 2
 
 [node name="NodeColorsPopup" type="PopupPanel" parent="." unique_id=372021348 groups=["node_colors"]]

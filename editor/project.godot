@@ -29,7 +29,7 @@ CustomConversationLayer="*uid://cutgqpa4uig2p"
 [display]
 
 window/stretch/mode="canvas_items"
-window/stretch/aspect="expand"
+window/stretch/aspect="ignore"
 
 [gui]
 

@@ -74,17 +74,6 @@ script = ExtResource("1_l48c1")
 view = NodePath("MainDialogueView")
 item_backgrounds = Array[Texture]([SubResource("AtlasTexture_ck8bg"), SubResource("AtlasTexture_rdpkc")])
 
-[node name="Black" type="TextureRect" parent="." unique_id=1678997231]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -3.0
-offset_bottom = -3.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("2_ewuah")
-
 [node name="reka_square" type="TextureRect" parent="." unique_id=1078003390]
 layout_mode = 1
 anchors_preset = 15
@@ -206,6 +195,18 @@ script = ExtResource("3_17usu")
 rotation = -1.5707964
 scale = Vector2(0.9228033, 0.82173437)
 texture = SubResource("AtlasTexture_tmy2p")
+
+[node name="reka_blank" type="TextureRect" parent="." unique_id=1678997231]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -3.0
+offset_bottom = -3.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_ewuah")
+script = ExtResource("3_17usu")
 
 [node name="MainDialogueView" parent="." unique_id=2033588754 instance=ExtResource("2_1bhkb")]
 layout_mode = 1

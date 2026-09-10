@@ -49,9 +49,12 @@ func catalog_matches() -> void:
 	if query.is_empty():
 		return
 	for candidate in get_tree().get_nodes_in_group(SEARCH_GROUP):
-		if candidate is CustomGraphNodeTextEdit \
-				and editor.is_ancestor_of(candidate) \
-				and candidate.search(query, 0, 0, true) != -Vector2i.ONE:
+		var valid_type := candidate is CustomGraphNodeTextEdit
+		var ancestor := editor.is_ancestor_of(candidate)
+		var search := false
+		if valid_type:
+			search = (candidate.search(query, 0, 0, true) != -Vector2i.ONE)
+		if valid_type and ancestor and search:
 			matches.append(candidate)
 
 func next_match() -> void:
