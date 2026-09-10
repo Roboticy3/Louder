@@ -14,6 +14,20 @@ var port := 45678
 @export var level:PackedScene
 
 func _ready():
+	
+	var args = OS.get_cmdline_args()
+	for a in args:
+		if a == "--quickstart=1":
+			play_as = "Geno"
+			mode = NetworkLayer.ClientMode.HOST
+			start()
+			break
+		elif a == "--quickstart=2":
+			play_as = "Reka"
+			mode = NetworkLayer.ClientMode.CLIENT
+			start()
+			break
+	
 	validate()
 
 func set_mode(to:NetworkLayer.ClientMode):
