@@ -94,7 +94,7 @@ func _request_choice(controller_path:NodePath, choice: String) -> void:
 				nonfollowers.push_back(c)
 	
 	if !controller.traverse(choice):
-		push_warning("Choice ", choice, " failed for controller ", controller_path, "!")
+		push_warning("Choice ", choice, " failed for controller ", controller_path, "! There's probably an auto node with no valid outbound paths.")
 		return
 	
 	if controller.branch_changed(): for nf in nonfollowers:

@@ -183,7 +183,6 @@ script = ExtResource("3_exxv7")
 
 [node name="MainDialogueView" parent="." unique_id=2033588754 instance=ExtResource("2_if7ko")]
 layout_mode = 1
-filter_speak_as = PackedStringArray("Geno")
 
 [node name="BackgroundAudio" type="Node" parent="." unique_id=973718887]
 

@@ -1140,6 +1140,7 @@
 		"type": "hub"
 	},
 	{
+		"branch": "shop",
 		"conversation_id": "179",
 		"is_choice": true,
 		"position_offset:x": "-160.0",
@@ -1179,6 +1180,7 @@
 		"type": "hub"
 	},
 	{
+		"branch": "shop",
 		"conversation_id": "180",
 		"position_offset:x": "340.0",
 		"position_offset:y": "6660.0",
@@ -1732,14 +1734,6 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "151",
-		"position_offset:x": "14040.0",
-		"position_offset:y": "4920.0",
-		"speaker": "Geno",
-		"text": "\"No idea.\"",
-		"type": "hub"
-	},
-	{
 		"choices": [
 			"\"I want the dagger. I'll buy it for 12\"",
 			"\"I want the dagger. I'll buy it for 8\"",
@@ -1747,7 +1741,6 @@
 			"(Try to interfere with the haggling to drop the price of the dagger.)",
 			"\"Um, actually, I'll chip in later.\""
 		],
-		"conditions": "bandit_haggling < 0",
 		"conversation_id": "251",
 		"position_offset:x": "14580.0",
 		"position_offset:y": "4940.0",
@@ -1814,8 +1807,8 @@
 		"conversation_id": "267",
 		"position_offset:x": "15820.0",
 		"position_offset:y": "5360.0",
-		"speaker": "aBody",
-		"text": "The tension resolves at the table. The price was indeed right.",
+		"speaker": "Body",
+		"text": "Some tension resolves at the table. The price was indeed right.",
 		"type": "hub"
 	},
 	{
@@ -2814,18 +2807,6 @@
 	},
 	{
 		"auto": true,
-		"choices": [
-			"(Choice 0)",
-			"(Choice 1)"
-		],
-		"conversation_id": "387",
-		"position_offset:x": "14040.0",
-		"position_offset:y": "5260.0",
-		"speaker": "Nervous System",
-		"type": "hub"
-	},
-	{
-		"auto": true,
 		"conditions": "bandit_haggling < 0",
 		"conversation_id": "388",
 		"position_offset:x": "14100.0",
@@ -2839,6 +2820,54 @@
 		"conversation_id": "308",
 		"position_offset:x": "20740.0",
 		"position_offset:y": "6080.0",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"choices": [
+			"(Choice 0)",
+			"(Choice 1)"
+		],
+		"conversation_id": "387",
+		"position_offset:x": "14080.0",
+		"position_offset:y": "5180.0",
+		"speaker": "Nervous System",
+		"type": "hub"
+	},
+	{
+		"choices": [
+			"\"I would like to purchase that dagger.\"",
+			"\"Don't mind me.\""
+		],
+		"conversation_id": "151",
+		"position_offset:x": "13980.0",
+		"position_offset:y": "4160.0",
+		"speaker": "Geno",
+		"text": "\"No idea.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "389",
+		"is_choice": true,
+		"position_offset:x": "14400.0",
+		"position_offset:y": "4180.0",
+		"speaker": "Reka",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "390",
+		"is_choice": true,
+		"position_offset:x": "14380.0",
+		"position_offset:y": "4440.0",
+		"speaker": "Reka",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "391",
+		"position_offset:x": "14940.0",
+		"position_offset:y": "3720.0",
+		"speaker": "Bandit",
+		"text": "\"I don't like this. Who are you? What are you doing here?\"",
 		"type": "hub"
 	},
 	{
@@ -3248,10 +3277,17 @@
 		"type": "connection"
 	},
 	{
-		"from_choice": "",
+		"from_choice": "\"I would like to purchase that dagger.\"",
 		"from_id": "151",
 		"from_port": 0,
-		"to_id": "387",
+		"to_id": "389",
+		"type": "connection"
+	},
+	{
+		"from_choice": "\"Don't mind me.\"",
+		"from_id": "151",
+		"from_port": 1,
+		"to_id": "390",
 		"type": "connection"
 	},
 	{
@@ -4903,14 +4939,14 @@
 		"from_choice": "(Choice 0)",
 		"from_id": "387",
 		"from_port": 0,
-		"to_id": "251",
+		"to_id": "388",
 		"type": "connection"
 	},
 	{
 		"from_choice": "(Choice 1)",
 		"from_id": "387",
 		"from_port": 1,
-		"to_id": "388",
+		"to_id": "251",
 		"type": "connection"
 	},
 	{
@@ -4922,9 +4958,23 @@
 	},
 	{
 		"from_choice": "",
+		"from_id": "389",
+		"from_port": 0,
+		"to_id": "387",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
 		"from_id": "39",
 		"from_port": 0,
 		"to_id": "48",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "390",
+		"from_port": 0,
+		"to_id": "391",
 		"type": "connection"
 	},
 	{
@@ -5481,9 +5531,9 @@
 		"type": "connection"
 	},
 	{
-		"position:x": "17859.064453125",
-		"position:y": "4868.72900390625",
+		"position:x": "6191.98779296875",
+		"position:y": "1612.18969726563",
 		"type": "camera",
-		"zoom": "0.88317662477493"
+		"zoom": "0.45320892333984"
 	}
 ]

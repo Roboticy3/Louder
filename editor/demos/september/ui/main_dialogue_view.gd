@@ -19,12 +19,13 @@ func _on_controller_event(controller: PSController) -> void:
 	if filter_speak_as.is_empty():
 		if controller != ControllerEventLayer.get_connected_controller():
 			return
-	for s in controller.speak_as:
-		var good := false
-		if s in filter_speak_as:
-			good = true
-		if !good:
-			return
+	else:
+		for s in controller.speak_as:
+			var good := false
+			if s in filter_speak_as:
+				good = true
+			if !good:
+				return
 	
 	update_feed(controller)
 
