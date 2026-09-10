@@ -37,7 +37,9 @@ grow_vertical = 2
 
 [node name="Label" type="Label" parent="VBoxContainer" unique_id=2032558977]
 layout_mode = 2
-text = "Only 1 player is connected. Please wait until both players are connected."
+text = "Only 1 player is connected. Please wait until both players are connected.
+
+If you really need to play right now right away, select one of the two options below:"
 
 [node name="Button2" type="Button" parent="VBoxContainer" unique_id=1881249475]
 layout_mode = 2
@@ -45,4 +47,4 @@ text = "Play with bots."
 
 [node name="Button" type="Button" parent="VBoxContainer" unique_id=1447938612]
 layout_mode = 2
-text = "I know what I'm doing."
+text = "Play with only one player character connected (buggy)"

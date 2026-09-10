@@ -76,7 +76,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_uuvyx")
 script = ExtResource("1_fgoqf")
-view = NodePath("CanvasLayer/MainDialogueView")
+view = NodePath("MainDialogueView")
 item_backgrounds = Array[Texture]([SubResource("AtlasTexture_uuvyx"), SubResource("AtlasTexture_r0if7"), SubResource("AtlasTexture_xaxpp"), SubResource("AtlasTexture_ttvgv")])
 
 [node name="geno_shop" type="TextureRect" parent="." unique_id=1606361945]
@@ -181,9 +181,9 @@ expand_mode = 1
 stretch_mode = 6
 script = ExtResource("3_exxv7")
 
-[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1387162157]
-
-[node name="MainDialogueView" parent="CanvasLayer" unique_id=2033588754 instance=ExtResource("2_if7ko")]
+[node name="MainDialogueView" parent="." unique_id=2033588754 instance=ExtResource("2_if7ko")]
+layout_mode = 1
+filter_speak_as = PackedStringArray("Geno")
 
 [node name="BackgroundAudio" type="Node" parent="." unique_id=973718887]
 

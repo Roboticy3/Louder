@@ -241,8 +241,6 @@
 		"choices": [
 			"Mom.",
 			"Dad.",
-			"Grandma.",
-			"Winsor, the dog.",
 			"A.. bird?"
 		],
 		"conversation_id": "66",
@@ -635,7 +633,7 @@
 		"position_offset:x": "11280.0",
 		"position_offset:y": "7260.0",
 		"speaker": "Geno",
-		"text": "\"All you.\"",
+		"text": "\"What do you want to hear?\"",
 		"type": "hub"
 	},
 	{
@@ -764,6 +762,7 @@
 		"conversation_id": "147",
 		"position_offset:x": "8040.0",
 		"position_offset:y": "4400.0",
+		"speaker": "Geno",
 		"type": "hub"
 	},
 	{
@@ -891,7 +890,7 @@
 		"position_offset:y": "7180.0",
 		"speaker": "Bandit",
 		"statements": "bandit_haggling--",
-		"text": "No.",
+		"text": "\"No.\"",
 		"type": "hub"
 	},
 	{
@@ -943,18 +942,19 @@
 		"conversation_id": "161",
 		"position_offset:x": "-560.0",
 		"position_offset:y": "1140.0",
-		"speaker": "Start",
+		"speaker": "Note",
 		"text": "Geno and Reka are in their own heads.",
 		"type": "hub"
 	},
 	{
+		"branch": "shop",
 		"choices": [
 			"Bandit appears"
 		],
 		"conversation_id": "162",
 		"position_offset:x": "-120.0",
 		"position_offset:y": "1360.0",
-		"speaker": "Shop branch",
+		"speaker": "Note",
 		"text": "Haggling scene",
 		"type": "hub"
 	},
@@ -970,6 +970,7 @@
 		"conversation_id": "163",
 		"position_offset:x": "-140.0",
 		"position_offset:y": "720.0",
+		"speaker": "Note",
 		"text": "Different behavior depending on what Geno's been up to.",
 		"type": "hub"
 	},
@@ -985,6 +986,7 @@
 		"conversation_id": "166",
 		"position_offset:x": "420.0",
 		"position_offset:y": "280.0",
+		"speaker": "Note",
 		"text": "Reka can force Geno awake, leading to \"Geno is here, before the bandit\"",
 		"type": "hub"
 	},
@@ -996,6 +998,7 @@
 		"conversation_id": "167",
 		"position_offset:x": "440.0",
 		"position_offset:y": "640.0",
+		"speaker": "Note",
 		"text": "Reka can meet the bandit and ask to buy something. Geno can use this customer interest as leverage during haggling with the bandit. Reka can also speak with Geno to keep him busy.",
 		"type": "hub"
 	},
@@ -1003,6 +1006,7 @@
 		"conversation_id": "164",
 		"position_offset:x": "420.0",
 		"position_offset:y": "-100.0",
+		"speaker": "Note",
 		"text": "Reka has the option to interfere with the haggling, or not. Eventually, the haggling scene concludes.",
 		"type": "hub"
 	},
@@ -1014,6 +1018,7 @@
 		"conversation_id": "169",
 		"position_offset:x": "860.0",
 		"position_offset:y": "1240.0",
+		"speaker": "Note",
 		"text": "Reka can buy the sabre for a set price or attempt haggling herself.",
 		"type": "hub"
 	},
@@ -1025,6 +1030,7 @@
 		"conversation_id": "168",
 		"position_offset:x": "860.0",
 		"position_offset:y": "800.0",
+		"speaker": "Note",
 		"text": "Reka can buy the dagger for the set price or attempt haggling herself.",
 		"type": "hub"
 	},
@@ -1032,6 +1038,7 @@
 		"conversation_id": "170",
 		"position_offset:x": "1391.67944335938",
 		"position_offset:y": "1174.16650390625",
+		"speaker": "Note",
 		"text": "If the bandit haggled and beat Geno, Geno doesn't want to do this. Haggling also gives players an opportunity to reveal things about themselves.\n\nThe basic mechanic of the actual haggle is the same as with the bandit, except with more internal voices describing the effects of the haggling on each character.",
 		"type": "hub"
 	},
@@ -1039,6 +1046,7 @@
 		"conversation_id": "171",
 		"position_offset:x": "1405.24291992188",
 		"position_offset:y": "788.359191894531",
+		"speaker": "Note",
 		"text": "Sold!",
 		"type": "hub"
 	},
@@ -1053,6 +1061,7 @@
 		"conversation_id": "165",
 		"position_offset:x": "300.0",
 		"position_offset:y": "1400.0",
+		"speaker": "Note",
 		"text": "Haggling outcomes depend on \"bandit_haggling\" variable being incremented and decremented. Reka can interfere with this process if present.",
 		"type": "hub"
 	},
@@ -1068,6 +1077,7 @@
 		"conversation_id": "174",
 		"position_offset:x": "1054.65759277344",
 		"position_offset:y": "1834.83154296875",
+		"speaker": "Note",
 		"text": "Thank you for playing!",
 		"type": "hub"
 	},
@@ -1075,6 +1085,7 @@
 		"conversation_id": "172",
 		"position_offset:x": "1800.0",
 		"position_offset:y": "1040.0",
+		"speaker": "Note",
 		"text": "Reka can ask Geno questions about her missing friends.",
 		"type": "hub"
 	},
@@ -1626,6 +1637,7 @@
 		"is_choice": true,
 		"position_offset:x": "12180.0",
 		"position_offset:y": "11180.0",
+		"speaker": "Reka",
 		"type": "hub"
 	},
 	{
@@ -1660,6 +1672,7 @@
 		"conversation_id": "188",
 		"position_offset:x": "4120.0",
 		"position_offset:y": "9460.0",
+		"speaker": "Reka",
 		"type": "hub"
 	},
 	{
@@ -1719,15 +1732,6 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "248",
-		"position_offset:x": "14800.0",
-		"position_offset:y": "7200.0",
-		"speaker": "Geno",
-		"statements": "reka_interfered_with_haggling",
-		"text": "\"You got in the way of my business.\"",
-		"type": "hub"
-	},
-	{
 		"conversation_id": "151",
 		"position_offset:x": "14040.0",
 		"position_offset:y": "4920.0",
@@ -1743,11 +1747,12 @@
 			"(Try to interfere with the haggling to drop the price of the dagger.)",
 			"\"Um, actually, I'll chip in later.\""
 		],
+		"conditions": "bandit_haggling < 0",
 		"conversation_id": "251",
 		"position_offset:x": "14580.0",
 		"position_offset:y": "4940.0",
 		"speaker": "Nervous System",
-		"text": "That dagger's been haggled for you already, now you can upsell the man in black and still get it for a decent price! How much was it going for, again? (Pick the price that's a little higher than what the dagger was going for. You might not have this information if you weren't patient.')",
+		"text": "How much was it going for, again?",
 		"type": "hub"
 	},
 	{
@@ -1981,14 +1986,6 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "114",
-		"position_offset:x": "10580.0",
-		"position_offset:y": "7540.0",
-		"speaker": "Bandit",
-		"text": "\"You know what? Just for giving me a hard time, I think I'll just take it. Any problems with that?\"",
-		"type": "hub"
-	},
-	{
 		"choices": [
 			"(Give him the dagger)",
 			"(Keep the dagger)",
@@ -2145,14 +2142,6 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "302",
-		"is_choice": true,
-		"position_offset:x": "19461.865234375",
-		"position_offset:y": "5919.4296875",
-		"speaker": "Reka",
-		"type": "hub"
-	},
-	{
 		"conversation_id": "301",
 		"is_choice": true,
 		"position_offset:x": "19460.0",
@@ -2189,12 +2178,7 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "308",
-		"position_offset:x": "20740.0",
-		"position_offset:y": "6080.0",
-		"type": "hub"
-	},
-	{
+		"auto": true,
 		"conditions": "reka_haggling >= -2",
 		"conversation_id": "307",
 		"position_offset:x": "20720.0",
@@ -2202,6 +2186,7 @@
 		"type": "hub"
 	},
 	{
+		"auto": true,
 		"conditions": "reka_haggling > 0",
 		"conversation_id": "306",
 		"position_offset:x": "20700.0",
@@ -2290,13 +2275,6 @@
 		"speaker": "Reka",
 		"statements": "postcard_shop = 1",
 		"text": "\"I'm looking for two missing persons. Here's a sketch.\"",
-		"type": "hub"
-	},
-	{
-		"conversation_id": "318",
-		"is_choice": true,
-		"position_offset:x": "4180.0",
-		"position_offset:y": "8580.0",
 		"type": "hub"
 	},
 	{
@@ -2494,7 +2472,7 @@
 	{
 		"choices": [
 			"\"Do you have anything that makes it easier to travel in the desert?\"",
-			"(Choice 1)"
+			"Wait, are you suggesting I go out to the desert myself?"
 		],
 		"conversation_id": "349",
 		"position_offset:x": "7680.0",
@@ -2550,20 +2528,9 @@
 	},
 	{
 		"auto": true,
-		"choices": [
-			"(Choice 0)",
-			"(Choice 1)"
-		],
-		"conversation_id": "357",
-		"position_offset:x": "8000.0",
-		"position_offset:y": "5880.0",
-		"type": "hub"
-	},
-	{
-		"auto": true,
 		"conversation_id": "356",
 		"position_offset:x": "8440.0",
-		"position_offset:y": "6040.0",
+		"position_offset:y": "6380.0",
 		"statements": "reka_armed",
 		"type": "hub"
 	},
@@ -2729,6 +2696,149 @@
 		"position_offset:y": "11948.7939453125",
 		"speaker": "Reka",
 		"text": "\"Let's go back.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "248",
+		"position_offset:x": "14820.0",
+		"position_offset:y": "7260.0",
+		"speaker": "Geno",
+		"statements": "reka_interfered_with_haggling",
+		"text": "\"You got in the way of my business.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "376",
+		"position_offset:x": "15260.0",
+		"position_offset:y": "7220.0",
+		"speaker": "Note",
+		"text": "Running out of time. Just going to clean up loose ends lazily for now.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "302",
+		"is_choice": true,
+		"position_offset:x": "19440.0",
+		"position_offset:y": "5920.0",
+		"speaker": "Reka",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "377",
+		"position_offset:x": "19868.443359375",
+		"position_offset:y": "5898.78759765625",
+		"speaker": "Geno",
+		"text": "\"Sure kid. Here's your decorations.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "318",
+		"is_choice": true,
+		"position_offset:x": "4180.0",
+		"position_offset:y": "8620.0",
+		"speaker": "Reka",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "379",
+		"position_offset:x": "4695.91552734375",
+		"position_offset:y": "8603.4345703125",
+		"speaker": "Geno",
+		"text": "\"Well I didn't take anything from anybody.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "380",
+		"position_offset:x": "5132.25732421875",
+		"position_offset:y": "8616.0888671875",
+		"speaker": "The Silent Square",
+		"text": "Nothing happens for an unfortunate amount of time. ",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"conversation_id": "381",
+		"position_offset:x": "5596.4501953125",
+		"position_offset:y": "8632.1181640625",
+		"speaker": "Geno",
+		"text": "\"So did you need anything?\"",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"choices": [
+			"(Choice 0)",
+			"(Choice 1)"
+		],
+		"conversation_id": "357",
+		"position_offset:x": "8000.0",
+		"position_offset:y": "6220.0",
+		"type": "hub"
+	},
+	{
+		"choices": [
+			"Oh, God. I'm going to die of dehydration in the desert aren't I?",
+			"Those stupid guards. They have all those materials to go on huge expeditions, and then just sit on their asses in the checkpoint all day. Lives are at stake!"
+		],
+		"conversation_id": "382",
+		"position_offset:x": "8080.0",
+		"position_offset:y": "5680.0",
+		"speaker": "Nervous System",
+		"text": "I would hate that. But it's a possibility.",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"conversation_id": "384",
+		"position_offset:x": "8460.0",
+		"position_offset:y": "5720.0",
+		"speaker": "Power",
+		"text": "Knowing your limits and pushing them within reason are two incredibly valuable skills. You may be able to go onto the sand one day, and you may want to be prepared for that day.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "385",
+		"position_offset:x": "7600.0",
+		"position_offset:y": "5780.0",
+		"speaker": "Note",
+		"text": "Multiplayer is kind of at odds with this really fun, longer inner monologues that solidifies characters in Disco Elysium. There must be a balancing point somewhere, but that doesn't mean the balancing point will be satisfying.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "114",
+		"position_offset:x": "10580.0",
+		"position_offset:y": "7540.0",
+		"speaker": "Bandit",
+		"text": "\"You know what? Just for giving me a hard time, I think I'll just take it. Any problems with that?\"",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"choices": [
+			"(Choice 0)",
+			"(Choice 1)"
+		],
+		"conversation_id": "387",
+		"position_offset:x": "14040.0",
+		"position_offset:y": "5260.0",
+		"speaker": "Nervous System",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"conditions": "bandit_haggling < 0",
+		"conversation_id": "388",
+		"position_offset:x": "14100.0",
+		"position_offset:y": "5700.0",
+		"speaker": "Nervous System",
+		"text": "That dagger's been haggled for you already, now you can upsell the man in black and still get it for a decent price! How much was it going for, again? (Pick the price that's a little higher than what the dagger was going for.)",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"conversation_id": "308",
+		"position_offset:x": "20740.0",
+		"position_offset:y": "6080.0",
 		"type": "hub"
 	},
 	{
@@ -3141,7 +3251,7 @@
 		"from_choice": "",
 		"from_id": "151",
 		"from_port": 0,
-		"to_id": "251",
+		"to_id": "387",
 		"type": "connection"
 	},
 	{
@@ -3894,6 +4004,13 @@
 		"type": "connection"
 	},
 	{
+		"from_choice": "",
+		"from_id": "248",
+		"from_port": 0,
+		"to_id": "346",
+		"type": "connection"
+	},
+	{
 		"from_choice": "\"I'm just passing through. Do you mind if I ask a few questions?\"",
 		"from_id": "250",
 		"from_port": 0,
@@ -4231,6 +4348,13 @@
 	},
 	{
 		"from_choice": "",
+		"from_id": "302",
+		"from_port": 0,
+		"to_id": "377",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
 		"from_id": "303",
 		"from_port": 0,
 		"to_id": "305",
@@ -4332,6 +4456,13 @@
 		"from_id": "317",
 		"from_port": 0,
 		"to_id": "150",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "318",
+		"from_port": 0,
+		"to_id": "379",
 		"type": "connection"
 	},
 	{
@@ -4500,6 +4631,13 @@
 		"from_id": "349",
 		"from_port": 0,
 		"to_id": "350",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Wait, are you suggesting I go out to the desert myself?",
+		"from_id": "349",
+		"from_port": 1,
+		"to_id": "382",
 		"type": "connection"
 	},
 	{
@@ -4707,9 +4845,79 @@
 	},
 	{
 		"from_choice": "",
+		"from_id": "377",
+		"from_port": 0,
+		"to_id": "305",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "379",
+		"from_port": 0,
+		"to_id": "380",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
 		"from_id": "38",
 		"from_port": 0,
 		"to_id": "43",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "380",
+		"from_port": 0,
+		"to_id": "381",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "381",
+		"from_port": 0,
+		"to_id": "185",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Oh, God. I'm going to die of dehydration in the desert aren't I?",
+		"from_id": "382",
+		"from_port": 0,
+		"to_id": "384",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Those stupid guards. They have all those materials to go on huge expeditions, and then just sit on their asses in the checkpoint all day. Lives are at stake!",
+		"from_id": "382",
+		"from_port": 1,
+		"to_id": "384",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "384",
+		"from_port": 0,
+		"to_id": "349",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 0)",
+		"from_id": "387",
+		"from_port": 0,
+		"to_id": "251",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 1)",
+		"from_id": "387",
+		"from_port": 1,
+		"to_id": "388",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "388",
+		"from_port": 0,
+		"to_id": "251",
 		"type": "connection"
 	},
 	{
@@ -4958,23 +5166,9 @@
 		"type": "connection"
 	},
 	{
-		"from_choice": "Grandma.",
-		"from_id": "66",
-		"from_port": 2,
-		"to_id": "67",
-		"type": "connection"
-	},
-	{
-		"from_choice": "Winsor, the dog.",
-		"from_id": "66",
-		"from_port": 3,
-		"to_id": "67",
-		"type": "connection"
-	},
-	{
 		"from_choice": "A.. bird?",
 		"from_id": "66",
-		"from_port": 4,
+		"from_port": 2,
 		"to_id": "68",
 		"type": "connection"
 	},
@@ -5287,9 +5481,9 @@
 		"type": "connection"
 	},
 	{
-		"position:x": "-229.657135009766",
-		"position:y": "4736.322265625",
+		"position:x": "17859.064453125",
+		"position:y": "4868.72900390625",
 		"type": "camera",
-		"zoom": "0.72989809513092"
+		"zoom": "0.88317662477493"
 	}
 ]

@@ -1,38 +1,18 @@
 [gd_scene format=3 uid="uid://cj44xlqqbvgwd"]
 
-[ext_resource type="PackedScene" uid="uid://dhii2e6mc7t81" path="res://demos/september/logic/character_select.tscn" id="1_s2skt"]
-[ext_resource type="Script" uid="uid://bj7q7bsrcvdrl" path="res://demos/september/logic/basic_spawner.gd" id="2_8jkri"]
+[ext_resource type="PackedScene" uid="uid://06emg8jtgki4" path="res://demos/september/merchant_base.tscn" id="1_s2skt"]
 [ext_resource type="PackedScene" uid="uid://cor0bmbbvv2l5" path="res://demos/september/specific/geno.tscn" id="2_e0tjo"]
 [ext_resource type="PackedScene" uid="uid://udwexxt1fl5t" path="res://demos/september/specific/reka.tscn" id="3_7fl6c"]
-[ext_resource type="PackedScene" uid="uid://fn48n343cb16" path="res://demos/september/logic/merchant_dialogue_avatar.tscn" id="3_nriho"]
 [ext_resource type="Script" uid="uid://jpgaxooa6ari" path="res://demos/september/network/character_switch.gd" id="4_j8er1"]
-[ext_resource type="Script" uid="uid://dshl0su1su5xe" path="res://proto_simulator/ps_simulator.gd" id="6_602u8"]
-[ext_resource type="Script" uid="uid://inieasxjm4nb" path="res://proto_simulator/ps_conversation.gd" id="7_nbaqi"]
-[ext_resource type="Script" uid="uid://cpa1hv77k8m77" path="res://demos/september/network/simulator_state_synchronizer.gd" id="9_cwy78"]
-[ext_resource type="Script" uid="uid://b27ucw68hr8oi" path="res://demos/september/ui/action_toggle.gd" id="10_ae3ac"]
-[ext_resource type="Script" uid="uid://iqiqq8gs5k8f" path="res://demos/september/specific/simulator_warp_listener.gd" id="10_l06m1"]
-[ext_resource type="Script" uid="uid://bjndh0uubojc6" path="res://demos/september/specific/warp_box.gd" id="10_xrcy2"]
-[ext_resource type="PackedScene" uid="uid://ctpltkbarsbjg" path="res://demos/september/ui/main_dialogue_debug.tscn" id="10_xrijs"]
-[ext_resource type="PackedScene" uid="uid://cqhf06i2ux2yp" path="res://demos/september/specific/connected_overlay.tscn" id="14_pkv0p"]
-[ext_resource type="Script" uid="uid://b8jjbbtjemx6g" path="res://proto_simulator/ps_config.gd" id="15_a2cdr"]
+[ext_resource type="PackedScene" uid="uid://dhii2e6mc7t81" path="res://demos/september/logic/character_select.tscn" id="5_sggte"]
 
-[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_nunj6"]
+[node name="Merchant" unique_id=438456980 instance=ExtResource("1_s2skt")]
 
-[node name="Merchant" type="Node2D" unique_id=438456980]
-
-[node name="Background" type="Sprite2D" parent="." unique_id=2097716038]
-
-[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1918040241]
-position = Vector2(583, 510)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=969255664]
-shape = SubResource("WorldBoundaryShape2D_nunj6")
-
-[node name="Geno" type="CanvasLayer" parent="." unique_id=1540345953]
+[node name="Geno" type="CanvasLayer" parent="." index="2" unique_id=931765019]
 script = ExtResource("4_j8er1")
 character = "Geno"
 
-[node name="Label" type="Label" parent="Geno" unique_id=1320348178]
+[node name="Label" type="Label" parent="Geno" index="0" unique_id=1507701784]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -46,13 +26,13 @@ grow_horizontal = 2
 grow_vertical = 2
 text = "Geno TV"
 
-[node name="Control" parent="Geno" unique_id=1123156141 instance=ExtResource("2_e0tjo")]
+[node name="Control" parent="Geno" index="1" unique_id=1123156141 instance=ExtResource("2_e0tjo")]
 
-[node name="Reka" type="CanvasLayer" parent="." unique_id=789903151]
+[node name="Reka" type="CanvasLayer" parent="." index="3" unique_id=806129303]
 script = ExtResource("4_j8er1")
 character = "Reka"
 
-[node name="Label" type="Label" parent="Reka" unique_id=663246174]
+[node name="Label" type="Label" parent="Reka" index="0" unique_id=229284645]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -66,11 +46,11 @@ grow_horizontal = 2
 grow_vertical = 2
 text = "Reka Vision :)"
 
-[node name="Control" parent="Reka" unique_id=824433713 instance=ExtResource("3_7fl6c")]
+[node name="Control" parent="Reka" index="1" unique_id=18826225 instance=ExtResource("3_7fl6c")]
 
-[node name="CharacterSelect" type="CanvasLayer" parent="." unique_id=1991834384]
+[node name="CharacterSelect" type="CanvasLayer" parent="." index="4" unique_id=1124979978]
 
-[node name="CharacterSelect" parent="CharacterSelect" unique_id=851426068 instance=ExtResource("1_s2skt")]
+[node name="CharacterSelect" parent="CharacterSelect" index="0" unique_id=851426068 instance=ExtResource("5_sggte")]
 anchors_preset = 14
 anchor_top = 0.5
 anchor_right = 1.0
@@ -79,69 +59,3 @@ offset_top = -171.5
 offset_bottom = 171.5
 grow_horizontal = 2
 grow_vertical = 2
-
-[node name="Louder" type="Node" parent="." unique_id=220019652]
-
-[node name="PSSimulator" type="Node" parent="Louder" unique_id=901825318 node_paths=PackedStringArray("conversation")]
-script = ExtResource("6_602u8")
-conversation = NodePath("../PSConversation")
-metadata/_custom_type_script = "uid://dshl0su1su5xe"
-
-[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="Louder/PSSimulator" unique_id=728369049]
-spawn_path = NodePath("..")
-script = ExtResource("2_8jkri")
-spawn_mode = 1
-spawnable_packed = ExtResource("3_nriho")
-
-[node name="PSConversation" type="Node" parent="Louder" unique_id=1560832398]
-script = ExtResource("7_nbaqi")
-input_path = "res://demos/conversations/merchant.json"
-metadata/_custom_type_script = "uid://inieasxjm4nb"
-
-[node name="SimulatorStateListener" type="Node" parent="." unique_id=523254008]
-script = ExtResource("9_cwy78")
-
-[node name="WarpListener" type="Node" parent="." unique_id=399758190]
-script = ExtResource("10_l06m1")
-
-[node name="DebugControls" type="CanvasLayer" parent="." unique_id=1404273262]
-script = ExtResource("10_ae3ac")
-
-[node name="VBoxContainer" type="VBoxContainer" parent="DebugControls" unique_id=98779171]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-
-[node name="MainDialogueDebug" parent="DebugControls/VBoxContainer" unique_id=2025365747 instance=ExtResource("10_xrijs")]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="Control" type="MarginContainer" parent="DebugControls/VBoxContainer" unique_id=1071076657]
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="DebugControls/VBoxContainer/Control" unique_id=301595178]
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="DebugControls/VBoxContainer/Control/HBoxContainer" unique_id=1060706720]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="DebugControls/VBoxContainer/Control/HBoxContainer/HBoxContainer" unique_id=978544286]
-layout_mode = 2
-text = "Warp to position:"
-
-[node name="TextEdit" type="LineEdit" parent="DebugControls/VBoxContainer/Control/HBoxContainer/HBoxContainer" unique_id=1513977881]
-layout_mode = 2
-script = ExtResource("10_xrcy2")
-
-[node name="ConnectedOverlay" parent="." unique_id=58385532 node_paths=PackedStringArray("simulator", "config") instance=ExtResource("14_pkv0p")]
-simulator = NodePath("../Louder/PSSimulator")
-config = NodePath("PSConfig")
-
-[node name="PSConfig" type="Node" parent="ConnectedOverlay" unique_id=1457389951]
-script = ExtResource("15_a2cdr")
-metadata/_custom_type_script = "uid://b8jjbbtjemx6g"
-
-[connection signal="state_variable_changed" from="Louder/PSSimulator" to="SimulatorStateListener" method="_on_state_changed_server"]

@@ -5,6 +5,7 @@ class_name MainDialogueView extends Control
 @export var background_rect:TextureRect
 
 @export var controller_group := &"ps_controller"
+@export var filter_speak_as:PackedStringArray
 
 func _ready() -> void:
 	ControllerEventLayer.choice_event.connect(_on_controller_event)
@@ -15,19 +16,24 @@ func _ready() -> void:
 func _on_controller_event(controller: PSController) -> void:
 	update_thinking()
 	
-	if controller != ControllerEventLayer.get_connected_controller():
-		return
+	if filter_speak_as.is_empty():
+		if controller != ControllerEventLayer.get_connected_controller():
+			return
+	for s in controller.speak_as:
+		var good := false
+		if s in filter_speak_as:
+			good = true
+		if !good:
+			return
 	
-	update_feed()
+	update_feed(controller)
 
-func update_feed():
-	var connected_controller := ControllerEventLayer.get_connected_controller()
-	
-	if connected_controller == null:
+func update_feed(c:PSController):	
+	if c == null:
 		scrolling_dialogue_feed.clear()
 		return
 	
-	scrolling_dialogue_feed.push_item(connected_controller)
+	scrolling_dialogue_feed.push_item(c)
 
 func update_thinking():
 	var thinking_set: Dictionary[String, bool]

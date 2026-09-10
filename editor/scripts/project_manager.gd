@@ -58,11 +58,11 @@ func _make_dialog(dialog_name:String, for_open:=false) -> FileDialog:
 	return dialog
 
 func _shortcut_for_action(action:StringName) -> Shortcut:
-	var shortcut := Shortcut.new()
+	var s := Shortcut.new()
 	var event := InputEventAction.new()
 	event.action = action
-	shortcut.events = [event]
-	return shortcut
+	s.events = [event]
+	return s
 
 func _on_id_pressed(id:int):
 	match id:

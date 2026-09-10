@@ -111,6 +111,9 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 right_disconnects = true
+zoom_min = 0.05
+show_minimap_button = false
+show_arrange_button = false
 
 [node name="Hub" parent="Control/GridContainer/GraphEdit" unique_id=1992437552 instance=ExtResource("1_wlowb")]
 layout_mode = 0

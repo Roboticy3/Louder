@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://i8ppkv2hjutf"]
 
 [ext_resource type="Script" uid="uid://cbiclxd6bqxa4" path="res://proto_simulator/ps_controller.gd" id="1_u42ey"]
+[ext_resource type="Script" uid="uid://dnire2og3ifn" path="res://demos/september/specific/bot_logic.gd" id="2_a6ca2"]
 
 [node name="Bot" type="Node" unique_id=661175149]
 script = ExtResource("1_u42ey")
@@ -10,4 +11,8 @@ metadata/_custom_type_script = "uid://cbiclxd6bqxa4"
 wait_time = 3.0
 autostart = true
 
-[connection signal="timeout" from="Timer" to="." method="traverse_index"]
+[node name="BotLogic" type="Node" parent="." unique_id=1524060638 node_paths=PackedStringArray("controller")]
+script = ExtResource("2_a6ca2")
+controller = NodePath("..")
+
+[connection signal="timeout" from="Timer" to="BotLogic" method="plonk"]

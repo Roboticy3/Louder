@@ -1,0 +1,61 @@
+[gd_scene format=3 uid="uid://p0yoa0gi2tbt"]
+
+[ext_resource type="PackedScene" uid="uid://06emg8jtgki4" path="res://demos/september/merchant_base.tscn" id="1_t4d6h"]
+[ext_resource type="PackedScene" uid="uid://cor0bmbbvv2l5" path="res://demos/september/specific/geno.tscn" id="2_cu3xd"]
+[ext_resource type="PackedScene" uid="uid://i8ppkv2hjutf" path="res://demos/september/specific/bot.tscn" id="2_wlswn"]
+[ext_resource type="PackedScene" uid="uid://udwexxt1fl5t" path="res://demos/september/specific/reka.tscn" id="3_2icb0"]
+
+[node name="Merchant" unique_id=438456980 instance=ExtResource("1_t4d6h")]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." index="2" unique_id=2089623526]
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer" index="0" unique_id=1128383518]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Control" parent="CanvasLayer/HBoxContainer" index="0" unique_id=1123156141 instance=ExtResource("2_cu3xd")]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MainDialogueView" parent="CanvasLayer/HBoxContainer/Control" index="2" unique_id=2033588754]
+anchors_preset = 15
+anchor_left = 0.0
+offset_left = 0.0
+grow_horizontal = 2
+
+[node name="VBoxContainer" parent="CanvasLayer/HBoxContainer/Control/MainDialogueView" index="1" unique_id=750293429]
+offset_top = -122.0
+
+[node name="Control2" parent="CanvasLayer/HBoxContainer" index="1" unique_id=598768807 instance=ExtResource("3_2icb0")]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MainDialogueView" parent="CanvasLayer/HBoxContainer/Control2" index="3" unique_id=2033588754]
+anchors_preset = 15
+anchor_left = 0.0
+offset_left = 0.0
+offset_right = 0.0
+grow_horizontal = 2
+
+[node name="VBoxContainer" parent="CanvasLayer/HBoxContainer/Control2/MainDialogueView" index="1" unique_id=750293429]
+offset_top = -106.0
+
+[node name="GenoBot" parent="." index="8" unique_id=661175149 node_paths=PackedStringArray("simulator", "config") instance=ExtResource("2_wlswn")]
+simulator = NodePath("../Louder/PSSimulator")
+config = NodePath("../ConnectedOverlay/PSConfig")
+speak_as = PackedStringArray("Geno")
+listen_to = PackedStringArray("Cage", "Inspiration", "Good", "Rhetoric", "Speed", "Evil")
+
+[node name="RekaBot" parent="." index="9" unique_id=1409836484 node_paths=PackedStringArray("simulator", "config") instance=ExtResource("2_wlswn")]
+simulator = NodePath("../Louder/PSSimulator")
+config = NodePath("../ConnectedOverlay/PSConfig")
+speak_as = PackedStringArray("Reka")
+listen_to = PackedStringArray("Power", "Body", "Soul", "Nervous System", "Integumetary System", "Skeletal System")
+
+[editable path="CanvasLayer/HBoxContainer/Control"]
+[editable path="CanvasLayer/HBoxContainer/Control/MainDialogueView"]
+[editable path="CanvasLayer/HBoxContainer/Control2"]
+[editable path="CanvasLayer/HBoxContainer/Control2/MainDialogueView"]
