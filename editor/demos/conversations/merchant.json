@@ -1117,6 +1117,149 @@
 		"type": "hub"
 	},
 	{
+		"choices": [
+			"Reka visits the shop",
+			"Geno tends to the shop"
+		],
+		"conversation_id": "161",
+		"position_offset:x": "-560.0",
+		"position_offset:y": "1140.0",
+		"speaker": "Start",
+		"text": "Geno and Reka are in their own heads.",
+		"type": "hub"
+	},
+	{
+		"choices": [
+			"Bandit appears"
+		],
+		"conversation_id": "162",
+		"position_offset:x": "-120.0",
+		"position_offset:y": "1360.0",
+		"speaker": "Shop branch",
+		"text": "Haggling scene",
+		"type": "hub"
+	},
+	{
+		"choices": [
+			"Geno isn't here",
+			"Geno is here, before the bandit",
+			"Geno is here, with the bandit",
+			"Geno is here, after the bandit, with the dagger",
+			"Geno is here, after the bandit, without the dagger",
+			"Geno is here, after selling something to Reka"
+		],
+		"conversation_id": "163",
+		"position_offset:x": "-140.0",
+		"position_offset:y": "720.0",
+		"text": "Different behavior depending on what Geno's been up to.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "160",
+		"position_offset:x": "-980.0",
+		"position_offset:y": "1300.0",
+		"speaker": "Note",
+		"text": "Conversation Outline!",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "166",
+		"position_offset:x": "420.0",
+		"position_offset:y": "280.0",
+		"text": "Reka can force Geno awake, leading to \"Geno is here, before the bandit\"",
+		"type": "hub"
+	},
+	{
+		"choices": [
+			"Speak with bandit",
+			"Speak with Geno"
+		],
+		"conversation_id": "167",
+		"position_offset:x": "440.0",
+		"position_offset:y": "640.0",
+		"text": "Reka can meet the bandit and ask to buy something. Geno can use this customer interest as leverage during haggling with the bandit. Reka can also speak with Geno to keep him busy.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "164",
+		"position_offset:x": "420.0",
+		"position_offset:y": "-100.0",
+		"text": "Reka has the option to interfere with the haggling, or not. Eventually, the haggling scene concludes.",
+		"type": "hub"
+	},
+	{
+		"choices": [
+			"Sabre at set price",
+			"Sabre with haggling"
+		],
+		"conversation_id": "169",
+		"position_offset:x": "860.0",
+		"position_offset:y": "1240.0",
+		"text": "Reka can buy the sabre for a set price or attempt haggling herself.",
+		"type": "hub"
+	},
+	{
+		"choices": [
+			"Dagger at set price",
+			"Dagger with haggling"
+		],
+		"conversation_id": "168",
+		"position_offset:x": "860.0",
+		"position_offset:y": "800.0",
+		"text": "Reka can buy the dagger for the set price or attempt haggling herself.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "170",
+		"position_offset:x": "1391.67944335938",
+		"position_offset:y": "1174.16650390625",
+		"text": "If the bandit haggled and beat Geno, Geno doesn't want to do this. Haggling also gives players an opportunity to reveal things about themselves.\n\nThe basic mechanic of the actual haggle is the same as with the bandit, except with more internal voices describing the effects of the haggling on each character.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "171",
+		"position_offset:x": "1405.24291992188",
+		"position_offset:y": "788.359191894531",
+		"text": "Sold!",
+		"type": "hub"
+	},
+	{
+		"choices": [
+			"Geno keeps the dagger",
+			"Geno \"gives away\" the dagger",
+			"Geno sells the dagger for 4 gold",
+			"Geno sells the dagger for 6 gold",
+			"Geno sells the dagger for 10 gold"
+		],
+		"conversation_id": "165",
+		"position_offset:x": "300.0",
+		"position_offset:y": "1400.0",
+		"text": "Haggling outcomes depend on \"bandit_haggling\" variable being incremented and decremented. Reka can interfere with this process if present.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "173",
+		"position_offset:x": "-560.0",
+		"position_offset:y": "560.0",
+		"speaker": "Note",
+		"text": "This \"central hub\" structure occured fairly naturally in the outline, but is obfuscated in my first draft of the actual dialogue tree.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "174",
+		"position_offset:x": "1054.65759277344",
+		"position_offset:y": "1834.83154296875",
+		"text": "Thank you for playing!",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "172",
+		"position_offset:x": "1800.0",
+		"position_offset:y": "1040.0",
+		"text": "Reka can ask Geno questions about her missing friends.",
+		"type": "hub"
+	},
+	{
 		"from_choice": "",
 		"from_id": "100",
 		"from_port": 0,
@@ -1548,6 +1691,188 @@
 		"from_id": "159",
 		"from_port": 0,
 		"to_id": "133",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "160",
+		"from_port": 0,
+		"to_id": "161",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Reka visits the shop",
+		"from_id": "161",
+		"from_port": 0,
+		"to_id": "163",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Geno tends to the shop",
+		"from_id": "161",
+		"from_port": 1,
+		"to_id": "162",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Bandit appears",
+		"from_id": "162",
+		"from_port": 0,
+		"to_id": "165",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Geno isn't here",
+		"from_id": "163",
+		"from_port": 0,
+		"to_id": "166",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Geno is here, before the bandit",
+		"from_id": "163",
+		"from_port": 1,
+		"to_id": "167",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Geno is here, with the bandit",
+		"from_id": "163",
+		"from_port": 2,
+		"to_id": "164",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Geno is here, after the bandit, with the dagger",
+		"from_id": "163",
+		"from_port": 3,
+		"to_id": "168",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Geno is here, after the bandit, without the dagger",
+		"from_id": "163",
+		"from_port": 4,
+		"to_id": "169",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Geno is here, after selling something to Reka",
+		"from_id": "163",
+		"from_port": 5,
+		"to_id": "174",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "164",
+		"from_port": 0,
+		"to_id": "163",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Geno keeps the dagger",
+		"from_id": "165",
+		"from_port": 0,
+		"to_id": "163",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Geno \"gives away\" the dagger",
+		"from_id": "165",
+		"from_port": 1,
+		"to_id": "163",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Geno sells the dagger for 4 gold",
+		"from_id": "165",
+		"from_port": 2,
+		"to_id": "163",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Geno sells the dagger for 6 gold",
+		"from_id": "165",
+		"from_port": 3,
+		"to_id": "163",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Geno sells the dagger for 10 gold",
+		"from_id": "165",
+		"from_port": 4,
+		"to_id": "163",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "166",
+		"from_port": 0,
+		"to_id": "163",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Speak with bandit",
+		"from_id": "167",
+		"from_port": 0,
+		"to_id": "163",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Speak with Geno",
+		"from_id": "167",
+		"from_port": 1,
+		"to_id": "172",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Dagger at set price",
+		"from_id": "168",
+		"from_port": 0,
+		"to_id": "171",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Dagger with haggling",
+		"from_id": "168",
+		"from_port": 1,
+		"to_id": "170",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Sabre at set price",
+		"from_id": "169",
+		"from_port": 0,
+		"to_id": "171",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Sabre with haggling",
+		"from_id": "169",
+		"from_port": 1,
+		"to_id": "170",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "170",
+		"from_port": 0,
+		"to_id": "172",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "171",
+		"from_port": 0,
+		"to_id": "172",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "172",
+		"from_port": 0,
+		"to_id": "163",
 		"type": "connection"
 	},
 	{
@@ -2153,9 +2478,9 @@
 		"type": "connection"
 	},
 	{
-		"position:x": "4622.5732421875",
-		"position:y": "1644.77038574219",
+		"position:x": "-879.115844726563",
+		"position:y": "424.117797851563",
 		"type": "camera",
-		"zoom": "0.72989809513092"
+		"zoom": "0.80288791656494"
 	}
 ]

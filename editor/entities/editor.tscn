@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://5auivb6rkpb8" path="res://entities/menus/view_menu.tscn" id="5_vumenu"]
 [ext_resource type="Script" uid="uid://b3jvwrspygwuc" path="res://scripts/pointer_logic.gd" id="6_qdkfl"]
 [ext_resource type="Script" uid="uid://ce2pghmljnbj6" path="res://scripts/copy_paste_logic.gd" id="8_4go3f"]
+[ext_resource type="Script" uid="uid://dascmi4sqyc4e" path="res://scripts/search_logic.gd" id="9_au7bs"]
 [ext_resource type="Script" uid="uid://bboylqujoaqru" path="res://scripts/on_screen_debug.gd" id="9_n5ixm"]
 [ext_resource type="Script" uid="uid://dfhadrloniwdc" path="res://scripts/user_config.gd" id="10_07l17"]
 [ext_resource type="PackedScene" uid="uid://dr7rs8c2sfbde" path="res://entities/menus/edit_menu.tscn" id="10_vvcdv"]
@@ -58,6 +59,12 @@ script = ExtResource("10_07l17")
 script = ExtResource("8_4go3f")
 editor = NodePath("../Control/GridContainer/GraphEdit")
 pointer = NodePath("../PointerLogic")
+
+[node name="SearchLogic" type="Node" parent="." unique_id=1470111229 node_paths=PackedStringArray("editor", "search_bar", "search_bar_line_edit")]
+script = ExtResource("9_au7bs")
+editor = NodePath("../Control/GridContainer/GraphEdit")
+search_bar = NodePath("../Control/Footer/SearchBar")
+search_bar_line_edit = NodePath("../Control/Footer/SearchBar/LineEdit")
 
 [node name="Control" type="Control" parent="." unique_id=2092511738]
 layout_mode = 1
@@ -111,9 +118,6 @@ hub_data = {
 NodePath("ChoicesSection/CheckBox"): true
 }
 
-[node name="callbacks" parent="Control/GridContainer/GraphEdit/Hub/OtherSection/VBoxContainer" parent_id_path=PackedInt32Array(1992437552, 72269939) index="3" unique_id=312146840]
-delimiter_strings = Array[String](["\" \"", "' '"])
-
 [node name="start" parent="Control/GridContainer/GraphEdit/Hub/ChoicesSection" parent_id_path=PackedInt32Array(1992437552, 255423357) index="0" unique_id=628973272]
 button_pressed = true
 
@@ -127,6 +131,26 @@ offset_right = 411.0
 grow_vertical = 0
 fit_content = true
 script = ExtResource("9_n5ixm")
+
+[node name="Footer" type="HBoxContainer" parent="Control" unique_id=633737761]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="SearchBar" type="HBoxContainer" parent="Control/Footer" unique_id=1715646056]
+visible = false
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Control/Footer/SearchBar" unique_id=286401829]
+layout_mode = 2
+text = "Search: "
+
+[node name="LineEdit" type="LineEdit" parent="Control/Footer/SearchBar" unique_id=759274951]
+layout_mode = 2
 
 [node name="NodeColorsPopup" type="PopupPanel" parent="." unique_id=372021348 groups=["node_colors"]]
 oversampling_override = 1.0
