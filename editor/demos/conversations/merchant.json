@@ -1093,7 +1093,7 @@
 		"position_offset:x": "180.0",
 		"position_offset:y": "3280.0",
 		"speaker": "Cage",
-		"text": "Beneath me, there is a desire to go home. It's too dry here.",
+		"text": "There is a desire to go home. In here somewhere.",
 		"type": "hub"
 	},
 	{
@@ -1163,7 +1163,7 @@
 		"private": true,
 		"recipient": "Reka",
 		"speaker": "Geno",
-		"statements": "geno_warp = 180",
+		"statements": "Geno_warp = 180",
 		"text": "You hear a faint click.",
 		"type": "hub"
 	},
@@ -1172,7 +1172,8 @@
 		"position_offset:x": "340.0",
 		"position_offset:y": "6660.0",
 		"speaker": "Speed",
-		"text": "Suddenly, you are ripped from your mind palace. At the same moment, glare from the desert morning pierces the clouds. This isn't the person I was waiting for. Get ready for multitasking.",
+		"statements": "geno_shop = 1\ngeno_blank = 0",
+		"text": "Suddenly, you are ripped from your mind palace. At the same moment, glare from the desert morning pierces the clouds. A wood elf has been waiting at the shop counter for an indeterminate amount of time.",
 		"type": "hub"
 	},
 	{
@@ -5286,9 +5287,9 @@
 		"type": "connection"
 	},
 	{
-		"position:x": "1892.51879882813",
-		"position:y": "4955.08056640625",
+		"position:x": "-229.657135009766",
+		"position:y": "4736.322265625",
 		"type": "camera",
-		"zoom": "0.66354370117188"
+		"zoom": "0.72989809513092"
 	}
 ]

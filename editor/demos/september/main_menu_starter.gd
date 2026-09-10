@@ -90,4 +90,4 @@ func start():
 		push_error("MainMenuStarter::start tried to start game after get_progress_disabled() returned true")
 	
 	NetworkLayer.start(mode, ip_address, port)
-	get_tree().change_scene_to_packed(level)
+	get_tree().change_scene_to_packed.call_deferred(level)

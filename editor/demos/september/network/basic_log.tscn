@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://b27ucw68hr8oi" path="res://demos/september/ui/action_toggle.gd" id="2_m5mdj"]
 
 [node name="BasicLog" type="Control" unique_id=128730021 node_paths=PackedStringArray("feed", "decay")]
+z_index = 1000
 layout_mode = 3
 anchor_top = 0.418
 anchor_right = 0.418

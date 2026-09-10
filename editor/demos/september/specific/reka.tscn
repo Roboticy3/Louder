@@ -122,6 +122,13 @@ expand_mode = 1
 stretch_mode = 6
 script = ExtResource("3_17usu")
 
+[node name="SecondaryDialogueView" parent="reka_square" unique_id=902305658 instance=ExtResource("3_be0wp")]
+layout_mode = 1
+offset_left = -416.0
+offset_top = -159.0
+offset_right = -160.0
+offset_bottom = 97.0
+
 [node name="reka_shop" type="TextureRect" parent="." unique_id=591384832]
 layout_mode = 1
 anchors_preset = 15
@@ -217,13 +224,6 @@ offset_right = 39.0
 
 [node name="ThinkingView" parent="MainDialogueView/VBoxContainer/Control" parent_id_path=PackedInt32Array(2033588754, 1630732809) index="2" unique_id=415213]
 alignment = 2
-
-[node name="SecondaryDialogueView" parent="." unique_id=902305658 instance=ExtResource("3_be0wp")]
-layout_mode = 1
-offset_left = -416.0
-offset_top = -159.0
-offset_right = -160.0
-offset_bottom = 97.0
 
 [node name="BackgroundAudio" type="Node" parent="." unique_id=316645903]
 

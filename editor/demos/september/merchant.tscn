@@ -8,10 +8,13 @@
 [ext_resource type="Script" uid="uid://jpgaxooa6ari" path="res://demos/september/network/character_switch.gd" id="4_j8er1"]
 [ext_resource type="Script" uid="uid://dshl0su1su5xe" path="res://proto_simulator/ps_simulator.gd" id="6_602u8"]
 [ext_resource type="Script" uid="uid://inieasxjm4nb" path="res://proto_simulator/ps_conversation.gd" id="7_nbaqi"]
-[ext_resource type="Script" uid="uid://cpa1hv77k8m77" path="res://demos/september/specific/simulator_state_synchronizer.gd" id="9_cwy78"]
+[ext_resource type="Script" uid="uid://cpa1hv77k8m77" path="res://demos/september/network/simulator_state_synchronizer.gd" id="9_cwy78"]
 [ext_resource type="Script" uid="uid://b27ucw68hr8oi" path="res://demos/september/ui/action_toggle.gd" id="10_ae3ac"]
+[ext_resource type="Script" uid="uid://iqiqq8gs5k8f" path="res://demos/september/specific/simulator_warp_listener.gd" id="10_l06m1"]
 [ext_resource type="Script" uid="uid://bjndh0uubojc6" path="res://demos/september/specific/warp_box.gd" id="10_xrcy2"]
 [ext_resource type="PackedScene" uid="uid://ctpltkbarsbjg" path="res://demos/september/ui/main_dialogue_debug.tscn" id="10_xrijs"]
+[ext_resource type="PackedScene" uid="uid://cqhf06i2ux2yp" path="res://demos/september/specific/connected_overlay.tscn" id="14_pkv0p"]
+[ext_resource type="Script" uid="uid://b8jjbbtjemx6g" path="res://proto_simulator/ps_config.gd" id="15_a2cdr"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_nunj6"]
 
@@ -95,41 +98,50 @@ script = ExtResource("7_nbaqi")
 input_path = "res://demos/conversations/merchant.json"
 metadata/_custom_type_script = "uid://inieasxjm4nb"
 
-[node name="SimulatorCallbackListener" type="Node" parent="." unique_id=523254008]
+[node name="SimulatorStateListener" type="Node" parent="." unique_id=523254008]
 script = ExtResource("9_cwy78")
+
+[node name="WarpListener" type="Node" parent="." unique_id=399758190]
+script = ExtResource("10_l06m1")
 
 [node name="DebugControls" type="CanvasLayer" parent="." unique_id=1404273262]
 script = ExtResource("10_ae3ac")
 
-[node name="MainDialogueDebug" parent="DebugControls" unique_id=2025365747 instance=ExtResource("10_xrijs")]
-
-[node name="Control" type="Control" parent="DebugControls/MainDialogueDebug" unique_id=1575804352]
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -37.0
-grow_horizontal = 2
-grow_vertical = 0
-
-[node name="HBoxContainer" type="HBoxContainer" parent="DebugControls/MainDialogueDebug/Control" unique_id=301595178]
-layout_mode = 1
+[node name="VBoxContainer" type="VBoxContainer" parent="DebugControls" unique_id=98779171]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="DebugControls/MainDialogueDebug/Control/HBoxContainer" unique_id=1060706720]
+[node name="MainDialogueDebug" parent="DebugControls/VBoxContainer" unique_id=2025365747 instance=ExtResource("10_xrijs")]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Control" type="MarginContainer" parent="DebugControls/VBoxContainer" unique_id=1071076657]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="DebugControls/MainDialogueDebug/Control/HBoxContainer/HBoxContainer" unique_id=978544286]
+[node name="HBoxContainer" type="HBoxContainer" parent="DebugControls/VBoxContainer/Control" unique_id=301595178]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="DebugControls/VBoxContainer/Control/HBoxContainer" unique_id=1060706720]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="DebugControls/VBoxContainer/Control/HBoxContainer/HBoxContainer" unique_id=978544286]
 layout_mode = 2
 text = "Warp to position:"
 
-[node name="TextEdit" type="LineEdit" parent="DebugControls/MainDialogueDebug/Control/HBoxContainer/HBoxContainer" unique_id=1513977881]
+[node name="TextEdit" type="LineEdit" parent="DebugControls/VBoxContainer/Control/HBoxContainer/HBoxContainer" unique_id=1513977881]
 layout_mode = 2
 script = ExtResource("10_xrcy2")
 
-[connection signal="state_variable_changed" from="Louder/PSSimulator" to="SimulatorCallbackListener" method="_on_state_changed_server"]
+[node name="ConnectedOverlay" parent="." unique_id=58385532 node_paths=PackedStringArray("simulator", "config") instance=ExtResource("14_pkv0p")]
+simulator = NodePath("../Louder/PSSimulator")
+config = NodePath("PSConfig")
+
+[node name="PSConfig" type="Node" parent="ConnectedOverlay" unique_id=1457389951]
+script = ExtResource("15_a2cdr")
+metadata/_custom_type_script = "uid://b8jjbbtjemx6g"
+
+[connection signal="state_variable_changed" from="Louder/PSSimulator" to="SimulatorStateListener" method="_on_state_changed_server"]

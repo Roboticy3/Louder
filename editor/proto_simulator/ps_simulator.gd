@@ -21,6 +21,9 @@ func _ready():
 	if !state:
 		state = PSDialogueState.new()
 
+func is_position(position:int) -> bool:
+	return conversation.hubs_by_id.has(position)
+
 #Get a property from a position in the conversation.
 func get_property(position: int, property: HubProperties, default=null) -> Variant:
 	return _hub(position).get(property, default)

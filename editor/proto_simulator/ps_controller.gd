@@ -68,6 +68,14 @@ func traverse(choice:String) -> bool:
 	data = simulator.align(data, choice, _filter_valid_choice)
 	return data.get(BodyProperties.success, false)
 
+func traverse_index(index:=0) -> bool:
+	var choices := simulator.list_choices(get_position(), _filter_valid_choice)
+	if index < 0 or index >= choices.size():
+		return false
+	
+	var choice = choices[index].get(PSObjects.ChoiceProperties.from_choice, "")
+	return traverse(choice)
+
 func warp(position:int) -> bool:
 	data = simulator.warp(data, position, _filter_valid_choice)
 	return data.get(BodyProperties.success, false)
