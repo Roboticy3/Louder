@@ -9,6 +9,9 @@
 [ext_resource type="Script" uid="uid://dshl0su1su5xe" path="res://proto_simulator/ps_simulator.gd" id="6_602u8"]
 [ext_resource type="Script" uid="uid://inieasxjm4nb" path="res://proto_simulator/ps_conversation.gd" id="7_nbaqi"]
 [ext_resource type="Script" uid="uid://cpa1hv77k8m77" path="res://demos/september/specific/simulator_state_synchronizer.gd" id="9_cwy78"]
+[ext_resource type="Script" uid="uid://b27ucw68hr8oi" path="res://demos/september/ui/action_toggle.gd" id="10_ae3ac"]
+[ext_resource type="Script" uid="uid://bjndh0uubojc6" path="res://demos/september/specific/warp_box.gd" id="10_xrcy2"]
+[ext_resource type="PackedScene" uid="uid://ctpltkbarsbjg" path="res://demos/september/ui/main_dialogue_debug.tscn" id="10_xrijs"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_nunj6"]
 
@@ -94,5 +97,39 @@ metadata/_custom_type_script = "uid://inieasxjm4nb"
 
 [node name="SimulatorCallbackListener" type="Node" parent="." unique_id=523254008]
 script = ExtResource("9_cwy78")
+
+[node name="DebugControls" type="CanvasLayer" parent="." unique_id=1404273262]
+script = ExtResource("10_ae3ac")
+
+[node name="MainDialogueDebug" parent="DebugControls" unique_id=2025365747 instance=ExtResource("10_xrijs")]
+
+[node name="Control" type="Control" parent="DebugControls/MainDialogueDebug" unique_id=1575804352]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -37.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="DebugControls/MainDialogueDebug/Control" unique_id=301595178]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="DebugControls/MainDialogueDebug/Control/HBoxContainer" unique_id=1060706720]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="DebugControls/MainDialogueDebug/Control/HBoxContainer/HBoxContainer" unique_id=978544286]
+layout_mode = 2
+text = "Warp to position:"
+
+[node name="TextEdit" type="LineEdit" parent="DebugControls/MainDialogueDebug/Control/HBoxContainer/HBoxContainer" unique_id=1513977881]
+layout_mode = 2
+script = ExtResource("10_xrcy2")
 
 [connection signal="state_variable_changed" from="Louder/PSSimulator" to="SimulatorCallbackListener" method="_on_state_changed_server"]

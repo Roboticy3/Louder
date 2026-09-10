@@ -94,7 +94,7 @@ func _request_choice(controller_path:NodePath, choice: String) -> void:
 				nonfollowers.push_back(c)
 	
 	if !controller.traverse(choice):
-		push_warning("Choice ", choice, " ignored for controller ", controller_path, " (not in a conversation yet)")
+		push_warning("Choice ", choice, " failed for controller ", controller_path, "!")
 		return
 	
 	if controller.branch_changed(): for nf in nonfollowers:
@@ -108,6 +108,53 @@ func _request_choice(controller_path:NodePath, choice: String) -> void:
 	#for f in followers:
 		#f.follow(controller)
 		#sync_controller_data.rpc(EventType.CHOICE, remote_authority, f.get_path(), f.data)
+	
+	for c in get_tree().get_nodes_in_group(controller_group):
+		if c is PSController and c != controller and c.is_active() and c.should_follow(controller):
+			c.follow(controller)
+			sync_controller_data.rpc(EventType.CHOICE, remote_authority, c.get_path(), c.data)
+	
+	sync_controller_data.rpc(EventType.CHOICE, remote_authority, controller_path, controller.data)
+
+# --- warping ------------------------------------------------------------
+
+func request_warp(controller:PSController, position:int) -> void:
+	if !is_instance_valid(controller):
+		return
+	if !multiplayer.has_multiplayer_peer():
+		return
+	if multiplayer.is_server():
+		_request_warp(controller.get_path(), position)
+	else:
+		_request_warp.rpc_id(1, controller.get_path(), position)
+
+@rpc("any_peer", "reliable")
+func _request_warp(controller_path:NodePath, position:int) -> void:
+	if !multiplayer.is_server():
+		return
+	var controller := get_node_or_null(controller_path) as PSController
+	if controller == null:
+		invalid_path_error(controller_path, get_node_or_null(controller_path))
+		return
+	
+	var nonfollowers:Array[PSController]
+	for c in get_tree().get_nodes_in_group(controller_group):
+		if c is PSController and c != controller and c.is_active():
+			if c.should_follow(controller):
+				pass
+			else:
+				nonfollowers.push_back(c)
+	
+	if !controller.warp(position):
+		push_warning("Warp to ", position, " failed for controller ", controller_path, "!")
+		return
+	
+	if controller.branch_changed(): for nf in nonfollowers:
+		if controller.should_follow(nf):
+			controller.follow(nf)
+			break
+	
+	var remote_authority := get_requester_id()
 	
 	for c in get_tree().get_nodes_in_group(controller_group):
 		if c is PSController and c != controller and c.is_active() and c.should_follow(controller):

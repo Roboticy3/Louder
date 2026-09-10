@@ -7,6 +7,7 @@ enum BodyProperties {
 	speaker,
 	text,
 	success,
+	dominated,
 }
 
 enum HubProperties {

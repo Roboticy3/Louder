@@ -4,14 +4,66 @@
 [ext_resource type="PackedScene" uid="uid://dnwmrvllc2101" path="res://demos/september/ui/main_dialogue_view.tscn" id="2_1bhkb"]
 [ext_resource type="Texture2D" uid="uid://b8al01yx5jq1o" path="res://demos/september/sprite/Reka View 1.png" id="2_be0wp"]
 [ext_resource type="Texture2D" uid="uid://bkhql6b61uqwg" path="res://demos/september/sprite/black.tres" id="2_ewuah"]
-[ext_resource type="Script" uid="uid://dut12f744fc2s" path="res://demos/september/specific/trigger_fader.gd" id="3_17usu"]
+[ext_resource type="Script" uid="uid://dut12f744fc2s" path="res://demos/september/specific/variable_fader_canvas.gd" id="3_17usu"]
 [ext_resource type="PackedScene" uid="uid://cip56nadhhph1" path="res://demos/september/ui/secondary_dialogue_view.tscn" id="3_be0wp"]
 [ext_resource type="Texture2D" uid="uid://7opd06klhxt6" path="res://demos/september/sprite/Reka View 1 Bandit.png" id="3_xxbk7"]
 [ext_resource type="Texture2D" uid="uid://c1tfnjsoi78q2" path="res://demos/september/sprite/Reka View 1 Geno.png" id="4_17usu"]
 [ext_resource type="Texture2D" uid="uid://dal1076wdhlrb" path="res://demos/september/sprite/Reka View 2.png" id="5_ewuah"]
 [ext_resource type="Texture2D" uid="uid://bruhbpbvomhx7" path="res://demos/september/sprite/Reka View 2 Geno.png" id="6_654kt"]
+[ext_resource type="Texture2D" uid="uid://dmpmrbyq6wkao" path="res://demos/september/sprite/Reka View 1 Geno 2.png" id="7_rdpkc"]
+[ext_resource type="Texture2D" uid="uid://c01taujqg44uv" path="res://demos/september/sprite/items.png" id="9_ck8bg"]
+[ext_resource type="Texture2D" uid="uid://chomgol3ljjk0" path="res://demos/september/sprite/Reka View 2 Geno 2.png" id="9_tmy2p"]
+[ext_resource type="AudioStream" uid="uid://ci5ph6lk8itkk" path="res://demos/september/audio/Demo3-loop.mp3" id="11_xofov"]
+[ext_resource type="Script" uid="uid://dwci644iorqlj" path="res://demos/september/specific/variable_fader_stream.gd" id="12_u6bov"]
+[ext_resource type="AudioStream" uid="uid://dovvgc2j78tyf" path="res://demos/september/audio/Demo3-main.mp3" id="13_u6bov"]
+[ext_resource type="Script" uid="uid://pdtwpxufvewd" path="res://demos/september/ui/main_dialogue_audio.gd" id="14_tmy2p"]
+[ext_resource type="AudioStream" uid="uid://c6w30j88ibuoq" path="res://demos/september/audio/dialogue_slides_1.wav" id="15_rdpkc"]
+[ext_resource type="AudioStream" uid="uid://cwj5eb15uergp" path="res://demos/september/audio/dialogue_slides_1-2.wav" id="16_lvml4"]
+[ext_resource type="AudioStream" uid="uid://b11st272ie4la" path="res://demos/september/audio/dialogue_slides_1-3.wav" id="17_jtnhr"]
+[ext_resource type="AudioStream" uid="uid://duy28reubb035" path="res://demos/september/audio/dialogue_slides_1-4.wav" id="18_cfcpv"]
+[ext_resource type="AudioStream" uid="uid://d3dmebns4tecq" path="res://demos/september/audio/dialogue_slide_5.wav" id="19_scgvh"]
+[ext_resource type="AudioStream" uid="uid://cq261rqp3xpaq" path="res://demos/september/audio/dialogue_slide_6.wav" id="20_wr5gb"]
+[ext_resource type="AudioStream" uid="uid://dre6qyec4pbw2" path="res://demos/september/audio/dialogue_slide_7.wav" id="21_85mwo"]
 
-[node name="Control" type="Control" unique_id=1123156141]
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_af4kj"]
+load_path = "res://.godot/imported/UI elements-export.png-367d6879a5084192da133597e035e7ae.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ck8bg"]
+atlas = SubResource("CompressedTexture2D_af4kj")
+region = Rect2(512, 256, 256, 256)
+margin = Rect2(-18, -4, -18, -9)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_tmy2p"]
+load_path = "res://.godot/imported/UI elements-export.png-367d6879a5084192da133597e035e7ae.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rdpkc"]
+atlas = SubResource("CompressedTexture2D_tmy2p")
+region = Rect2(512, 0, 256, 256)
+margin = Rect2(-16, -1, -16, -14)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nunj6"]
+atlas = ExtResource("9_ck8bg")
+region = Rect2(184, 0, 561, 810)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tmy2p"]
+atlas = ExtResource("9_ck8bg")
+region = Rect2(900, 8, 317, 810)
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_skou3"]
+random_pitch = 1.0594631
+streams_count = 7
+stream_0/stream = ExtResource("15_rdpkc")
+stream_1/stream = ExtResource("16_lvml4")
+stream_2/stream = ExtResource("17_jtnhr")
+stream_3/stream = ExtResource("18_cfcpv")
+stream_4/stream = ExtResource("19_scgvh")
+stream_5/stream = ExtResource("20_wr5gb")
+stream_6/stream = ExtResource("21_85mwo")
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_t3lbj"]
+streams_count = 1
+
+[node name="Control" type="Control" unique_id=1123156141 node_paths=PackedStringArray("view")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -19,6 +71,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_l48c1")
+view = NodePath("MainDialogueView")
+item_backgrounds = Array[Texture]([SubResource("AtlasTexture_ck8bg"), SubResource("AtlasTexture_rdpkc")])
 
 [node name="Black" type="TextureRect" parent="." unique_id=1678997231]
 layout_mode = 1
@@ -31,7 +85,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_ewuah")
 
-[node name="Reka View 1" type="TextureRect" parent="." unique_id=1078003390]
+[node name="reka_square" type="TextureRect" parent="." unique_id=1078003390]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -42,9 +96,8 @@ texture = ExtResource("2_be0wp")
 expand_mode = 1
 stretch_mode = 6
 script = ExtResource("3_17usu")
-show_trigger = PackedStringArray("reka_square")
 
-[node name="Reka View 1 Bandit" type="TextureRect" parent="Reka View 1" unique_id=963220423]
+[node name="bandit_shop" type="TextureRect" parent="reka_square" unique_id=963220423]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -55,9 +108,8 @@ texture = ExtResource("3_xxbk7")
 expand_mode = 1
 stretch_mode = 6
 script = ExtResource("3_17usu")
-show_trigger = PackedStringArray("bandit_shop")
 
-[node name="Reka View 1 Geno" type="TextureRect" parent="Reka View 1" unique_id=1184510832]
+[node name="geno_shop" type="TextureRect" parent="reka_square" unique_id=1184510832]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -68,9 +120,20 @@ texture = ExtResource("4_17usu")
 expand_mode = 1
 stretch_mode = 6
 script = ExtResource("3_17usu")
-show_trigger = PackedStringArray("geno_shop")
 
-[node name="Reka View 2" type="TextureRect" parent="." unique_id=591384832]
+[node name="geno_blank" type="TextureRect" parent="reka_square" unique_id=130174102]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("7_rdpkc")
+expand_mode = 1
+stretch_mode = 6
+script = ExtResource("3_17usu")
+
+[node name="reka_shop" type="TextureRect" parent="." unique_id=591384832]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -81,9 +144,8 @@ texture = ExtResource("5_ewuah")
 expand_mode = 1
 stretch_mode = 6
 script = ExtResource("3_17usu")
-show_trigger = PackedStringArray("reka_shop")
 
-[node name="Reka View 2 Geno" type="TextureRect" parent="Reka View 2" unique_id=382540219]
+[node name="geno_shop" type="TextureRect" parent="reka_shop" unique_id=382540219]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -94,11 +156,66 @@ texture = ExtResource("6_654kt")
 expand_mode = 1
 stretch_mode = 6
 script = ExtResource("3_17usu")
-show_trigger = PackedStringArray("geno_shop")
+
+[node name="geno_blank" type="TextureRect" parent="reka_shop" unique_id=580483964]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("9_tmy2p")
+expand_mode = 1
+stretch_mode = 6
+script = ExtResource("3_17usu")
+
+[node name="dagger_shop" type="Control" parent="reka_shop" unique_id=1242683493]
+layout_mode = 1
+anchor_left = 0.29500002
+anchor_top = 0.80600005
+anchor_right = 0.29500002
+anchor_bottom = 0.80600005
+offset_left = -62.840027
+offset_top = 37.711975
+offset_right = -62.840027
+offset_bottom = 37.711975
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_17usu")
+
+[node name="Sprite2D" type="Sprite2D" parent="reka_shop/dagger_shop" unique_id=942013424]
+rotation = 1.5805573
+scale = Vector2(0.3493761, 0.31111112)
+texture = SubResource("AtlasTexture_nunj6")
+
+[node name="sabre_shop" type="Control" parent="reka_shop" unique_id=2043553318]
+layout_mode = 1
+anchor_left = 0.637
+anchor_top = 0.827
+anchor_right = 0.637
+anchor_bottom = 0.827
+offset_left = -93.824036
+offset_top = -1.8959961
+offset_right = -93.824036
+offset_bottom = -1.8959961
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_17usu")
+
+[node name="Sprite2D" type="Sprite2D" parent="reka_shop/sabre_shop" unique_id=1041635420]
+rotation = -1.5707964
+scale = Vector2(0.9228033, 0.82173437)
+texture = SubResource("AtlasTexture_tmy2p")
 
 [node name="MainDialogueView" parent="." unique_id=2033588754 instance=ExtResource("2_1bhkb")]
 layout_mode = 1
 offset_right = -0.00012207031
+
+[node name="ScrollContainer" parent="MainDialogueView/VBoxContainer/Control" parent_id_path=PackedInt32Array(2033588754, 1630732809) index="1" unique_id=902509730]
+offset_right = 39.0
+
+[node name="ThinkingView" parent="MainDialogueView/VBoxContainer/Control" parent_id_path=PackedInt32Array(2033588754, 1630732809) index="2" unique_id=415213]
+alignment = 2
 
 [node name="SecondaryDialogueView" parent="." unique_id=902305658 instance=ExtResource("3_be0wp")]
 layout_mode = 1
@@ -106,3 +223,26 @@ offset_left = -416.0
 offset_top = -159.0
 offset_right = -160.0
 offset_bottom = 97.0
+
+[node name="BackgroundAudio" type="Node" parent="." unique_id=316645903]
+
+[node name="reka_blank" type="AudioStreamPlayer" parent="BackgroundAudio" unique_id=2078178441]
+stream = ExtResource("11_xofov")
+script = ExtResource("12_u6bov")
+
+[node name="reka_square" type="AudioStreamPlayer" parent="BackgroundAudio" unique_id=1379761648]
+stream = ExtResource("13_u6bov")
+script = ExtResource("12_u6bov")
+
+[node name="MainDialogueAudio" type="Node" parent="." unique_id=200998291 node_paths=PackedStringArray("outer_voice", "inner_voice")]
+script = ExtResource("14_tmy2p")
+outer_voice = NodePath("AudioStreamPlayer2")
+inner_voice = NodePath("AudioStreamPlayer")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="MainDialogueAudio" unique_id=1857406091]
+stream = SubResource("AudioStreamRandomizer_skou3")
+
+[node name="AudioStreamPlayer2" type="AudioStreamPlayer" parent="MainDialogueAudio" unique_id=1558507617]
+stream = SubResource("AudioStreamRandomizer_t3lbj")
+
+[editable path="MainDialogueView"]

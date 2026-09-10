@@ -2,8 +2,10 @@ class_name CustomGraphNodeTextEdit extends CodeEdit
 
 @export var oneliner := true
 @export var inliner := false
+@export var group := &"hub_text_edit"
 
 func _ready() -> void:
+	add_to_group(group)
 	text_changed.connect(_on_text_changed)
 
 func _on_text_changed():

@@ -88,17 +88,28 @@ func save_project_to_file(path:String) -> bool:
 		if child is NetworkEntity:
 			objects.append(ProjectManagerHelpers.export_network_entity(child))
 
+	var connections: Array[Dictionary] = []
 	for c in editor.connections:
 		var from_hub = editor.get_node(NodePath(c["from_node"]))
 		var to_hub = editor.get_node(NodePath(c["to_node"]))
 		if not (from_hub is NetworkEntity and to_hub is NetworkEntity):
 			continue
-		objects.append({
+		connections.append({
 			ProjectManagerHelpers.OBJECT_TYPE: ProjectManagerHelpers.TYPE_CONNECTION,
 			"from_id": str(from_hub.id),
 			"from_choice": from_hub.get_choices_logic().port_out_to_choice(c["from_port"]),
+			"from_port": c["from_port"],
 			"to_id": str(to_hub.id),
 		})
+	
+	connections.sort_custom(func(a, b):
+		if a["from_id"] != b["from_id"]:
+			return a["from_id"] < b["from_id"]
+		return a["from_port"] < b["from_port"]
+	)
+	
+	for c in connections:
+		objects.append(c)
 
 	var camera := {
 		ProjectManagerHelpers.OBJECT_TYPE: ProjectManagerHelpers.TYPE_CAMERA, 

@@ -103,19 +103,29 @@ func align(body: Dictionary[BodyProperties, Variant], choice: String, filter:=no
 	if result.get(BodyProperties.branch, DEFAULT_BRANCH) != from_branch:
 		result[BodyProperties.branch_changed] = true
 	
-	state.covered[result.get(BodyProperties.position, -1)] = true
-	
+	return result
+
+#Warp `body` directly to `position`, bypassing choice validation. Like align,
+#auto hubs are traversed after landing. `taken_choice` is left empty.
+func warp(body: Dictionary[BodyProperties, Variant], position: int, filter:=no_filter) -> Dictionary[BodyProperties, Variant]:
+	var from_branch: String = body.get(BodyProperties.branch, DEFAULT_BRANCH)
+	var result := body.duplicate()
+	result = _traverse(result, position, "", filter)
+	if result.get(BodyProperties.branch, DEFAULT_BRANCH) != from_branch:
+		result[BodyProperties.branch_changed] = true
 	return result
 
 #Move `body` to `position`, then auto-advance through any auto hubs until a
 #non-auto hub is reached, or the conversation runs dry. `taken_choice` is the
 #choice that moved the body here ("" when starting a conversation).
 func _traverse(body: Dictionary[BodyProperties, Variant], position: int, choice: String, filter: Callable) -> Dictionary[BodyProperties, Variant]:
-	if position == 21:
+	#set breakpoints here to debug specific conversation points
+	if position == 79:
 		pass
 	
 	var visited := {}
 	var current := position
+	var dominating: Dictionary
 	while true:
 		if current < 0 or current in visited:
 			body[BodyProperties.success] = false
@@ -124,22 +134,35 @@ func _traverse(body: Dictionary[BodyProperties, Variant], position: int, choice:
 		
 		var hub := _hub(current)
 		body[BodyProperties.position] = current
-		if hub.has(HubProperties.speaker):
-			body[BodyProperties.speaker] = hub[HubProperties.speaker]
 		
-		if hub.has(HubProperties.text):
-			body[BodyProperties.text] = hub[HubProperties.text]
-		elif !choice.is_empty():
+		var auto := bool(hub.get(HubProperties.auto, false))
+		
+		_project_hub_to_body(hub, body)
+		
+		var text_changed := !str(hub.get(HubProperties.text, "")).is_empty()
+		if !auto and !dominating.is_empty():
+			
+			_project_hub_to_body(dominating, body, true)
+			
+			if !text_changed:
+				text_changed = !str(hub.get(HubProperties.text, "")).is_empty()
+		
+		if !text_changed and !choice.is_empty():
 			body[BodyProperties.text] = choice
 		
 		var branch := str(hub.get(HubProperties.branch, ""))
 		if not branch.is_empty():
 			body[BodyProperties.branch] = branch
 		
-		_evaluate_statements(hub.get(HubProperties.statements, ""))
-		_evaluate_callbacks(hub.get(HubProperties.callbacks, ""))
+		if !state.covered.get(current):
+			_evaluate_statements(hub.get(HubProperties.statements, ""))
+			_evaluate_callbacks(hub.get(HubProperties.callbacks, ""))
+		state.covered[current] = true
 		
-		if not (hub.get(HubProperties.auto, false) as bool):
+		if auto:
+			dominating = hub
+		else:
+			dominating = {}
 			body[BodyProperties.success] = true
 			break
 		
@@ -150,6 +173,19 @@ func _traverse(body: Dictionary[BodyProperties, Variant], position: int, choice:
 		current = int(available[0].get(ChoiceProperties.to_id, -1))
 	
 	return body
+
+func _project_hub_to_body(hub:Dictionary, body:Dictionary[BodyProperties, Variant], is_domination:=false) -> void:
+	var dominated = false
+	if hub.has(HubProperties.speaker):
+		body[BodyProperties.speaker] = hub[HubProperties.speaker]
+		dominated = is_domination
+	
+	if hub.has(HubProperties.text):
+		body[BodyProperties.text] = hub[HubProperties.text]
+		dominated = is_domination
+	
+	if dominated:
+		body[BodyProperties.dominated] = true
 
 signal state_variable_changed(simulator:PSSimulator, variable:String, value)
 const ASSIGNMENTS:PackedStringArray = [
@@ -179,8 +215,7 @@ func _evaluate_statements(statements:String) -> void:
 		
 		var value_right = 0
 		if !partial_right.is_empty():
-			expression.parse(partial_right, state.scope.get_names())
-			value_right = expression.execute([], state.scope, true, false)
+			value_right = _evaluate_string(partial_right)
 		
 		var value_left = state.scope.get(partial_left)
 		
@@ -208,14 +243,39 @@ func _evaluate_callbacks(callbacks:String) -> void:
 
 func check_conditions(position:int) -> bool:
 	var hub := _hub(position)
-	var passing := true
+	
 	var conditions := str(hub.get(HubProperties.conditions, "")).split("\n", false)
-	
 	for c in conditions:
-		expression.parse(c, state.scope.get_names())
-		passing = passing and expression.execute([], state.scope, true, true)
+		if !_evaluate_string(c):
+			return false
+		
+	return true
+
+func _evaluate_string(e:String) -> Variant:
+	var result = null
 	
-	return passing
+	var names := names_to_trick_parser(e)
+	for n in names:
+		e.replace(n, str(state.scope.get(n)))
+	expression.parse(e)
+	result = expression.execute([], state.scope, true)
+	if expression.has_execute_failed():
+		pass
+	
+	return result
+
+func names_to_trick_parser(e:String) -> PackedStringArray:
+	#trick the expression parser into allowing names that haven't been declared yet
+	#state.scope is a special type that fills in missing variables, so all valid variable names syntactically are valid names
+	var invalid_name := RegEx.new()
+	invalid_name.compile("[^a-zA-Z_]")
+	var names:PackedStringArray
+	var words := e.split(" ", false)
+	for w in words:
+		if invalid_name.search(w.substr(0, 1)):
+			continue
+		names.append(w)
+	return names
 
 #Return the position that would result from making choice `choice` from
 #position `position`.

@@ -2,24 +2,62 @@
 
 [ext_resource type="Script" uid="uid://bt5qiks6r8rsq" path="res://demos/september/ui/scroll_margin.gd" id="1_0sccc"]
 [ext_resource type="Script" uid="uid://dqgsy05dmmkko" path="res://demos/september/ui/scrolling_dialogue_item.gd" id="1_ll1a4"]
+[ext_resource type="Script" uid="uid://cn1kndepwse4m" path="res://demos/september/ui/copy_height.gd" id="3_smkqf"]
 
-[node name="ScrollingDialogueItem" type="VBoxContainer" unique_id=489570033 node_paths=PackedStringArray("element_container", "choice_container")]
-anchors_preset = 14
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-grow_horizontal = 2
-grow_vertical = 2
+[node name="ScrollingDialogueItem" type="VBoxContainer" unique_id=489570033 node_paths=PackedStringArray("element_container", "choice_container", "element_background")]
+anchors_preset = -1
+anchor_right = 0.372
+anchor_bottom = 0.108
+offset_left = 0.22393799
+offset_right = -0.54400635
+offset_bottom = 0.01599884
+size_flags_horizontal = 3
 script = ExtResource("1_ll1a4")
-element_container = NodePath("DialogueElements")
+element_container = NodePath("DialogueContainer/MarginContainer/DialogueElements")
 choice_container = NodePath("ChoiceElements")
+element_background = NodePath("DialogueContainer/TextureRect")
 
 [node name="Spacer" type="Control" parent="." unique_id=1699966593]
 layout_mode = 2
 script = ExtResource("1_0sccc")
 
-[node name="DialogueElements" type="VBoxContainer" parent="." unique_id=1141869158]
+[node name="DialogueContainer" type="Control" parent="." unique_id=556680763 node_paths=PackedStringArray("of")]
 layout_mode = 2
+script = ExtResource("3_smkqf")
+of = NodePath("MarginContainer")
+
+[node name="TextureRect" type="NinePatchRect" parent="DialogueContainer" unique_id=72595154]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -30.0
+offset_bottom = 30.0
+grow_horizontal = 2
+grow_vertical = 2
+patch_margin_left = 30
+patch_margin_top = 15
+patch_margin_right = 30
+patch_margin_bottom = 15
+
+[node name="MarginContainer" type="MarginContainer" parent="DialogueContainer" unique_id=1598474804]
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -30.0
+offset_bottom = 30.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DialogueElements" type="VBoxContainer" parent="DialogueContainer/MarginContainer" unique_id=1141869158]
+layout_mode = 2
+
+[node name="Spacer2" type="Control" parent="." unique_id=1974883704]
+layout_mode = 2
+script = ExtResource("1_0sccc")
+ratio = 60.0
 
 [node name="ChoiceElements" type="VBoxContainer" parent="." unique_id=316933347]
 layout_mode = 2

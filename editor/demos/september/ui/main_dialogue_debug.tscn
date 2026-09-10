@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://csgv46x1tqok5" path="res://demos/september/ui/main_dialogue_debug.gd" id="1_ywo2p"]
 
-[node name="MainDialogueDebug" type="Control" unique_id=2025365747 node_paths=PackedStringArray("data_text", "speaker_text")]
+[node name="MainDialogueDebug" type="Control" unique_id=2025365747 node_paths=PackedStringArray("data_text", "speaker_text", "state_text")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -13,6 +13,7 @@ mouse_filter = 2
 script = ExtResource("1_ywo2p")
 data_text = NodePath("GridContainer/RichTextLabel")
 speaker_text = NodePath("GridContainer/RichTextLabel2")
+state_text = NodePath("GridContainer/RichTextLabel3")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=596874679]
 layout_mode = 0
@@ -29,6 +30,18 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 columns = 2
+
+[node name="RichTextLabel3" type="RichTextLabel" parent="GridContainer" unique_id=1454027988]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+bbcode_enabled = true
+fit_content = true
+
+[node name="Control" type="Control" parent="GridContainer" unique_id=54796668]
+layout_mode = 2
+mouse_filter = 2
 
 [node name="RichTextLabel2" type="RichTextLabel" parent="GridContainer" unique_id=1152455493]
 layout_mode = 2
