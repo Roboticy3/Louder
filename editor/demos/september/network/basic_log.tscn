@@ -4,8 +4,7 @@
 [ext_resource type="Script" uid="uid://b27ucw68hr8oi" path="res://demos/september/ui/action_toggle.gd" id="2_m5mdj"]
 
 [node name="BasicLog" type="CanvasLayer" unique_id=636752349 node_paths=PackedStringArray("feed", "decay")]
-layer = 1000
-visible = false
+layer = 100
 script = ExtResource("1_xlwlw")
 feed = NodePath("Control/VBoxContainer")
 decay = NodePath("Timer")
