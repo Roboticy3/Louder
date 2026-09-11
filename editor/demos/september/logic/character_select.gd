@@ -10,6 +10,6 @@ func _on_character_selected(authority:int, _character:String):
 		return
 	hide()
 
-func _input(event: InputEvent) -> void:
+func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("lobby_character_select"):
 		show()

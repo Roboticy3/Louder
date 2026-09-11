@@ -60,6 +60,10 @@ func _filter_visible_node(position:int) -> bool:
 		return true
 	return false
 
+func get_start() -> int:
+	var q := simulator.align_start(-1, _filter_valid_choice)
+	return int(q.get(BodyProperties.position))
+
 func start() -> bool:
 	data = simulator.align_start(-1, _filter_valid_choice)
 	return data.get(BodyProperties.success, false)

@@ -367,7 +367,6 @@
 		"type": "hub"
 	},
 	{
-		"auto": true,
 		"conversation_id": "78",
 		"once": true,
 		"position_offset:x": "6220.0",
@@ -409,6 +408,7 @@
 		"position_offset:x": "9273.7587890625",
 		"position_offset:y": "4289.5302734375",
 		"speaker": "Bandit",
+		"statements": "bandit_minigame_seen = 1",
 		"text": "\"Don't rip me off.\"",
 		"type": "hub"
 	},
@@ -2522,14 +2522,6 @@
 	},
 	{
 		"auto": true,
-		"conversation_id": "356",
-		"position_offset:x": "8440.0",
-		"position_offset:y": "6380.0",
-		"statements": "reka_armed",
-		"type": "hub"
-	},
-	{
-		"auto": true,
 		"conversation_id": "355",
 		"position_offset:x": "9280.0",
 		"position_offset:y": "5800.0",
@@ -2571,14 +2563,15 @@
 		"type": "hub"
 	},
 	{
-		"auto": true,
 		"choices": [
-			"(Choice 0)",
-			"(Choice 1)"
+			"The dagger.",
+			"A rusty sabre."
 		],
 		"conversation_id": "360",
 		"position_offset:x": "2066.39038085938",
 		"position_offset:y": "7095.359375",
+		"speaker": "Rhetoric",
+		"text": "Let's take a look in the inventory.",
 		"type": "hub"
 	},
 	{
@@ -2652,6 +2645,11 @@
 		"type": "hub"
 	},
 	{
+		"choices": [
+			"\"Deal.\"",
+			"\"That's steep.\"",
+			"\"Nevermind.\""
+		],
 		"conversation_id": "369",
 		"position_offset:x": "3737.134765625",
 		"position_offset:y": "6843.1162109375",
@@ -2869,6 +2867,409 @@
 		"position_offset:y": "3720.0",
 		"speaker": "Bandit",
 		"text": "\"I don't like this. Who are you? What are you doing here?\"",
+		"type": "hub"
+	},
+	{
+		"choices": [
+			"\"Deal\"",
+			"\"That's steep.\"",
+			"\"Nevermind\""
+		],
+		"conversation_id": "392",
+		"position_offset:x": "4217.71728515625",
+		"position_offset:y": "7749.58642578125",
+		"speaker": "Geno",
+		"text": "\"For you, 16 gold.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "393",
+		"is_choice": true,
+		"position_offset:x": "4620.0",
+		"position_offset:y": "7740.0",
+		"speaker": "Reka",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "394",
+		"position_offset:x": "5037.66015625",
+		"position_offset:y": "7773.3974609375",
+		"speaker": "Geno",
+		"text": "\"And?\"",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"choices": [
+			"(Choice 0)",
+			"(Choice 1)"
+		],
+		"conversation_id": "395",
+		"position_offset:x": "5460.0",
+		"position_offset:y": "7800.0",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"conditions": "bandit_recognized",
+		"conversation_id": "396",
+		"position_offset:x": "5880.0",
+		"position_offset:y": "7720.0",
+		"speaker": "Evil",
+		"text": "She doesn't have any leverage here. Let's just stand firm.",
+		"type": "hub"
+	},
+	{
+		"choices": [
+			"\"16. It's a lot of metal.\"",
+			"\"Maybe you should come back when you're more on top of things.\""
+		],
+		"conversation_id": "399",
+		"position_offset:x": "6340.0",
+		"position_offset:y": "7760.0",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "401",
+		"is_choice": true,
+		"position_offset:x": "6762.0478515625",
+		"position_offset:y": "8112.9765625",
+		"speaker": "Geno",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "402",
+		"position_offset:x": "7140.0",
+		"position_offset:y": "8120.0",
+		"speaker": "Power",
+		"text": "Oh no he didn't.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "403",
+		"position_offset:x": "7543.19189453125",
+		"position_offset:y": "8148.591796875",
+		"speaker": "Integumetary System",
+		"text": "He's groggy. He's trying to hold in a yawn You can hear his joints pop when he moves. His posture is forced. He's not out of shape necessarily, but he won't be quick on his feed either.",
+		"type": "hub"
+	},
+	{
+		"choices": [
+			"(Steal the sabre)",
+			"(Pay for the sabre)"
+		],
+		"conversation_id": "404",
+		"position_offset:x": "7965.6044921875",
+		"position_offset:y": "8234.556640625",
+		"speaker": "Skeletal System",
+		"text": "I have an idea. No regulation in The Silent Square, right?",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"conversation_id": "356",
+		"position_offset:x": "8480.0",
+		"position_offset:y": "6300.0",
+		"statements": "reka_armed",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"choices": [
+			"(Choice 0)",
+			"(Choice 1)"
+		],
+		"conversation_id": "408",
+		"position_offset:x": "9054.091796875",
+		"position_offset:y": "7885.93212890625",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"conversation_id": "410",
+		"position_offset:x": "9600.0",
+		"position_offset:y": "8340.0",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"conditions": "reka_armed",
+		"conversation_id": "409",
+		"position_offset:x": "9580.0",
+		"position_offset:y": "7840.0",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "411",
+		"position_offset:x": "8415.302734375",
+		"position_offset:y": "8231.5029296875",
+		"speaker": "Reka",
+		"statements": "sabre_sold = \"Reka\"\nsabre_shop = 0\nreka_shop = 0\nreka_square = 1\nreka_armed = 1",
+		"text": "The sabre is removed from the counter in the blink of an eye and taken nimbly up the steps.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "412",
+		"position_offset:x": "8936.7294921875",
+		"position_offset:y": "8348.837890625",
+		"speaker": "Cage",
+		"text": "I try to get out of your stand but trip over your workbench. Suddenly I'm more just too depressed to follow.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "413",
+		"position_offset:x": "8922.720703125",
+		"position_offset:y": "8746.923828125",
+		"speaker": "Evil",
+		"text": "Idiot. She did something even better than paying. She owes us now! That can be with interest. If captured, the reparations can be double, triple the value.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "414",
+		"position_offset:x": "9320.0",
+		"position_offset:y": "8760.0",
+		"speaker": "Good",
+		"text": "That's not sound logic. But the mentality is ok. Pick yourself up. Don't fester.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "405",
+		"once": true,
+		"position_offset:x": "4640.0",
+		"position_offset:y": "8160.0",
+		"speaker": "Power",
+		"text": "Don't back out now. You made a decision to come here.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "417",
+		"position_offset:x": "6280.0",
+		"position_offset:y": "7360.0",
+		"speaker": "Skeletal System",
+		"text": "The large sword feels like a second spine. Get it cleaned up before using it. And you are going to use it.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "415",
+		"position_offset:x": "6260.0",
+		"position_offset:y": "6920.0",
+		"speaker": "Inspiration",
+		"text": "Beneath the rust, the grain of the sword was exquisite. Something only revealed in the glint of the morning sun. Maybe you'll see it agian.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "418",
+		"once": true,
+		"position_offset:x": "4200.0",
+		"position_offset:y": "7180.0",
+		"speaker": "Power",
+		"text": "You came all this way.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "419",
+		"is_choice": true,
+		"position_offset:x": "4400.0",
+		"position_offset:y": "6840.0",
+		"speaker": "Reka",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"choices": [
+			"(Choice 0)",
+			"(Choice 1)"
+		],
+		"conversation_id": "420",
+		"position_offset:x": "4860.0",
+		"position_offset:y": "6800.0",
+		"type": "hub"
+	},
+	{
+		"conditions": "bandit_minigame_seen",
+		"conversation_id": "421",
+		"position_offset:x": "5400.0",
+		"position_offset:y": "6400.0",
+		"speaker": "Cage",
+		"text": "I really don't want to haggle any more.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "422",
+		"position_offset:x": "5400.0",
+		"position_offset:y": "6840.0",
+		"speaker": "Rhetoric",
+		"text": "No, it isn't. I was going to give it to someone else for 10. [i]That's[/i] steep. I just want to get this over with. Therefore, for you, 8.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "424",
+		"position_offset:x": "5520.0",
+		"position_offset:y": "6040.0",
+		"speaker": "Note",
+		"text": "Reka doesn't have nearly as much leverage here for haggling as the bandit does.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "397",
+		"position_offset:x": "5908.5078125",
+		"position_offset:y": "8232.9765625",
+		"speaker": "Cage",
+		"text": "I can feel her awkwardness. She came here looking for a fight, but she's not ready for one. ",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"conversation_id": "398",
+		"position_offset:x": "6319.1494140625",
+		"position_offset:y": "8230.0048828125",
+		"speaker": "Good",
+		"text": "Maybe this sale could be put off to another day?",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "407",
+		"position_offset:x": "5038.4462890625",
+		"position_offset:y": "7300.0",
+		"speaker": "Geno",
+		"text": "\"Thank you for your business.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "406",
+		"is_choice": true,
+		"position_offset:x": "4638.4462890625",
+		"position_offset:y": "7259.99951171875",
+		"speaker": "Reka",
+		"statements": "sabre_sold = \"Reka\"\nsabre_shop = 0\nreka_armed = 1",
+		"text": "\"Deal.\" ",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"choices": [
+			"(Choice 0)",
+			"(Choice 1)"
+		],
+		"conversation_id": "416",
+		"position_offset:x": "5478.4462890625",
+		"position_offset:y": "7219.99951171875",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "426",
+		"position_offset:x": "6280.0",
+		"position_offset:y": "6440.0",
+		"speaker": "Geno",
+		"text": "\"Thank you for your business.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "431",
+		"position_offset:x": "7640.0",
+		"position_offset:y": "6400.0",
+		"speaker": "Good",
+		"text": "I agree. I'm lightly invested now in this wayward soul on the other side of the counter, in her safety, maybe.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "427",
+		"is_choice": true,
+		"position_offset:x": "5880.0",
+		"position_offset:y": "6400.0",
+		"speaker": "Reka",
+		"statements": "sabre_sold = \"Reka\"\nsabre_shop = 0\nreka_armed = 1",
+		"text": "\"Deal.\" ",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"choices": [
+			"(Choice 0)",
+			"(Choice 1)"
+		],
+		"conversation_id": "428",
+		"position_offset:x": "6780.0",
+		"position_offset:y": "6340.0",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "430",
+		"position_offset:x": "7200.0",
+		"position_offset:y": "6580.0",
+		"speaker": "Body",
+		"text": "You feel a connection to the weapon when you hold it, setting the holster high on your flank and under your cloak, closer to your heart than your hip.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "429",
+		"position_offset:x": "7200.0",
+		"position_offset:y": "6220.0",
+		"speaker": "Inspiration",
+		"text": "The dagger is a simple beauty. It's not meant for combat.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "423",
+		"position_offset:x": "6900.0",
+		"position_offset:y": "7100.0",
+		"speaker": "Geno",
+		"text": "\"8. Final offer.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "400",
+		"is_choice": true,
+		"position_offset:x": "6920.0",
+		"position_offset:y": "7720.0",
+		"speaker": "Geno",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "434",
+		"position_offset:x": "8221.0458984375",
+		"position_offset:y": "7228.63623046875",
+		"speaker": "Cage",
+		"text": "She seemed friendly.",
+		"type": "hub"
+	},
+	{
+		"choices": [
+			"\"Deal.\"",
+			"\"I'll come back later.\""
+		],
+		"conversation_id": "432",
+		"position_offset:x": "7320.0",
+		"position_offset:y": "7080.0",
+		"speaker": "Soul",
+		"text": "You can come back later. He wants to sell it to you.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "433",
+		"is_choice": true,
+		"position_offset:x": "7800.0",
+		"position_offset:y": "7160.0",
+		"speaker": "Reka",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "437",
+		"is_choice": true,
+		"position_offset:x": "7820.0",
+		"position_offset:y": "7680.0",
+		"type": "hub"
+	},
+	{
+		"choices": [
+			"\"Deal.\"",
+			"\"I'll come back later.\""
+		],
+		"conversation_id": "436",
+		"position_offset:x": "7340.0",
+		"position_offset:y": "7600.0",
+		"speaker": "Soul",
+		"text": "You can come back later. He wants to sell it to you.",
 		"type": "hub"
 	},
 	{
@@ -4783,14 +5184,14 @@
 		"type": "connection"
 	},
 	{
-		"from_choice": "(Choice 0)",
+		"from_choice": "The dagger.",
 		"from_id": "360",
 		"from_port": 0,
 		"to_id": "361",
 		"type": "connection"
 	},
 	{
-		"from_choice": "(Choice 1)",
+		"from_choice": "A rusty sabre.",
 		"from_id": "360",
 		"from_port": 1,
 		"to_id": "362",
@@ -4840,9 +5241,37 @@
 	},
 	{
 		"from_choice": "",
+		"from_id": "367",
+		"from_port": 0,
+		"to_id": "392",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
 		"from_id": "368",
 		"from_port": 0,
 		"to_id": "369",
+		"type": "connection"
+	},
+	{
+		"from_choice": "\"Deal.\"",
+		"from_id": "369",
+		"from_port": 0,
+		"to_id": "427",
+		"type": "connection"
+	},
+	{
+		"from_choice": "\"That's steep.\"",
+		"from_id": "369",
+		"from_port": 1,
+		"to_id": "419",
+		"type": "connection"
+	},
+	{
+		"from_choice": "\"Nevermind.\"",
+		"from_id": "369",
+		"from_port": 2,
+		"to_id": "418",
 		"type": "connection"
 	},
 	{
@@ -4979,10 +5408,171 @@
 		"type": "connection"
 	},
 	{
+		"from_choice": "\"Deal\"",
+		"from_id": "392",
+		"from_port": 0,
+		"to_id": "406",
+		"type": "connection"
+	},
+	{
+		"from_choice": "\"That's steep.\"",
+		"from_id": "392",
+		"from_port": 1,
+		"to_id": "393",
+		"type": "connection"
+	},
+	{
+		"from_choice": "\"Nevermind\"",
+		"from_id": "392",
+		"from_port": 2,
+		"to_id": "405",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "393",
+		"from_port": 0,
+		"to_id": "394",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "394",
+		"from_port": 0,
+		"to_id": "395",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 0)",
+		"from_id": "395",
+		"from_port": 0,
+		"to_id": "396",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 1)",
+		"from_id": "395",
+		"from_port": 1,
+		"to_id": "397",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "396",
+		"from_port": 0,
+		"to_id": "399",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "397",
+		"from_port": 0,
+		"to_id": "398",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "398",
+		"from_port": 0,
+		"to_id": "399",
+		"type": "connection"
+	},
+	{
+		"from_choice": "\"16. It's a lot of metal.\"",
+		"from_id": "399",
+		"from_port": 0,
+		"to_id": "400",
+		"type": "connection"
+	},
+	{
+		"from_choice": "\"Maybe you should come back when you're more on top of things.\"",
+		"from_id": "399",
+		"from_port": 1,
+		"to_id": "401",
+		"type": "connection"
+	},
+	{
 		"from_choice": "",
 		"from_id": "40",
 		"from_port": 0,
 		"to_id": "41",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "400",
+		"from_port": 0,
+		"to_id": "436",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "401",
+		"from_port": 0,
+		"to_id": "402",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "402",
+		"from_port": 0,
+		"to_id": "403",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "403",
+		"from_port": 0,
+		"to_id": "404",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Steal the sabre)",
+		"from_id": "404",
+		"from_port": 0,
+		"to_id": "411",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "405",
+		"from_port": 0,
+		"to_id": "392",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "406",
+		"from_port": 0,
+		"to_id": "407",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "407",
+		"from_port": 0,
+		"to_id": "416",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 0)",
+		"from_id": "408",
+		"from_port": 0,
+		"to_id": "409",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 1)",
+		"from_id": "408",
+		"from_port": 1,
+		"to_id": "410",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "409",
+		"from_port": 0,
+		"to_id": "346",
 		"type": "connection"
 	},
 	{
@@ -5001,9 +5591,149 @@
 	},
 	{
 		"from_choice": "",
+		"from_id": "411",
+		"from_port": 0,
+		"to_id": "412",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "412",
+		"from_port": 0,
+		"to_id": "413",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "413",
+		"from_port": 0,
+		"to_id": "414",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "414",
+		"from_port": 0,
+		"to_id": "409",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "415",
+		"from_port": 0,
+		"to_id": "409",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 0)",
+		"from_id": "416",
+		"from_port": 0,
+		"to_id": "415",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 1)",
+		"from_id": "416",
+		"from_port": 1,
+		"to_id": "417",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "417",
+		"from_port": 0,
+		"to_id": "409",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "418",
+		"from_port": 0,
+		"to_id": "369",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "419",
+		"from_port": 0,
+		"to_id": "420",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
 		"from_id": "42",
 		"from_port": 0,
 		"to_id": "44",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 0)",
+		"from_id": "420",
+		"from_port": 0,
+		"to_id": "421",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 1)",
+		"from_id": "420",
+		"from_port": 1,
+		"to_id": "422",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "421",
+		"from_port": 0,
+		"to_id": "423",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "422",
+		"from_port": 0,
+		"to_id": "423",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "423",
+		"from_port": 0,
+		"to_id": "432",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "426",
+		"from_port": 0,
+		"to_id": "428",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "427",
+		"from_port": 0,
+		"to_id": "426",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 0)",
+		"from_id": "428",
+		"from_port": 0,
+		"to_id": "429",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 1)",
+		"from_id": "428",
+		"from_port": 1,
+		"to_id": "430",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "429",
+		"from_port": 0,
+		"to_id": "431",
 		"type": "connection"
 	},
 	{
@@ -5011,6 +5741,69 @@
 		"from_id": "43",
 		"from_port": 0,
 		"to_id": "39",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "430",
+		"from_port": 0,
+		"to_id": "409",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "431",
+		"from_port": 0,
+		"to_id": "409",
+		"type": "connection"
+	},
+	{
+		"from_choice": "\"Deal.\"",
+		"from_id": "432",
+		"from_port": 0,
+		"to_id": "427",
+		"type": "connection"
+	},
+	{
+		"from_choice": "\"I'll come back later.\"",
+		"from_id": "432",
+		"from_port": 1,
+		"to_id": "433",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "433",
+		"from_port": 0,
+		"to_id": "434",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "434",
+		"from_port": 0,
+		"to_id": "408",
+		"type": "connection"
+	},
+	{
+		"from_choice": "\"Deal.\"",
+		"from_id": "436",
+		"from_port": 0,
+		"to_id": "406",
+		"type": "connection"
+	},
+	{
+		"from_choice": "\"I'll come back later.\"",
+		"from_id": "436",
+		"from_port": 1,
+		"to_id": "437",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "437",
+		"from_port": 0,
+		"to_id": "434",
 		"type": "connection"
 	},
 	{
@@ -5532,9 +6325,9 @@
 		"type": "connection"
 	},
 	{
-		"position:x": "7298.14990234375",
-		"position:y": "2353.94555664063",
+		"position:x": "4618.67578125",
+		"position:y": "4109.79150390625",
 		"type": "camera",
-		"zoom": "1.06864309310913"
+		"zoom": "0.60322099924088"
 	}
 ]
