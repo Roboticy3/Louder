@@ -155,6 +155,16 @@ inverted = true
 [node name="LineEdit" type="LineEdit" parent="VBoxContainer/VBoxContainer/HBoxContainer3" unique_id=678850952]
 layout_mode = 2
 
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/VBoxContainer" unique_id=235546752]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/VBoxContainer/HBoxContainer2" unique_id=2111654165]
+layout_mode = 2
+
+[node name="TextEdit" type="LineEdit" parent="VBoxContainer/VBoxContainer/HBoxContainer2" unique_id=625619352]
+layout_mode = 2
+expand_to_text_length = true
+
 [node name="Confirmation" type="VBoxContainer" parent="VBoxContainer" unique_id=498766543]
 layout_mode = 2
 size_flags_horizontal = 0
@@ -185,6 +195,6 @@ level = ExtResource("2_rhy6e")
 [connection signal="pressed" from="VBoxContainer/MultiplayerOptions/Button" to="MainMenuStarter" method="set_mode" binds= [1]]
 [connection signal="pressed" from="VBoxContainer/MultiplayerOptions/Button2" to="MainMenuStarter" method="set_mode" binds= [2]]
 [connection signal="toggled" from="VBoxContainer/NetworkingType/HBoxContainer/LAN" to="VBoxContainer/NetworkingType/Label" method="set_visible"]
-[connection signal="toggled" from="VBoxContainer/NetworkingType/HBoxContainer/UPNP" to="MainMenuStarter" method="set_use_upnp"]
 [connection signal="toggled" from="VBoxContainer/NetworkingType/HBoxContainer/UPNP" to="VBoxContainer/NetworkingType/Label2" method="set_visible"]
+[connection signal="toggled" from="VBoxContainer/NetworkingType/HBoxContainer/UPNP" to="MainMenuStarter" method="set_use_upnp"]
 [connection signal="pressed" from="VBoxContainer/Confirmation/Button" to="MainMenuStarter" method="start"]

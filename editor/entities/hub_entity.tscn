@@ -79,7 +79,6 @@ script = ExtResource("1_so4sa")
 grabber = NodePath("TextSectionWrapper/TextSection/speaker")
 start_check = NodePath("ChoicesSection/start")
 auto_check = NodePath("ChoicesSection/auto")
-group = null
 component_group = null
 default_source = null
 choices_section_logic = NodePath("ChoicesSection/choices")
@@ -248,6 +247,7 @@ hub = NodePath("../..")
 spin_box = NodePath("../ChoicesSpinBox")
 start_check = NodePath("../start")
 spoke_child_index = 1
+text_content_packed = ExtResource("3_f5yrs")
 
 [connection signal="pressed" from="TextSectionWrapper/TextSection/HBoxContainer2/is_choice" to="." method="reset_size" flags=3]
 [connection signal="folding_changed" from="OtherSection" to="." method="reset_size" flags=3 unbinds=1]

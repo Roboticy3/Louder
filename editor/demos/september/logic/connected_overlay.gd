@@ -6,7 +6,7 @@ extends CanvasLayer
 @export var simulator:PSSimulator
 @export var config:PSConfig
 
-@export var bot_packed:PackedScene = load("res://demos/september/specific/bot.tscn")
+@export var bot_packed:PackedScene
 var bot_summoned := false
 
 # Called when the node enters the scene tree for the first time.
@@ -40,7 +40,7 @@ func _check_data(_a=null, _d=null):
 	var cd := ClientDataLayer.client_data
 	if !(multiplayer.get_unique_id() in cd):
 		hide_backdrop()
-	elif cd.size() < 2 and !bot_summoned:
+	elif cd.size() < 2 and !bot_summoned and !override_button.button_pressed:
 		show_backdrop()
 	else:
 		hide_backdrop()

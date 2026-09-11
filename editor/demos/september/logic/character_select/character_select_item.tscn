@@ -1,0 +1,80 @@
+[gd_scene format=3 uid="uid://b62ogsm6c1200"]
+
+[ext_resource type="Script" uid="uid://g2q2pxgcsrco" path="res://demos/september/logic/character_select/character_select_button.gd" id="1_cxltw"]
+[ext_resource type="Script" uid="uid://c3wvy73f68y1q" path="res://demos/september/logic/character_select/character_select_item.gd" id="1_ipy5q"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dpcax"]
+bg_color = Color(0, 0, 0, 0.5294118)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_nunj6"]
+size = Vector2(128, 256)
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_1pf2h"]
+allow_unpress = true
+
+[node name="CharacterSelectItem" type="MarginContainer" unique_id=698136948 node_paths=PackedStringArray("description_label", "name_label", "portrait_rect", "button")]
+offset_right = 253.0
+offset_bottom = 411.0
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 0
+script = ExtResource("1_ipy5q")
+description_label = NodePath("VBoxContainer/MarginContainer/VBoxContainer/Panel/VBoxContainer/ScrollContainer/Description")
+name_label = NodePath("VBoxContainer/MarginContainer/VBoxContainer/Panel/VBoxContainer/Name")
+portrait_rect = NodePath("VBoxContainer/MarginContainer/VBoxContainer/Panel/Portrait")
+button = NodePath("VBoxContainer/SelectButton")
+
+[node name="Panel" type="Panel" parent="." unique_id=595106642]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_dpcax")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=832458243]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer" unique_id=69499064]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/MarginContainer" unique_id=257796095]
+layout_mode = 2
+
+[node name="Panel" type="HBoxContainer" parent="VBoxContainer/MarginContainer/VBoxContainer" unique_id=958838216]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/MarginContainer/VBoxContainer/Panel" unique_id=338650236]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Name" type="RichTextLabel" parent="VBoxContainer/MarginContainer/VBoxContainer/Panel/VBoxContainer" unique_id=1955278630]
+layout_mode = 2
+size_flags_horizontal = 3
+bbcode_enabled = true
+text = "Geno"
+fit_content = true
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/MarginContainer/VBoxContainer/Panel/VBoxContainer" unique_id=2081612617]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Description" type="RichTextLabel" parent="VBoxContainer/MarginContainer/VBoxContainer/Panel/VBoxContainer/ScrollContainer" unique_id=1011900699]
+layout_mode = 2
+size_flags_horizontal = 3
+bbcode_enabled = true
+text = "Character description: Geno"
+fit_content = true
+
+[node name="Portrait" type="TextureRect" parent="VBoxContainer/MarginContainer/VBoxContainer/Panel" unique_id=1205027389]
+layout_mode = 2
+texture = SubResource("PlaceholderTexture2D_nunj6")
+
+[node name="SelectButton" type="Button" parent="VBoxContainer" unique_id=1123576476]
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+button_group = SubResource("ButtonGroup_1pf2h")
+text = "Select"
+script = ExtResource("1_cxltw")
+character = "Geno"

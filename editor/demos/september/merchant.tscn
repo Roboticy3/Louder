@@ -5,8 +5,75 @@
 [ext_resource type="PackedScene" uid="uid://udwexxt1fl5t" path="res://demos/september/logic/reka.tscn" id="3_7fl6c"]
 [ext_resource type="Script" uid="uid://jpgaxooa6ari" path="res://demos/september/network/character_switch.gd" id="4_j8er1"]
 [ext_resource type="Script" uid="uid://ya7il61i4u2e" path="res://scripts/mutual_exclusive_checkbox.gd" id="5_j6hxa"]
-[ext_resource type="PackedScene" uid="uid://dhii2e6mc7t81" path="res://demos/september/logic/character_select.tscn" id="5_sggte"]
+[ext_resource type="PackedScene" uid="uid://dhii2e6mc7t81" path="res://demos/september/logic/character_select/character_select.tscn" id="5_sggte"]
 [ext_resource type="Script" uid="uid://ph50nnic85au" path="res://demos/september/logic/view_network_layer.gd" id="6_yxm24"]
+[ext_resource type="Texture2D" uid="uid://bskqp3jfl3dp2" path="res://demos/september/sprite/Guard.png" id="8_cwy78"]
+[ext_resource type="Script" uid="uid://bkv8l05n57om4" path="res://demos/september/logic/character_select/character_select_item_data.gd" id="8_e0tjo"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_e0tjo"]
+size = Vector2(128, 256)
+
+[sub_resource type="Resource" id="Resource_ipy5q"]
+script = ExtResource("8_e0tjo")
+name = "Geno"
+description = "Greedy and heartless, forever a stranger. Runs away from everything. Secretly an artist. Doesn't want to admit it.
+
+
+SKILLS
+Geno's skills are aspects of his instincts. Despite having a strong vocabulary, his actual executive function isn't very good. Can you see through the veil?
+
+[b]Cage[/b]
+16 bars of wrought iron between my id and the real world. 
+
+[b]Good[/b]
+Utilitarian Mathematical Philosophy in practice. Listening to the Good voice isn't always easy but it usually feels best later.
+
+[b]Inspiration[/b]
+Sacred Geometry haunts my dreams. One day, I must burn the crest into this physical plane.
+
+[b]Rhetoric[/b]
+More money more problems. I never go to bed without balancing my accounts and tying up all loose ends.
+
+[b]Speed[/b]
+At attention! I wasn't sleeping, I swear!
+
+[b]Evil[/b]
+There's something inside of me that I don't like. A desire to act with no values. And yet, I use it too much. Is there any escape?"
+portrait = SubResource("PlaceholderTexture2D_e0tjo")
+metadata/_custom_type_script = "uid://bkv8l05n57om4"
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_cwy78"]
+size = Vector2(128, 256)
+
+[sub_resource type="Resource" id="Resource_k1q44"]
+script = ExtResource("8_e0tjo")
+name = "Reka"
+description = "Well traveled, but still naïve in many ways. Overdramatic and overextending. Too young for this. Too old to still be acting like a kid.
+
+
+HERO'S SKILLS
+Reka's skills are split into 2 groups. 3 \"Hero's skills\" which represent her values, and \"Systems\" which counteract them. Don't be fooled. All have their utilities and shortcomings.
+
+[b]Power[/b]
+First pillar of the tragic hero. Never give up and always move with a clear goal.
+
+[b]Body[/b]
+Second pillar of the tragic hero. Care and cherish the self and others in both medicine and art.
+
+[b]Soul[/b]
+Third pillar of the tragic hero. Know one's limits and never be corrupted by temptation.
+
+THE SYSTEMS
+[b]Nervous System[/b]
+Retreat, sidestep, connive, scheme, react erratically and never let Them know your next move.
+
+[b]Integumetary System[/b]
+Be attuned and obsessed with all things sensory. Seek out sounds, colors, and chemicals that make you feel fuzzy.
+
+[b]Skeletal System[/b]
+Maybe.. sometimes.. it's ok to give into your intrusive thoughts? Love, your skeleton."
+portrait = SubResource("PlaceholderTexture2D_cwy78")
+metadata/_custom_type_script = "uid://bkv8l05n57om4"
 
 [node name="Merchant" unique_id=438456980 instance=ExtResource("1_s2skt")]
 
@@ -110,14 +177,8 @@ host_port_label = NodePath("../HBoxContainer2/VBoxContainer/HBoxContainer2/Label
 [node name="CharacterSelect" type="CanvasLayer" parent="." index="5" unique_id=1124979978]
 
 [node name="CharacterSelect" parent="CharacterSelect" index="0" unique_id=851426068 instance=ExtResource("5_sggte")]
-anchors_preset = 14
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-offset_top = -171.5
-offset_bottom = 171.5
-grow_horizontal = 2
-grow_vertical = 2
+background = ExtResource("8_cwy78")
+characters = Array[ExtResource("8_e0tjo")]([SubResource("Resource_ipy5q"), SubResource("Resource_k1q44")])
 
 [node name="DebugControls" parent="." index="9" unique_id=1404273262]
 visible = false

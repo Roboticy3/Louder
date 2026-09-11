@@ -1,0 +1,5 @@
+[gd_scene format=3 uid="uid://bxu3t3v52s01d"]
+
+[ext_resource type="PackedScene" uid="uid://06emg8jtgki4" path="res://demos/september/merchant_base.tscn" id="1_dtmuc"]
+
+[node name="Merchant" unique_id=438456980 instance=ExtResource("1_dtmuc")]

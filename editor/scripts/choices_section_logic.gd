@@ -5,6 +5,7 @@ class_name ChoicesSectionLogic extends Node
 @export var start_check_default:bool = false
 @export var child_index := 4
 @export var spoke_child_index := 2
+@export var text_content_packed:PackedScene
 
 @export var port_change_listener_group := &"port_change_listener"
 @export var port_change_listener_method := &"_on_port_changed"
@@ -22,7 +23,7 @@ func add_choice_auto():
 	add_choice("", placeholder_text)
 
 func add_choice(text:String, placeholder_text:String = "(Choice)"):
-	var le:Node = load("res://entities/text_content.tscn").instantiate()
+	var le:Node = text_content_packed.instantiate()
 	le.set("text", text)
 	le.set("placeholder_text", placeholder_text)
 	le.set("inliner", true)

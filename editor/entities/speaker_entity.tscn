@@ -83,7 +83,6 @@ layout_mode = 2
 size_flags_vertical = 0
 placeholder_text = "Voice (audio stream path)"
 wrap_mode = 0
-delimiter_strings = Array[String](["\" \"", "' '"])
 oneliner = true
 inliner = true
 
@@ -144,6 +143,7 @@ hub = NodePath("../..")
 spin_box = NodePath("../ChoicesSpinBox")
 child_index = 3
 spoke_child_index = 1
+text_content_packed = ExtResource("2_kglcw")
 
 [node name="ColorPickerLogic" type="Node" parent="ChoicesSection" unique_id=59080645 node_paths=PackedStringArray("color_picker", "hub")]
 script = ExtResource("6_jwvd8")

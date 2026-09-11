@@ -7,7 +7,7 @@ const ChoiceProperties := PSObjects.ChoiceProperties
 @export var choice_container:Container
 @export var element_background:NinePatchRect
 @export var disabled := false
-@export var choice_packed:PackedScene = load("res://demos/september/ui/scrolling_dialogue_choice.tscn")
+@export var choice_packed:PackedScene
 
 @export var textures:Array[Texture]
 
