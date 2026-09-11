@@ -136,7 +136,13 @@ text = "Reka Vision :)"
 
 [node name="Control" parent="Reka" index="1" unique_id=18826225 instance=ExtResource("3_7fl6c")]
 
-[node name="CanvasLayer" type="CanvasLayer" parent="." index="4" unique_id=1543932512]
+[node name="CharacterSelect" type="CanvasLayer" parent="." index="4" unique_id=1124979978]
+
+[node name="CharacterSelect" parent="CharacterSelect" index="0" unique_id=851426068 instance=ExtResource("5_sggte")]
+background = ExtResource("8_cwy78")
+characters = Array[ExtResource("8_e0tjo")]([SubResource("Resource_ipy5q"), SubResource("Resource_k1q44")])
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." index="5" unique_id=1543932512]
 
 [node name="HBoxContainer2" type="VBoxContainer" parent="CanvasLayer" index="0" unique_id=1738638005]
 anchors_preset = 5
@@ -171,8 +177,10 @@ text = "Host Ip Address:"
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label2" type="Label" parent="CanvasLayer/HBoxContainer2/VBoxContainer/HBoxContainer" index="2" unique_id=1246709481]
+[node name="Label2" type="LineEdit" parent="CanvasLayer/HBoxContainer2/VBoxContainer/HBoxContainer" index="2" unique_id=313122007]
 layout_mode = 2
+editable = false
+expand_to_text_length = true
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/HBoxContainer2/VBoxContainer" index="1" unique_id=1105956900]
 layout_mode = 2
@@ -185,19 +193,15 @@ text = "Host Port:"
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label2" type="Label" parent="CanvasLayer/HBoxContainer2/VBoxContainer/HBoxContainer2" index="2" unique_id=1612533080]
+[node name="Label2" type="LineEdit" parent="CanvasLayer/HBoxContainer2/VBoxContainer/HBoxContainer2" index="2" unique_id=1433662151]
 layout_mode = 2
+editable = false
+expand_to_text_length = true
 
 [node name="Node" type="Node" parent="CanvasLayer" index="1" unique_id=1415692196 node_paths=PackedStringArray("host_ip_label", "host_port_label")]
 script = ExtResource("6_yxm24")
 host_ip_label = NodePath("../HBoxContainer2/VBoxContainer/HBoxContainer/Label2")
 host_port_label = NodePath("../HBoxContainer2/VBoxContainer/HBoxContainer2/Label2")
-
-[node name="CharacterSelect" type="CanvasLayer" parent="." index="5" unique_id=1124979978]
-
-[node name="CharacterSelect" parent="CharacterSelect" index="0" unique_id=851426068 instance=ExtResource("5_sggte")]
-background = ExtResource("8_cwy78")
-characters = Array[ExtResource("8_e0tjo")]([SubResource("Resource_ipy5q"), SubResource("Resource_k1q44")])
 
 [node name="DebugControls" parent="." index="9" unique_id=1404273262]
 visible = false

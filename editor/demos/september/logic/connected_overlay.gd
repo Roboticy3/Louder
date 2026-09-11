@@ -6,7 +6,7 @@ extends CanvasLayer
 @export var simulator:PSSimulator
 @export var config:PSConfig
 
-@export var exclude := []
+@export var exclude := ["Freya", "Benjamin"]
 
 @export var bot_packed:PackedScene
 var bot_summoned := false
