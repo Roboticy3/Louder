@@ -84,6 +84,11 @@ func should_follow(other:PSController) -> bool:
 	var other_position := other.get_position()
 	return other.get_branch() == get_branch() and _filter_visible_node(other_position)
 
+func choice_follow(to_branch:String, from_position:int, from_choice:String) -> bool:
+	if get_branch() == to_branch and get_position() == from_position:
+		return traverse(from_choice)
+	return false
+
 func can_spectate(other:PSController) -> bool:
 	if !other or !other.simulator or other == self: return false
 	var other_position := other.get_position()
