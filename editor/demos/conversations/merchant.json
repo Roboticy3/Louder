@@ -2301,6 +2301,7 @@
 			"\"They look so happy.\"",
 			"\"Where were they last seen?\""
 		],
+		"conditions": "postcard_shop = 0",
 		"conversation_id": "325",
 		"position_offset:x": "3080.0",
 		"position_offset:y": "5600.0",
@@ -6325,9 +6326,9 @@
 		"type": "connection"
 	},
 	{
-		"position:x": "4618.67578125",
-		"position:y": "4109.79150390625",
+		"position:x": "1689.00439453125",
+		"position:y": "2581.07202148438",
 		"type": "camera",
-		"zoom": "0.60322099924088"
+		"zoom": "0.498529702425"
 	}
 ]

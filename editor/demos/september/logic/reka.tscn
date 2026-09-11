@@ -19,6 +19,7 @@
 [ext_resource type="AudioStream" uid="uid://dovvgc2j78tyf" path="res://demos/september/audio/Demo3-main.mp3" id="13_u6bov"]
 [ext_resource type="Texture2D" uid="uid://bdrsimwb67dlr" path="res://demos/september/sprite/Postcard.png" id="14_jtnhr"]
 [ext_resource type="Script" uid="uid://pdtwpxufvewd" path="res://demos/september/ui/main_dialogue_audio.gd" id="14_tmy2p"]
+[ext_resource type="Texture2D" uid="uid://bskqp3jfl3dp2" path="res://demos/september/sprite/Guard.png" id="15_4tsou"]
 [ext_resource type="AudioStream" uid="uid://c6w30j88ibuoq" path="res://demos/september/audio/dialogue_slides_1.wav" id="15_rdpkc"]
 [ext_resource type="AudioStream" uid="uid://cwj5eb15uergp" path="res://demos/september/audio/dialogue_slides_1-2.wav" id="16_lvml4"]
 [ext_resource type="AudioStream" uid="uid://b11st272ie4la" path="res://demos/september/audio/dialogue_slides_1-3.wav" id="17_jtnhr"]
@@ -262,6 +263,22 @@ texture = SubResource("AtlasTexture_4tsou")
 expand_mode = 1
 stretch_mode = 6
 
+[node name="flash_guard_quarter" type="TextureRect" parent="." unique_id=1080642403]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 339.55554
+offset_top = 191.0
+offset_right = -339.55554
+offset_bottom = -191.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("15_4tsou")
+expand_mode = 1
+stretch_mode = 5
+script = ExtResource("3_17usu")
+
 [node name="MainDialogueView" parent="." unique_id=2033588754 instance=ExtResource("2_1bhkb")]
 layout_mode = 1
 offset_right = -0.00012207031
@@ -286,6 +303,7 @@ script = ExtResource("12_u6bov")
 
 [node name="MainDialogueAudio" type="Node" parent="." unique_id=200998291 node_paths=PackedStringArray("outer_voice", "inner_voice")]
 script = ExtResource("14_tmy2p")
+valid_speakers = PackedStringArray("Reka")
 outer_voice = NodePath("AudioStreamPlayer2")
 inner_voice = NodePath("AudioStreamPlayer")
 

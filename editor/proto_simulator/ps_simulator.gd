@@ -105,6 +105,8 @@ func align(body: Dictionary[BodyProperties, Variant], choice: String, filter:=no
 	result = _traverse(result, get_destination(from_position, choice), choice, filter)
 	if result.get(BodyProperties.branch, DEFAULT_BRANCH) != from_branch:
 		result[BodyProperties.branch_changed] = true
+	else:
+		result[BodyProperties.branch_changed] = false
 	
 	return result
 
@@ -123,7 +125,7 @@ func warp(body: Dictionary[BodyProperties, Variant], position: int, filter:=no_f
 #choice that moved the body here ("" when starting a conversation).
 func _traverse(body: Dictionary[BodyProperties, Variant], position: int, choice: String, filter: Callable) -> Dictionary[BodyProperties, Variant]:
 	#set breakpoints here to debug specific conversation points
-	if position == 78:
+	if position == 323:
 		pass
 	
 	var visited := {}
