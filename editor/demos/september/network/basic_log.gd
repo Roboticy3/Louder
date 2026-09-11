@@ -1,4 +1,4 @@
-extends Control
+extends CanvasLayer
 
 @export var feed: Container
 @export var decay: Timer
@@ -17,6 +17,10 @@ extends Control
 @export var mute_data_error: bool = true
 @export var mute_character_selected: bool
 @export var mute_controller_event: bool
+@export var mute_upnp: bool
+@export var mute_upnp_mapping_failed_tcp: bool
+@export var mute_upnp_mapping_failed_udp: bool
+@export var mute_upnp_mapping_established: bool
 
 func _ready() -> void:
 	decay.timeout.connect(_on_decay_timeout)
@@ -31,6 +35,10 @@ func _ready() -> void:
 	NetworkLayer.create_server_error.connect(_on_create_server_error)
 	NetworkLayer.create_client_error.connect(_on_create_client_error)
 	NetworkLayer.client_mode_error.connect(_on_client_mode_error)
+
+	NetworkLayer.upnp_mapping_failed_tcp.connect(_on_upnp_mapping_failed_tcp)
+	NetworkLayer.upnp_mapping_failed_udp.connect(_on_upnp_mapping_failed_udp)
+	NetworkLayer.upnp_mapping_established.connect(_on_upnp_mapping_established)
 
 	ClientDataLayer.data_updated.connect(_on_data_updated)
 	ClientDataLayer.data_error.connect(_on_data_error)
@@ -113,3 +121,15 @@ func _on_controller_connect(controller: PSController) -> void:
 func _on_controller_disconnect(controller: PSController) -> void:
 	if mute_controller_event: return
 	_add_message("Controller %s, %s disconnected" % [controller.speak_as, controller.get_parent().name])
+
+func _on_upnp_mapping_failed_tcp(error: int) -> void:
+	if mute_upnp or mute_upnp_mapping_failed_tcp: return
+	_add_message("UPNP port mapping failed (TCP): %d" % error)
+
+func _on_upnp_mapping_failed_udp(error: int) -> void:
+	if mute_upnp or mute_upnp_mapping_failed_udp: return
+	_add_message("UPNP port mapping failed (UDP): %d" % error)
+
+func _on_upnp_mapping_established(external_ip: String, port: int) -> void:
+	if mute_upnp or mute_upnp_mapping_established: return
+	_add_message("UPNP port mapping established: %s:%d" % [external_ip, port])

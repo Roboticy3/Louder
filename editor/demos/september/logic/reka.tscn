@@ -1,10 +1,10 @@
 [gd_scene format=3 uid="uid://udwexxt1fl5t"]
 
-[ext_resource type="Script" uid="uid://c3s3wg88ndoib" path="res://demos/september/specific/reka.gd" id="1_l48c1"]
+[ext_resource type="Script" uid="uid://c3s3wg88ndoib" path="res://demos/september/logic/reka.gd" id="1_l48c1"]
 [ext_resource type="PackedScene" uid="uid://dnwmrvllc2101" path="res://demos/september/ui/main_dialogue_view.tscn" id="2_1bhkb"]
 [ext_resource type="Texture2D" uid="uid://b8al01yx5jq1o" path="res://demos/september/sprite/Reka View 1.png" id="2_be0wp"]
 [ext_resource type="Texture2D" uid="uid://bkhql6b61uqwg" path="res://demos/september/sprite/black.tres" id="2_ewuah"]
-[ext_resource type="Script" uid="uid://dut12f744fc2s" path="res://demos/september/specific/variable_fader_canvas.gd" id="3_17usu"]
+[ext_resource type="Script" uid="uid://dut12f744fc2s" path="res://demos/september/logic/variable_fader_canvas.gd" id="3_17usu"]
 [ext_resource type="PackedScene" uid="uid://cip56nadhhph1" path="res://demos/september/ui/secondary_dialogue_view.tscn" id="3_be0wp"]
 [ext_resource type="Texture2D" uid="uid://7opd06klhxt6" path="res://demos/september/sprite/Reka View 1 Bandit.png" id="3_xxbk7"]
 [ext_resource type="Texture2D" uid="uid://c1tfnjsoi78q2" path="res://demos/september/sprite/Reka View 1 Geno.png" id="4_17usu"]
@@ -15,8 +15,9 @@
 [ext_resource type="Texture2D" uid="uid://chomgol3ljjk0" path="res://demos/september/sprite/Reka View 2 Geno 2.png" id="9_tmy2p"]
 [ext_resource type="Texture2D" uid="uid://qmoaudu6caoq" path="res://demos/september/sprite/Reka View 2 Bandit.png" id="11_lvml4"]
 [ext_resource type="AudioStream" uid="uid://ci5ph6lk8itkk" path="res://demos/september/audio/Demo3-loop.mp3" id="11_xofov"]
-[ext_resource type="Script" uid="uid://dwci644iorqlj" path="res://demos/september/specific/variable_fader_stream.gd" id="12_u6bov"]
+[ext_resource type="Script" uid="uid://dwci644iorqlj" path="res://demos/september/logic/variable_fader_stream.gd" id="12_u6bov"]
 [ext_resource type="AudioStream" uid="uid://dovvgc2j78tyf" path="res://demos/september/audio/Demo3-main.mp3" id="13_u6bov"]
+[ext_resource type="Texture2D" uid="uid://bdrsimwb67dlr" path="res://demos/september/sprite/Postcard.png" id="14_jtnhr"]
 [ext_resource type="Script" uid="uid://pdtwpxufvewd" path="res://demos/september/ui/main_dialogue_audio.gd" id="14_tmy2p"]
 [ext_resource type="AudioStream" uid="uid://c6w30j88ibuoq" path="res://demos/september/audio/dialogue_slides_1.wav" id="15_rdpkc"]
 [ext_resource type="AudioStream" uid="uid://cwj5eb15uergp" path="res://demos/september/audio/dialogue_slides_1-2.wav" id="16_lvml4"]
@@ -49,6 +50,12 @@ region = Rect2(184, 0, 561, 810)
 [sub_resource type="AtlasTexture" id="AtlasTexture_tmy2p"]
 atlas = ExtResource("9_ck8bg")
 region = Rect2(900, 8, 317, 810)
+
+[sub_resource type="Gradient" id="Gradient_jtnhr"]
+colors = PackedColorArray(0.67751473, 0.7942496, 0.5101507, 1, 0.5295871, 0.47588032, 0.16824314, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_nunj6"]
+gradient = SubResource("Gradient_jtnhr")
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_skou3"]
 random_pitch = 1.0594631
@@ -227,6 +234,35 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_ewuah")
 script = ExtResource("3_17usu")
+
+[node name="postcard_shop" type="TextureRect" parent="." unique_id=1076990106]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 339.55554
+offset_top = 191.0
+offset_right = -339.55554
+offset_bottom = -191.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture1D_nunj6")
+expand_mode = 1
+script = ExtResource("3_17usu")
+
+[node name="postcard_shop" type="TextureRect" parent="postcard_shop" unique_id=472737113]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -83.5556
+offset_top = -47.0
+offset_right = 83.5556
+offset_bottom = 47.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("14_jtnhr")
+expand_mode = 1
 
 [node name="MainDialogueView" parent="." unique_id=2033588754 instance=ExtResource("2_1bhkb")]
 layout_mode = 1

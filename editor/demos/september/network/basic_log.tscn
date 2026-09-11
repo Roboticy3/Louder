@@ -3,17 +3,8 @@
 [ext_resource type="Script" uid="uid://c3mwlunur3atv" path="res://demos/september/network/basic_log.gd" id="1_xlwlw"]
 [ext_resource type="Script" uid="uid://b27ucw68hr8oi" path="res://demos/september/ui/action_toggle.gd" id="2_m5mdj"]
 
-[node name="BasicLog" type="Control" unique_id=128730021 node_paths=PackedStringArray("feed", "decay")]
-z_index = 1000
-layout_mode = 3
-anchor_top = 0.418
-anchor_right = 0.418
-anchor_bottom = 1.0
-offset_top = 0.13598633
-offset_right = -0.53601074
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
+[node name="BasicLog" type="CanvasLayer" unique_id=636752349 node_paths=PackedStringArray("feed", "decay")]
+layer = 1000
 script = ExtResource("1_xlwlw")
 feed = NodePath("Control/VBoxContainer")
 decay = NodePath("Timer")
@@ -22,10 +13,12 @@ mute_data_updated = false
 [node name="Timer" type="Timer" parent="." unique_id=1114858324]
 
 [node name="Control" type="Control" parent="." unique_id=1366469923]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
+layout_mode = 3
+anchor_top = 0.404
+anchor_right = 0.319
 anchor_bottom = 1.0
+offset_top = 0.2079773
+offset_right = -0.4880066
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
@@ -39,4 +32,5 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 alignment = 2

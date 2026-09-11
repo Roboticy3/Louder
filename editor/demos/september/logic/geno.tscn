@@ -1,19 +1,20 @@
 [gd_scene format=3 uid="uid://cor0bmbbvv2l5"]
 
-[ext_resource type="Script" uid="uid://2x5tvoc4rfd4" path="res://demos/september/specific/geno.gd" id="1_fgoqf"]
-[ext_resource type="Theme" uid="uid://8guntd0dq8f" path="res://demos/september/specific/geno_theme.tres" id="1_uuvyx"]
+[ext_resource type="Script" uid="uid://2x5tvoc4rfd4" path="res://demos/september/logic/geno.gd" id="1_fgoqf"]
+[ext_resource type="Theme" uid="uid://8guntd0dq8f" path="res://demos/september/logic/geno_theme.tres" id="1_uuvyx"]
 [ext_resource type="Texture2D" uid="uid://bkhql6b61uqwg" path="res://demos/september/sprite/black.tres" id="2_exxv7"]
 [ext_resource type="PackedScene" uid="uid://dnwmrvllc2101" path="res://demos/september/ui/main_dialogue_view.tscn" id="2_if7ko"]
 [ext_resource type="Texture2D" uid="uid://cbw2uv1nltg40" path="res://demos/september/sprite/UI elements-export.png" id="3_8sve8"]
 [ext_resource type="Texture2D" uid="uid://bqkth6diqnmtu" path="res://demos/september/sprite/Geno View.png" id="3_avyjx"]
-[ext_resource type="Script" uid="uid://dut12f744fc2s" path="res://demos/september/specific/variable_fader_canvas.gd" id="3_exxv7"]
+[ext_resource type="Script" uid="uid://dut12f744fc2s" path="res://demos/september/logic/variable_fader_canvas.gd" id="3_exxv7"]
 [ext_resource type="Texture2D" uid="uid://csyfqjrs6cq2y" path="res://demos/september/sprite/Geno View Bandit.png" id="5_cl5uo"]
 [ext_resource type="Texture2D" uid="uid://d1w5f80ssvy4v" path="res://demos/september/sprite/Geno View Reka 1.png" id="6_q1hvi"]
 [ext_resource type="Texture2D" uid="uid://5bx7hebrp0qu" path="res://demos/september/sprite/Geno View Reka 2.png" id="7_tampr"]
 [ext_resource type="AudioStream" uid="uid://ci5ph6lk8itkk" path="res://demos/september/audio/Demo3-loop.mp3" id="9_tampr"]
-[ext_resource type="Script" uid="uid://dwci644iorqlj" path="res://demos/september/specific/variable_fader_stream.gd" id="10_5snrs"]
+[ext_resource type="Script" uid="uid://dwci644iorqlj" path="res://demos/september/logic/variable_fader_stream.gd" id="10_5snrs"]
 [ext_resource type="Texture2D" uid="uid://c01taujqg44uv" path="res://demos/september/sprite/items.png" id="10_hfdov"]
 [ext_resource type="AudioStream" uid="uid://dovvgc2j78tyf" path="res://demos/september/audio/Demo3-main.mp3" id="11_01e0q"]
+[ext_resource type="Texture2D" uid="uid://bdrsimwb67dlr" path="res://demos/september/sprite/Postcard.png" id="11_r0if7"]
 [ext_resource type="Script" uid="uid://pdtwpxufvewd" path="res://demos/september/ui/main_dialogue_audio.gd" id="12_uuvyx"]
 [ext_resource type="AudioStream" uid="uid://c6w30j88ibuoq" path="res://demos/september/audio/dialogue_slides_1.wav" id="13_8sve8"]
 [ext_resource type="AudioStream" uid="uid://cwj5eb15uergp" path="res://demos/september/audio/dialogue_slides_1-2.wav" id="14_hfdov"]
@@ -51,6 +52,12 @@ region = Rect2(184, 0, 561, 810)
 [sub_resource type="AtlasTexture" id="AtlasTexture_j2u2i"]
 atlas = ExtResource("10_hfdov")
 region = Rect2(900, 8, 317, 810)
+
+[sub_resource type="Gradient" id="Gradient_jtnhr"]
+colors = PackedColorArray(0.67751473, 0.7942496, 0.5101507, 1, 0.5295871, 0.47588032, 0.16824314, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_ovk7e"]
+gradient = SubResource("Gradient_jtnhr")
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_ntx1s"]
 random_pitch = 1.0594631
@@ -180,6 +187,35 @@ texture = ExtResource("2_exxv7")
 expand_mode = 1
 stretch_mode = 6
 script = ExtResource("3_exxv7")
+
+[node name="postcard_shop" type="TextureRect" parent="." unique_id=2062609033]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 339.55554
+offset_top = 191.0
+offset_right = -339.55554
+offset_bottom = -191.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture1D_ovk7e")
+expand_mode = 1
+script = ExtResource("3_exxv7")
+
+[node name="postcard_shop" type="TextureRect" parent="postcard_shop" unique_id=1460438290]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -83.5556
+offset_top = -47.0
+offset_right = 83.5556
+offset_bottom = 47.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("11_r0if7")
+expand_mode = 1
 
 [node name="MainDialogueView" parent="." unique_id=2033588754 instance=ExtResource("2_if7ko")]
 layout_mode = 1

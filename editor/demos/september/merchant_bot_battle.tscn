@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://p0yoa0gi2tbt"]
 
 [ext_resource type="PackedScene" uid="uid://06emg8jtgki4" path="res://demos/september/merchant_base.tscn" id="1_t4d6h"]
-[ext_resource type="PackedScene" uid="uid://cor0bmbbvv2l5" path="res://demos/september/specific/geno.tscn" id="2_cu3xd"]
-[ext_resource type="PackedScene" uid="uid://i8ppkv2hjutf" path="res://demos/september/specific/bot.tscn" id="2_wlswn"]
-[ext_resource type="PackedScene" uid="uid://udwexxt1fl5t" path="res://demos/september/specific/reka.tscn" id="3_2icb0"]
+[ext_resource type="PackedScene" uid="uid://cor0bmbbvv2l5" path="res://demos/september/logic/geno.tscn" id="2_cu3xd"]
+[ext_resource type="PackedScene" uid="uid://i8ppkv2hjutf" path="res://demos/september/logic/bot.tscn" id="2_wlswn"]
+[ext_resource type="PackedScene" uid="uid://udwexxt1fl5t" path="res://demos/september/logic/reka.tscn" id="3_2icb0"]
 
 [node name="Merchant" unique_id=438456980 instance=ExtResource("1_t4d6h")]
 

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cqhf06i2ux2yp"]
 
-[ext_resource type="Script" uid="uid://dep4iuvvutvgo" path="res://demos/september/specific/connected_overlay.gd" id="1_k7po3"]
+[ext_resource type="Script" uid="uid://dep4iuvvutvgo" path="res://demos/september/logic/connected_overlay.gd" id="1_k7po3"]
 
 [node name="ConnectedOverlay" type="CanvasLayer" unique_id=58385532 node_paths=PackedStringArray("bot_button", "override_button", "backdrop")]
 script = ExtResource("1_k7po3")

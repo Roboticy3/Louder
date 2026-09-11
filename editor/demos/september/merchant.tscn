@@ -1,10 +1,12 @@
 [gd_scene format=3 uid="uid://cj44xlqqbvgwd"]
 
 [ext_resource type="PackedScene" uid="uid://06emg8jtgki4" path="res://demos/september/merchant_base.tscn" id="1_s2skt"]
-[ext_resource type="PackedScene" uid="uid://cor0bmbbvv2l5" path="res://demos/september/specific/geno.tscn" id="2_e0tjo"]
-[ext_resource type="PackedScene" uid="uid://udwexxt1fl5t" path="res://demos/september/specific/reka.tscn" id="3_7fl6c"]
+[ext_resource type="PackedScene" uid="uid://cor0bmbbvv2l5" path="res://demos/september/logic/geno.tscn" id="2_e0tjo"]
+[ext_resource type="PackedScene" uid="uid://udwexxt1fl5t" path="res://demos/september/logic/reka.tscn" id="3_7fl6c"]
 [ext_resource type="Script" uid="uid://jpgaxooa6ari" path="res://demos/september/network/character_switch.gd" id="4_j8er1"]
+[ext_resource type="Script" uid="uid://ya7il61i4u2e" path="res://scripts/mutual_exclusive_checkbox.gd" id="5_j6hxa"]
 [ext_resource type="PackedScene" uid="uid://dhii2e6mc7t81" path="res://demos/september/logic/character_select.tscn" id="5_sggte"]
+[ext_resource type="Script" uid="uid://ph50nnic85au" path="res://demos/september/logic/view_network_layer.gd" id="6_yxm24"]
 
 [node name="Merchant" unique_id=438456980 instance=ExtResource("1_s2skt")]
 
@@ -48,7 +50,64 @@ text = "Reka Vision :)"
 
 [node name="Control" parent="Reka" index="1" unique_id=18826225 instance=ExtResource("3_7fl6c")]
 
-[node name="CharacterSelect" type="CanvasLayer" parent="." index="4" unique_id=1124979978]
+[node name="CanvasLayer" type="CanvasLayer" parent="." index="4" unique_id=1543932512]
+
+[node name="HBoxContainer2" type="VBoxContainer" parent="CanvasLayer" index="0" unique_id=1738638005]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -156.5
+offset_right = 156.5
+offset_bottom = 58.0
+grow_horizontal = 2
+size_flags_horizontal = 4
+
+[node name="Button" type="Button" parent="CanvasLayer/HBoxContainer2" index="0" unique_id=1709950315 node_paths=PackedStringArray("mutual_exclusive")]
+layout_mode = 2
+toggle_mode = true
+button_pressed = true
+text = "Show/Hide Host Ip Address and Port"
+script = ExtResource("5_j6hxa")
+mutual_exclusive = [NodePath("../VBoxContainer")]
+inverted = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/HBoxContainer2" index="1" unique_id=764738449]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/HBoxContainer2/VBoxContainer" index="0" unique_id=409122172]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/HBoxContainer2/VBoxContainer/HBoxContainer" index="0" unique_id=821221734]
+layout_mode = 2
+text = "Host Ip Address:"
+
+[node name="Spacer" type="Control" parent="CanvasLayer/HBoxContainer2/VBoxContainer/HBoxContainer" index="1" unique_id=990524125]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label2" type="Label" parent="CanvasLayer/HBoxContainer2/VBoxContainer/HBoxContainer" index="2" unique_id=1246709481]
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/HBoxContainer2/VBoxContainer" index="1" unique_id=1105956900]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/HBoxContainer2/VBoxContainer/HBoxContainer2" index="0" unique_id=2062351897]
+layout_mode = 2
+text = "Host Port:"
+
+[node name="Spacer" type="Control" parent="CanvasLayer/HBoxContainer2/VBoxContainer/HBoxContainer2" index="1" unique_id=1461060843]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label2" type="Label" parent="CanvasLayer/HBoxContainer2/VBoxContainer/HBoxContainer2" index="2" unique_id=1612533080]
+layout_mode = 2
+
+[node name="Node" type="Node" parent="CanvasLayer" index="1" unique_id=1415692196 node_paths=PackedStringArray("host_ip_label", "host_port_label")]
+script = ExtResource("6_yxm24")
+host_ip_label = NodePath("../HBoxContainer2/VBoxContainer/HBoxContainer/Label2")
+host_port_label = NodePath("../HBoxContainer2/VBoxContainer/HBoxContainer2/Label2")
+
+[node name="CharacterSelect" type="CanvasLayer" parent="." index="5" unique_id=1124979978]
 
 [node name="CharacterSelect" parent="CharacterSelect" index="0" unique_id=851426068 instance=ExtResource("5_sggte")]
 anchors_preset = 14
@@ -60,5 +119,8 @@ offset_bottom = 171.5
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ConnectedOverlay" parent="." index="9" unique_id=58385532]
+[node name="DebugControls" parent="." index="9" unique_id=1404273262]
+visible = false
+
+[node name="ConnectedOverlay" parent="." index="10" unique_id=58385532]
 visible = true
