@@ -278,10 +278,12 @@ alignment = 2
 
 [node name="reka_blank" type="AudioStreamPlayer" parent="BackgroundAudio" unique_id=2078178441]
 stream = ExtResource("11_xofov")
+bus = &"Music"
 script = ExtResource("12_u6bov")
 
 [node name="reka_square" type="AudioStreamPlayer" parent="BackgroundAudio" unique_id=1379761648]
 stream = ExtResource("13_u6bov")
+bus = &"Music"
 script = ExtResource("12_u6bov")
 
 [node name="MainDialogueAudio" type="Node" parent="." unique_id=200998291 node_paths=PackedStringArray("outer_voice", "inner_voice")]
@@ -291,8 +293,10 @@ inner_voice = NodePath("AudioStreamPlayer")
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="MainDialogueAudio" unique_id=1857406091]
 stream = SubResource("AudioStreamRandomizer_skou3")
+bus = &"Sfx"
 
 [node name="AudioStreamPlayer2" type="AudioStreamPlayer" parent="MainDialogueAudio" unique_id=1558507617]
 stream = SubResource("AudioStreamRandomizer_t3lbj")
+bus = &"Sfx"
 
 [editable path="MainDialogueView"]

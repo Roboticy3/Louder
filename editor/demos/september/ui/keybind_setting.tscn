@@ -1,0 +1,36 @@
+[gd_scene format=3 uid="uid://br6v1d3dkcmma"]
+
+[ext_resource type="Script" uid="uid://gwv7fe6a2801" path="res://demos/september/ui/keybind_setting.gd" id="1_k2ste"]
+
+[node name="KeybindSetting" type="HBoxContainer" unique_id=1935755576 node_paths=PackedStringArray("activate", "action_label", "bind_label")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_k2ste")
+activate = NodePath("Button")
+action_label = NodePath("Label")
+bind_label = NodePath("Label3")
+
+[node name="Label" type="Label" parent="." unique_id=1256758832]
+layout_mode = 2
+text = "Action"
+
+[node name="Label2" type="Label" parent="." unique_id=101256804]
+layout_mode = 2
+text = ":"
+
+[node name="Label3" type="Label" parent="." unique_id=513094079]
+layout_mode = 2
+text = "B"
+
+[node name="Control" type="Control" parent="." unique_id=671935900]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+
+[node name="Button" type="Button" parent="." unique_id=923219289]
+layout_mode = 2
+size_flags_vertical = 4
+text = "Set"

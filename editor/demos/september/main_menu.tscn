@@ -192,6 +192,9 @@ conversation = NodePath("../../VBoxContainer/HBoxContainer3/LineEdit")
 script = ExtResource("1_cv508")
 level = ExtResource("2_rhy6e")
 
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1735830]
+bus = &"Music"
+
 [connection signal="pressed" from="VBoxContainer/MultiplayerOptions/Button" to="MainMenuStarter" method="set_mode" binds= [1]]
 [connection signal="pressed" from="VBoxContainer/MultiplayerOptions/Button2" to="MainMenuStarter" method="set_mode" binds= [2]]
 [connection signal="toggled" from="VBoxContainer/NetworkingType/HBoxContainer/LAN" to="VBoxContainer/NetworkingType/Label" method="set_visible"]

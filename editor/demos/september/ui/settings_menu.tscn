@@ -1,0 +1,162 @@
+[gd_scene format=3 uid="uid://dkld2y7n6ifpl"]
+
+[ext_resource type="Script" uid="uid://cdvimlwg16x5u" path="res://demos/september/ui/settings_menu.gd" id="1_xg06m"]
+[ext_resource type="PackedScene" uid="uid://bd5bqg420bb2g" path="res://demos/september/ui/audio_setting.tscn" id="2_min6j"]
+[ext_resource type="PackedScene" uid="uid://br6v1d3dkcmma" path="res://demos/september/ui/keybind_setting.tscn" id="3_fch2u"]
+
+[node name="SettingsMenu" type="CanvasLayer" unique_id=1170044108]
+layer = 10
+script = ExtResource("1_xg06m")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=78988941]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="MarginContainer" unique_id=601117698]
+layout_mode = 2
+
+[node name="Columns" type="HBoxContainer" parent="MarginContainer/Panel" unique_id=661016142]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/Panel/Columns" unique_id=417135864]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Audio" type="VBoxContainer" parent="MarginContainer/Panel/Columns/MarginContainer" unique_id=1336018626]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="MarginContainer/Panel/Columns/MarginContainer/Audio" unique_id=305862067]
+layout_mode = 2
+text = "Audio:"
+
+[node name="AudioSetting" parent="MarginContainer/Panel/Columns/MarginContainer/Audio" unique_id=256702161 instance=ExtResource("2_min6j")]
+layout_mode = 2
+
+[node name="AudioSetting2" parent="MarginContainer/Panel/Columns/MarginContainer/Audio" unique_id=1466559145 instance=ExtResource("2_min6j")]
+layout_mode = 2
+
+[node name="AudioSetting3" parent="MarginContainer/Panel/Columns/MarginContainer/Audio" unique_id=592422639 instance=ExtResource("2_min6j")]
+layout_mode = 2
+
+[node name="MarginContainer2" type="MarginContainer" parent="MarginContainer/Panel/Columns" unique_id=813730944]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/Panel/Columns/MarginContainer2" unique_id=799207938]
+layout_mode = 2
+
+[node name="Keybinds" type="VBoxContainer" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer" unique_id=1163982150]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds" unique_id=1960802338]
+layout_mode = 2
+text = "Controls"
+
+[node name="FoldableContainer" type="FoldableContainer" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds" unique_id=231618540]
+layout_mode = 2
+folded = true
+title = "Dialogue"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds/FoldableContainer" unique_id=2064650383]
+visible = false
+layout_mode = 2
+
+[node name="dialogue_1" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds/FoldableContainer/VBoxContainer" unique_id=1390741019 instance=ExtResource("3_fch2u")]
+layout_mode = 2
+
+[node name="dialogue_2" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds/FoldableContainer/VBoxContainer" unique_id=1584885843 instance=ExtResource("3_fch2u")]
+layout_mode = 2
+
+[node name="dialogue_3" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds/FoldableContainer/VBoxContainer" unique_id=2141672957 instance=ExtResource("3_fch2u")]
+layout_mode = 2
+
+[node name="dialogue_4" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds/FoldableContainer/VBoxContainer" unique_id=565548905 instance=ExtResource("3_fch2u")]
+layout_mode = 2
+
+[node name="dialogue_5" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds/FoldableContainer/VBoxContainer" unique_id=1400427730 instance=ExtResource("3_fch2u")]
+layout_mode = 2
+
+[node name="dialogue_6" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds/FoldableContainer/VBoxContainer" unique_id=1999503455 instance=ExtResource("3_fch2u")]
+layout_mode = 2
+
+[node name="dialogue_7" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds/FoldableContainer/VBoxContainer" unique_id=1634894669 instance=ExtResource("3_fch2u")]
+layout_mode = 2
+
+[node name="dialogue_8" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds/FoldableContainer/VBoxContainer" unique_id=529250373 instance=ExtResource("3_fch2u")]
+layout_mode = 2
+
+[node name="dialogue_9" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds/FoldableContainer/VBoxContainer" unique_id=1035267145 instance=ExtResource("3_fch2u")]
+layout_mode = 2
+
+[node name="dialogue_10" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds/FoldableContainer/VBoxContainer" unique_id=435326501 instance=ExtResource("3_fch2u")]
+layout_mode = 2
+
+[node name="FoldableContainer2" type="FoldableContainer" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds" unique_id=767260177]
+layout_mode = 2
+title = "Lobby"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds/FoldableContainer2" unique_id=858659213]
+layout_mode = 2
+
+[node name="lobby_menu" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds/FoldableContainer2/VBoxContainer" unique_id=787165540 instance=ExtResource("3_fch2u")]
+layout_mode = 2
+
+[node name="lobby_character_select" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds/FoldableContainer2/VBoxContainer" unique_id=1952030158 instance=ExtResource("3_fch2u")]
+layout_mode = 2
+
+[node name="FoldableContainer3" type="FoldableContainer" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds" unique_id=256867435]
+layout_mode = 2
+title = "Editor"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds/FoldableContainer3" unique_id=388959078]
+layout_mode = 2
+
+[node name="graph_create" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds/FoldableContainer3/VBoxContainer" unique_id=962682420 instance=ExtResource("3_fch2u")]
+layout_mode = 2
+
+[node name="graph_save" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds/FoldableContainer3/VBoxContainer" unique_id=1591034133 instance=ExtResource("3_fch2u")]
+layout_mode = 2
+
+[node name="graph_save_as" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds/FoldableContainer3/VBoxContainer" unique_id=946426659 instance=ExtResource("3_fch2u")]
+layout_mode = 2
+
+[node name="graph_load" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds/FoldableContainer3/VBoxContainer" unique_id=887615718 instance=ExtResource("3_fch2u")]
+layout_mode = 2
+
+[node name="graph_new" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds/FoldableContainer3/VBoxContainer" unique_id=604804446 instance=ExtResource("3_fch2u")]
+layout_mode = 2
+
+[node name="graph_copy" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds/FoldableContainer3/VBoxContainer" unique_id=2001116391 instance=ExtResource("3_fch2u")]
+layout_mode = 2
+
+[node name="graph_paste" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds/FoldableContainer3/VBoxContainer" unique_id=1475757478 instance=ExtResource("3_fch2u")]
+layout_mode = 2
+
+[node name="graph_search_forward" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds/FoldableContainer3/VBoxContainer" unique_id=1535101725 instance=ExtResource("3_fch2u")]
+layout_mode = 2
+
+[node name="graph_search_backward" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds/FoldableContainer3/VBoxContainer" unique_id=2072732639 instance=ExtResource("3_fch2u")]
+layout_mode = 2
+
+[node name="FoldableContainer4" type="FoldableContainer" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds" unique_id=1391764534]
+layout_mode = 2
+title = "Debug"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds/FoldableContainer4" unique_id=41209062]
+layout_mode = 2
+
+[node name="debug_menu_1" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds/FoldableContainer4/VBoxContainer" unique_id=680024218 instance=ExtResource("3_fch2u")]
+layout_mode = 2
+
+[node name="debug_menu_2" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds/FoldableContainer4/VBoxContainer" unique_id=1572689599 instance=ExtResource("3_fch2u")]
+layout_mode = 2

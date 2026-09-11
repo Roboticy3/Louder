@@ -10,6 +10,14 @@
 [ext_resource type="Texture2D" uid="uid://bskqp3jfl3dp2" path="res://demos/september/sprite/Guard.png" id="8_cwy78"]
 [ext_resource type="Script" uid="uid://bkv8l05n57om4" path="res://demos/september/logic/character_select/character_select_item_data.gd" id="8_e0tjo"]
 
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_xrcy2"]
+load_path = "res://.godot/imported/UI elements-export.png-367d6879a5084192da133597e035e7ae.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xrijs"]
+atlas = SubResource("CompressedTexture2D_xrcy2")
+region = Rect2(0, 256, 256, 256)
+margin = Rect2(-14, -19, -15, -32)
+
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_e0tjo"]
 size = Vector2(128, 256)
 
@@ -40,7 +48,16 @@ At attention! I wasn't sleeping, I swear!
 [b]Evil[/b]
 There's something inside of me that I don't like. A desire to act with no values. And yet, I use it too much. Is there any escape?"
 portrait = SubResource("PlaceholderTexture2D_e0tjo")
+background = SubResource("AtlasTexture_xrijs")
 metadata/_custom_type_script = "uid://bkv8l05n57om4"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_cwy78"]
+load_path = "res://.godot/imported/UI elements-export.png-367d6879a5084192da133597e035e7ae.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xrcy2"]
+atlas = SubResource("CompressedTexture2D_cwy78")
+region = Rect2(512, 256, 256, 256)
+margin = Rect2(-18, -4, -18, -9)
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_cwy78"]
 size = Vector2(128, 256)
@@ -73,6 +90,8 @@ Be attuned and obsessed with all things sensory. Seek out sounds, colors, and ch
 [b]Skeletal System[/b]
 Maybe.. sometimes.. it's ok to give into your intrusive thoughts? Love, your skeleton."
 portrait = SubResource("PlaceholderTexture2D_cwy78")
+background = SubResource("AtlasTexture_xrcy2")
+text_color = Color(0, 0, 0, 1)
 metadata/_custom_type_script = "uid://bkv8l05n57om4"
 
 [node name="Merchant" unique_id=438456980 instance=ExtResource("1_s2skt")]

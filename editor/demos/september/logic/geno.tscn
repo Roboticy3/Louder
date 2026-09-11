@@ -224,10 +224,12 @@ layout_mode = 1
 
 [node name="geno_blank" type="AudioStreamPlayer" parent="BackgroundAudio" unique_id=896838602]
 stream = ExtResource("9_tampr")
+bus = &"Music"
 script = ExtResource("10_5snrs")
 
 [node name="geno_shop" type="AudioStreamPlayer" parent="BackgroundAudio" unique_id=1129960654]
 stream = ExtResource("11_01e0q")
+bus = &"Music"
 script = ExtResource("10_5snrs")
 
 [node name="MainDialogueAudio" type="Node" parent="." unique_id=1384410909 node_paths=PackedStringArray("outer_voice", "inner_voice")]
@@ -237,6 +239,8 @@ inner_voice = NodePath("Inner Voice")
 
 [node name="Inner Voice" type="AudioStreamPlayer" parent="MainDialogueAudio" unique_id=314036440]
 stream = SubResource("AudioStreamRandomizer_ntx1s")
+bus = &"Sfx"
 
 [node name="Normal Voice" type="AudioStreamPlayer" parent="MainDialogueAudio" unique_id=523035550]
 stream = SubResource("AudioStreamRandomizer_ip3j6")
+bus = &"Sfx"

@@ -15,6 +15,10 @@ run/main_scene="uid://262tuwnn0nqs"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://icon.svg"
 
+[audio]
+
+buses/default_bus_layout="uid://bu0kj5r32vn55"
+
 [autoload]
 
 IdSystem="*uid://emcgvjw2xenp"
@@ -25,6 +29,7 @@ NetworkLayer="*uid://cmb4d6ennhr0l"
 ProjectManagerHelpers="*uid://edmw44iljr42"
 SimulatorEventLayer="*uid://da81e32yt8e0t"
 CustomConversationLayer="*uid://cutgqpa4uig2p"
+Settings="*uid://ch8fwf4bvu18m"
 
 [display]
 
