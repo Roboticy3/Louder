@@ -36,15 +36,15 @@ size_flags_horizontal = 3
 
 [node name="Label" type="Label" parent="MarginContainer/Panel/Columns/MarginContainer/Audio" unique_id=305862067]
 layout_mode = 2
-text = "Audio:"
+text = "Audio Levels:"
 
-[node name="AudioSetting" parent="MarginContainer/Panel/Columns/MarginContainer/Audio" unique_id=256702161 instance=ExtResource("2_min6j")]
+[node name="Master" parent="MarginContainer/Panel/Columns/MarginContainer/Audio" unique_id=256702161 instance=ExtResource("2_min6j")]
 layout_mode = 2
 
-[node name="AudioSetting2" parent="MarginContainer/Panel/Columns/MarginContainer/Audio" unique_id=1466559145 instance=ExtResource("2_min6j")]
+[node name="Music" parent="MarginContainer/Panel/Columns/MarginContainer/Audio" unique_id=1466559145 instance=ExtResource("2_min6j")]
 layout_mode = 2
 
-[node name="AudioSetting3" parent="MarginContainer/Panel/Columns/MarginContainer/Audio" unique_id=592422639 instance=ExtResource("2_min6j")]
+[node name="Sfx" parent="MarginContainer/Panel/Columns/MarginContainer/Audio" unique_id=592422639 instance=ExtResource("2_min6j")]
 layout_mode = 2
 
 [node name="MarginContainer2" type="MarginContainer" parent="MarginContainer/Panel/Columns" unique_id=813730944]
@@ -64,11 +64,9 @@ text = "Controls"
 
 [node name="FoldableContainer" type="FoldableContainer" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds" unique_id=231618540]
 layout_mode = 2
-folded = true
 title = "Dialogue"
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds/FoldableContainer" unique_id=2064650383]
-visible = false
 layout_mode = 2
 
 [node name="dialogue_1" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds/FoldableContainer/VBoxContainer" unique_id=1390741019 instance=ExtResource("3_fch2u")]

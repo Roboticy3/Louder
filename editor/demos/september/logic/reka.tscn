@@ -51,11 +51,9 @@ region = Rect2(184, 0, 561, 810)
 atlas = ExtResource("9_ck8bg")
 region = Rect2(900, 8, 317, 810)
 
-[sub_resource type="Gradient" id="Gradient_jtnhr"]
-colors = PackedColorArray(0.67751473, 0.7942496, 0.5101507, 1, 0.5295871, 0.47588032, 0.16824314, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_nunj6"]
-gradient = SubResource("Gradient_jtnhr")
+[sub_resource type="AtlasTexture" id="AtlasTexture_4tsou"]
+atlas = ExtResource("14_jtnhr")
+region = Rect2(211, 147, 1007, 519)
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_skou3"]
 random_pitch = 1.0594631
@@ -246,7 +244,6 @@ offset_right = -339.55554
 offset_bottom = -191.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = SubResource("GradientTexture1D_nunj6")
 expand_mode = 1
 script = ExtResource("3_17usu")
 
@@ -261,8 +258,9 @@ offset_right = 83.5556
 offset_bottom = 47.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("14_jtnhr")
+texture = SubResource("AtlasTexture_4tsou")
 expand_mode = 1
+stretch_mode = 6
 
 [node name="MainDialogueView" parent="." unique_id=2033588754 instance=ExtResource("2_1bhkb")]
 layout_mode = 1

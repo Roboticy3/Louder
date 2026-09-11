@@ -53,11 +53,9 @@ region = Rect2(184, 0, 561, 810)
 atlas = ExtResource("10_hfdov")
 region = Rect2(900, 8, 317, 810)
 
-[sub_resource type="Gradient" id="Gradient_jtnhr"]
-colors = PackedColorArray(0.67751473, 0.7942496, 0.5101507, 1, 0.5295871, 0.47588032, 0.16824314, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_ovk7e"]
-gradient = SubResource("Gradient_jtnhr")
+[sub_resource type="AtlasTexture" id="AtlasTexture_ws3xl"]
+atlas = ExtResource("11_r0if7")
+region = Rect2(211, 147, 1007, 519)
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_ntx1s"]
 random_pitch = 1.0594631
@@ -188,7 +186,7 @@ expand_mode = 1
 stretch_mode = 6
 script = ExtResource("3_exxv7")
 
-[node name="postcard_shop" type="TextureRect" parent="." unique_id=2062609033]
+[node name="postcard_shop" type="TextureRect" parent="." unique_id=148468579]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -199,11 +197,10 @@ offset_right = -339.55554
 offset_bottom = -191.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = SubResource("GradientTexture1D_ovk7e")
 expand_mode = 1
 script = ExtResource("3_exxv7")
 
-[node name="postcard_shop" type="TextureRect" parent="postcard_shop" unique_id=1460438290]
+[node name="postcard_shop" type="TextureRect" parent="postcard_shop" unique_id=494052739]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -214,8 +211,9 @@ offset_right = 83.5556
 offset_bottom = 47.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("11_r0if7")
+texture = SubResource("AtlasTexture_ws3xl")
 expand_mode = 1
+stretch_mode = 6
 
 [node name="MainDialogueView" parent="." unique_id=2033588754 instance=ExtResource("2_if7ko")]
 layout_mode = 1
