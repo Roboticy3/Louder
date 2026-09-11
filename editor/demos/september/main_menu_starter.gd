@@ -65,6 +65,9 @@ func get_progress_disabled() -> bool:
 func set_server_ip(to:String) -> void:
 	ip_address = to
 
+func set_server_port_sus(to:float) -> void:
+	set_server_port(to)
+
 func set_server_port(to:int) -> void:
 	port = to
 

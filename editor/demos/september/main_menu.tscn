@@ -200,4 +200,6 @@ bus = &"Music"
 [connection signal="toggled" from="VBoxContainer/NetworkingType/HBoxContainer/LAN" to="VBoxContainer/NetworkingType/Label" method="set_visible"]
 [connection signal="toggled" from="VBoxContainer/NetworkingType/HBoxContainer/UPNP" to="VBoxContainer/NetworkingType/Label2" method="set_visible"]
 [connection signal="toggled" from="VBoxContainer/NetworkingType/HBoxContainer/UPNP" to="MainMenuStarter" method="set_use_upnp"]
+[connection signal="text_changed" from="VBoxContainer/VBoxContainer/IPAndPort/IP/LineEdit" to="MainMenuStarter" method="set_server_ip"]
+[connection signal="value_changed" from="VBoxContainer/VBoxContainer/IPAndPort/LineEdit2" to="MainMenuStarter" method="set_server_port_sus"]
 [connection signal="pressed" from="VBoxContainer/Confirmation/Button" to="MainMenuStarter" method="start"]
