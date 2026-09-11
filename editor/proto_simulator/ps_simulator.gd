@@ -123,7 +123,7 @@ func warp(body: Dictionary[BodyProperties, Variant], position: int, filter:=no_f
 #choice that moved the body here ("" when starting a conversation).
 func _traverse(body: Dictionary[BodyProperties, Variant], position: int, choice: String, filter: Callable) -> Dictionary[BodyProperties, Variant]:
 	#set breakpoints here to debug specific conversation points
-	if position == 79:
+	if position == 78:
 		pass
 	
 	var visited := {}

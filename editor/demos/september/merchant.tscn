@@ -59,3 +59,6 @@ offset_top = -171.5
 offset_bottom = 171.5
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="ConnectedOverlay" parent="." index="9" unique_id=58385532]
+visible = true

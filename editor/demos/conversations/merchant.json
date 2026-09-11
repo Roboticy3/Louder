@@ -924,6 +924,7 @@
 		"type": "hub"
 	},
 	{
+		"branch": "shop",
 		"conversation_id": "152",
 		"position_offset:x": "7120.0",
 		"position_offset:y": "2320.0",
@@ -5531,9 +5532,9 @@
 		"type": "connection"
 	},
 	{
-		"position:x": "6191.98779296875",
-		"position:y": "1612.18969726563",
+		"position:x": "7298.14990234375",
+		"position:y": "2353.94555664063",
 		"type": "camera",
-		"zoom": "0.45320892333984"
+		"zoom": "1.06864309310913"
 	}
 ]

@@ -2,6 +2,7 @@ extends CanvasLayer
 
 @export var bot_button:BaseButton
 @export var override_button:BaseButton
+@export var backdrop:Window
 @export var simulator:PSSimulator
 @export var config:PSConfig
 
@@ -12,20 +13,37 @@ var bot_summoned := false
 func _ready() -> void:
 	ClientDataLayer.data_updated.connect(_check_data)
 	
-	override_button.pressed.connect(hide)
+	override_button.pressed.connect(hide_backdrop)
 	bot_button.pressed.connect(_summon_bot)
 	
 	if !multiplayer.is_server():
 		bot_button.visible = false
+	
+	_check_data()
+	
+	get_window().size_changed.connect(position_backdrop)
+	position_backdrop()
 
-func _check_data(_a, _d):
+func position_backdrop():
+	backdrop.size = get_window().size
+	backdrop.position = Vector2.ZERO
+
+func show_backdrop():
+	backdrop.size = get_window().size
+	backdrop.position = Vector2.ZERO
+	backdrop.visible = true
+	
+func hide_backdrop():
+	backdrop.visible = false
+
+func _check_data(_a=null, _d=null):
 	var cd := ClientDataLayer.client_data
 	if !(multiplayer.get_unique_id() in cd):
-		hide()
+		hide_backdrop()
 	elif cd.size() < 2 and !bot_summoned:
-		show()
+		show_backdrop()
 	else:
-		hide()
+		hide_backdrop()
 
 func _get_missing_character() -> String:
 	var cd := ClientDataLayer.client_data
@@ -65,4 +83,4 @@ func _summon_bot():
 	add_child(bot) 
 	
 	bot_summoned = true
-	hide()
+	hide_backdrop()
