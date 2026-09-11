@@ -34,16 +34,16 @@ func get_connected_controller() -> PSController:
 # an active conversation works entirely on state every peer already has, so
 # that case never touches the network.
 
-func request_controller(controller:PSController) -> void:
+func request_controller(controller:PSController, make_current:=true) -> void:
 	if !is_instance_valid(controller):
 		return
 	if !multiplayer.has_multiplayer_peer():
 		return
-	if controller.is_active():
+	if controller.is_active() and make_current:
 		connect_local(controller)
 		return
 	
-	_request_start.rpc_id(1, controller.get_path(), controller.speak_as, controller.listen_to)
+	_request_start.rpc_id(1, controller.get_path(), controller.speak_as, controller.listen_to, make_current)
 	if !multiplayer.is_server():
 		_request_catch_up.rpc_id(1, controller.get_path())
 
@@ -168,7 +168,7 @@ func _request_warp(controller_path:NodePath, position:int) -> void:
 #computes the start of a conversation on the authoritative simulator and
 #replicates it, so the requesting peer can connect to the result.
 @rpc("any_peer", "call_local", "reliable")
-func _request_start(controller_path:NodePath, speak_as:PackedStringArray, listen_to:PackedStringArray) -> void:
+func _request_start(controller_path:NodePath, speak_as:PackedStringArray, listen_to:PackedStringArray, make_current:=true) -> void:
 	if !multiplayer.is_server():
 		return
 	
@@ -186,16 +186,16 @@ func _request_start(controller_path:NodePath, speak_as:PackedStringArray, listen
 	
 	var remote_authority := get_requester_id()
 	if controller.is_active():
-		sync_controller_data.rpc(EventType.CONNECT, remote_authority, controller_path, controller.data)
+		sync_controller_data.rpc(EventType.CONNECT, remote_authority, controller_path, controller.data, make_current)
 		return
 	if !controller.start():
 		push_error("Failed to start simulation on controller ", controller_path, "!")
 		return
-	sync_controller_data.rpc(EventType.CONNECT, remote_authority, controller_path, controller.data)
+	sync_controller_data.rpc(EventType.CONNECT, remote_authority, controller_path, controller.data, make_current)
 
 #sync uses paths because they are able to transmit over a network, unlike actual references
 @rpc("authority", "call_local", "reliable")
-func sync_controller_data(event_type:EventType, original_authority:int, controller_path: NodePath, data: Dictionary) -> void:
+func sync_controller_data(event_type:EventType, original_authority:int, controller_path: NodePath, data: Dictionary, make_current:=true) -> void:
 	var node := get_node_or_null(controller_path)
 	if !(node is PSController):
 		return
@@ -204,10 +204,9 @@ func sync_controller_data(event_type:EventType, original_authority:int, controll
 	match event_type:
 		EventType.CONNECT:
 			if multiplayer.get_unique_id() == original_authority:
-				if connected_controller != controller:
-					
+				if connected_controller != controller and make_current:
 					connected_controller = controller
-					connect_event.emit(controller)
+				connect_event.emit(controller)
 		EventType.DISCONNECT:
 			if multiplayer.get_unique_id() == original_authority:
 				if connected_controller == controller:

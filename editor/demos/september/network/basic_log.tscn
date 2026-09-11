@@ -5,6 +5,7 @@
 
 [node name="BasicLog" type="CanvasLayer" unique_id=636752349 node_paths=PackedStringArray("feed", "decay")]
 layer = 1000
+visible = false
 script = ExtResource("1_xlwlw")
 feed = NodePath("Control/VBoxContainer")
 decay = NodePath("Timer")

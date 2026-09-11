@@ -56,3 +56,11 @@ func get_relationships(speaker:String) -> Array:
 
 func _on_conversation_changed(_path:String):
 	_ready()
+
+func list_ownable_speakers() -> PackedStringArray:
+	var result := PackedStringArray()
+	for speaker in speakers_by_name:
+		var s := speakers_by_name[speaker]
+		if s.get(SPK_OWND):
+			result.append(speaker)
+	return result

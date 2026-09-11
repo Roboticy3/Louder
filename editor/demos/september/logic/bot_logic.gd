@@ -5,7 +5,7 @@ const ChoiceProperties := PSObjects.ChoiceProperties
 @export var controller:PSController
 
 func _ready() -> void:
-	ControllerEventLayer.request_controller(controller)
+	ControllerEventLayer.request_controller(controller, false)
 
 func plonk():
 	var choices := controller.get_choices()

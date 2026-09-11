@@ -6,6 +6,8 @@ extends CanvasLayer
 @export var simulator:PSSimulator
 @export var config:PSConfig
 
+@export var exclude := []
+
 @export var bot_packed:PackedScene
 var bot_summoned := false
 
@@ -45,42 +47,38 @@ func _check_data(_a=null, _d=null):
 	else:
 		hide_backdrop()
 
-func _get_missing_character() -> String:
-	var cd := ClientDataLayer.client_data
-	if cd.size() < 2 and !bot_summoned:
-		for data in cd.values():
-			var character: String = data.get(ClientDataLayer.ClientProperties.character, "")
-			if character == "Reka":
-				return "Geno"
-			if character == "Geno":
-				return "Reka"
-	return ""
+func _get_unpossessed_ownable_speakers() -> PackedStringArray:
+	var possessed: PackedStringArray
+	for controller in get_tree().get_nodes_in_group(&"ps_controller"):
+		if controller is PSController:
+			possessed.append_array(controller.speak_as)
+	
+	var unpossessed := PackedStringArray()
+	for speaker in config.list_ownable_speakers():
+		if !(speaker in possessed) and !(speaker in exclude):
+			unpossessed.append(speaker)
+	return unpossessed
 
 func _summon_bot():
 	if !multiplayer.is_server():
 		return
 	
-	#speak_as = [bot_play_as] later
-	var bot_play_as := _get_missing_character()
-	if bot_play_as.is_empty():
-		return
-	
 	if !simulator or !config:
 		return
 	
-	#summon a bot and connect it to the simulator
+	#summon a bot for each ownable speaker not already possessed by a controller
 	#"bot" is a PSController with a timer attached to automatically make choices
 	#location of bot in the scene tree shouldn't matter. As long as it's 
 	#speak_as, listen_to, and simulator properties are set correctly.
-	
-	var bot := bot_packed.instantiate() as PSController
-	bot.speak_as = PackedStringArray([bot_play_as])
-	#listen_to is filled out using the speak_as speakers' relationships in config
-	bot.listen_to = PackedStringArray(config.get_relationships(bot_play_as))
-	bot.simulator = simulator
-	bot.config = config
-	
-	add_child(bot) 
+	for speaker in _get_unpossessed_ownable_speakers():
+		var bot := bot_packed.instantiate() as PSController
+		bot.speak_as = PackedStringArray([speaker])
+		#listen_to is filled out using the speak_as speakers' relationships in config
+		bot.listen_to = PackedStringArray(config.get_relationships(speaker))
+		bot.simulator = simulator
+		bot.config = config
+		
+		add_child(bot)
 	
 	bot_summoned = true
 	hide_backdrop()

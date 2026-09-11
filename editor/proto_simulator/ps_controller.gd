@@ -89,8 +89,8 @@ func can_spectate(other:PSController) -> bool:
 	var other_position := other.get_position()
 	return other.get_branch() != get_branch() and _filter_visible_node(other_position)
 
-func get_text(property:String) -> String:
-	return str(data.get(property))
+func get_text() -> String:
+	return str(data.get(BodyProperties.text, ""))
 
 func get_position() -> int:
 	return data.get(BodyProperties.position, -1)

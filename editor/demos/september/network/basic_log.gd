@@ -112,7 +112,7 @@ func _on_character_selected(peer_id: int, character: String) -> void:
 
 func _on_controller_choice(controller: PSController) -> void:
 	if mute_controller_event: return
-	_add_message("Controller %s, %s made a choice" % [controller.speak_as, controller.get_parent().name] )
+	_add_message("Controller %s, %s is now at position %d: \'%s\'" % [controller.speak_as, controller.get_parent().name, controller.get_position(), controller.get_text().substr(0, 16)] )
 
 func _on_controller_connect(controller: PSController) -> void:
 	if mute_controller_event: return
