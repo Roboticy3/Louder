@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://ya7il61i4u2e" path="res://scripts/mutual_exclusive_checkbox.gd" id="1_ybclp"]
 [ext_resource type="PackedScene" uid="uid://cj44xlqqbvgwd" path="res://demos/september/merchant.tscn" id="2_rhy6e"]
 [ext_resource type="PackedScene" uid="uid://d1xnbir365a7q" path="res://entities/editor.tscn" id="2_wnrnk"]
+[ext_resource type="Script" uid="uid://riwd3y84n5u0" path="res://demos/september/ui/lazy_submit.gd" id="3_jfkvc"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_nunj6"]
 font_size = 32
@@ -154,6 +155,8 @@ inverted = true
 
 [node name="LineEdit" type="LineEdit" parent="VBoxContainer/VBoxContainer/HBoxContainer3" unique_id=678850952]
 layout_mode = 2
+expand_to_text_length = true
+script = ExtResource("3_jfkvc")
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/VBoxContainer" unique_id=235546752]
 layout_mode = 2
@@ -202,4 +205,5 @@ bus = &"Music"
 [connection signal="toggled" from="VBoxContainer/NetworkingType/HBoxContainer/UPNP" to="MainMenuStarter" method="set_use_upnp"]
 [connection signal="text_changed" from="VBoxContainer/VBoxContainer/IPAndPort/IP/LineEdit" to="MainMenuStarter" method="set_server_ip"]
 [connection signal="value_changed" from="VBoxContainer/VBoxContainer/IPAndPort/LineEdit2" to="MainMenuStarter" method="set_server_port_sus"]
+[connection signal="text_submitted" from="VBoxContainer/VBoxContainer/HBoxContainer3/LineEdit" to="MainMenuStarter" method="set_custom_conversation"]
 [connection signal="pressed" from="VBoxContainer/Confirmation/Button" to="MainMenuStarter" method="start"]

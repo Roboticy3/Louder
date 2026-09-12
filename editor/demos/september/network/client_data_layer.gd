@@ -3,6 +3,7 @@ extends Node
 enum ClientProperties {
 	authority = 0,
 	character,
+	conversation,
 }
 
 enum DataError {

@@ -7,6 +7,7 @@ var username := ""
 var ip_address := "localhost"
 var port := 45678
 var use_upnp := false
+var custom_conversation := ""
 
 @export var progress_message_listener_group := &"progress_message_listener"
 @export var progress_status_listener_group := &"progress_status_listener"
@@ -49,6 +50,10 @@ func set_username(to:String):
 	if mode == NetworkLayer.ClientMode.NONE:
 		mode = NetworkLayer.ClientMode.CLIENT
 	validate()
+
+func set_custom_conversation(to:String):
+	if FileAccess.file_exists(to):
+		custom_conversation = to
 
 func validate():
 	get_tree().call_group(progress_status_listener_group, &"set", &"disabled", get_progress_disabled())
@@ -96,5 +101,7 @@ func start():
 	if get_progress_disabled():
 		push_error("MainMenuStarter::start tried to start game after get_progress_disabled() returned true")
 	
+	CustomConversationLayer.conversation_path = custom_conversation
 	NetworkLayer.start(mode, ip_address, port, use_upnp)
 	get_tree().change_scene_to_packed.call_deferred(level)
+	

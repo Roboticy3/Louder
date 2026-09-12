@@ -18,8 +18,6 @@ var camera := {}
 func _ready() -> void:
 	if not input_path.is_empty():
 		load_from_json(input_path)
-	
-	
 
 func load_from_json(path: String) -> bool:
 	var parsed := JSONSceneLoader.load_from_json(path)

@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dshl0su1su5xe" path="res://proto_simulator/ps_simulator.gd" id="5_h8y86"]
 [ext_resource type="Script" uid="uid://bj7q7bsrcvdrl" path="res://demos/september/logic/basic_spawner.gd" id="6_r21cg"]
+[ext_resource type="Script" uid="uid://dsa2lgi7qeko3" path="res://demos/september/logic/conversation_loader.gd" id="7_1gk02"]
 [ext_resource type="PackedScene" uid="uid://fn48n343cb16" path="res://demos/september/logic/merchant_dialogue_avatar.tscn" id="7_doqhh"]
 [ext_resource type="Script" uid="uid://inieasxjm4nb" path="res://proto_simulator/ps_conversation.gd" id="8_rnka0"]
 [ext_resource type="Script" uid="uid://cpa1hv77k8m77" path="res://demos/september/network/simulator_state_synchronizer.gd" id="9_b1fsl"]
@@ -40,7 +41,6 @@ spawnable_packed = ExtResource("7_doqhh")
 
 [node name="PSConversation" type="Node" parent="Louder" unique_id=1560832398]
 script = ExtResource("8_rnka0")
-input_path = "res://demos/conversations/merchant.json"
 metadata/_custom_type_script = "uid://inieasxjm4nb"
 
 [node name="SimulatorStateListener" type="Node" parent="." unique_id=523254008]
@@ -48,6 +48,11 @@ script = ExtResource("9_b1fsl")
 
 [node name="WarpListener" type="Node" parent="." unique_id=399758190]
 script = ExtResource("10_o51n7")
+
+[node name="ConversationLoader" type="Node" parent="." unique_id=397806342 node_paths=PackedStringArray("ps_conversation")]
+script = ExtResource("7_1gk02")
+conversation_path = "res://demos/conversations/merchant.json"
+ps_conversation = NodePath("../Louder/PSConversation")
 
 [node name="DebugControls" type="CanvasLayer" parent="." unique_id=1404273262]
 script = ExtResource("11_kc62v")
