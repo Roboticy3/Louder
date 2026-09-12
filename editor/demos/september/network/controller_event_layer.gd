@@ -116,6 +116,7 @@ func _request_choice(controller_path:NodePath, choice: String) -> void:
 	for c in get_tree().get_nodes_in_group(controller_group):
 		if c is PSController and c != controller and c.is_active() and c.should_follow(controller):
 			c.follow(controller)
+			follow.append(c)
 			sync_controller_data.rpc(EventType.CHOICE, remote_authority, c.get_path(), c.data)
 	
 	#rule 3: if other controllers were at the same position and branch as this controller before simulation,
