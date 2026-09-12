@@ -1,11 +1,15 @@
-extends BaseButton
+class_name CharacterSelectButton extends Button
 
-@export var character:String
+@export var character:String :
+	set(new_character):
+		character = new_character
+		text = "Select %s" % [character]
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	ClientDataLayer.data_error.connect(_on_data_error)
 	ClientDataLayer.data_updated.connect(_on_data_updated)
+	
 	
 	toggled.connect(_on_toggled)
 

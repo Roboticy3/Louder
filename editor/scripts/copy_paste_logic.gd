@@ -2,6 +2,7 @@ extends Node
 
 const OBJECT_TYPE := "type"
 const CLIPBOARD_REFERENCE := "__copy_reference"
+const WRAPPER_GUARD := "__block"
 
 @export var editor:GraphEdit
 @export var pointer:PointerLogic
@@ -27,16 +28,21 @@ func serialize_selection() -> String:
 	var data: Array = [{"__copy_reference": [reference.x, reference.y]}]
 	for n in selected:
 		data.append(ProjectManagerHelpers.export_network_entity(n))
-	return JSON.stringify(data)
+	return JSON.stringify({WRAPPER_GUARD: data})
 
 func deserialize_selection(clipboard:String) -> bool:
 	var data = JSON.parse_string(clipboard)
-	if !(data is Array):
+	if !(data is Dictionary):
+		return false
+	
+	var block = data.get(WRAPPER_GUARD)
+	
+	if !(block is Array):
 		return false
 	
 	var copy_reference := Vector2.ZERO
 	var payload: Array = []
-	for entry in data:
+	for entry in block:
 		if entry is Dictionary and entry.has(CLIPBOARD_REFERENCE):
 			var ref := entry[CLIPBOARD_REFERENCE] as Array
 			copy_reference = Vector2(float(ref[0]), float(ref[1]))
@@ -60,6 +66,7 @@ func deserialize_selection(clipboard:String) -> bool:
 				var hub_data := ProjectManagerHelpers.import_network_entity(s, entity)
 				hub_data["position_offset"] = ProjectManagerHelpers.join_vector(s, "position_offset") + paste_offset
 				entity.hub_data = hub_data
+				entity.id = IdSystem.assign_id(entity)
 				editor.add_child(entity)
 				entity.selected = true
 				hubs_created.append(entity) 

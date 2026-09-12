@@ -6,6 +6,7 @@ var play_as := ""
 var username := ""
 var ip_address := "localhost"
 var port := 45678
+var use_upnp := false
 
 @export var progress_message_listener_group := &"progress_message_listener"
 @export var progress_status_listener_group := &"progress_status_listener"
@@ -14,11 +15,28 @@ var port := 45678
 @export var level:PackedScene
 
 func _ready():
+	
+	var args = OS.get_cmdline_args()
+	for a in args:
+		if a == "--quickstart=1":
+			play_as = "Geno"
+			mode = NetworkLayer.ClientMode.HOST
+			start()
+			break
+		elif a == "--quickstart=2":
+			play_as = "Reka"
+			mode = NetworkLayer.ClientMode.CLIENT
+			start()
+			break
+	
 	validate()
 
 func set_mode(to:NetworkLayer.ClientMode):
 	mode = to
 	validate()
+
+func set_use_upnp(to:bool):
+	use_upnp = to
 
 func set_play_as(to:String):
 	play_as = to
@@ -46,6 +64,9 @@ func get_progress_disabled() -> bool:
 
 func set_server_ip(to:String) -> void:
 	ip_address = to
+
+func set_server_port_sus(to:float) -> void:
+	set_server_port(to)
 
 func set_server_port(to:int) -> void:
 	port = to
@@ -75,5 +96,5 @@ func start():
 	if get_progress_disabled():
 		push_error("MainMenuStarter::start tried to start game after get_progress_disabled() returned true")
 	
-	NetworkLayer.start(mode, ip_address, port)
-	get_tree().change_scene_to_packed(level)
+	NetworkLayer.start(mode, ip_address, port, use_upnp)
+	get_tree().change_scene_to_packed.call_deferred(level)

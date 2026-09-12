@@ -1,6 +1,8 @@
 @tool
 extends TextureRect
 
+#unused
+
 @export var sprite_directory := "res://demos/september/sprite/"
 @export var texture_extension := ".png"
 

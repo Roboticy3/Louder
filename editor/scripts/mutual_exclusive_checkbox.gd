@@ -1,4 +1,4 @@
-extends CheckBox
+extends BaseButton
 
 @export var mutual_exclusive:Array[Control]
 @export var inverted:bool
@@ -10,5 +10,6 @@ func _ready() -> void:
 
 func _on_toggled(to:bool) -> void:
 	for m in mutual_exclusive:
+		var value := to if inverted else !to
 		if is_instance_valid(m):
-			m.visible = to if inverted else !to
+			m.visible = value

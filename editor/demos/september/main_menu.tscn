@@ -2,10 +2,17 @@
 
 [ext_resource type="Script" uid="uid://xkm1psypo8hm" path="res://demos/september/to_editor.gd" id="1_aeouo"]
 [ext_resource type="Script" uid="uid://ybu0cnnjqu7b" path="res://demos/september/main_menu_starter.gd" id="1_cv508"]
+[ext_resource type="Texture2D" uid="uid://gko45oycfncn" path="res://demos/september/sprite/Wide.png" id="1_exmph"]
+[ext_resource type="Script" uid="uid://ya7il61i4u2e" path="res://scripts/mutual_exclusive_checkbox.gd" id="1_ybclp"]
 [ext_resource type="PackedScene" uid="uid://cj44xlqqbvgwd" path="res://demos/september/merchant.tscn" id="2_rhy6e"]
 [ext_resource type="PackedScene" uid="uid://d1xnbir365a7q" path="res://entities/editor.tscn" id="2_wnrnk"]
 
+[sub_resource type="LabelSettings" id="LabelSettings_nunj6"]
+font_size = 32
+
 [sub_resource type="ButtonGroup" id="ButtonGroup_cv508"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_exmph"]
 
 [node name="MainMenu" type="Control" unique_id=550762822]
 layout_mode = 3
@@ -15,95 +22,184 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=191694602]
+[node name="TextureRect" type="TextureRect" parent="." unique_id=82907137]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -371.0
-offset_top = -66.0
-offset_right = 371.0
-offset_bottom = 66.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+texture = ExtResource("1_exmph")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=191694602]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -151.5
+offset_right = 240.0
+offset_bottom = 151.5
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="VBoxContainer" unique_id=1134952235]
+layout_mode = 2
+text = "East Breach Demo"
+label_settings = SubResource("LabelSettings_nunj6")
 
 [node name="MultiplayerOptions" type="VBoxContainer" parent="VBoxContainer" unique_id=659374955]
 layout_mode = 2
-size_flags_horizontal = 4
+size_flags_horizontal = 0
 
-[node name="Button" type="Button" parent="VBoxContainer/MultiplayerOptions" unique_id=970546172]
+[node name="Button" type="Button" parent="VBoxContainer/MultiplayerOptions" unique_id=970546172 node_paths=PackedStringArray("mutual_exclusive")]
 layout_mode = 2
 toggle_mode = true
 button_group = SubResource("ButtonGroup_cv508")
 text = "JOIN GAME"
+script = ExtResource("1_ybclp")
+mutual_exclusive = [NodePath("../../NetworkingType")]
 
-[node name="Button2" type="Button" parent="VBoxContainer/MultiplayerOptions" unique_id=639502323]
+[node name="Button2" type="Button" parent="VBoxContainer/MultiplayerOptions" unique_id=639502323 node_paths=PackedStringArray("mutual_exclusive")]
 layout_mode = 2
 toggle_mode = true
 button_group = SubResource("ButtonGroup_cv508")
 text = "HOST GAME"
+script = ExtResource("1_ybclp")
+mutual_exclusive = [NodePath("../../NetworkingType")]
+inverted = true
+
+[node name="NetworkingType" type="VBoxContainer" parent="VBoxContainer" unique_id=1990005871]
+visible = false
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/NetworkingType" unique_id=160648079]
+layout_mode = 2
+text = "LAN Multiplayer"
+
+[node name="Label2" type="Label" parent="VBoxContainer/NetworkingType" unique_id=504155658]
+visible = false
+layout_mode = 2
+text = "Online Multiplayer 
+(WARNING: Peer to peer multiplayer with automatic port forwarding via UPNP. 
+Do not leave running idly outside of playtime)"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/NetworkingType" unique_id=1588422162]
+layout_mode = 2
+
+[node name="LAN" type="Button" parent="VBoxContainer/NetworkingType/HBoxContainer" unique_id=1140039689]
+layout_mode = 2
+toggle_mode = true
+button_pressed = true
+button_group = SubResource("ButtonGroup_exmph")
+text = "LAN"
+
+[node name="UPNP" type="Button" parent="VBoxContainer/NetworkingType/HBoxContainer" unique_id=1834838799 node_paths=PackedStringArray("mutual_exclusive")]
+layout_mode = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_exmph")
+text = "UPNP"
+script = ExtResource("1_ybclp")
+mutual_exclusive = [NodePath("../../../VBoxContainer/IPAndPort/IP")]
 
 [node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer" unique_id=363779684]
 layout_mode = 2
-size_flags_horizontal = 4
+size_flags_horizontal = 0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/VBoxContainer" unique_id=273355132]
+[node name="UserName" type="HBoxContainer" parent="VBoxContainer/VBoxContainer" unique_id=273355132]
+visible = false
 layout_mode = 2
 
-[node name="Label" type="Label" parent="VBoxContainer/VBoxContainer/HBoxContainer" unique_id=931277015]
+[node name="Label" type="Label" parent="VBoxContainer/VBoxContainer/UserName" unique_id=931277015]
 layout_mode = 2
 text = "Username: "
 
-[node name="LineEdit" type="LineEdit" parent="VBoxContainer/VBoxContainer/HBoxContainer" unique_id=1349319352]
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/VBoxContainer/UserName" unique_id=1349319352]
 layout_mode = 2
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/VBoxContainer" unique_id=418321804]
+[node name="IPAndPort" type="HBoxContainer" parent="VBoxContainer/VBoxContainer" unique_id=418321804]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="VBoxContainer/VBoxContainer/HBoxContainer2" unique_id=1307828847]
+[node name="IP" type="HBoxContainer" parent="VBoxContainer/VBoxContainer/IPAndPort" unique_id=1665558731]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/VBoxContainer/IPAndPort/IP" unique_id=1307828847]
 layout_mode = 2
 text = "Ip: "
 
-[node name="LineEdit" type="LineEdit" parent="VBoxContainer/VBoxContainer/HBoxContainer2" unique_id=620899331]
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/VBoxContainer/IPAndPort/IP" unique_id=620899331]
 layout_mode = 2
 text = "localhost"
 expand_to_text_length = true
 
-[node name="Label2" type="Label" parent="VBoxContainer/VBoxContainer/HBoxContainer2" unique_id=1667087935]
+[node name="Label2" type="Label" parent="VBoxContainer/VBoxContainer/IPAndPort" unique_id=1667087935]
 layout_mode = 2
 text = "Port:"
 
-[node name="LineEdit2" type="SpinBox" parent="VBoxContainer/VBoxContainer/HBoxContainer2" unique_id=804554379]
+[node name="LineEdit2" type="SpinBox" parent="VBoxContainer/VBoxContainer/IPAndPort" unique_id=804554379]
 layout_mode = 2
 max_value = 65535.0
 value = 45678.0
 
+[node name="HBoxContainer3" type="VBoxContainer" parent="VBoxContainer/VBoxContainer" unique_id=645402403]
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="CheckBox" type="CheckBox" parent="VBoxContainer/VBoxContainer/HBoxContainer3" unique_id=209825764 node_paths=PackedStringArray("mutual_exclusive")]
+layout_mode = 2
+text = "Load Custom Conversation"
+script = ExtResource("1_ybclp")
+mutual_exclusive = [NodePath("../LineEdit")]
+inverted = true
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/VBoxContainer/HBoxContainer3" unique_id=678850952]
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/VBoxContainer" unique_id=235546752]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/VBoxContainer/HBoxContainer2" unique_id=2111654165]
+layout_mode = 2
+
+[node name="TextEdit" type="LineEdit" parent="VBoxContainer/VBoxContainer/HBoxContainer2" unique_id=625619352]
+layout_mode = 2
+expand_to_text_length = true
+
 [node name="Confirmation" type="VBoxContainer" parent="VBoxContainer" unique_id=498766543]
 layout_mode = 2
+size_flags_horizontal = 0
 
 [node name="Label" type="Label" parent="VBoxContainer/Confirmation" unique_id=1810265427 groups=["progress_message_listener"]]
 layout_mode = 2
+size_flags_horizontal = 0
 text = "Awaiting command...."
 horizontal_alignment = 1
 
 [node name="Button" type="Button" parent="VBoxContainer/Confirmation" unique_id=2031063729 groups=["progress_status_listener"]]
 layout_mode = 2
-size_flags_horizontal = 4
+size_flags_horizontal = 0
 text = "      GO      "
 
-[node name="Button2" type="Button" parent="VBoxContainer/Confirmation" unique_id=317394501]
+[node name="Button2" type="Button" parent="VBoxContainer/Confirmation" unique_id=317394501 node_paths=PackedStringArray("conversation")]
 layout_mode = 2
-size_flags_horizontal = 4
-text = "To Editor"
+size_flags_horizontal = 0
+text = "Custom Conversation Editor"
 script = ExtResource("1_aeouo")
 level = ExtResource("2_wnrnk")
+conversation = NodePath("../../VBoxContainer/HBoxContainer3/LineEdit")
 
 [node name="MainMenuStarter" type="Node" parent="." unique_id=1882237254]
 script = ExtResource("1_cv508")
 level = ExtResource("2_rhy6e")
 
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1735830]
+bus = &"Music"
+
 [connection signal="pressed" from="VBoxContainer/MultiplayerOptions/Button" to="MainMenuStarter" method="set_mode" binds= [1]]
 [connection signal="pressed" from="VBoxContainer/MultiplayerOptions/Button2" to="MainMenuStarter" method="set_mode" binds= [2]]
+[connection signal="toggled" from="VBoxContainer/NetworkingType/HBoxContainer/LAN" to="VBoxContainer/NetworkingType/Label" method="set_visible"]
+[connection signal="toggled" from="VBoxContainer/NetworkingType/HBoxContainer/UPNP" to="VBoxContainer/NetworkingType/Label2" method="set_visible"]
+[connection signal="toggled" from="VBoxContainer/NetworkingType/HBoxContainer/UPNP" to="MainMenuStarter" method="set_use_upnp"]
+[connection signal="text_changed" from="VBoxContainer/VBoxContainer/IPAndPort/IP/LineEdit" to="MainMenuStarter" method="set_server_ip"]
+[connection signal="value_changed" from="VBoxContainer/VBoxContainer/IPAndPort/LineEdit2" to="MainMenuStarter" method="set_server_port_sus"]
 [connection signal="pressed" from="VBoxContainer/Confirmation/Button" to="MainMenuStarter" method="start"]

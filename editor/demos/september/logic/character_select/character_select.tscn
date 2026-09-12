@@ -1,0 +1,48 @@
+[gd_scene format=3 uid="uid://dhii2e6mc7t81"]
+
+[ext_resource type="Script" uid="uid://knxiu6mpw6dg" path="res://demos/september/logic/character_select/character_select.gd" id="1_a0s22"]
+[ext_resource type="PackedScene" uid="uid://b62ogsm6c1200" path="res://demos/september/logic/character_select/character_select_item.tscn" id="2_5cmjw"]
+
+[node name="CharacterSelect" type="Control" unique_id=1798519443 node_paths=PackedStringArray("background_rect", "slot")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_a0s22")
+background_rect = NodePath("TextureRect")
+slot = NodePath("VBoxContainer/HBoxContainer")
+item_packed = ExtResource("2_5cmjw")
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=859538220]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1471658457]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 124.0
+offset_top = 146.0
+offset_right = -124.0
+offset_bottom = -146.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="VBoxContainer" unique_id=1192537315]
+z_index = 5
+layout_mode = 2
+text = "Click to select a character!"
+
+[node name="HBoxContainer" type="GridContainer" parent="VBoxContainer" unique_id=213673091]
+layout_mode = 2
+size_flags_vertical = 3
+columns = 2

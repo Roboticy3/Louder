@@ -4,7 +4,6 @@
 [ext_resource type="Script" uid="uid://ds0uapcn5b5v5" path="res://demos/september/ui/scrolling_dialogue_feed.gd" id="2_wqg5q"]
 [ext_resource type="PackedScene" uid="uid://d3scduqubuvrq" path="res://demos/september/ui/scrolling_dialogue_item.tscn" id="3_lqc4t"]
 [ext_resource type="PackedScene" uid="uid://cdckqsifi5wle" path="res://demos/september/ui/scrolling_dialogue_thinking.tscn" id="4_wqg5q"]
-[ext_resource type="Script" uid="uid://bk5bowxpxjfu3" path="res://demos/september/ui/scroll_shrinker.gd" id="5_6tn8e"]
 [ext_resource type="Script" uid="uid://bt5qiks6r8rsq" path="res://demos/september/ui/scroll_margin.gd" id="5_lqc4t"]
 [ext_resource type="PackedScene" uid="uid://ctpltkbarsbjg" path="res://demos/september/ui/main_dialogue_debug.tscn" id="5_qjalj"]
 
@@ -90,17 +89,11 @@ layout_mode = 1
 anchors_preset = 11
 anchor_left = 1.0
 offset_left = -374.0
-offset_top = 537.0
-offset_bottom = -88.0
+offset_top = 570.0
+offset_bottom = -55.0
 grow_horizontal = 0
 size_flags_vertical = 0
 size_flags_stretch_ratio = 0.2
-
-[node name="ScrollShrinker" type="Node" parent="." unique_id=296895966 node_paths=PackedStringArray("scroll_container", "inner_container", "max_size_reference")]
-script = ExtResource("5_6tn8e")
-scroll_container = NodePath("../VBoxContainer/Control/ScrollContainer")
-inner_container = NodePath("../VBoxContainer/Control/ScrollContainer/Feed")
-max_size_reference = NodePath("../VBoxContainer/Control/ScrollContainerMaxFit")
 
 [node name="MainDialogueDebug" parent="." unique_id=2025365747 instance=ExtResource("5_qjalj")]
 visible = false

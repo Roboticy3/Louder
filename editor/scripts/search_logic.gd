@@ -30,7 +30,7 @@ func _search(forward: bool) -> void:
 		previous_match()
 
 func show_search_bar() -> void:
-	search_bar.visible = true
+	#search_bar.visible = true
 	search_bar_line_edit.grab_focus()
 	search_bar_line_edit.select_all()
 	catalog_matches()
@@ -39,7 +39,7 @@ func _on_query_changed(_new_text: String) -> void:
 	catalog_matches()
 
 func _on_line_edit_focus_lost() -> void:
-	search_bar.visible = false
+	#search_bar.visible = false
 	matches.clear()
 
 func catalog_matches() -> void:
@@ -49,9 +49,12 @@ func catalog_matches() -> void:
 	if query.is_empty():
 		return
 	for candidate in get_tree().get_nodes_in_group(SEARCH_GROUP):
-		if candidate is CustomGraphNodeTextEdit \
-				and editor.is_ancestor_of(candidate) \
-				and candidate.search(query, 0, 0, true) != -Vector2i.ONE:
+		var valid_type := candidate is CustomGraphNodeTextEdit
+		var ancestor := editor.is_ancestor_of(candidate)
+		var search := false
+		if valid_type and candidate.text.length() > query.length():
+			search = (candidate.search(query, 0, 0, true) != -Vector2i.ONE)
+		if valid_type and ancestor and search:
 			matches.append(candidate)
 
 func next_match() -> void:

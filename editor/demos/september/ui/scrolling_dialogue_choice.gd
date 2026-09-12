@@ -62,7 +62,7 @@ func set_index(to:int) -> bool:
 	
 	return true
 
-func _input(event:InputEvent):
+func _unhandled_input(event:InputEvent):
 	if !action.is_empty():
 		if event.is_action_pressed(action):
 			button.grab_focus.call_deferred()

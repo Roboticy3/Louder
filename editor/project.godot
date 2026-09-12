@@ -13,7 +13,12 @@ config_version=5
 config/name="CustomGraph"
 run/main_scene="uid://262tuwnn0nqs"
 config/features=PackedStringArray("4.7", "GL Compatibility")
+boot_splash/image="uid://c3cvgqg2wm2b6"
 config/icon="res://icon.svg"
+
+[audio]
+
+buses/default_bus_layout="uid://bu0kj5r32vn55"
 
 [autoload]
 
@@ -24,6 +29,8 @@ ClientDataLayer="*uid://4tjo2itl4enh"
 NetworkLayer="*uid://cmb4d6ennhr0l"
 ProjectManagerHelpers="*uid://edmw44iljr42"
 SimulatorEventLayer="*uid://da81e32yt8e0t"
+CustomConversationLayer="*uid://cutgqpa4uig2p"
+Settings="*uid://ch8fwf4bvu18m"
 
 [display]
 
@@ -103,8 +110,7 @@ lobby_menu={
 }
 lobby_character_select={
 "deadzone": 0.2,
-"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":77,"key_label":0,"unicode":109,"location":0,"echo":false,"script":null)
-]
+"events": []
 }
 dialogue_1={
 "deadzone": 0.2,
@@ -184,6 +190,16 @@ graph_search_forward={
 graph_search_backward={
 "deadzone": 0.2,
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":true,"ctrl_pressed":true,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":70,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+]
+}
+ui_scroll_up={
+"deadzone": 0.2,
+"events": [Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"button_mask":8,"position":Vector2(305, 16),"global_position":Vector2(317, 76),"factor":1.0,"button_index":4,"canceled":false,"pressed":true,"double_click":false,"script":null)
+]
+}
+ui_scroll_down={
+"deadzone": 0.2,
+"events": [Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"button_mask":16,"position":Vector2(188, 19),"global_position":Vector2(200, 79),"factor":1.0,"button_index":5,"canceled":false,"pressed":true,"double_click":false,"script":null)
 ]
 }
 

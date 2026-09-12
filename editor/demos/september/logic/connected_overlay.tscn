@@ -1,0 +1,55 @@
+[gd_scene format=3 uid="uid://cqhf06i2ux2yp"]
+
+[ext_resource type="Script" uid="uid://dep4iuvvutvgo" path="res://demos/september/logic/connected_overlay.gd" id="1_k7po3"]
+[ext_resource type="PackedScene" uid="uid://i8ppkv2hjutf" path="res://demos/september/logic/bot.tscn" id="2_skpnr"]
+
+[node name="ConnectedOverlay" type="CanvasLayer" unique_id=58385532 node_paths=PackedStringArray("bot_button", "override_button", "backdrop")]
+script = ExtResource("1_k7po3")
+bot_button = NodePath("Control/VBoxContainer/Button2")
+override_button = NodePath("Control/VBoxContainer/Button")
+backdrop = NodePath("Control")
+bot_packed = ExtResource("2_skpnr")
+
+[node name="Control" type="Window" parent="." unique_id=1477288447]
+oversampling_override = 1.0
+mode = 2
+initial_position = 1
+visible = false
+
+[node name="MarginContainer" type="MarginContainer" parent="Control" unique_id=1284650537]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="Control/MarginContainer" unique_id=920986118]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control" unique_id=926693334]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -303.5
+offset_top = -72.5
+offset_right = 303.5
+offset_bottom = 72.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="Control/VBoxContainer" unique_id=2032558977]
+layout_mode = 2
+text = "Only 1 player is connected. Please wait until both players are connected.
+
+If you really need to play right now right away, select one of the options below:"
+
+[node name="Button2" type="Button" parent="Control/VBoxContainer" unique_id=1881249475]
+layout_mode = 2
+text = "Play with bots."
+
+[node name="Button" type="Button" parent="Control/VBoxContainer" unique_id=1447938612]
+layout_mode = 2
+toggle_mode = true
+text = "Play with only one player character connected (buggy)"

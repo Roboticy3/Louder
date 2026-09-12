@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://bd5bqg420bb2g"]
+
+[ext_resource type="Script" uid="uid://cgqjkym5fjp31" path="res://demos/september/ui/audio_setting.gd" id="1_ljv6w"]
+
+[node name="AudioSetting" type="HBoxContainer" unique_id=77851079 node_paths=PackedStringArray("slider", "bus_label")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ljv6w")
+slider = NodePath("HSlider")
+bus_label = NodePath("Label")
+
+[node name="Label" type="Label" parent="." unique_id=787719802]
+layout_mode = 2
+text = "Bus Name"
+
+[node name="Control" type="Control" parent="." unique_id=1377999056]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="HSlider" type="HSlider" parent="." unique_id=64979259]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4

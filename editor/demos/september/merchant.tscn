@@ -1,35 +1,106 @@
 [gd_scene format=3 uid="uid://cj44xlqqbvgwd"]
 
-[ext_resource type="PackedScene" uid="uid://dhii2e6mc7t81" path="res://demos/september/logic/character_select.tscn" id="1_s2skt"]
-[ext_resource type="Script" uid="uid://bj7q7bsrcvdrl" path="res://demos/september/logic/basic_spawner.gd" id="2_8jkri"]
-[ext_resource type="PackedScene" uid="uid://cor0bmbbvv2l5" path="res://demos/september/specific/geno.tscn" id="2_e0tjo"]
-[ext_resource type="PackedScene" uid="uid://udwexxt1fl5t" path="res://demos/september/specific/reka.tscn" id="3_7fl6c"]
-[ext_resource type="PackedScene" uid="uid://fn48n343cb16" path="res://demos/september/logic/merchant_dialogue_avatar.tscn" id="3_nriho"]
+[ext_resource type="PackedScene" uid="uid://06emg8jtgki4" path="res://demos/september/merchant_base.tscn" id="1_s2skt"]
+[ext_resource type="PackedScene" uid="uid://cor0bmbbvv2l5" path="res://demos/september/logic/geno.tscn" id="2_e0tjo"]
+[ext_resource type="PackedScene" uid="uid://udwexxt1fl5t" path="res://demos/september/logic/reka.tscn" id="3_7fl6c"]
 [ext_resource type="Script" uid="uid://jpgaxooa6ari" path="res://demos/september/network/character_switch.gd" id="4_j8er1"]
-[ext_resource type="Script" uid="uid://dshl0su1su5xe" path="res://proto_simulator/ps_simulator.gd" id="6_602u8"]
-[ext_resource type="Script" uid="uid://inieasxjm4nb" path="res://proto_simulator/ps_conversation.gd" id="7_nbaqi"]
-[ext_resource type="Script" uid="uid://cpa1hv77k8m77" path="res://demos/september/specific/simulator_state_synchronizer.gd" id="9_cwy78"]
-[ext_resource type="Script" uid="uid://b27ucw68hr8oi" path="res://demos/september/ui/action_toggle.gd" id="10_ae3ac"]
-[ext_resource type="Script" uid="uid://bjndh0uubojc6" path="res://demos/september/specific/warp_box.gd" id="10_xrcy2"]
-[ext_resource type="PackedScene" uid="uid://ctpltkbarsbjg" path="res://demos/september/ui/main_dialogue_debug.tscn" id="10_xrijs"]
+[ext_resource type="Script" uid="uid://ya7il61i4u2e" path="res://scripts/mutual_exclusive_checkbox.gd" id="5_j6hxa"]
+[ext_resource type="PackedScene" uid="uid://dhii2e6mc7t81" path="res://demos/september/logic/character_select/character_select.tscn" id="5_sggte"]
+[ext_resource type="Script" uid="uid://ph50nnic85au" path="res://demos/september/logic/view_network_layer.gd" id="6_yxm24"]
+[ext_resource type="Texture2D" uid="uid://bskqp3jfl3dp2" path="res://demos/september/sprite/Guard.png" id="8_cwy78"]
+[ext_resource type="Script" uid="uid://bkv8l05n57om4" path="res://demos/september/logic/character_select/character_select_item_data.gd" id="8_e0tjo"]
 
-[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_nunj6"]
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_xrcy2"]
+load_path = "res://.godot/imported/UI elements-export.png-367d6879a5084192da133597e035e7ae.ctex"
 
-[node name="Merchant" type="Node2D" unique_id=438456980]
+[sub_resource type="AtlasTexture" id="AtlasTexture_xrijs"]
+atlas = SubResource("CompressedTexture2D_xrcy2")
+region = Rect2(0, 256, 256, 256)
+margin = Rect2(-14, -19, -15, -32)
 
-[node name="Background" type="Sprite2D" parent="." unique_id=2097716038]
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_e0tjo"]
+size = Vector2(128, 256)
 
-[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1918040241]
-position = Vector2(583, 510)
+[sub_resource type="Resource" id="Resource_ipy5q"]
+script = ExtResource("8_e0tjo")
+name = "Geno"
+description = "Greedy and heartless, forever a stranger. Runs away from everything. Secretly an artist. Doesn't want to admit it.
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=969255664]
-shape = SubResource("WorldBoundaryShape2D_nunj6")
 
-[node name="Geno" type="CanvasLayer" parent="." unique_id=1540345953]
+SKILLS
+Geno's skills are aspects of his instincts. Despite having a strong vocabulary, his actual executive function isn't very good. Can you see through the veil?
+
+[b]Cage[/b]
+16 bars of wrought iron between my id and the real world. 
+
+[b]Good[/b]
+Utilitarian Mathematical Philosophy in practice. Listening to the Good voice isn't always easy but it usually feels best later.
+
+[b]Inspiration[/b]
+Sacred Geometry haunts my dreams. One day, I must burn the crest into this physical plane.
+
+[b]Rhetoric[/b]
+More money more problems. I never go to bed without balancing my accounts and tying up all loose ends.
+
+[b]Speed[/b]
+At attention! I wasn't sleeping, I swear!
+
+[b]Evil[/b]
+There's something inside of me that I don't like. A desire to act with no values. And yet, I use it too much. Is there any escape?"
+portrait = SubResource("PlaceholderTexture2D_e0tjo")
+background = SubResource("AtlasTexture_xrijs")
+metadata/_custom_type_script = "uid://bkv8l05n57om4"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_cwy78"]
+load_path = "res://.godot/imported/UI elements-export.png-367d6879a5084192da133597e035e7ae.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xrcy2"]
+atlas = SubResource("CompressedTexture2D_cwy78")
+region = Rect2(512, 256, 256, 256)
+margin = Rect2(-18, -4, -18, -9)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_cwy78"]
+size = Vector2(128, 256)
+
+[sub_resource type="Resource" id="Resource_k1q44"]
+script = ExtResource("8_e0tjo")
+name = "Reka"
+description = "Well traveled, but still naïve in many ways. Overdramatic and overextending. Too young for this. Too old to still be acting like a kid.
+
+
+HERO'S SKILLS
+Reka's skills are split into 2 groups. 3 \"Hero's skills\" which represent her values, and \"Systems\" which counteract them. Don't be fooled. All have their utilities and shortcomings.
+
+[b]Power[/b]
+First pillar of the tragic hero. Never give up and always move with a clear goal.
+
+[b]Body[/b]
+Second pillar of the tragic hero. Care and cherish the self and others in both medicine and art.
+
+[b]Soul[/b]
+Third pillar of the tragic hero. Know one's limits and never be corrupted by temptation.
+
+THE SYSTEMS
+[b]Nervous System[/b]
+Retreat, sidestep, connive, scheme, react erratically and never let Them know your next move.
+
+[b]Integumetary System[/b]
+Be attuned and obsessed with all things sensory. Seek out sounds, colors, and chemicals that make you feel fuzzy.
+
+[b]Skeletal System[/b]
+Maybe.. sometimes.. it's ok to give into your intrusive thoughts? Love, your skeleton."
+portrait = SubResource("PlaceholderTexture2D_cwy78")
+background = SubResource("AtlasTexture_xrcy2")
+text_color = Color(0, 0, 0, 1)
+metadata/_custom_type_script = "uid://bkv8l05n57om4"
+
+[node name="Merchant" unique_id=438456980 instance=ExtResource("1_s2skt")]
+
+[node name="Geno" type="CanvasLayer" parent="." index="2" unique_id=931765019]
 script = ExtResource("4_j8er1")
 character = "Geno"
 
-[node name="Label" type="Label" parent="Geno" unique_id=1320348178]
+[node name="Label" type="Label" parent="Geno" index="0" unique_id=1507701784]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -43,13 +114,13 @@ grow_horizontal = 2
 grow_vertical = 2
 text = "Geno TV"
 
-[node name="Control" parent="Geno" unique_id=1123156141 instance=ExtResource("2_e0tjo")]
+[node name="Control" parent="Geno" index="1" unique_id=1123156141 instance=ExtResource("2_e0tjo")]
 
-[node name="Reka" type="CanvasLayer" parent="." unique_id=789903151]
+[node name="Reka" type="CanvasLayer" parent="." index="3" unique_id=806129303]
 script = ExtResource("4_j8er1")
 character = "Reka"
 
-[node name="Label" type="Label" parent="Reka" unique_id=663246174]
+[node name="Label" type="Label" parent="Reka" index="0" unique_id=229284645]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -63,73 +134,77 @@ grow_horizontal = 2
 grow_vertical = 2
 text = "Reka Vision :)"
 
-[node name="Control" parent="Reka" unique_id=824433713 instance=ExtResource("3_7fl6c")]
+[node name="Control" parent="Reka" index="1" unique_id=18826225 instance=ExtResource("3_7fl6c")]
 
-[node name="CharacterSelect" type="CanvasLayer" parent="." unique_id=1991834384]
+[node name="CharacterSelect" type="CanvasLayer" parent="." index="4" unique_id=1124979978]
 
-[node name="CharacterSelect" parent="CharacterSelect" unique_id=851426068 instance=ExtResource("1_s2skt")]
-anchors_preset = 14
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-offset_top = -171.5
-offset_bottom = 171.5
+[node name="CharacterSelect" parent="CharacterSelect" index="0" unique_id=851426068 instance=ExtResource("5_sggte")]
+background = ExtResource("8_cwy78")
+characters = Array[ExtResource("8_e0tjo")]([SubResource("Resource_ipy5q"), SubResource("Resource_k1q44")])
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." index="5" unique_id=1543932512]
+
+[node name="HBoxContainer2" type="VBoxContainer" parent="CanvasLayer" index="0" unique_id=1738638005]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -156.5
+offset_right = 156.5
+offset_bottom = 58.0
 grow_horizontal = 2
-grow_vertical = 2
+size_flags_horizontal = 4
 
-[node name="Louder" type="Node" parent="." unique_id=220019652]
+[node name="Button" type="Button" parent="CanvasLayer/HBoxContainer2" index="0" unique_id=1709950315 node_paths=PackedStringArray("mutual_exclusive")]
+layout_mode = 2
+toggle_mode = true
+button_pressed = true
+text = "Show/Hide Host Ip Address and Port"
+script = ExtResource("5_j6hxa")
+mutual_exclusive = [NodePath("../VBoxContainer")]
+inverted = true
 
-[node name="PSSimulator" type="Node" parent="Louder" unique_id=901825318 node_paths=PackedStringArray("conversation")]
-script = ExtResource("6_602u8")
-conversation = NodePath("../PSConversation")
-metadata/_custom_type_script = "uid://dshl0su1su5xe"
-
-[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="Louder/PSSimulator" unique_id=728369049]
-spawn_path = NodePath("..")
-script = ExtResource("2_8jkri")
-spawn_mode = 1
-spawnable_packed = ExtResource("3_nriho")
-
-[node name="PSConversation" type="Node" parent="Louder" unique_id=1560832398]
-script = ExtResource("7_nbaqi")
-input_path = "res://demos/conversations/merchant.json"
-metadata/_custom_type_script = "uid://inieasxjm4nb"
-
-[node name="SimulatorCallbackListener" type="Node" parent="." unique_id=523254008]
-script = ExtResource("9_cwy78")
-
-[node name="DebugControls" type="CanvasLayer" parent="." unique_id=1404273262]
-script = ExtResource("10_ae3ac")
-
-[node name="MainDialogueDebug" parent="DebugControls" unique_id=2025365747 instance=ExtResource("10_xrijs")]
-
-[node name="Control" type="Control" parent="DebugControls/MainDialogueDebug" unique_id=1575804352]
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -37.0
-grow_horizontal = 2
-grow_vertical = 0
-
-[node name="HBoxContainer" type="HBoxContainer" parent="DebugControls/MainDialogueDebug/Control" unique_id=301595178]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="DebugControls/MainDialogueDebug/Control/HBoxContainer" unique_id=1060706720]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/HBoxContainer2" index="1" unique_id=764738449]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="DebugControls/MainDialogueDebug/Control/HBoxContainer/HBoxContainer" unique_id=978544286]
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/HBoxContainer2/VBoxContainer" index="0" unique_id=409122172]
 layout_mode = 2
-text = "Warp to position:"
 
-[node name="TextEdit" type="LineEdit" parent="DebugControls/MainDialogueDebug/Control/HBoxContainer/HBoxContainer" unique_id=1513977881]
+[node name="Label" type="Label" parent="CanvasLayer/HBoxContainer2/VBoxContainer/HBoxContainer" index="0" unique_id=821221734]
 layout_mode = 2
-script = ExtResource("10_xrcy2")
+text = "Host Ip Address:"
 
-[connection signal="state_variable_changed" from="Louder/PSSimulator" to="SimulatorCallbackListener" method="_on_state_changed_server"]
+[node name="Spacer" type="Control" parent="CanvasLayer/HBoxContainer2/VBoxContainer/HBoxContainer" index="1" unique_id=990524125]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label2" type="LineEdit" parent="CanvasLayer/HBoxContainer2/VBoxContainer/HBoxContainer" index="2" unique_id=313122007]
+layout_mode = 2
+editable = false
+expand_to_text_length = true
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/HBoxContainer2/VBoxContainer" index="1" unique_id=1105956900]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/HBoxContainer2/VBoxContainer/HBoxContainer2" index="0" unique_id=2062351897]
+layout_mode = 2
+text = "Host Port:"
+
+[node name="Spacer" type="Control" parent="CanvasLayer/HBoxContainer2/VBoxContainer/HBoxContainer2" index="1" unique_id=1461060843]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label2" type="LineEdit" parent="CanvasLayer/HBoxContainer2/VBoxContainer/HBoxContainer2" index="2" unique_id=1433662151]
+layout_mode = 2
+editable = false
+expand_to_text_length = true
+
+[node name="Node" type="Node" parent="CanvasLayer" index="1" unique_id=1415692196 node_paths=PackedStringArray("host_ip_label", "host_port_label")]
+script = ExtResource("6_yxm24")
+host_ip_label = NodePath("../HBoxContainer2/VBoxContainer/HBoxContainer/Label2")
+host_port_label = NodePath("../HBoxContainer2/VBoxContainer/HBoxContainer2/Label2")
+
+[node name="DebugControls" parent="." index="9" unique_id=1404273262]
+visible = false
+
+[node name="ConnectedOverlay" parent="." index="10" unique_id=58385532]
+visible = true

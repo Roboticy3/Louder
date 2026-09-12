@@ -21,6 +21,9 @@ func _ready():
 	if !state:
 		state = PSDialogueState.new()
 
+func is_position(position:int) -> bool:
+	return conversation.hubs_by_id.has(position)
+
 #Get a property from a position in the conversation.
 func get_property(position: int, property: HubProperties, default=null) -> Variant:
 	return _hub(position).get(property, default)
@@ -102,6 +105,8 @@ func align(body: Dictionary[BodyProperties, Variant], choice: String, filter:=no
 	result = _traverse(result, get_destination(from_position, choice), choice, filter)
 	if result.get(BodyProperties.branch, DEFAULT_BRANCH) != from_branch:
 		result[BodyProperties.branch_changed] = true
+	else:
+		result[BodyProperties.branch_changed] = false
 	
 	return result
 
@@ -120,7 +125,7 @@ func warp(body: Dictionary[BodyProperties, Variant], position: int, filter:=no_f
 #choice that moved the body here ("" when starting a conversation).
 func _traverse(body: Dictionary[BodyProperties, Variant], position: int, choice: String, filter: Callable) -> Dictionary[BodyProperties, Variant]:
 	#set breakpoints here to debug specific conversation points
-	if position == 79:
+	if position == 323:
 		pass
 	
 	var visited := {}
@@ -231,7 +236,7 @@ func _evaluate_statements(statements:String) -> void:
 			"--":
 				value_right = value_left - 1
 		
-		if value_right != value_left:
+		if str(value_right) != str(value_left):
 			state.scope.set(partial_left, value_right)
 			state_variable_changed.emit(self, partial_left, value_right)
 

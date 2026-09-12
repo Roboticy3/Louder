@@ -60,6 +60,10 @@ func _filter_visible_node(position:int) -> bool:
 		return true
 	return false
 
+func get_start() -> int:
+	var q := simulator.align_start(-1, _filter_valid_choice)
+	return int(q.get(BodyProperties.position))
+
 func start() -> bool:
 	data = simulator.align_start(-1, _filter_valid_choice)
 	return data.get(BodyProperties.success, false)
@@ -80,13 +84,20 @@ func should_follow(other:PSController) -> bool:
 	var other_position := other.get_position()
 	return other.get_branch() == get_branch() and _filter_visible_node(other_position)
 
+func choice_follow(other:PSController, pre_body:Dictionary[BodyProperties, Variant], from_choice:String) -> bool:
+	if get_branch() == other.get_branch():
+		var post_body := simulator.align(pre_body, from_choice, _filter_valid_choice)
+		data = post_body
+		return post_body.get(BodyProperties.success, true)
+	return false
+
 func can_spectate(other:PSController) -> bool:
 	if !other or !other.simulator or other == self: return false
 	var other_position := other.get_position()
 	return other.get_branch() != get_branch() and _filter_visible_node(other_position)
 
-func get_text(property:String) -> String:
-	return str(data.get(property))
+func get_text() -> String:
+	return str(data.get(BodyProperties.text, ""))
 
 func get_position() -> int:
 	return data.get(BodyProperties.position, -1)
