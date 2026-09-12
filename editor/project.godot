@@ -13,6 +13,7 @@ config_version=5
 config/name="CustomGraph"
 run/main_scene="uid://262tuwnn0nqs"
 config/features=PackedStringArray("4.7", "GL Compatibility")
+boot_splash/image="uid://c3cvgqg2wm2b6"
 config/icon="res://icon.svg"
 
 [audio]
