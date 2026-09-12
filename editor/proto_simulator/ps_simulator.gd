@@ -236,7 +236,7 @@ func _evaluate_statements(statements:String) -> void:
 			"--":
 				value_right = value_left - 1
 		
-		if value_right != value_left:
+		if str(value_right) != str(value_left):
 			state.scope.set(partial_left, value_right)
 			state_variable_changed.emit(self, partial_left, value_right)
 

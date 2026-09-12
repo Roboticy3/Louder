@@ -8,7 +8,7 @@ script = ExtResource("1_u42ey")
 metadata/_custom_type_script = "uid://cbiclxd6bqxa4"
 
 [node name="Timer" type="Timer" parent="." unique_id=1793747371]
-wait_time = 0.1
+wait_time = 3.0
 autostart = true
 
 [node name="BotLogic" type="Node" parent="." unique_id=1524060638 node_paths=PackedStringArray("controller")]

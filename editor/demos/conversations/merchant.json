@@ -1216,17 +1216,8 @@
 		"position_offset:x": "4489.94970703125",
 		"position_offset:y": "3683.87109375",
 		"speaker": "Bandit",
-		"statements": "bandit_shop = 1",
+		"statements": "bandit_shop = 1\nbandit_introduced = 1",
 		"text": "\"Did you get the decorations?\"",
-		"type": "hub"
-	},
-	{
-		"conditions": "!dagger_sold",
-		"conversation_id": "189",
-		"position_offset:x": "5440.0",
-		"position_offset:y": "9340.0",
-		"speaker": "Bandit",
-		"text": "Suddenly, there's a rude interruption.",
 		"type": "hub"
 	},
 	{
@@ -1735,21 +1726,6 @@
 		"type": "hub"
 	},
 	{
-		"choices": [
-			"\"I want the dagger. I'll buy it for 12\"",
-			"\"I want the dagger. I'll buy it for 8\"",
-			"\"I want the dagger. I'll buy it for 6\"",
-			"(Try to interfere with the haggling to drop the price of the dagger.)",
-			"\"Um, actually, I'll chip in later.\""
-		],
-		"conversation_id": "251",
-		"position_offset:x": "14580.0",
-		"position_offset:y": "4940.0",
-		"speaker": "Nervous System",
-		"text": "How much was it going for, again?",
-		"type": "hub"
-	},
-	{
 		"conversation_id": "258",
 		"position_offset:x": "16120.0",
 		"position_offset:y": "6800.0",
@@ -1920,8 +1896,8 @@
 			"Decline the gambit."
 		],
 		"conversation_id": "289",
-		"position_offset:x": "16740.0",
-		"position_offset:y": "5620.0",
+		"position_offset:x": "17200.0",
+		"position_offset:y": "5600.0",
 		"speaker": "Evil",
 		"text": "It's not for her, but you have leverage. You don't really care who the dagger goes to, and she's willing to pay more. That's all that matters, at the end of the day.",
 		"type": "hub"
@@ -1929,8 +1905,8 @@
 	{
 		"conversation_id": "291",
 		"is_choice": true,
-		"position_offset:x": "17140.0",
-		"position_offset:y": "6020.0",
+		"position_offset:x": "17600.0",
+		"position_offset:y": "6000.0",
 		"speaker": "Geno",
 		"text": "\"Sorry, I have previous communications with this client. Though this does raise a question on the price.\"",
 		"type": "hub"
@@ -2012,18 +1988,9 @@
 		"type": "hub"
 	},
 	{
-		"conditions": "bandit_haggling >= reka_haggling",
-		"conversation_id": "268",
-		"position_offset:x": "15780.0",
-		"position_offset:y": "4700.0",
-		"speaker": "Body",
-		"text": "Their faces tell you everything you need to know. Unfortunately, your wager is too thin for this deal.",
-		"type": "hub"
-	},
-	{
 		"conversation_id": "295",
-		"position_offset:x": "17500.0",
-		"position_offset:y": "5600.0",
+		"position_offset:x": "17960.0",
+		"position_offset:y": "5580.0",
 		"speaker": "Inspiration",
 		"text": "The irony of Ace winning the shoots game- a gambling game involving cards -last night versus you eventually winning on the deal here is not lost on him. You played your hand close yesterday and didn't spend much. Because you're in debt and you know how to have fun without ruining your life. The bandit, not just the man but the species, is already a debtor, because they only know how to:",
 		"type": "hub"
@@ -2031,24 +1998,24 @@
 	{
 		"conversation_id": "290",
 		"is_choice": true,
-		"position_offset:x": "17120.0",
-		"position_offset:y": "5600.0",
+		"position_offset:x": "17580.0",
+		"position_offset:y": "5580.0",
 		"speaker": "Geno",
 		"text": "\"Looks like you have a competing deal, Ace. You gonna raise?\"",
 		"type": "hub"
 	},
 	{
 		"conversation_id": "296",
-		"position_offset:x": "17880.0",
-		"position_offset:y": "5600.0",
+		"position_offset:x": "18340.0",
+		"position_offset:y": "5580.0",
 		"speaker": "Bandit",
 		"text": "\"I fold.\"",
 		"type": "hub"
 	},
 	{
 		"conversation_id": "297",
-		"position_offset:x": "18260.0",
-		"position_offset:y": "5600.0",
+		"position_offset:x": "18720.0",
+		"position_offset:y": "5580.0",
 		"speaker": "Inspiration",
 		"statements": "bandit_shop = 0",
 		"text": "Raise! You were supposed to raise! He's getting away!",
@@ -2056,8 +2023,8 @@
 	},
 	{
 		"conversation_id": "298",
-		"position_offset:x": "18640.0",
-		"position_offset:y": "5600.0",
+		"position_offset:x": "19100.0",
+		"position_offset:y": "5580.0",
 		"speaker": "Evil",
 		"text": "At least there's still the girl. Let's get some money.",
 		"type": "hub"
@@ -2087,14 +2054,6 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "288",
-		"position_offset:x": "16380.0",
-		"position_offset:y": "5620.0",
-		"speaker": "Geno",
-		"text": "\"Well, it's not..\"",
-		"type": "hub"
-	},
-	{
 		"auto": true,
 		"choices": [
 			"(Choice 0)",
@@ -2117,8 +2076,8 @@
 	},
 	{
 		"conversation_id": "300",
-		"position_offset:x": "18240.0",
-		"position_offset:y": "5140.0",
+		"position_offset:x": "18700.0",
+		"position_offset:y": "5120.0",
 		"speaker": "Note",
 		"text": "300 nodes! Yay! The real reason I put this here is to point out how interesting it is that Node 297 is only visible to Geno, but causes a state effect that should be visible to Reka.",
 		"type": "hub"
@@ -2129,8 +2088,8 @@
 			"\"Need to know basis.\""
 		],
 		"conversation_id": "299",
-		"position_offset:x": "19040.0",
-		"position_offset:y": "5600.0",
+		"position_offset:x": "19500.0",
+		"position_offset:y": "5580.0",
 		"speaker": "Geno",
 		"text": "\"Well, looks like you have a deal. What was your name again?\"",
 		"type": "hub"
@@ -2138,15 +2097,15 @@
 	{
 		"conversation_id": "301",
 		"is_choice": true,
-		"position_offset:x": "19460.0",
-		"position_offset:y": "5580.0",
+		"position_offset:x": "19920.0",
+		"position_offset:y": "5560.0",
 		"speaker": "Reka",
 		"type": "hub"
 	},
 	{
 		"conversation_id": "303",
-		"position_offset:x": "19867.12890625",
-		"position_offset:y": "5559.75390625",
+		"position_offset:x": "20320.0",
+		"position_offset:y": "5540.0",
 		"speaker": "Geno",
 		"text": "\"Ok Reka. Here's your knife.\"",
 		"type": "hub"
@@ -2167,30 +2126,30 @@
 			"(Choice 2)"
 		],
 		"conversation_id": "305",
-		"position_offset:x": "20333.015625",
-		"position_offset:y": "5533.80712890625",
+		"position_offset:x": "20780.0",
+		"position_offset:y": "5520.0",
 		"type": "hub"
 	},
 	{
 		"auto": true,
 		"conditions": "reka_haggling >= -2",
 		"conversation_id": "307",
-		"position_offset:x": "20720.0",
-		"position_offset:y": "5620.0",
+		"position_offset:x": "21180.0",
+		"position_offset:y": "5600.0",
 		"type": "hub"
 	},
 	{
 		"auto": true,
 		"conditions": "reka_haggling > 0",
 		"conversation_id": "306",
-		"position_offset:x": "20700.0",
-		"position_offset:y": "5120.0",
+		"position_offset:x": "21160.0",
+		"position_offset:y": "5100.0",
 		"type": "hub"
 	},
 	{
 		"conversation_id": "309",
-		"position_offset:x": "21137.576171875",
-		"position_offset:y": "5109.31787109375",
+		"position_offset:x": "21600.0",
+		"position_offset:y": "5080.0",
 		"speaker": "Geno",
 		"statements": "dagger_sold = \"Reka\"\nreka_armed = 1",
 		"text": "12 gold is exchanged for the dagger.",
@@ -2206,8 +2165,8 @@
 	},
 	{
 		"conversation_id": "310",
-		"position_offset:x": "21155.455078125",
-		"position_offset:y": "5589.85009765625",
+		"position_offset:x": "21600.0",
+		"position_offset:y": "5560.0",
 		"speaker": "Geno",
 		"statements": "dagger_sold = \"Reka\"\nreka_armed = 1",
 		"text": "8 gold is exchanged for the dagger.",
@@ -2215,8 +2174,8 @@
 	},
 	{
 		"conversation_id": "312",
-		"position_offset:x": "21180.0",
-		"position_offset:y": "6080.0",
+		"position_offset:x": "21640.0",
+		"position_offset:y": "6060.0",
 		"speaker": "Geno",
 		"statements": "dagger_sold = \"Reka\"\nreka_armed = 1",
 		"text": "6 gold is exchanged for the dagger.",
@@ -2225,19 +2184,10 @@
 	{
 		"auto": true,
 		"conversation_id": "313",
-		"position_offset:x": "21821.310546875",
-		"position_offset:y": "5595.486328125",
+		"position_offset:x": "22280.0",
+		"position_offset:y": "5580.0",
 		"speaker": "Geno",
 		"text": "\"Anything else?\"",
-		"type": "hub"
-	},
-	{
-		"conversation_id": "315",
-		"position_offset:x": "16302.896484375",
-		"position_offset:y": "4783.74755859375",
-		"speaker": "Geno",
-		"statements": "bandit_haggling++",
-		"text": "\"Sorry, the dagger's only for my friend here. More as to the question of why he's being such a stickler about the price. Business is business, man.\"",
 		"type": "hub"
 	},
 	{
@@ -2301,11 +2251,11 @@
 			"\"They look so happy.\"",
 			"\"Where were they last seen?\""
 		],
-		"conditions": "postcard_shop = 0",
 		"conversation_id": "325",
 		"position_offset:x": "3080.0",
 		"position_offset:y": "5600.0",
 		"speaker": "Cage",
+		"statements": "postcard_shop = 0",
 		"text": "The warm dry sand makes me feel safe. When I see something pretty, I take a picture in my memories.",
 		"type": "hub"
 	},
@@ -2375,7 +2325,6 @@
 		"position_offset:x": "4840.0",
 		"position_offset:y": "5260.0",
 		"speaker": "Reka",
-		"statements": "rouge_introduced = 1",
 		"type": "hub"
 	},
 	{
@@ -2388,22 +2337,11 @@
 		"type": "hub"
 	},
 	{
-		"auto": true,
 		"conversation_id": "341",
 		"position_offset:x": "6040.0",
 		"position_offset:y": "5380.0",
-		"statements": "flash_guard_quarter = 0",
-		"type": "hub"
-	},
-	{
-		"auto": true,
-		"choices": [
-			"(Choice 0)",
-			"(Choice 1)"
-		],
-		"conversation_id": "343",
-		"position_offset:x": "6440.0",
-		"position_offset:y": "5420.0",
+		"speaker": "Geno",
+		"text": "\"Where did you go from there?\"",
 		"type": "hub"
 	},
 	{
@@ -2448,11 +2386,11 @@
 		"type": "hub"
 	},
 	{
-		"conditions": "geno_blank = 1\nreka_blank = 1\nshow_end = 1",
 		"conversation_id": "346",
 		"position_offset:x": "15680.0",
 		"position_offset:y": "8700.0",
 		"speaker": "Demo",
+		"statements": "geno_blank = 1\nreka_blank = 1\nshow_end = 1",
 		"text": "Thank you for playing the demo of East Breach! I intend to work with a less visual novel, more CRPG style in the future, and 4 playable characters!! Follow for updates on the open source narrative engine: Louder. And make sure to check out the custom conversation editor.",
 		"type": "hub"
 	},
@@ -2554,16 +2492,6 @@
 		"type": "hub"
 	},
 	{
-		"conditions": "!reka_armed",
-		"conversation_id": "314",
-		"is_choice": true,
-		"position_offset:x": "1560.0",
-		"position_offset:y": "7120.0",
-		"speaker": "Reka",
-		"text": "\"I'm looking for a weapon. What do you have?\"",
-		"type": "hub"
-	},
-	{
 		"choices": [
 			"The dagger.",
 			"A rusty sabre."
@@ -2580,15 +2508,17 @@
 		"position_offset:x": "2500.0",
 		"position_offset:y": "7620.0",
 		"speaker": "Geno",
-		"text": "\"Let me see what I have in storage.\"",
+		"statements": "sabre_shop = 1",
+		"text": "\"One sword. Good condition.\"",
 		"type": "hub"
 	},
 	{
+		"conditions": "!dagger_sold",
 		"conversation_id": "361",
 		"position_offset:x": "2480.0",
 		"position_offset:y": "6740.0",
 		"speaker": "Geno",
-		"statements": "!dagger_sold",
+		"statements": "dagger_shop = 1",
 		"text": "\"Well, after everything, I still have this.\"",
 		"type": "hub"
 	},
@@ -2692,11 +2622,11 @@
 		"type": "hub"
 	},
 	{
+		"conditions": "reka_interfered_with_haggling",
 		"conversation_id": "248",
 		"position_offset:x": "14820.0",
 		"position_offset:y": "7260.0",
 		"speaker": "Geno",
-		"statements": "reka_interfered_with_haggling",
 		"text": "\"You got in the way of my business.\"",
 		"type": "hub"
 	},
@@ -2711,15 +2641,15 @@
 	{
 		"conversation_id": "302",
 		"is_choice": true,
-		"position_offset:x": "19440.0",
-		"position_offset:y": "5920.0",
+		"position_offset:x": "19900.0",
+		"position_offset:y": "5900.0",
 		"speaker": "Reka",
 		"type": "hub"
 	},
 	{
 		"conversation_id": "377",
-		"position_offset:x": "19868.443359375",
-		"position_offset:y": "5898.78759765625",
+		"position_offset:x": "20320.0",
+		"position_offset:y": "5880.0",
 		"speaker": "Geno",
 		"text": "\"Sure kid. Here's your decorations.\"",
 		"type": "hub"
@@ -2755,17 +2685,6 @@
 		"position_offset:y": "8632.1181640625",
 		"speaker": "Geno",
 		"text": "\"So did you need anything?\"",
-		"type": "hub"
-	},
-	{
-		"auto": true,
-		"choices": [
-			"(Choice 0)",
-			"(Choice 1)"
-		],
-		"conversation_id": "357",
-		"position_offset:x": "8000.0",
-		"position_offset:y": "6220.0",
 		"type": "hub"
 	},
 	{
@@ -2818,8 +2737,8 @@
 	{
 		"auto": true,
 		"conversation_id": "308",
-		"position_offset:x": "20740.0",
-		"position_offset:y": "6080.0",
+		"position_offset:x": "21200.0",
+		"position_offset:y": "6060.0",
 		"type": "hub"
 	},
 	{
@@ -2831,7 +2750,6 @@
 		"conversation_id": "387",
 		"position_offset:x": "14080.0",
 		"position_offset:y": "5180.0",
-		"speaker": "Nervous System",
 		"type": "hub"
 	},
 	{
@@ -2968,10 +2886,10 @@
 	},
 	{
 		"auto": true,
+		"conditions": "reka_armed",
 		"conversation_id": "356",
 		"position_offset:x": "8480.0",
 		"position_offset:y": "6300.0",
-		"statements": "reka_armed",
 		"type": "hub"
 	},
 	{
@@ -3271,6 +3189,175 @@
 		"position_offset:y": "7600.0",
 		"speaker": "Soul",
 		"text": "You can come back later. He wants to sell it to you.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "288",
+		"position_offset:x": "16840.0",
+		"position_offset:y": "5600.0",
+		"speaker": "Geno",
+		"text": "\"Well, it's not..\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "441",
+		"is_choice": true,
+		"position_offset:x": "14600.0",
+		"position_offset:y": "5980.0",
+		"speaker": "Reka",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "444",
+		"position_offset:x": "16360.0",
+		"position_offset:y": "5580.0",
+		"speaker": "Bandit",
+		"text": "\"What?\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "440",
+		"is_choice": true,
+		"position_offset:x": "14520.0",
+		"position_offset:y": "5660.0",
+		"speaker": "Reka",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "442",
+		"is_choice": true,
+		"position_offset:x": "14900.0",
+		"position_offset:y": "5160.0",
+		"speaker": "Reka",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "438",
+		"is_choice": true,
+		"position_offset:x": "14860.0",
+		"position_offset:y": "4660.0",
+		"speaker": "Reka",
+		"type": "hub"
+	},
+	{
+		"choices": [
+			"\"I want the dagger. I'll buy it for 12\"",
+			"\"I want the dagger. I'll buy it for 8\"",
+			"\"I want the dagger. I'll buy it for 6\"",
+			"(Try to interfere with the haggling to drop the price of the dagger.)",
+			"\"Um, actually, I'll chip in later.\""
+		],
+		"conversation_id": "251",
+		"position_offset:x": "14480.0",
+		"position_offset:y": "4920.0",
+		"private": true,
+		"recipient": "Reka",
+		"speaker": "Nervous System",
+		"text": "How much was it going for, again?",
+		"type": "hub"
+	},
+	{
+		"conditions": "bandit_haggling >= reka_haggling",
+		"conversation_id": "268",
+		"position_offset:x": "15780.0",
+		"position_offset:y": "4700.0",
+		"speaker": "Body",
+		"text": "Their faces tell you everything you need to know. Unfortunately, your wager is too thin for this deal.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "315",
+		"position_offset:x": "16820.0",
+		"position_offset:y": "4720.0",
+		"speaker": "Geno",
+		"statements": "bandit_haggling++",
+		"text": "\"Sorry, the dagger's only for my friend here. More as to the question of why he's being such a stickler about the price. Business is business, man.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "443",
+		"position_offset:x": "16260.0",
+		"position_offset:y": "4820.0",
+		"speaker": "Bandit",
+		"text": "\"Maybe next time.\"",
+		"type": "hub"
+	},
+	{
+		"conditions": "!bandit_introduced",
+		"conversation_id": "189",
+		"position_offset:x": "5440.0",
+		"position_offset:y": "9340.0",
+		"speaker": "Bandit",
+		"text": "Suddenly, there's a rude interruption.",
+		"type": "hub"
+	},
+	{
+		"conditions": "!bandit_introduced",
+		"conversation_id": "445",
+		"position_offset:x": "1660.0",
+		"position_offset:y": "6620.0",
+		"speaker": "Bandit",
+		"text": "Suddenly, there's a rude interruption.",
+		"type": "hub"
+	},
+	{
+		"conditions": "!reka_armed",
+		"conversation_id": "314",
+		"is_choice": true,
+		"position_offset:x": "1400.0",
+		"position_offset:y": "7100.0",
+		"speaker": "Reka",
+		"text": "\"I'm looking for a weapon. What do you have?\"",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"choices": [
+			"(Choice 0)",
+			"(Choice 1)"
+		],
+		"conversation_id": "446",
+		"position_offset:x": "1680.0",
+		"position_offset:y": "7500.0",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"choices": [
+			"(Choice 0)",
+			"(Choice 1)"
+		],
+		"conversation_id": "357",
+		"position_offset:x": "8060.0",
+		"position_offset:y": "6280.0",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"choices": [
+			"(Choice 0)",
+			"(Choice 1)"
+		],
+		"conversation_id": "343",
+		"position_offset:x": "6460.0",
+		"position_offset:y": "5520.0",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "448",
+		"position_offset:x": "6453.0244140625",
+		"position_offset:y": "6007.2841796875",
+		"speaker": "Power",
+		"text": "You [i]guess[/i]? Time won't wait for you, young hero.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "447",
+		"position_offset:x": "6060.0",
+		"position_offset:y": "5900.0",
+		"speaker": "Reka",
+		"statements": "flash_guard_quarter = 0",
+		"text": "\"I got a place to stay up in the public area. I guess my plan is to assist with the investigation until something comes up.\"",
 		"type": "hub"
 	},
 	{
@@ -4446,7 +4533,7 @@
 		"from_choice": "",
 		"from_id": "248",
 		"from_port": 0,
-		"to_id": "346",
+		"to_id": "185",
 		"type": "connection"
 	},
 	{
@@ -4460,21 +4547,21 @@
 		"from_choice": "\"I want the dagger. I'll buy it for 12\"",
 		"from_id": "251",
 		"from_port": 0,
-		"to_id": "252",
+		"to_id": "438",
 		"type": "connection"
 	},
 	{
 		"from_choice": "\"I want the dagger. I'll buy it for 8\"",
 		"from_id": "251",
 		"from_port": 1,
-		"to_id": "254",
+		"to_id": "442",
 		"type": "connection"
 	},
 	{
 		"from_choice": "\"I want the dagger. I'll buy it for 6\"",
 		"from_id": "251",
 		"from_port": 2,
-		"to_id": "255",
+		"to_id": "441",
 		"type": "connection"
 	},
 	{
@@ -4488,7 +4575,7 @@
 		"from_choice": "\"Um, actually, I'll chip in later.\"",
 		"from_id": "251",
 		"from_port": 4,
-		"to_id": "88",
+		"to_id": "440",
 		"type": "connection"
 	},
 	{
@@ -4628,14 +4715,14 @@
 		"from_choice": "",
 		"from_id": "267",
 		"from_port": 0,
-		"to_id": "288",
+		"to_id": "444",
 		"type": "connection"
 	},
 	{
 		"from_choice": "",
 		"from_id": "268",
 		"from_port": 0,
-		"to_id": "315",
+		"to_id": "443",
 		"type": "connection"
 	},
 	{
@@ -4677,7 +4764,7 @@
 		"from_choice": "",
 		"from_id": "276",
 		"from_port": 0,
-		"to_id": "288",
+		"to_id": "444",
 		"type": "connection"
 	},
 	{
@@ -4873,7 +4960,7 @@
 		"from_choice": "",
 		"from_id": "314",
 		"from_port": 0,
-		"to_id": "360",
+		"to_id": "446",
 		"type": "connection"
 	},
 	{
@@ -5027,7 +5114,7 @@
 		"from_choice": "",
 		"from_id": "341",
 		"from_port": 0,
-		"to_id": "343",
+		"to_id": "447",
 		"type": "connection"
 	},
 	{
@@ -5809,9 +5896,86 @@
 	},
 	{
 		"from_choice": "",
+		"from_id": "438",
+		"from_port": 0,
+		"to_id": "252",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
 		"from_id": "44",
 		"from_port": 0,
 		"to_id": "45",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "440",
+		"from_port": 0,
+		"to_id": "88",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "441",
+		"from_port": 0,
+		"to_id": "255",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "442",
+		"from_port": 0,
+		"to_id": "254",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "443",
+		"from_port": 0,
+		"to_id": "315",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "444",
+		"from_port": 0,
+		"to_id": "288",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "445",
+		"from_port": 0,
+		"to_id": "70",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 0)",
+		"from_id": "446",
+		"from_port": 0,
+		"to_id": "360",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 1)",
+		"from_id": "446",
+		"from_port": 1,
+		"to_id": "445",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "447",
+		"from_port": 0,
+		"to_id": "448",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "448",
+		"from_port": 0,
+		"to_id": "343",
 		"type": "connection"
 	},
 	{
@@ -6326,9 +6490,9 @@
 		"type": "connection"
 	},
 	{
-		"position:x": "1689.00439453125",
-		"position:y": "2581.07202148438",
+		"position:x": "2257.50366210938",
+		"position:y": "7143.5361328125",
 		"type": "camera",
-		"zoom": "0.498529702425"
+		"zoom": "1.06864178180695"
 	}
 ]

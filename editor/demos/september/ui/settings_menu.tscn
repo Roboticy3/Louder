@@ -109,9 +109,6 @@ layout_mode = 2
 [node name="lobby_menu" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds/FoldableContainer2/VBoxContainer" unique_id=787165540 instance=ExtResource("3_fch2u")]
 layout_mode = 2
 
-[node name="lobby_character_select" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds/FoldableContainer2/VBoxContainer" unique_id=1952030158 instance=ExtResource("3_fch2u")]
-layout_mode = 2
-
 [node name="FoldableContainer3" type="FoldableContainer" parent="MarginContainer/Panel/Columns/MarginContainer2/ScrollContainer/Keybinds" unique_id=256867435]
 layout_mode = 2
 title = "Editor"

@@ -268,15 +268,11 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 339.55554
-offset_top = 191.0
-offset_right = -339.55554
-offset_bottom = -191.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("15_4tsou")
 expand_mode = 1
-stretch_mode = 5
+stretch_mode = 6
 script = ExtResource("3_17usu")
 
 [node name="MainDialogueView" parent="." unique_id=2033588754 instance=ExtResource("2_1bhkb")]

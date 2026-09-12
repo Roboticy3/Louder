@@ -93,7 +93,7 @@ func _request_choice(controller_path:NodePath, choice: String) -> void:
 			else:
 				nonfollowers.push_back(c)
 	
-	var start_position := controller.get_position()
+	var pre_body := controller.data
 	if !controller.traverse(choice):
 		push_warning("Choice ", choice, " failed for controller ", controller_path, "! There's probably an auto node with no valid outbound paths.")
 		return
@@ -112,19 +112,17 @@ func _request_choice(controller_path:NodePath, choice: String) -> void:
 		#sync_controller_data.rpc(EventType.CHOICE, remote_authority, f.get_path(), f.data)
 	
 	#rule 2: if other controllers can follow this controller, make them follow this controller
+	var follow : Array[PSController]
 	for c in get_tree().get_nodes_in_group(controller_group):
 		if c is PSController and c != controller and c.is_active() and c.should_follow(controller):
 			c.follow(controller)
 			sync_controller_data.rpc(EventType.CHOICE, remote_authority, c.get_path(), c.data)
 	
-	if start_position == 185:
-		pass
-	
 	#rule 3: if other controllers were at the same position and branch as this controller before simulation,
 	#those controllers should emulate the choice made.
 	for c in get_tree().get_nodes_in_group(controller_group):
-		if c is PSController and c != controller and c.is_active():
-			c.choice_follow(controller.get_branch(), start_position, choice)
+		if c is PSController and c != controller and c.is_active() and !(c in follow):
+			c.choice_follow(controller, pre_body, choice)
 			sync_controller_data.rpc(EventType.CHOICE, remote_authority, c.get_path(), c.data)
 	
 	sync_controller_data.rpc(EventType.CHOICE, remote_authority, controller_path, controller.data)
