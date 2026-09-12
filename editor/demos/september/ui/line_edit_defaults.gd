@@ -6,6 +6,10 @@ extends Node
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	options.add_item("")
+	for m in mapping:
+		options.add_item(m)
+	options.text = "Defaults"
 	options.item_selected.connect(_on_item_selected)
 
 func _on_item_selected(index:int) -> void:

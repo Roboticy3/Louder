@@ -7,10 +7,12 @@ var bus_volumes := {}
 var keybinds := {}
 
 const MENU := preload("res://demos/september/ui/settings_menu.tscn")
+var menu:CanvasLayer
 
 func _ready() -> void:
 	load_settings()
-	add_child(MENU.instantiate())
+	menu = MENU.instantiate()
+	add_child(menu)
 
 
 func load_settings() -> void:

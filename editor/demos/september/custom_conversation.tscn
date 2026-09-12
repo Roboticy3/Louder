@@ -1,5 +1,76 @@
 [gd_scene format=3 uid="uid://bxu3t3v52s01d"]
 
 [ext_resource type="PackedScene" uid="uid://06emg8jtgki4" path="res://demos/september/merchant_base.tscn" id="1_dtmuc"]
+[ext_resource type="PackedScene" uid="uid://dnwmrvllc2101" path="res://demos/september/ui/main_dialogue_view.tscn" id="2_d6fuc"]
+[ext_resource type="PackedScene" uid="uid://dhii2e6mc7t81" path="res://demos/september/logic/character_select/character_select.tscn" id="3_fpw3k"]
+[ext_resource type="Script" uid="uid://b8jjbbtjemx6g" path="res://proto_simulator/ps_config.gd" id="4_fpw3k"]
+
+[sub_resource type="Gradient" id="Gradient_dtmuc"]
+offsets = PackedFloat32Array(0)
+colors = PackedColorArray(0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_nunj6"]
+gradient = SubResource("Gradient_dtmuc")
 
 [node name="Merchant" unique_id=438456980 instance=ExtResource("1_dtmuc")]
+
+[node name="BackgroundView" type="CanvasLayer" parent="." index="0" unique_id=1372696545]
+
+[node name="TextureRect" type="TextureRect" parent="BackgroundView" index="0" unique_id=266419185]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture1D_nunj6")
+expand_mode = 1
+
+[node name="MainView" type="CanvasLayer" parent="." index="3" unique_id=771041053]
+
+[node name="MainDialogueView" parent="MainView" index="0" unique_id=2033588754 instance=ExtResource("2_d6fuc")]
+anchor_left = 0.643
+offset_left = 0.26397705
+grow_horizontal = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainView" index="1" unique_id=729273985]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -85.5
+offset_top = -20.0
+offset_right = 85.5
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainView/VBoxContainer" index="0" unique_id=50239549]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MainView/VBoxContainer/HBoxContainer" index="0" unique_id=1255950916]
+layout_mode = 2
+text = "Custom Conversation:"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="MainView/VBoxContainer" index="1" unique_id=1655953520]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="MainView/VBoxContainer/HBoxContainer2" index="0" unique_id=211083648]
+layout_mode = 2
+text = "Playing As:"
+
+[node name="CharacterSelect" type="CanvasLayer" parent="." index="4" unique_id=392892665]
+
+[node name="CharacterSelect" parent="CharacterSelect" index="0" unique_id=1798519443 node_paths=PackedStringArray("config") instance=ExtResource("3_fpw3k")]
+config = NodePath("../PSConfig")
+
+[node name="PSConfig" type="Node" parent="CharacterSelect" index="1" unique_id=1574703444]
+script = ExtResource("4_fpw3k")
+metadata/_custom_type_script = "uid://b8jjbbtjemx6g"
+
+[node name="ConversationLoader" parent="." index="8" unique_id=397806342 node_paths=PackedStringArray("ps_config")]
+config_path = "res://demos/speakers/minimal.json"
+ps_config = NodePath("../CharacterSelect/PSConfig")
+
+[connection signal="all_done" from="ConversationLoader" to="CharacterSelect/CharacterSelect" method="_ready"]

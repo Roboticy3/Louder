@@ -118,7 +118,7 @@ func _deploy_upnp_thread(port_to_forward:int):
 	upnp_mapping_thread.start(_port_forward_synchronous.bind(port_to_forward))
 
 func _reset_upnp_thread():
-	if upnp_mapping_thread and upnp_mapping_thread.is_started(): 
+	if upnp_mapping_thread and upnp_mapping_thread.is_started() and upnp_mapping_thread.is_alive(): 
 		print("closing port mapping thread...")
 		upnp_mapping_thread.wait_to_finish()
 		print("done")
@@ -152,7 +152,10 @@ func _port_forward_synchronous(port:int) -> Dictionary:
 	}
 
 func _exit_tree() -> void:
-	
+	disconnect_peer()
+
+func disconnect_peer() -> void:
+	multiplayer.multiplayer_peer = null
 	if upnp and port_forwarded != -1:
 		print("closing port mappings...")
 		upnp.delete_port_mapping(port_forwarded, "UDP")

@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://riwd3y84n5u0" path="res://demos/september/ui/lazy_submit.gd" id="3_jfkvc"]
 [ext_resource type="Script" uid="uid://tva8xu22g5pf" path="res://demos/september/ui/line_edit_defaults.gd" id="4_70ewt"]
 [ext_resource type="Script" uid="uid://cbl10c4ws3k4e" path="res://demos/september/ui/file_dialog_to_line_edit.gd" id="5_t31q4"]
+[ext_resource type="PackedScene" uid="uid://bxu3t3v52s01d" path="res://demos/september/custom_conversation.tscn" id="10_jcos0"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_nunj6"]
 font_size = 32
@@ -152,24 +153,28 @@ size_flags_horizontal = 0
 layout_mode = 2
 text = "Load Custom Conversation"
 script = ExtResource("1_ybclp")
-mutual_exclusive = [NodePath("../HBoxContainer")]
+mutual_exclusive = [NodePath("../ConversationBar"), NodePath("../ConfigBar")]
 inverted = true
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/VBoxContainer/HBoxContainer3" unique_id=1145885555]
+[node name="ConversationBar" type="HBoxContainer" parent="VBoxContainer/VBoxContainer/HBoxContainer3" unique_id=1145885555]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="CustomConversation" type="LineEdit" parent="VBoxContainer/VBoxContainer/HBoxContainer3/HBoxContainer" unique_id=678850952]
+[node name="Label" type="Label" parent="VBoxContainer/VBoxContainer/HBoxContainer3/ConversationBar" unique_id=1700563580]
+layout_mode = 2
+text = "Conversation Path:"
+
+[node name="CustomConversation" type="LineEdit" parent="VBoxContainer/VBoxContainer/HBoxContainer3/ConversationBar" unique_id=678850952]
 layout_mode = 2
 size_flags_horizontal = 3
 expand_to_text_length = true
 script = ExtResource("3_jfkvc")
 
-[node name="Button" type="Button" parent="VBoxContainer/VBoxContainer/HBoxContainer3/HBoxContainer" unique_id=1209770758]
+[node name="Button" type="Button" parent="VBoxContainer/VBoxContainer/HBoxContainer3/ConversationBar" unique_id=1209770758]
 layout_mode = 2
 text = "Open File"
 
-[node name="FileDialog" type="FileDialog" parent="VBoxContainer/VBoxContainer/HBoxContainer3/HBoxContainer/Button" unique_id=362691244]
+[node name="FileDialog" type="FileDialog" parent="VBoxContainer/VBoxContainer/HBoxContainer3/ConversationBar/Button" unique_id=362691244]
 title = "Open a File"
 file_mode = 0
 display_mode = 1
@@ -177,17 +182,11 @@ access = 2
 filters = PackedStringArray("*.json")
 use_native_dialog = true
 
-[node name="CustomConversationDefaults" type="OptionButton" parent="VBoxContainer/VBoxContainer/HBoxContainer3/HBoxContainer" unique_id=189941951]
+[node name="CustomConversationDefaults" type="OptionButton" parent="VBoxContainer/VBoxContainer/HBoxContainer3/ConversationBar" unique_id=189941951]
 layout_mode = 2
 size_flags_horizontal = 8
-search_bar_enabled = true
-item_count = 2
-popup/item_0/text = "Tutorial 1"
-popup/item_0/id = 0
-popup/item_1/text = "Tutorial 2"
-popup/item_1/id = 1
 
-[node name="LineEditDefaults" type="Node" parent="VBoxContainer/VBoxContainer/HBoxContainer3/HBoxContainer" unique_id=738886785 node_paths=PackedStringArray("options", "line_edit")]
+[node name="LineEditDefaults" type="Node" parent="VBoxContainer/VBoxContainer/HBoxContainer3/ConversationBar" unique_id=738886785 node_paths=PackedStringArray("options", "line_edit")]
 script = ExtResource("4_70ewt")
 options = NodePath("../CustomConversationDefaults")
 line_edit = NodePath("../CustomConversation")
@@ -198,11 +197,56 @@ mapping = Dictionary[String, String]({
 "Tutorial 3": "res://demos/tutorials/tutorial_3.json"
 })
 
-[node name="LineEditFileDialog" type="Node" parent="VBoxContainer/VBoxContainer/HBoxContainer3/HBoxContainer" unique_id=166171863 node_paths=PackedStringArray("file_dialog_button", "file_dialog", "line_edit")]
+[node name="LineEditFileDialog" type="Node" parent="VBoxContainer/VBoxContainer/HBoxContainer3/ConversationBar" unique_id=166171863 node_paths=PackedStringArray("file_dialog_button", "file_dialog", "line_edit")]
 script = ExtResource("5_t31q4")
 file_dialog_button = NodePath("../Button")
 file_dialog = NodePath("../Button/FileDialog")
 line_edit = NodePath("../CustomConversation")
+
+[node name="ConfigBar" type="HBoxContainer" parent="VBoxContainer/VBoxContainer/HBoxContainer3" unique_id=249707000]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="VBoxContainer/VBoxContainer/HBoxContainer3/ConfigBar" unique_id=27575809]
+layout_mode = 2
+text = "Config Path:"
+
+[node name="CustomConfig" type="LineEdit" parent="VBoxContainer/VBoxContainer/HBoxContainer3/ConfigBar" unique_id=1088446516]
+layout_mode = 2
+size_flags_horizontal = 3
+expand_to_text_length = true
+script = ExtResource("3_jfkvc")
+
+[node name="Button" type="Button" parent="VBoxContainer/VBoxContainer/HBoxContainer3/ConfigBar" unique_id=307801652]
+layout_mode = 2
+text = "Open File"
+
+[node name="FileDialog" type="FileDialog" parent="VBoxContainer/VBoxContainer/HBoxContainer3/ConfigBar/Button" unique_id=378041521]
+title = "Open a File"
+file_mode = 0
+display_mode = 1
+access = 2
+filters = PackedStringArray("*.json")
+use_native_dialog = true
+
+[node name="CustomConfigDefaults" type="OptionButton" parent="VBoxContainer/VBoxContainer/HBoxContainer3/ConfigBar" unique_id=295037246]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="LineEditDefaults" type="Node" parent="VBoxContainer/VBoxContainer/HBoxContainer3/ConfigBar" unique_id=1022838516 node_paths=PackedStringArray("options", "line_edit")]
+script = ExtResource("4_70ewt")
+options = NodePath("../CustomConfigDefaults")
+line_edit = NodePath("../CustomConfig")
+mapping = Dictionary[String, String]({
+"Merchant": "res://demos/speakers/test.json",
+"Minimal": "res://demos/speakers/minimal.json"
+})
+
+[node name="LineEditFileDialog" type="Node" parent="VBoxContainer/VBoxContainer/HBoxContainer3/ConfigBar" unique_id=211588578 node_paths=PackedStringArray("file_dialog_button", "file_dialog", "line_edit")]
+script = ExtResource("5_t31q4")
+file_dialog_button = NodePath("../Button")
+file_dialog = NodePath("../Button/FileDialog")
+line_edit = NodePath("../CustomConfig")
 
 [node name="Confirmation" type="VBoxContainer" parent="VBoxContainer" unique_id=498766543]
 layout_mode = 2
@@ -225,11 +269,12 @@ size_flags_horizontal = 0
 text = "Custom Conversation Editor"
 script = ExtResource("1_aeouo")
 level = ExtResource("2_wnrnk")
-conversation = NodePath("../../VBoxContainer/HBoxContainer3/HBoxContainer/CustomConversation")
+conversation = NodePath("../../VBoxContainer/HBoxContainer3/ConversationBar/CustomConversation")
 
 [node name="MainMenuStarter" type="Node" parent="." unique_id=1882237254]
 script = ExtResource("1_cv508")
 level = ExtResource("2_rhy6e")
+alternate_level = ExtResource("10_jcos0")
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1735830]
 bus = &"Music"
@@ -241,5 +286,6 @@ bus = &"Music"
 [connection signal="toggled" from="VBoxContainer/NetworkingType/HBoxContainer/UPNP" to="MainMenuStarter" method="set_use_upnp"]
 [connection signal="text_changed" from="VBoxContainer/VBoxContainer/IPAndPort/IP/LineEdit" to="MainMenuStarter" method="set_server_ip"]
 [connection signal="value_changed" from="VBoxContainer/VBoxContainer/IPAndPort/LineEdit2" to="MainMenuStarter" method="set_server_port_sus"]
-[connection signal="text_submitted" from="VBoxContainer/VBoxContainer/HBoxContainer3/HBoxContainer/CustomConversation" to="MainMenuStarter" method="set_custom_conversation"]
+[connection signal="text_submitted" from="VBoxContainer/VBoxContainer/HBoxContainer3/ConversationBar/CustomConversation" to="MainMenuStarter" method="set_custom_conversation"]
+[connection signal="text_submitted" from="VBoxContainer/VBoxContainer/HBoxContainer3/ConfigBar/CustomConfig" to="MainMenuStarter" method="set_custom_config"]
 [connection signal="pressed" from="VBoxContainer/Confirmation/Button" to="MainMenuStarter" method="start"]
