@@ -1,0 +1,457 @@
+[
+	{
+		"choices": [
+			"(Choice 0)",
+			"(Choice 1)"
+		],
+		"conversation_id": "0",
+		"position_offset:x": "140.0",
+		"position_offset:y": "120.0",
+		"speaker": "Tutorial 2: Conditions and Statements",
+		"start": true,
+		"text": "Let's learn about conditions and statements.",
+		"type": "hub"
+	},
+	{
+		"conditions": "this + statement + must + be + true",
+		"conversation_id": "2",
+		"position_offset:x": "680.0",
+		"position_offset:y": "20.0",
+		"speaker": "Conditions",
+		"text": "Conditions are expressions, snippets of code, that must evaluate to \"true\" for a choice to be available in dialogue.",
+		"type": "hub"
+	},
+	{
+		"choices": [
+			"Ok, teach me more about auto blocks!",
+			"Ok, teach me about expressions and parsing!"
+		],
+		"conversation_id": "9",
+		"position_offset:x": "3020.0",
+		"position_offset:y": "680.0",
+		"speaker": "Note",
+		"text": "If an auto block has no valid choices or \"escape paths\", the resulting behavior for the user is a choice that appears to do nothing, and softlock the game. \n\nThis should result in a log in the bottom left corner of the screen for whoever is hosting. If you don't see this log, Press F2 in-game.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "10",
+		"position_offset:x": "3660.0",
+		"position_offset:y": "580.0",
+		"speaker": "Auto Blocks 4",
+		"text": "Wait, one more thing.",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"conversation_id": "11",
+		"position_offset:x": "4220.0",
+		"position_offset:y": "640.0",
+		"speaker": "Auto Blocks 5",
+		"text": "You can chain auto blocks together! Use this to make complex decision trees.",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"conversation_id": "12",
+		"position_offset:x": "4780.0",
+		"position_offset:y": "660.0",
+		"speaker": "Auto Blocks 6",
+		"text": "Finally, Auto blocks \"dominate\" their destination nodes. That's how you're seeing this text, even though the auto block it originated from was skipped over.",
+		"type": "hub"
+	},
+	{
+		"conditions": "this + statement + must + be + true",
+		"conversation_id": "7",
+		"position_offset:x": "2580.0",
+		"position_offset:y": "200.0",
+		"speaker": "Auto Blocks 2",
+		"text": "Again, the condition here fails, so this choice is unavailable. The auto block logic now automatically looks at the next choice.",
+		"type": "hub"
+	},
+	{
+		"choices": [
+			"Teach me about auto blocks",
+			"Teach me more about conditions"
+		],
+		"conversation_id": "4",
+		"position_offset:x": "700.0",
+		"position_offset:y": "600.0",
+		"speaker": "Condition Failed!",
+		"text": "If you're playing through this tutorial as a dialogue tree, you should end up here.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "13",
+		"position_offset:x": "1240.0",
+		"position_offset:y": "520.0",
+		"speaker": "Auto Blocks",
+		"text": "Auto blocks- nodes with the \"Auto\" checkbox checked -proceed automatically without appearing on screen.\n\nIf an auto block needs to make a choice, it tries to make the first choice available.",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"choices": [
+			"(Choice 0)",
+			"(Choice 1)"
+		],
+		"conversation_id": "5",
+		"position_offset:x": "1820.0",
+		"position_offset:y": "520.0",
+		"type": "hub"
+	},
+	{
+		"choices": [
+			"Ok."
+		],
+		"conversation_id": "14",
+		"position_offset:x": "5281.677734375",
+		"position_offset:y": "728.749755859375",
+		"text": "This text is invisible due to dominant auto block logic!",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "16",
+		"position_offset:x": "3660.0",
+		"position_offset:y": "1220.0",
+		"speaker": "Identifiers",
+		"statements": "here = 1\nare = 1\nsom3 = 1\nVALID = 1\nVariable = 1\nnAMEs_ = 1",
+		"text": "Expressions can be broken up into \"identifiers\" and \"operators\". Identifiers are variable names. \n\nThey can contain numbers, upper and lower case letters, and underscores",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "17",
+		"position_offset:x": "4180.0",
+		"position_offset:y": "1260.0",
+		"speaker": "Values",
+		"statements": "integer_value = 12\ndecimal_value = 2.4\nstring_value = \"abc\"\nboolean_value = false",
+		"text": "Identifiers can be valued as integers, decimals, strings and booleans (technically more if you're familiar with Godot expressions, but that's all I'm planning to support long-term). \n\nIf you're playing through this tree and don't see them already, press F1 to see the game state with all the variables that were just set to the different possible data types.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "8",
+		"position_offset:x": "2560.0",
+		"position_offset:y": "740.0",
+		"speaker": "Auto Blocks 3",
+		"text": "Finally, we arrive at destination.",
+		"type": "hub"
+	},
+	{
+		"choices": [
+			"Choice 1",
+			"Choice 2",
+			"Choice 3"
+		],
+		"conversation_id": "20",
+		"position_offset:x": "6102.47998046875",
+		"position_offset:y": "1172.04797363281",
+		"speaker": "Common Patterns",
+		"text": "Here's a common pattern with expressions and conditions. First, the user has two choices.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "21",
+		"position_offset:x": "6769.82861328125",
+		"position_offset:y": "1219.87878417969",
+		"speaker": "Choice 1",
+		"statements": "choice_1_passed = 1",
+		"text": "In choice 1, we make a statement saying \"choice_1_passed = 1\". The integers 1 and 0 typically act the same as the booleans true and false, so I prefer to use them.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "22",
+		"position_offset:x": "6760.0",
+		"position_offset:y": "1820.0",
+		"speaker": "Choice 2",
+		"statements": "choice_2_passed = 1",
+		"text": "In choice 2, we [i]also[/i] make a statement saying \"choice_1_passed = 1\". The integers 1 and 0 typically act the same as the booleans true and false, so I prefer to use them.",
+		"type": "hub"
+	},
+	{
+		"conditions": "choice_1_passed && choice_2_passed",
+		"conversation_id": "23",
+		"position_offset:x": "6820.0",
+		"position_offset:y": "2500.0",
+		"speaker": "Choice 3",
+		"text": "Choice 3 is only \"unlocked\" by a condition that checks both choices have been set.\n\nSince the integer 1 is similar to the boolean true, the condition \"choice_1_passed && choice_2_passed\" evaluates to true, and the check passes after both choice 1 and choice 2 have been taken.",
+		"type": "hub"
+	},
+	{
+		"choices": [
+			"(Do not continue)",
+			"(Continue)"
+		],
+		"conversation_id": "25",
+		"position_offset:x": "7680.0",
+		"position_offset:y": "1200.0",
+		"speaker": "Common Patterns 2",
+		"text": "In this pattern, one choice goes to a node marked auto, which then links back here to this node.\n\nThis is a really good way to get more visual variation out of dialogue by juxtaposing one set of choices with multiple sets of speakers and text content.\n\nThis kind of pattern is usually called a \"hub\".",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"conversation_id": "26",
+		"position_offset:x": "8200.0",
+		"position_offset:y": "1200.0",
+		"speaker": "Auto Block",
+		"text": "Overwriting the text content of the hub! Note that the choices stay the same.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "27",
+		"position_offset:x": "8200.7197265625",
+		"position_offset:y": "1735.18493652344",
+		"speaker": "Meanwhile",
+		"text": "Meanwhile, (Continue), which often denotes \"continue the story\", does not link to an auto node, and does not link back to the hub.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "28",
+		"position_offset:x": "8678.806640625",
+		"position_offset:y": "1836.47546386719",
+		"speaker": "Note",
+		"text": "The previous 2 patterns can also be combined together.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "29",
+		"position_offset:x": "9233.8671875",
+		"position_offset:y": "1749.28442382813",
+		"speaker": "That's it",
+		"text": "That's it for this tutorial. Obviously there's a lot more you can do with conditionals and statements, but I recommend digging around the \"Merchant\" dialogue tree (the default tree used by the game) to see more complex examples, like the haggling minigame with the bandit.",
+		"type": "hub"
+	},
+	{
+		"conditions": "this_will_result_in_an_error = 1",
+		"conversation_id": "19",
+		"position_offset:x": "5540.0",
+		"position_offset:y": "1360.0",
+		"speaker": "Assignment Operators",
+		"text": "Assignment Operators can only belong to Statements\n\nAssignments:\na = b\n\nInteger only assignments:\na += b (a = a + b)\na -= b (a = a - b)\na++ (a = a + 1)\na-- (a = a - 1)",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "18",
+		"position_offset:x": "4600.0",
+		"position_offset:y": "1240.0",
+		"speaker": "Operators",
+		"text": "Binary operators are symbols that are written with an identifer on each side. The resulting expression is a new value based on the operation.\n\nInteger binary operators:\na + b\na - b\na * b (multiply)\na / b\na % b (modulus)\n\nBitwise operatos for fancy people\na & b\na | b\na ^ b\n\nLogical operators for integers and booleans\na && b (a AND b are true)\na || b (a OR b are true)",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "30",
+		"position_offset:x": "5040.0",
+		"position_offset:y": "1500.0",
+		"speaker": "Other Logical Operators",
+		"text": "Logical Operators are operators that return booleans\n\nInteger Logical Operators\na < b\na > b\na <= b (true if a is equal to or less than b)\na >= b \na == b (true if a equals b)\na != b (true if a does not equal b)",
+		"type": "hub"
+	},
+	{
+		"from_choice": "(Choice 0)",
+		"from_id": "0",
+		"from_port": 0,
+		"to_id": "2",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 1)",
+		"from_id": "0",
+		"from_port": 1,
+		"to_id": "4",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "10",
+		"from_port": 0,
+		"to_id": "11",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "11",
+		"from_port": 0,
+		"to_id": "12",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "12",
+		"from_port": 0,
+		"to_id": "14",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "13",
+		"from_port": 0,
+		"to_id": "5",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Ok.",
+		"from_id": "14",
+		"from_port": 0,
+		"to_id": "9",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "16",
+		"from_port": 0,
+		"to_id": "17",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "17",
+		"from_port": 0,
+		"to_id": "18",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "18",
+		"from_port": 0,
+		"to_id": "30",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "19",
+		"from_port": 0,
+		"to_id": "20",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Choice 1",
+		"from_id": "20",
+		"from_port": 0,
+		"to_id": "21",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Choice 2",
+		"from_id": "20",
+		"from_port": 1,
+		"to_id": "22",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Choice 3",
+		"from_id": "20",
+		"from_port": 2,
+		"to_id": "23",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "21",
+		"from_port": 0,
+		"to_id": "20",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "22",
+		"from_port": 0,
+		"to_id": "20",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "23",
+		"from_port": 0,
+		"to_id": "25",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Do not continue)",
+		"from_id": "25",
+		"from_port": 0,
+		"to_id": "26",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Continue)",
+		"from_id": "25",
+		"from_port": 1,
+		"to_id": "27",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "26",
+		"from_port": 0,
+		"to_id": "25",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "27",
+		"from_port": 0,
+		"to_id": "28",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "28",
+		"from_port": 0,
+		"to_id": "29",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "30",
+		"from_port": 0,
+		"to_id": "19",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Teach me about auto blocks",
+		"from_id": "4",
+		"from_port": 0,
+		"to_id": "13",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 0)",
+		"from_id": "5",
+		"from_port": 0,
+		"to_id": "7",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 1)",
+		"from_id": "5",
+		"from_port": 1,
+		"to_id": "8",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "8",
+		"from_port": 0,
+		"to_id": "9",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Ok, teach me more about auto blocks!",
+		"from_id": "9",
+		"from_port": 0,
+		"to_id": "10",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Ok, teach me about expressions and parsing!",
+		"from_id": "9",
+		"from_port": 1,
+		"to_id": "16",
+		"type": "connection"
+	},
+	{
+		"position:x": "4875.3671875",
+		"position:y": "1417.83129882813",
+		"type": "camera",
+		"zoom": "0.99999964237213"
+	}
+]

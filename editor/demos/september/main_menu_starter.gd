@@ -54,6 +54,9 @@ func set_username(to:String):
 func set_custom_conversation(to:String):
 	if FileAccess.file_exists(to):
 		custom_conversation = to
+	else:
+		custom_conversation = ""
+	validate()
 
 func validate():
 	get_tree().call_group(progress_status_listener_group, &"set", &"disabled", get_progress_disabled())
@@ -94,7 +97,11 @@ func get_progress_text() -> String:
 	if !username.is_empty():
 		part3 = " (%s)" % [username]
 	
-	var full := part1 + part2 + part3 + "..."
+	var part4 := ""
+	if !custom_conversation.is_empty():
+		part4 = " with custom conversation: %s." % [custom_conversation]
+	
+	var full := part1 + part2 + part3 + part4 + "..."
 	return full
 
 func start():
