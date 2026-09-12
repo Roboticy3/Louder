@@ -155,10 +155,16 @@ func _exit_tree() -> void:
 	disconnect_peer()
 
 func disconnect_peer() -> void:
+	peer = null
 	multiplayer.multiplayer_peer = null
+	host_ip = ""
+	host_port = -1
+	
 	if upnp and port_forwarded != -1:
 		print("closing port mappings...")
 		upnp.delete_port_mapping(port_forwarded, "UDP")
 		upnp.delete_port_mapping(port_forwarded, "TCP")
 		print("done")
 	_reset_upnp_thread()
+	external_ip = ""
+	port_forwarded = -1

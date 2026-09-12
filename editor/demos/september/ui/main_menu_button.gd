@@ -8,5 +8,8 @@ func _ready() -> void:
 func _on_pressed():
 	NetworkLayer.disconnect_peer()
 	ClientDataLayer.client_data.clear()
-	get_tree().change_scene_to_file.bind(MAIN_MENU_PATH)
+	ControllerEventLayer.connected_controller = null
+	CustomConversationLayer.conversation_path = ""
+	CustomConversationLayer.config_path = ""
+	get_tree().change_scene_to_file.call_deferred(MAIN_MENU_PATH)
 	

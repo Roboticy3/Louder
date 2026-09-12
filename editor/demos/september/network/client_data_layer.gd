@@ -89,4 +89,6 @@ func get_data(authority:int) -> Dictionary:
 	return client_data.get(authority, {})
 
 func get_local_data() -> Dictionary:
+	if !multiplayer.multiplayer_peer:
+		return {}
 	return client_data.get(multiplayer.get_unique_id(), {})
