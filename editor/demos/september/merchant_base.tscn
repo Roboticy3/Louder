@@ -55,6 +55,7 @@ conversation_path = "res://demos/conversations/merchant.json"
 ps_conversation = NodePath("../Louder/PSConversation")
 
 [node name="DebugControls" type="CanvasLayer" parent="." unique_id=1404273262]
+visible = false
 script = ExtResource("11_kc62v")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="DebugControls" unique_id=98779171]
@@ -104,10 +105,9 @@ expand_to_text_length = true
 [node name="Buttons" type="CanvasLayer" parent="." unique_id=1698378752]
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Buttons" unique_id=794767625]
-anchors_preset = 10
-anchor_right = 1.0
+offset_right = 170.0
 offset_bottom = 31.0
-grow_horizontal = 2
+size_flags_horizontal = 0
 
 [node name="Button" type="Button" parent="Buttons/HBoxContainer" unique_id=873755047]
 layout_mode = 2

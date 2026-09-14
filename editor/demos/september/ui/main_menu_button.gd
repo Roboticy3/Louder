@@ -11,5 +11,6 @@ func _on_pressed():
 	ControllerEventLayer.connected_controller = null
 	CustomConversationLayer.conversation_path = ""
 	CustomConversationLayer.config_path = ""
+	IdSystem.clear_ids()
 	get_tree().change_scene_to_file.call_deferred(MAIN_MENU_PATH)
 	

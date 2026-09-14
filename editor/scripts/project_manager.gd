@@ -36,9 +36,6 @@ func _ready():
 	popup.set_item_disabled(LOAD, disable_load)
 	popup.set_item_disabled(NEW, disable_new)
 
-	if not CustomConversationLayer.conversation_path.is_empty():
-		load_project_from_file(CustomConversationLayer.conversation_path)
-
 	save_as_dialog = _make_dialog("Save As")
 	save_as_dialog.file_selected.connect(save_project_to_file)
 

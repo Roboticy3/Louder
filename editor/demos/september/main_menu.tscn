@@ -239,7 +239,8 @@ options = NodePath("../CustomConfigDefaults")
 line_edit = NodePath("../CustomConfig")
 mapping = Dictionary[String, String]({
 "Merchant": "res://demos/speakers/test.json",
-"Minimal": "res://demos/speakers/minimal.json"
+"Minimal": "res://demos/speakers/minimal.json",
+"Tutorial 3": "res://demos/tutorials/tutorial_3.json"
 })
 
 [node name="LineEditFileDialog" type="Node" parent="VBoxContainer/VBoxContainer/HBoxContainer3/ConfigBar" unique_id=211588578 node_paths=PackedStringArray("file_dialog_button", "file_dialog", "line_edit")]
