@@ -1,0 +1,388 @@
+[
+	{
+		"conversation_id": "0",
+		"position_offset:x": "-1.0",
+		"position_offset:y": "139.0",
+		"speaker": "Tutorial 3: Branching and multiplayer",
+		"start": true,
+		"text": "Here's where things get funky. And where my narrative engine really separates itself from others.",
+		"type": "hub"
+	},
+	{
+		"choices": [
+			"Ok, teach me about branches.",
+			"Ok, teach me about private speakers!"
+		],
+		"conversation_id": "2",
+		"position_offset:x": "440.0",
+		"position_offset:y": "140.0",
+		"speaker": "Speaker 1",
+		"text": "Two things before we continue. First, this is the last tutorial I'm making for now. The \"Once\" and \"Is Choice\" properties are never covered because they aren't fully implemented. \n\nSecond, the speaker here being Speaker 1, and Speaker 1 being configured as a playable character, means that players speaking as Speaker 1 are the only ones who can make choices leading into this node. However, other players can see this node. This is the default \"speaking out loud.\"",
+		"type": "hub"
+	},
+	{
+		"branch": "new_branch",
+		"conversation_id": "3",
+		"position_offset:x": "860.0",
+		"position_offset:y": "140.0",
+		"speaker": "Speaker 1",
+		"text": "Let's make a branch! If you're playing through this tutorial and inspect the game state with F1, there should now be an entry called \"branch\" with a value called \"new_branch.\" In the editor, this can be set as the \"branch\" property of a node.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "4",
+		"position_offset:x": "1362.0",
+		"position_offset:y": "212.0",
+		"speaker": "Speaker 1",
+		"text": "Branches persist from node to node. This node has no branch property set, but since the last node had the branch property set, we stay \"in\" the same branch.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "5",
+		"position_offset:x": "1852.0",
+		"position_offset:y": "247.0",
+		"speaker": "Speaker 1",
+		"text": "So, what [i]is[/i] a branch? Well, they're for multiplayer! \n\nI recommend playing with the conversation and config set to preset \"Tutorial 3\", with yourself as Player 1 and a bot controlling Player 2 to understand what happens after this node.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "10",
+		"position_offset:x": "-500.0",
+		"position_offset:y": "-2780.0",
+		"speaker": "Note",
+		"text": "Nothing is stopping you from putting speakers and dialogue in the same file, though it makes sense why you would want to separate them and reuse speakers for multiple conversations, for example.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "9",
+		"position_offset:x": "-520.0",
+		"position_offset:y": "-3240.0",
+		"speaker": "Note",
+		"text": "These are speaker nodes. When you load a graph as a \"config,\" these are the nodes the game looks for to define characters.\n\nIf \"Ownable\" is checked, the characters will be playable.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "13",
+		"position_offset:x": "2800.0",
+		"position_offset:y": "800.0",
+		"private": true,
+		"recipient": "Player 2",
+		"speaker": "Player 2",
+		"text": "This node is private to Player 2. If you selected Player 2 and didn't allocate a friend or bot to Player 1, congradulations, you are softlocked.\n\nUse the warp box in the F1 menu to escape by warping to a node by it's id.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "12",
+		"position_offset:x": "2760.0",
+		"position_offset:y": "-200.0",
+		"private": true,
+		"recipient": "Player 1",
+		"speaker": "Player 1",
+		"text": "This node is private to Player 1.\n\nI've marked that this node is private for player 1 manually using the \"Private\" checkbox. This opens an editable line below \"Speaker\" called \"Recipient.\"\n\nThe Auto block before this node (see Tutorial 2) sees that this node is only visible to Player 1. The protocol then is to drag Player 1 up this path, and Player 2 down the other.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "14",
+		"position_offset:x": "3223.81396484375",
+		"position_offset:y": "115.470031738281",
+		"private": true,
+		"recipient": "Player 1",
+		"speaker": "Player 1",
+		"text": "We can keep manually marking nodes as private for Player 1. But sometimes we want to let Player 2 in on the action.\n\nAnd when we don't want that, marking nodes private 1 by 1 is tedious.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "15",
+		"position_offset:x": "3688.03564453125",
+		"position_offset:y": "285.261596679688",
+		"speaker": "Player 1",
+		"text": "Ah, a public node, a breath of fresh air before the chaos.",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"choices": [
+			"(Choice 0)",
+			"(Choice 1)"
+		],
+		"conversation_id": "11",
+		"position_offset:x": "2348.38061523438",
+		"position_offset:y": "345.0048828125",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"choices": [
+			"(Choice 0)",
+			"(Choice 1)"
+		],
+		"conversation_id": "17",
+		"position_offset:x": "4138.65380859375",
+		"position_offset:y": "280.022979736328",
+		"type": "hub"
+	},
+	{
+		"branch": "player_1_branch",
+		"conversation_id": "18",
+		"position_offset:x": "4609.654296875",
+		"position_offset:y": "139.022827148438",
+		"private": true,
+		"recipient": "Player 1",
+		"speaker": "Player 1",
+		"text": "Now, another split using an auto-block. But on top of using a private node, we've used a branch. This node has a branch called \"player_1_branch\".",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "19",
+		"position_offset:x": "4620.0",
+		"position_offset:y": "600.0",
+		"recipient": "Player 2",
+		"speaker": "Player 2",
+		"text": "Softlocked again.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "20",
+		"position_offset:x": "5060.0",
+		"position_offset:y": "140.0",
+		"speaker": "Player 1",
+		"text": "And just like that, we no longer have to mark nodes as private. Player 2 is \"in\" a different branch from us, so they aren't following our part of the conversation.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "21",
+		"position_offset:x": "5500.0",
+		"position_offset:y": "140.0",
+		"speaker": "Player 1",
+		"text": "It's kind of rare to see this, but in the demo, Reka actually uses this mechanic very creatively with a \"spectator\" secondary dialogue view that's tuned into the shop branch while she marinates on her plans in the silent square.\n\nMultiple branches allow one conversation to support multiple simultaeneous \"flows\" of dialogue.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "22",
+		"position_offset:x": "5934.5458984375",
+		"position_offset:y": "306.648681640625",
+		"speaker": "Player 1",
+		"text": "To get Player 2's attention again...",
+		"type": "hub"
+	},
+	{
+		"branch": "new_branch",
+		"conversation_id": "24",
+		"position_offset:x": "6320.0",
+		"position_offset:y": "320.0",
+		"statements": "Player_1_returned = 1",
+		"type": "hub"
+	},
+	{
+		"conditions": "Player_1_returned",
+		"conversation_id": "25",
+		"position_offset:x": "6820.0",
+		"position_offset:y": "400.0",
+		"speaker": "Player 2",
+		"text": "We just have to join their branch again.\n\nIf you join a branch that 1. another player is inside of, and 2. your player can see the node they are at, you will warp to their position. This is called \"merging\" your branch.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "26",
+		"position_offset:x": "7320.0",
+		"position_offset:y": "440.0",
+		"speaker": "Player 1",
+		"text": "Tbh, I could have implemented this a lot better. Particularly the way the game differentiates between making a new flow versus joining an existing one is very hard to write around practically. \n\nMaybe it would be better to have an integer priority system? Like branches still exist, but when merging, some story priority quantity is used to decide who follows who. I don't know. Something to think about for future versions.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "27",
+		"position_offset:x": "865.153015136719",
+		"position_offset:y": "846.271545410156",
+		"speaker": "Player 1's Internal Thought",
+		"text": "Psst! This is an internal thought! This speaker is flagged as non-public. However, Player 1 has it in its list of \"relationships.\" That gives Player 1 the authority to act on behalf of \"Player 1's Internal Thought\" and see it's dialogue nodes.",
+		"type": "hub"
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "6",
+		"description": "Take the top path on all splits.",
+		"ownable": true,
+		"position_offset:x": "-120.0",
+		"position_offset:y": "-3320.0",
+		"public": true,
+		"relationships": [
+			"Player 1's Internal Thought"
+		],
+		"speaker": "Player 1",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "29",
+		"description": "",
+		"ownable": false,
+		"position_offset:x": "300.0",
+		"position_offset:y": "-3200.0",
+		"public": false,
+		"relationships": [],
+		"speaker": "Player 1's Internal Thought",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"color": "000000ff",
+		"conversation_id": "7",
+		"description": "Take the bottom path on all splits.",
+		"ownable": true,
+		"position_offset:x": "-120.0",
+		"position_offset:y": "-3000.0",
+		"public": true,
+		"relationships": [],
+		"speaker": "Player 2",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"from_choice": "",
+		"from_id": "0",
+		"from_port": 0,
+		"to_id": "2",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 0)",
+		"from_id": "11",
+		"from_port": 0,
+		"to_id": "12",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 1)",
+		"from_id": "11",
+		"from_port": 1,
+		"to_id": "13",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "12",
+		"from_port": 0,
+		"to_id": "14",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "14",
+		"from_port": 0,
+		"to_id": "15",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "15",
+		"from_port": 0,
+		"to_id": "17",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 0)",
+		"from_id": "17",
+		"from_port": 0,
+		"to_id": "18",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 1)",
+		"from_id": "17",
+		"from_port": 1,
+		"to_id": "19",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "18",
+		"from_port": 0,
+		"to_id": "20",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "19",
+		"from_port": 0,
+		"to_id": "25",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Ok, teach me about branches.",
+		"from_id": "2",
+		"from_port": 0,
+		"to_id": "3",
+		"type": "connection"
+	},
+	{
+		"from_choice": "Ok, teach me about private speakers!",
+		"from_id": "2",
+		"from_port": 1,
+		"to_id": "27",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "20",
+		"from_port": 0,
+		"to_id": "21",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "21",
+		"from_port": 0,
+		"to_id": "22",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "22",
+		"from_port": 0,
+		"to_id": "24",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "25",
+		"from_port": 0,
+		"to_id": "26",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "27",
+		"from_port": 0,
+		"to_id": "2",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "3",
+		"from_port": 0,
+		"to_id": "4",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "4",
+		"from_port": 0,
+		"to_id": "5",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "5",
+		"from_port": 0,
+		"to_id": "11",
+		"type": "connection"
+	},
+	{
+		"position:x": "536.701293945313",
+		"position:y": "766.7919921875",
+		"type": "camera",
+		"zoom": "0.99999868869781"
+	}
+]

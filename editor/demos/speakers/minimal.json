@@ -1,0 +1,21 @@
+[
+	{
+		"color": "ffffffff",
+		"conversation_id": "2",
+		"description": "",
+		"ownable": true,
+		"position_offset:x": "340.0",
+		"position_offset:y": "160.0",
+		"public": false,
+		"relationships": [],
+		"speaker": "John Breach",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"position:x": "0.0",
+		"position:y": "0.0",
+		"type": "camera",
+		"zoom": "1.0"
+	}
+]

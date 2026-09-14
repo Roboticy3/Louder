@@ -1,0 +1,164 @@
+[
+	{
+		"conversation_id": "0",
+		"position_offset:x": "-1.0",
+		"position_offset:y": "139.0",
+		"speaker": "Tutorial 1: Basic Flow",
+		"start": true,
+		"text": "Welcome to the first of a few short tutorials on how to use my dialogue editor!",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "2",
+		"position_offset:x": "440.0",
+		"position_offset:y": "80.0",
+		"speaker": "Properties",
+		"text": "If you're looking at this in the editor, click the \"Properties\" drop-down. This drop down will be closed automatically unless you populate it.",
+		"type": "hub"
+	},
+	{
+		"choices": [
+			"(Choice 0)",
+			"(Choice 1)",
+			"(Choice 2)",
+			"(Choice 3)"
+		],
+		"conversation_id": "3",
+		"position_offset:x": "860.0",
+		"position_offset:y": "60.0",
+		"speaker": "Choices",
+		"text": "Click the up and down arrows next to the \"Choices\" label. To increase/decrease the number of choices. You can also use Tab or Shift+Tab to navigate to the number and click the Up/Down arrows, and even type a number.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "6",
+		"position_offset:x": "1317.09997558594",
+		"position_offset:y": "900.5",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "4",
+		"position_offset:x": "1340.0",
+		"position_offset:y": "100.0",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "5",
+		"position_offset:x": "1420.0",
+		"position_offset:y": "420.0",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "7",
+		"position_offset:x": "2000.0",
+		"position_offset:y": "240.0",
+		"speaker": "Complexity",
+		"text": "This conversation is getting complicated! Press Ctrl+F to bring up the search bar, then type \"7\" in the box labeled \"Go to id\". To warp to other nodes, type the number in their top left corner.\n\nYou can also use the search bar to search by text content.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "0",
+		"position_offset:x": "-1.0",
+		"position_offset:y": "139.0",
+		"speaker": "Tutorial 1: Basic Flow",
+		"start": true,
+		"text": "Welcome to the first of a few short tutorials on how to use my dialogue editor!",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "2",
+		"position_offset:x": "440.0",
+		"position_offset:y": "80.0",
+		"speaker": "Properties",
+		"text": "If you're looking at this in the editor, click the \"Properties\" drop-down. This drop down will be closed automatically unless you populate it.",
+		"type": "hub"
+	},
+	{
+		"choices": [
+			"(Choice 0)",
+			"(Choice 1)",
+			"(Choice 2)",
+			"(Choice 3)"
+		],
+		"conversation_id": "3",
+		"position_offset:x": "860.0",
+		"position_offset:y": "60.0",
+		"speaker": "Choices",
+		"text": "Click the up and down arrows next to the \"Choices\" label. To increase/decrease the number of choices. You can also use Tab or Shift+Tab to navigate to the number and click the Up/Down arrows, and even type a number.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "6",
+		"position_offset:x": "1317.09997558594",
+		"position_offset:y": "900.5",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "4",
+		"position_offset:x": "1340.0",
+		"position_offset:y": "100.0",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "5",
+		"position_offset:x": "1420.0",
+		"position_offset:y": "420.0",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "7",
+		"position_offset:x": "2000.0",
+		"position_offset:y": "240.0",
+		"speaker": "Complexity",
+		"text": "This conversation is getting complicated! In the editor, press Ctrl+F to bring up the search bar, then type \"7\" in the box labeled \"Go to id\". To warp to other nodes, type the number in their top left corner.\n\nYou can also use the search bar to search by text content.",
+		"type": "hub"
+	},
+	{
+		"from_choice": "",
+		"from_id": "0",
+		"from_port": 0,
+		"to_id": "2",
+		"type": "connection"
+	},
+	{
+		"from_choice": "",
+		"from_id": "2",
+		"from_port": 0,
+		"to_id": "3",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 0)",
+		"from_id": "3",
+		"from_port": 0,
+		"to_id": "4",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 1)",
+		"from_id": "3",
+		"from_port": 1,
+		"to_id": "5",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 2)",
+		"from_id": "3",
+		"from_port": 2,
+		"to_id": "7",
+		"type": "connection"
+	},
+	{
+		"from_choice": "(Choice 3)",
+		"from_id": "3",
+		"from_port": 3,
+		"to_id": "6",
+		"type": "connection"
+	},
+	{
+		"position:x": "982.619873046875",
+		"position:y": "111.884384155273",
+		"type": "camera",
+		"zoom": "0.8264462351799"
+	}
+]

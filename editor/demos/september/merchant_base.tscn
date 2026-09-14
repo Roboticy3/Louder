@@ -2,16 +2,17 @@
 
 [ext_resource type="Script" uid="uid://dshl0su1su5xe" path="res://proto_simulator/ps_simulator.gd" id="5_h8y86"]
 [ext_resource type="Script" uid="uid://bj7q7bsrcvdrl" path="res://demos/september/logic/basic_spawner.gd" id="6_r21cg"]
+[ext_resource type="Script" uid="uid://dsa2lgi7qeko3" path="res://demos/september/logic/conversation_loader.gd" id="7_1gk02"]
 [ext_resource type="PackedScene" uid="uid://fn48n343cb16" path="res://demos/september/logic/merchant_dialogue_avatar.tscn" id="7_doqhh"]
 [ext_resource type="Script" uid="uid://inieasxjm4nb" path="res://proto_simulator/ps_conversation.gd" id="8_rnka0"]
 [ext_resource type="Script" uid="uid://cpa1hv77k8m77" path="res://demos/september/network/simulator_state_synchronizer.gd" id="9_b1fsl"]
 [ext_resource type="Script" uid="uid://cpdnn1lksikyv" path="res://demos/september/logic/conversation_reload_button.gd" id="10_6ms1d"]
 [ext_resource type="Script" uid="uid://iqiqq8gs5k8f" path="res://demos/september/logic/simulator_warp_listener.gd" id="10_o51n7"]
 [ext_resource type="Script" uid="uid://b27ucw68hr8oi" path="res://demos/september/ui/action_toggle.gd" id="11_kc62v"]
+[ext_resource type="Script" uid="uid://pwpqkvjlfq62" path="res://demos/september/ui/main_menu_button.gd" id="12_1gk02"]
+[ext_resource type="Script" uid="uid://de3ml3fwlh5mf" path="res://demos/september/logic/settings_button.gd" id="12_6ms1d"]
 [ext_resource type="PackedScene" uid="uid://ctpltkbarsbjg" path="res://demos/september/ui/main_dialogue_debug.tscn" id="12_xhyk3"]
 [ext_resource type="Script" uid="uid://bjndh0uubojc6" path="res://demos/september/logic/warp_box.gd" id="13_oq4wc"]
-[ext_resource type="PackedScene" uid="uid://cqhf06i2ux2yp" path="res://demos/september/logic/connected_overlay.tscn" id="14_yg0c0"]
-[ext_resource type="Script" uid="uid://b8jjbbtjemx6g" path="res://proto_simulator/ps_config.gd" id="15_p6d1s"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_nunj6"]
 
@@ -40,7 +41,6 @@ spawnable_packed = ExtResource("7_doqhh")
 
 [node name="PSConversation" type="Node" parent="Louder" unique_id=1560832398]
 script = ExtResource("8_rnka0")
-input_path = "res://demos/conversations/merchant.json"
 metadata/_custom_type_script = "uid://inieasxjm4nb"
 
 [node name="SimulatorStateListener" type="Node" parent="." unique_id=523254008]
@@ -49,7 +49,13 @@ script = ExtResource("9_b1fsl")
 [node name="WarpListener" type="Node" parent="." unique_id=399758190]
 script = ExtResource("10_o51n7")
 
+[node name="ConversationLoader" type="Node" parent="." unique_id=397806342 node_paths=PackedStringArray("ps_conversation")]
+script = ExtResource("7_1gk02")
+conversation_path = "res://demos/conversations/merchant.json"
+ps_conversation = NodePath("../Louder/PSConversation")
+
 [node name="DebugControls" type="CanvasLayer" parent="." unique_id=1404273262]
+visible = false
 script = ExtResource("11_kc62v")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="DebugControls" unique_id=98779171]
@@ -96,13 +102,21 @@ conversation = NodePath("../../../../../../Louder/PSConversation")
 layout_mode = 2
 expand_to_text_length = true
 
-[node name="ConnectedOverlay" parent="." unique_id=58385532 node_paths=PackedStringArray("simulator", "config") instance=ExtResource("14_yg0c0")]
-visible = false
-simulator = NodePath("../Louder/PSSimulator")
-config = NodePath("PSConfig")
+[node name="Buttons" type="CanvasLayer" parent="." unique_id=1698378752]
 
-[node name="PSConfig" type="Node" parent="ConnectedOverlay" unique_id=1457389951]
-script = ExtResource("15_p6d1s")
-metadata/_custom_type_script = "uid://b8jjbbtjemx6g"
+[node name="HBoxContainer" type="HBoxContainer" parent="Buttons" unique_id=794767625]
+offset_right = 170.0
+offset_bottom = 31.0
+size_flags_horizontal = 0
+
+[node name="Button" type="Button" parent="Buttons/HBoxContainer" unique_id=873755047]
+layout_mode = 2
+text = "Main Menu"
+script = ExtResource("12_1gk02")
+
+[node name="Button2" type="Button" parent="Buttons/HBoxContainer" unique_id=1452115446]
+layout_mode = 2
+text = "Settings"
+script = ExtResource("12_6ms1d")
 
 [connection signal="state_variable_changed" from="Louder/PSSimulator" to="SimulatorStateListener" method="_on_state_changed_server"]

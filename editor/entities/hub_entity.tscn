@@ -142,6 +142,7 @@ layout_mode = 2
 size_flags_vertical = 0
 placeholder_text = "Speaker"
 wrap_mode = 0
+scroll_fit_content_width = true
 oneliner = true
 inliner = true
 
@@ -169,6 +170,7 @@ script = ExtResource("4_jhl5y")
 layout_mode = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="OtherSection/VBoxContainer" unique_id=1263849597]
+visible = false
 layout_mode = 2
 
 [node name="DiceCheckLabel" type="Label" parent="OtherSection/VBoxContainer/HBoxContainer" unique_id=882231788]

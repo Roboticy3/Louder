@@ -9,6 +9,8 @@
 [ext_resource type="Script" uid="uid://ph50nnic85au" path="res://demos/september/logic/view_network_layer.gd" id="6_yxm24"]
 [ext_resource type="Texture2D" uid="uid://bskqp3jfl3dp2" path="res://demos/september/sprite/Guard.png" id="8_cwy78"]
 [ext_resource type="Script" uid="uid://bkv8l05n57om4" path="res://demos/september/logic/character_select/character_select_item_data.gd" id="8_e0tjo"]
+[ext_resource type="PackedScene" uid="uid://cqhf06i2ux2yp" path="res://demos/september/logic/connected_overlay.tscn" id="10_xrijs"]
+[ext_resource type="Script" uid="uid://b8jjbbtjemx6g" path="res://proto_simulator/ps_config.gd" id="11_ae3ac"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_xrcy2"]
 load_path = "res://.godot/imported/UI elements-export.png-367d6879a5084192da133597e035e7ae.ctex"
@@ -203,8 +205,18 @@ script = ExtResource("6_yxm24")
 host_ip_label = NodePath("../HBoxContainer2/VBoxContainer/HBoxContainer/Label2")
 host_port_label = NodePath("../HBoxContainer2/VBoxContainer/HBoxContainer2/Label2")
 
-[node name="DebugControls" parent="." index="9" unique_id=1404273262]
+[node name="ConversationLoader" parent="." index="9" unique_id=397806342 node_paths=PackedStringArray("ps_config")]
+config_path = "res://demos/speakers/test.json"
+ps_config = NodePath("../ConnectedOverlay/PSConfig")
+
+[node name="DebugControls" parent="." index="10" unique_id=1404273262]
 visible = false
 
-[node name="ConnectedOverlay" parent="." index="10" unique_id=58385532]
-visible = true
+[node name="ConnectedOverlay" parent="." index="11" unique_id=58385532 node_paths=PackedStringArray("simulator", "config") instance=ExtResource("10_xrijs")]
+visible = false
+simulator = NodePath("../Louder/PSSimulator")
+config = NodePath("PSConfig")
+
+[node name="PSConfig" type="Node" parent="ConnectedOverlay" index="1" unique_id=1568526834]
+script = ExtResource("11_ae3ac")
+metadata/_custom_type_script = "uid://b8jjbbtjemx6g"

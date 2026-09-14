@@ -7,12 +7,15 @@ var username := ""
 var ip_address := "localhost"
 var port := 45678
 var use_upnp := false
+var custom_conversation := ""
+var custom_config := ""
 
 @export var progress_message_listener_group := &"progress_message_listener"
 @export var progress_status_listener_group := &"progress_status_listener"
 @export var start_listener_group := &"start_listener"
 
 @export var level:PackedScene
+@export var alternate_level:PackedScene
 
 func _ready():
 	
@@ -48,6 +51,20 @@ func set_username(to:String):
 	username = to
 	if mode == NetworkLayer.ClientMode.NONE:
 		mode = NetworkLayer.ClientMode.CLIENT
+	validate()
+
+func set_custom_conversation(to:String):
+	if FileAccess.file_exists(to):
+		custom_conversation = to
+	else:
+		custom_conversation = ""
+	validate()
+	
+func set_custom_config(to:String):
+	if FileAccess.file_exists(to):
+		custom_config = to
+	else:
+		custom_config = ""
 	validate()
 
 func validate():
@@ -89,12 +106,28 @@ func get_progress_text() -> String:
 	if !username.is_empty():
 		part3 = " (%s)" % [username]
 	
-	var full := part1 + part2 + part3 + "..."
+	var part4 := ""
+	if !custom_conversation.is_empty():
+		part4 = " with custom conversation %s" % [custom_conversation]
+	
+	var part5 := ""
+	if !custom_conversation.is_empty() and !custom_config.is_empty():
+		part5 = " and custom config %s" % [custom_config]
+	
+	var full := part1 + part2 + part3 + part4 + part5 + "..."
 	return full
 
 func start():
 	if get_progress_disabled():
 		push_error("MainMenuStarter::start tried to start game after get_progress_disabled() returned true")
 	
+	CustomConversationLayer.conversation_path = custom_conversation
+	CustomConversationLayer.config_path = custom_config
 	NetworkLayer.start(mode, ip_address, port, use_upnp)
-	get_tree().change_scene_to_packed.call_deferred(level)
+	
+	if !custom_conversation.is_empty():
+		#alternate scene
+		get_tree().change_scene_to_packed.call_deferred(alternate_level)
+	else:
+		get_tree().change_scene_to_packed.call_deferred(level)
+	

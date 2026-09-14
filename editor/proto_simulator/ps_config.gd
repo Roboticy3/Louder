@@ -4,6 +4,7 @@ const OBJECT_TYPE := "type"
 const OBJECT_SPEAKER := "speaker"
 
 const SPK_NAME := "speaker"
+const SPK_DESC := "description"
 const SPK_PBLC := "public"
 const SPK_OWND := "ownable"
 const SPK_RLTN := "relationships"
