@@ -10,18 +10,19 @@ character portraits, etc. This deficiency is the purpose of the [examples](/exam
 secion.
 
 # Dialogue Rules
-Conversations are made up of hubs connected by choices. Hubs have a position, tags, speakers,
-text content, choices, expressions, callbacks, flags, channels, priority, and user-defined properties.
+Conversations are made up of hubs connected by choices. 
 
-Conversations are accessed via Conversation Actors, entities which can speak as
-and listen to different speakers (see below).
+Conversations are interfaced with via Conversation Actors, entities which can speak as
+and listen to different speakers.
 
 As actors make dialogue choices, hubs "appear" to them.
 
 # Hubs
+Hubs have a position, tags, speakers,
+text content, choices, expressions, callbacks, flags, recipients, channels, priority, and user-defined properties.
 
 ## Position
-A number uniquely identifying each hub.
+A number uniquely identifying each hub in a conversation.
 
 ## Tags
 Tags are lists of short strings attached to each hub that can be used to query the conversation as a whole.
@@ -31,17 +32,15 @@ Good for finding the "start" node, or filtering for start candidates and picking
 ## Speakers
 Speakers are single names on each hub. If present, they determine who the hub is visible to.
 
-Speakers are themselves defined by their own name, description, flags, "listening" and additional data:
-
+Speakers are themselves defined by their own name, flags, "listening" and additional data:
  - Name: The name used to reference this speaker in hubs and by actors.
- - Description: Arbitrary text description.
  - Flags: Speakers can be flagged "public". If a speaker is not defined,
  they are assumed to be public. 
    - Public speakers. Hubs with public speakers appear to all conversation actors. Non-public speakers 
    only appear to actors who are explicitly "listening" to them. See section on "Listening"
  - Listening: Speakers can reference other speakers as "listening." If an actor is speaking
  as a speaker, they implicitly listen to these speakers as well.
- - Additional data (see Homogeneous Objects)
+ - see Homogeneous Objects.
 
 When this guide says that a hub "appears" to a speaker, it's referring to
 appearing to an actor that is either speaking as or listening to this speakers.
@@ -77,8 +76,8 @@ traveled to before. The data of which hubs have been "covered" is stored in the
 story state along with variables.
 
 ## Callbacks
-Space-separated commands that are exposed to the program using the engine and
 can be caught as events when this hub is traveled to.
+Space-separated commands that are exposed to the program using the engine and
 
 Callbacks are assumed to be mutable and only run once unless flagged as "repeating."
 
@@ -87,8 +86,14 @@ Checkboxes that hubs can have checked:
  - Auto. Auto hubs automatically select the first choice available from the
  perspective of the actor that entered them. Auto nodes never appear. If no
  choices are available, this is considered an error.
- - Private. Forces the hub to only appear to a given "recipient" speaker.
- Private.
+ - Ask. Ask hubs send callbacks to the user when checking if they should appear,
+ rather than when an actor travels into them. These hubs then _wait_ until the
+ user sends an answer back to them about the hub before coming to a conclusion
+ on whether they should appear or not.
+
+## Recipients
+List of names, like tags. If not empty, the hub may only appear to actors
+speaking as or listening to speakers in this list.
 
 ## Channels and Priority
 Channels and priority allow for multiple dialogue flows to be balanced at once.
@@ -108,42 +113,28 @@ are in the same channel, but different parts of the conversation.
 
 By default, the priority of every hub is 0. "The priority of the hub at an actor's position" below is shortened to "the priority of the actor."
 
-When an actor makes a choice, and there are other actors in their channel, the one they were in before the choice, whose
-priority is less than or equal to their priority, their priority after the choice, those actors will warp to them (see Warping). This gives channel hubs immense control over which actors they bring along.
+When an actor, the "leader", makes a choice, and there are other actors who 1. are in the same channel as the leader before or after their choice, 2. are actors who the hub at the new position of the leader may appear to, and 3. have a priority less than or equal to the leader's after their choice, these actors "warp" to the leader.
 
-When an actor joins a channel, if another actor is also in the channel, and the
-joining actor, after joining, has a priority less than or equal to the other's, the joining actor will warp to the other actor.
+When an actor makes a choice, and there are other actors in the same channel to whom the new hub may appear, but won't follow the leading actor because of priority rules, the hub will appear to these actors in the "background" (see Events and Interface), without choices. Again, thinking of a messaging service, this is like separating an actor's "thread" from the rest of the channel- still visible to them.
 
-When an actor does not warp to a choice made in their channel, the hub resulting
-from the choice still appears to them if it would appear to them normally, however,
-their choices will not be updated.
-
-Finally, priority can also be an expression, like a condition, derived from the
-story state which evaluates to an integer.
-
-Generally, it's going to be smart conversation design to have high priority
-choices also be high visibility- using public speakers for them and not using the
-private flag, which would necessarily prevent actors from following.
+Finally, when a choice is made, the resulting hub appears to all spectator actors regardless of their channel, and do not appear in the background. Spectators are treated as not having a channel or priority.
 
 ## Warping
 When one actor, the "source," warps to another, the "target," they will change their position to match theirs,
 and change all information they have that depends on the hub at their position
 to match the hub under the target.
 
-If the warping is happening due to the target making a choice, and the source
-is at the same position the target was at before making the choice, warping instead
-has the behavior of emulating the action of making that choice for the source,
-whether the choice appeared to them or not. This can be combined with Auto hubs
-to split the flow into two channels, or two private hubs.
+If the warping is happening due to the target making a choice, the source is warped instead to the result of the source actor making the same choice on the same position that the target just did. This is the main mechanism by which splitting happens between actors, since the replayed choice can end up going down different paths through Auto logic.
 
 ## Changing position
 Simply changing the position of an actor is relatively simple. If the actor lands
 in a hub flagged as Auto, the logic of Auto nodes will proceed as normal and the 
-actor will land somewhere else.
+actor will land somewhere else. If the hub at the new position may not appear to
+the actor, this is treated as an error.
 
 # Actors
 Actors have a list of speakers they "speak as", "listen to", flags, current
-position, current channel, and additional data.
+position, current channel and priority, and additional data.
 
 ## Speak as and Listening
 See Speakers. Choices may appear to actors when the actor is positioned at the hub the choice originates from, and the hubs the choices link to have speakers that the actor "speaks as."
@@ -188,13 +179,14 @@ caused the event to be emitted.
 
 # Events and Interface
 Events are emitted when:
- - A hub is revealed to an actor. Provides identification for the actor, associated motion
+ - A hub is revealed to an actor. Provides identification for the actor, whether the hub is in the "background" or not, associated motion
  - A choice is revealed to an actor. Provides identification for the actor, choice text, choice index, linked position, associated motion
  - A callback should be executed. Provides the callback to execute, associated motion
  - The story state changed. Provides the source statement (if available), changed variable, new value and associated motion.
  - A condition evaluates. Provides the condition evaluated, resulting value, and associated motion.
  - A warp happens. Provides whether it was an "emulation" warp or not, the channel, the source actor, the resulting position, and associated motion.
  - An actor's channel changes. Provides the actor, channel and associated motion.
+ - An actor's priority changes. Provides the actor, channel and associated motion.
  - An actor's additonal data changes. Provides the actor, additional data and associated motion.
  - An actor is added. Provides the actor, speak as and listen to speakers.
  - An actor is removed. Provides the actor.
@@ -207,6 +199,8 @@ Constant accessors. Channels are optional and default to "main".
  - From a channel, get current actors in channel
  - From a channel and position, get current actors in channel at that position
  - From a hub position and conversation, get any hub property, including homogeneous properties
+ - From an actor and conversation, get any actor property including additional properties
+ - From a speaker, get any speaker property including additional properties
  - From a conversation, get any Variant from the story state
  - From tags, get hub positions
  - From flags, get hub positions
@@ -248,6 +242,7 @@ cannot be invalid, and default to 0 if they haven't been initialized.
 
 User loads a conversation with hubs 0, 1, 2, 3, 4. 
 
+```
 Speakers:
 2: "Speaker A"
 3: "Speaker B"
@@ -268,13 +263,16 @@ Tags:
 
 Callbacks:
 4: "exit"
+```
 
 User loads a config with speakers "Speaker A" and "Speaker B". (under the hood,
 these may still be identified with integers like everything else, I'm not sure yet)
 
+```
 Names:
 "Speaker A": "Speaker A"
 "Speaker B": "Speaker B"
+```
 
 Actors 0 and 1 are then added automatically:
 0: Speaking as "Speaker A"
@@ -335,3 +333,125 @@ Therefore:
  - Two hub appearance events happen for actors 1 and 2, updating the other client and terminal.
 
 No choice event is fired because there are no choices from actor 1's new position.
+
+In summary: Actor 0 is in position 2 with one choice in a newly created channel. Actor 1 is in position 3 with zero choices.
+
+The network requests actor 0 to make their choice. The user passes this request
+to the engine. Actor 0 moves to hub 4.
+ - Two hub appearance events for actors 0 and 2. Even though hub 4 may appear to actor 1, 1 is in a different channel.
+ - One callback event is sent with the callback "exit". The user interprets this as the end of execution.
+
+Here are three equivalent conversations achieved with priority and private flags instead of channels:
+
+## With Priority
+By replacing the channel on node 2 with a priority on node 4, node 4 is no longer high enough priority to drag actor 0 along with actor 1's choice.
+```
+Hubs 0, 1, 2, 3, 4. 
+
+Speakers:
+2: "Speaker A"
+3: "Speaker B"
+
+Choices:
+0: "Choice index 0" -> 1
+1: "(invisible choice 1)" -> 2, "(invisible choice 2)" -> 3
+2: "Finish Conversation" -> 4
+
+Flags:
+1: Auto
+
+Priority:
+4: -1
+
+Tags:
+0: "Start"
+
+Callbacks:
+4: "exit"
+```
+
+Or, equivalently, give the lower branch of the auto node higher priority. Since that node cannot appear to actor 0, it can't follow.
+```
+Hubs 0, 1, 2, 3, 4. 
+
+Speakers:
+2: "Speaker A"
+3: "Speaker B"
+
+Choices:
+0: "Choice index 0" -> 1
+1: "(invisible choice 1)" -> 2, "(invisible choice 2)" -> 3
+2: "Finish Conversation" -> 4
+
+Flags:
+1: Auto
+
+Priority:
+3: 1
+
+Tags:
+0: "Start"
+
+Callbacks:
+4: "exit"
+```
+
+## With Privacy
+```
+Hubs 0, 1, 2, 3, 4. 
+
+Speakers:
+2: "Speaker A"
+3: "Speaker B"
+
+Choices:
+0: "Choice index 0" -> 1
+1: "(invisible choice 1)" -> 2, "(invisible choice 2)" -> 3
+2: "Finish Conversation" -> 4
+
+Flags:
+1: Auto
+
+Recipients:
+4: "Speaker A"
+
+Tags:
+0: "Start"
+
+Callbacks:
+4: "exit"
+```
+
+## Experiment
+What happens if we move the "Channel A" property in the original conversation from node 2 to 4?
+```
+Speakers:
+2: "Speaker A"
+3: "Speaker B"
+
+Choices:
+0: "Choice index 0" -> 1
+1: "(invisible choice 1)" -> 2, "(invisible choice 2)" -> 3
+2: "Finish Conversation" -> 4
+
+Flags:
+1: Auto
+
+Channels:
+#2: "Channel A" get rid of this
+4: "Channel A"
+
+Tags:
+0: "Start"
+
+Callbacks:
+4: "exit"
+```
+
+Node 4 doesn't have a speaker. A speaker that is not defined is public by
+default, so it may appear to both actors 0 and 1. When actor 0 moves there,
+it's moving from node 2, channel "main", into node 4, priority 0. Actor 1 will also be in channel "main" with priority 0. This matches the conditions for a warp. 
+
+Since actor 0 is making a choice, this warp acts as if actor 1 were at node 2, making the same choice as actor 0. Since there is no auto logic, actor 1 goes the same way as actor 0, and both end up in node 4.
+
+This still results in a single callback event, since callbacks only execute once on each hub before they are marked as "covered."
