@@ -17,7 +17,7 @@ When this api refers to a "name", it's referring to an integer in this system.
 Conversations are id'd by names containing the file they were loaded from.
 
 # Events
-int poll_event(int index)
+int is_event(int index)
  - Get an event by index. Returns 0 id the index is invalid.
 EventFlags get_event_flags(int index)
  - Get an event type flags by index. Returns 0 for "no flags" if invalid. Events with 0 flags are invalid and shouldn't appear.
@@ -38,6 +38,9 @@ EventFlags get_event_flags(int index)
  - SPEAKER_ADDED
  - SPEAKER_REMOVED
  - DUPLICATE_ID_LOADED
+Name get_event_name(int index, EventName key)
+ - CONVERSATION: Get a conversation by event index.is associated with this event.
+ - CHANNEL: Get the channel name of this event if the event indicates a channel change.
 int get_event_int(int index, EventInt key)
  - Returns -1 if not available or invalid index.
  - ACTOR: Get an actor associated with this event's motion or just the actor.
@@ -46,8 +49,6 @@ int get_event_int(int index, EventInt key)
  - TARGET_POSITION: Get the target position associated with this event's motion.
  - CHOICE_INDEX: Get the choice index of this event.
  - CHOICE_LINKED_POSITION: Get the position linked to by the choice of thie event.
- - CONVERSATION: Get a conversation by event index.is associated with this event.
- - CHANNEL: Get the channel name of this event if the event indicates a channel change.
 int read_event_string(int index, EventString key, char* buffer, int max_size)
  - Reads 0 bytes if index is invalid or if no `key` object is associated with this event.
  - TEXT: Get the text of this event if it's a hub appearance event.
@@ -79,7 +80,20 @@ for (int i = 0; poll_conversation_event(i); i++) {
 flush_conversation_events();
 ```
 
-Generally, api layers should split these events into individual events for the different types of events described in the [requirements](../index.md).
+Generally, language wrappers should split these events into individual events for the different types of events described in the [requirements](../index.md).
+
+int is_ask(int index)
+Name get_ask_name(int index, AskName key)
+ - CONVERSATION: Get a conversation by event index.is associated with this event.
+ - CHANNEL: Get the channel name of this event if the event indicates a channel change.
+int get_event_int(int index, AskInt key)
+ - Returns -1 if not available or invalid index.
+ - ACTOR: Get an actor associated with this event's motion or just the actor.
+ - SOURCE_POSITION: Get the source position associated with this event's motion.
+ - SOURCE_CHOICE_SELECTED: Get the index of the choice selected on the source position by the actor of this event's motion.
+ - CALLBACK_POSITION: Get the position the callback originates from
+int read_ask_callback(int index, char* buffer, int max_length)
+int answer_ask(int index, int verdict)
 
 # Accessors
 "read" methods are either in buffer form (int read_...(... type* buffer, int max_count) = # of items written to buffer), or iterator form (type read_...(... type start = -1) = next iterator item or -1 if no items left, where type is an int, Name, or similar). Iterator form readers will have the default argument start=-1 filled in, while buffer methods will not and will take a pointer and size. 
@@ -148,31 +162,33 @@ int read_snapshot_json(Name conversation, char* buffer, int max_size)
 
 # Modifiers
 int init_louder()
- - Initialize the event queue
+ - Initialize the event queue and ask cache.
 int deinit_louder()
  - Remove all conversations, speaker objects, and the event queue.
 LoadError load_conversation_json(Name conversation, char* buffer, int size)
  - Standard JSON syntax errors are returned
  - JSON is expected in array form, returning an error otherwise.
+ - Standard properties are left default or read from matching JSON fields.
+ - Additional JSON fields are treated as additional data on hubs.
  - Error returns if the provided name is already occupied by another conversation.
  - Errors relating to individual objects, such as DUPLICATE_ID_LOADED in the conversation are emitted as events with the invalid hub's position as get_event_int(index, SOURCE_POSITION)
-LoadError load_conversation_config(char* buffer, int size)
 int remove_conversation(Name conversation)
  - Remove a conversation if available and remove all associated actors and objects.
  - Returns error if conversation name was not loaded.
-int add_actor(Name* speak_as, int speak_as_count, Name* listen_to, int listen_to_count)
-
-Modifiers
- - Load a conversation from a file created from the editor
- - Unload a conversation
- - Load actors and speakers from a speaker config created from the editor and add them to a conversation
- - Add an actor with speak as, listen to config to a conversation
- - Add a spectator to a conversation
- - Add a debug actor to a conversation
- - Remove an debug, spectator, or regular actor.
- - Select a choice from an actor, choice index and conversation
- - Force a warp from an actor, target, optional target choice index, and conversation
- - Force a change of position from an actor, position, and conversation.
- - Force a change of position from a channel, position, and conversation.
- - Force a channel change with an actor, channel, and conversation
- - Change the story state with a variable, variant and conversation
+LoadError load_conversation_config(char* buffer, int size)
+ - JSON array form like conversation. 
+ - Same error scheme and data format, but with speakers as the target objects instead of hubs. Config is also a singleton as opposed to a named instance.
+ - Objects are speakers and their configurations.
+int clear_config()
+ - Remove all speakers in this config
+int add_actor(Name conversation, int start_position, ActorFlags flags, Name* speak_as, int speak_as_count, Name* listen_to, int listen_to_count)
+ - returns int id-ing this actor.
+int remove_actor(Name conversation, int actor)
+int select_choice(Name conversation, int actor, int choice_index)
+int force_warp(Name conversation, int actor, int target_position, Name fake_channel=-1, int fake_priority=0)
+ - fake_priority unused if 0, otherwise overrides priority of the destination
+ - fake_channel unused if -1, otherwise overrides channel of the destination
+int force_position(Name conversation, int actor, int target_position, Name fake_channel=-1, int fake_priority=0)
+int set_story_state_int(Name conversation, Name key, int value)
+int set_story_state_float(Name conversation, Name key, float value)
+int set_story_state_string(Name conversation, Name key, char* buffer, int buf_size)

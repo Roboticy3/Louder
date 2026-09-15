@@ -86,6 +86,10 @@ Checkboxes that hubs can have checked:
  - Auto. Auto hubs automatically select the first choice available from the
  perspective of the actor that entered them. Auto nodes never appear. If no
  choices are available, this is considered an error.
+ - Ask. Ask hubs send callbacks to the user when checking if they should appear,
+ rather than when an actor travels into them. These hubs then _wait_ until the
+ user sends an answer back to them about the hub before coming to a conclusion
+ on whether they should appear or not.
 
 ## Recipients
 List of names, like tags. If not empty, the hub may only appear to actors
