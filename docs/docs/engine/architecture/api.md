@@ -3,13 +3,13 @@
 The set of functions revealed to the user.
 
 # Names
-int get_named_id(char* name, int name_length)
+Name get_named_id(char* name, int name_length)
 Get the id of a string. If it didn't exist before, this function returns -1.
 
-int declare_name(char* name, int name_length)
+Name declare_name(char* name, int name_length)
 Assign the id of a string.
 
-int read_name(int id, char* name, int max_length)
+int read_name(Name name, char* name, int max_length)
 From an id, read a name. If no name is associated, write 0 bytes.
 
 When this api refers to a "name", it's referring to an integer in this system.
@@ -19,39 +19,55 @@ Conversations are id'd by names containing the file they were loaded from.
 # Events
 int poll_event(int index)
  - Get an event by index. Returns 0 id the index is invalid.
-EventType get_event_type(int index)
- - Get an event type by index. Returns 0 for "NONE" if index is invalid.
+EventFlags get_event_flags(int index)
+ - Get an event type flags by index. Returns 0 for "no flags" if invalid. Events with 0 flags are invalid and shouldn't appear.
+ - HUB_APPEARANCE
+ - BACKGROUND_HUB_APPEARANCE
+ - CHOICE_APPEARANCE
+ - CALLBACK
+ - STATEMENT
+ - CONDITION
+ - CHANNEL
+ - WARP
+ - FORCE_POSITION: not mentioned in reqs, but a consequence of the ability to force a position update
+ - ACTOR_ADDITONAL_DATA_CHANGE
+ - ACTOR_ADDED
+ - ACTOR_REMOVED
+ - CONVERSATION_ADDED
+ - CONVERSATION_REMOVED
+ - SPEAKER_ADDED
+ - SPEAKER_REMOVED
+ - DUPLICATE_ID_LOADED
 int get_event_int(int index, EventInt key)
- - CONVERSATION: Get a conversation by event index. Returns -1 for "no conversation" if index is invalid or no conversation is associated with this event.
- - ACTOR: Get an actor associated with this event's motion or just the actor. Returns -1 if index is invalid or no actor is associated with this event.
- - SOURCE_POSITION: Get the source position associated with this event's motion. Returns -1 if index is invalid or no motion is associated.
- - SOURCE_CHOICE_SELECTED: Get the index of the choice selected on the source position by the actor of this event's motion. Returns -1 if index is invalid, no motion is associated, or the motion associated is a warp with no emulation.
- - TARGET_POSITION: Get the target position associated with this event's motion. Returns -1 if the index is invalid or no motion is associated.
- - IS_BACKGROUND: Get whether an event is in the background. Defaults to 0 or "false" if index is invalid.
- - CHOICE_INDEX: Get the choice index of this event. Returns -1 if index is invalid of if no choice is associated with this event.
- - CHOICE_LINKED_POSITION: Get the position linked to by the choice of thie event. Returns -1 if index is invalid of if no choice is associated with this event.
- - IS_WARP: Returns 1 if this event is a warp. 0 if otherwise or invalid index.
- - IS_FORCE: Returns 1 if event has a motion resulting from a force position update. 0 if otherwise or invalid index.
- - CHANNEL: Get the channel name of this event if the event indicates a channel change. -1 otherwise or if invalid index.
- - PRIORITY: Get the priority of this event if the event indicates a hub appearance. -1 otherwise of if invalid index.
- - CONDITION_RESULT: Get the result of a condition
+ - Returns -1 if not available or invalid index.
+ - ACTOR: Get an actor associated with this event's motion or just the actor.
+ - SOURCE_POSITION: Get the source position associated with this event's motion.
+ - SOURCE_CHOICE_SELECTED: Get the index of the choice selected on the source position by the actor of this event's motion.
+ - TARGET_POSITION: Get the target position associated with this event's motion.
+ - CHOICE_INDEX: Get the choice index of this event.
+ - CHOICE_LINKED_POSITION: Get the position linked to by the choice of thie event.
+ - CONVERSATION: Get a conversation by event index.is associated with this event.
+ - CHANNEL: Get the channel name of this event if the event indicates a channel change.
 int read_event_string(int index, EventString key, char* buffer, int max_size)
-Writes 0 bytes if index is invalid or if no `key` object is associated with this event.
+ - Reads 0 bytes if index is invalid or if no `key` object is associated with this event.
  - TEXT: Get the text of this event if it's a hub appearance event.
  - CHOICE_TEXT: Get the text of the choice of this event if it's a choice appearance event.
  - CALLBACK: Get the callback of this event if it's a hub appearance event and the event indicates a callback.
  - STATMENT: Get the statement of this event if it's a hub appearance event and the event indicates a state change.
  - CONDITION: Get the condition of this event if it's a hub appearance event and the event indicates a condition evaluation.
- - ACTOR_ADDED: Whether or not this event is an actor being added or not.
- - ACTOR_REMOVED: Whether or not this event is an actor being removed or not.
-VariantType get_event_additional_variant_type(int index, int key)
- - Returns NONE, INTEGER, FLOAT, or STRING depending on the type of data at the name `key` in the additional data of this event. Returns NONE if key or index are invalid.
-int get_event_additional_int(int index, int key)
- - Get integer from additional data in this event. NONE, STRING map to 0 and FLOAT is truncated.
-float get_event_additional_float(int index, int key)
- - Get float from additional data in this event. NONE, STRING map to 0.0 and INT is extended to decimal.
-int read_event_additional_string(int index, int key, char* buffer, int max_size)
- - Get string from additional data in this event. NONE maps to "". INT and FLOAT map to their printed variants.
+int get_event_priority(int index)
+ - Get the priority of this event if the event indicates a hub appearance. 0 otherwise or if invalid index.
+
+VariantType get_event_condition_variant_type(int index)
+int get_event_condition_int(int index)
+float get_event_condition_float(int index)
+int read_event_condition_string(int index, char* buffer, int max_size)
+
+VariantType get_event_additional_variant_type(int index, Name key)
+int get_event_additional_int(int index, Name key)
+float get_event_additional_float(int index, Name key)
+int read_event_additional_string(int index, Name key, char* buffer, int max_size)
+
 int flush_events()
  - Flush all events from the queue and return the number of events flushed.
 
@@ -66,47 +82,85 @@ flush_conversation_events();
 Generally, api layers should split these events into individual events for the different types of events described in the [requirements](../index.md).
 
 # Accessors
-int get_actor_channel(int conversation, int actor)
- - Get the channel of an actor.
-int get_actor_position(int conversation, int actor)
- - Get the position of an actor.
-int read_actors_in_channel(int conversation, int channel, int* actors, int max_actors)
- - Find actors currently in the given conversation and channel.
- - Returns number of actors read into buffer.
-int read_actors_in_channel_and_position(int conversation, int channel, int position, int* actors, int max_actors)
- - Find actors currently in the given conversation and channel and position.
- - Returns number of actors read into buffer.
-int get_tags
+"read" methods are either in buffer form (int read_...(... type* buffer, int max_count) = # of items written to buffer), or iterator form (type read_...(... type start = -1) = next iterator item or -1 if no items left, where type is an int, Name, or similar). Iterator form readers will have the default argument start=-1 filled in, while buffer methods will not and will take a pointer and size. 
 
-position, tags, speakers,
-text content, choices, expressions, callbacks, flags, recipients, channels, priority, and user-defined properties.
+int is_speaker_public(Name speaker)
+Name read_speaker_listening(Name speaker, Name start=-1)
+VariantType get_speaker_additional_type(Name conversation, Name speaker, Name key)
+int get_speaker_additional_int(Name conversation, Name speaker, Name key)
+float get_speaker_additional_float(Name conversation, Name speaker, Name key)
+int read_speaker_additional_string(Name conversation, Name speaker, Name key, char *buffer, int max_size)
 
-Finally, the engine exposes an interface to see the following:
+Name get_actor_channel(Name conversation, int actor)
+int get_actor_position(Name conversation, int actor)
+Name read_actor_speak_as(Name conversation, int actor, Name start=-1)
+Name read_actor_listening_base(Name conversation, int actor, Name start=-1)
+Name read_actor_listening(Name conversation, int actor, Name start=-1)
+ - listen_to + speak as listening speakers
+ActorFlags get_actor_flags(Name conversation, int actor)
+int get_actor_priority(Name conversation, int actor)
+VariantType get_actor_additional_type(Name conversation, int actor, Name key)
+int get_actor_additional_int(Name conversation, int actor, Name key)
+float get_actor_additional_float(Name conversation, int actor, Name key)
+int read_actor_additional_string(Name conversation, int actor, Name key, char *buffer, int max_size)
 
-Constant accessors. Channels are optional and default to "main".
- - From an actor and conversation, get the current channel and position
- - From a actor and conversation, get choices currently appearing to this actor
- - From a channel, get current actors in channel
- - From a channel and position, get current actors in channel at that position
- - From a hub position and conversation, get any hub property, including homogeneous properties
- - From an actor and conversation, get any actor property including additional properties
- - From a speaker, get any speaker property including additional properties
- - From a conversation, get any Variant from the story state
- - From tags, get hub positions
- - From flags, get hub positions
- - From channels, get hub positions
- - From priority constraints, get hub positions
- - From a speaker, get actors speaking as that speaker
- - From a speaker, get actors listening to that speaker
- - Get spectators
- - Get debug actors
+int read_actors_in_channel(Name conversation, Name channel, int start=-1)
+int read_actors_in_channel_and_position(Name conversation, Name channel, int position, int start=-1)
+int read_actors_speaking_as(Name conversation, Name speaker, int start=-1)
+int read_actors_listening(Name conversation, Name speaker, int start=-1)
+ - Includes listen_to and listening actors derived from listening speakers in speak_as.
+int read_actors_from_flags(Name conversation, ActorFlags include, int exact, int start=-1)
 
-Getters that return multiple of something should generally be in the form of
-an iterator, taking a blank object as the starting argument and returning a
-blank object when all objects have been iterated through. Since objects in the
-conversation, actors, and so on are generally registered via integers, there is
-always a canonical ordering with which to iterate through these sets without
-having to expose complex collections to the user.
+Name read_hub_tags(Name conversation, int position, Name start=-1)
+Name get_hub_speaker(Name conversation, int position)
+int read_hub_text(Name conversation, int position, char* text, int max_length)
+int get_hub_choice_count(Name conversation, int position, int actor_perspective)
+int read_hub_choice_text(Name conversation, int position, int actor_perspective, int choice_index, char* text, int max_length)
+int get_hub_choice_link(Name conversation, int position, int actor_perspective, int choice_index)
+int read_hub_expressions(Name conversation, int position, char* expressions, int max_length)
+int read_hub_callbacks(Name conversation, int position, char* callbacks, int max_length)
+HubFlags get_hub_flags(Name conversation, int position)
+Name read_hub_recipients(Name conversation, int position, Name start=-1)
+Name get_hub_channel(Name conversation, int position)
+int get_hub_priority(Name conversation, int position)
+VariantType get_hub_additional_type(Name conversation, int position, Name key)
+int get_hub_additional_int(Name conversation, int position, Name key)
+float get_hub_additional_float(Name conversation, int position, Name key)
+int read_hub_additional_string(Name conversation, int position, Name key, char *buffer, int max_size)
+
+int read_hubs_by_channel(Name conversation, Name channel, int start=-1)
+int read_hubs_spoken_by(Name conversation, Name speaker, int start=-1)
+int read_hubs_heard_by(Name conversation, Name speaker, int start=-1)
+ - Uses speakers' listening speakers to search for hubs that may appear to actors speaking as this speaker.
+int read_hubs_by_priority(Name conversation, int priority_min, int priority_max, int start=-1)
+int read_hubs_from_tags(Name conversation, Name* include, int include_count, int exact, int start=-1)
+int read_hubs_from_flags(Name conversation, HubFlags include, int exact, int start=-1)
+
+VariantType get_story_state_type(Name conversation, Name state)
+int get_story_state_int(Name conversation, Name state)
+float get_story_state_float(Name conversation, Name state)
+int read_story_state_string(Name conversation, Name state, char *buffer, int max_size)
+
+int read_state_json(Name conversation, char* buffer, int max_size)
+ - Serialize the story state in JSON.
+int read_snapshot_json(Name conversation, char* buffer, int max_size)
+ - Serialize the story state, as well as the positions and details of all actors in JSON.
+
+# Modifiers
+int init_louder()
+ - Initialize the event queue
+int deinit_louder()
+ - Remove all conversations, speaker objects, and the event queue.
+LoadError load_conversation_json(Name conversation, char* buffer, int size)
+ - Standard JSON syntax errors are returned
+ - JSON is expected in array form, returning an error otherwise.
+ - Error returns if the provided name is already occupied by another conversation.
+ - Errors relating to individual objects, such as DUPLICATE_ID_LOADED in the conversation are emitted as events with the invalid hub's position as get_event_int(index, SOURCE_POSITION)
+LoadError load_conversation_config(char* buffer, int size)
+int remove_conversation(Name conversation)
+ - Remove a conversation if available and remove all associated actors and objects.
+ - Returns error if conversation name was not loaded.
+int add_actor(Name* speak_as, int speak_as_count, Name* listen_to, int listen_to_count)
 
 Modifiers
  - Load a conversation from a file created from the editor

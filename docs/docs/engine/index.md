@@ -32,9 +32,8 @@ Good for finding the "start" node, or filtering for start candidates and picking
 ## Speakers
 Speakers are single names on each hub. If present, they determine who the hub is visible to.
 
-Speakers are themselves defined by their own name, description, flags, "listening" and additional data:
+Speakers are themselves defined by their own name, flags, "listening" and additional data:
  - Name: The name used to reference this speaker in hubs and by actors.
- - Description: Arbitrary text description.
  - Flags: Speakers can be flagged "public". If a speaker is not defined,
  they are assumed to be public. 
    - Public speakers. Hubs with public speakers appear to all conversation actors. Non-public speakers 
