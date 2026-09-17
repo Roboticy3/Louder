@@ -1,0 +1,11 @@
+[package]
+name = "louder_rust"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "louder_rust"
+path = "src/lib.rs"
+crate-type = ["cdylib"]
+
+[dependencies]
