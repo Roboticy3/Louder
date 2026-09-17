@@ -9,6 +9,21 @@ This is very much a back-end tool, and does not help with rendering text, sound,
 character portraits, etc. This deficiency is the purpose of the [examples](/examples/)
 secion.
 
+# Goals of Dialogue Rules
+The rules below essentially split dialogue into 3 non-mutually exclusive scenarios which may happen all at once in parallel.
+
+The goal is to make a dialogue system that is friendly to multiple players.
+
+The 3 scenarios are the following:
+ - Synchronous dialogue. 1 or more actors moves through a dialogue tree synchronously in a single channel. Story priority and appearance rules drive who is "leading" the conversation at any given time and lower-priority sections are intended to be displayed on the side of the "main" flow, where the leading actor is making decisions. The leading actor can change freely.
+ - Spoke dialogue/spoke rule. Subset of synchronous dialogue where the leading actor cannot change for the portion of time where no meaningful choices can be made. This makes it so the leading actor decides when dialogue proceeds, but still can't make any meaningful choices on behalf of other actors who may be in the scene.
+ - Asynchronous dialogue. 2 or more actors split into multiple channels to explore different parts of a conversation independenlty.
+
+The consequence of these scenarios is that dialogue is:
+ - Visible. Synchronous dialogue is mostly centered on the rules which make dialogue appear/not appear to different actors.
+ - Extensible. Choices can be added to break the spoke rule. Actors can then be assigned to speakers not previously intended to be possessed by players to "bring them to life." Choices can also be removed and the spoke rule would "fix" the flow of a complex section, turning it into a simple one.
+ - Concurrent. Like in real conversations, channels allow for actors to "break out" into separate flows which can be explored independently. This allows more actors to be in control at the same time. Priority rules allow these flows to cleanly merge with each other, too, without interrupting any one channel's flow unless absolutely necessary.
+
 # Dialogue Rules
 Conversations are made up of hubs connected by choices. 
 
@@ -57,8 +72,14 @@ Actors traverse through dialogue by "making choices" or "selecting choices",
 which changes their position and all relevant information to match the linked
 hub under an available choice.
 
-Choices should only appear to an actor if their linked hub would appear. So,
-if a hub were private to another actor, for example, the choice would not appear.
+Choices should only appear to an actor if their linked hub would appear, and the
+speaker of the linked hub matches one of the four cases:
+1. The speaker is in the actor's "speak as" list
+2. The speaker is in the actor's "listen to" list and no other actor has that speaker in it's "speak as" list.
+3. The speaker is public and no other actor has that speaker in it's "speak as" list.
+4. (toggleable via config) The speaker is in the actor's "speak as" list, "listen to" list, or is public, and that choice is the only choice on this hub. This is called the "spoke rule" and it prevents linear dialogue from switching "leading" actors too frequently. 
+
+If the hub has "recipients", these checks are done on the recipient speakers instead of the hub's speaker.
 
 ## Expressions
 Snippets of code sent to the engine's expression parser. Can directly manipulate
@@ -137,11 +158,7 @@ Actors have a list of speakers they "speak as", "listen to", flags, current
 position, current channel and priority, and additional data.
 
 ## Speak as and Listening
-See Speakers. Choices may appear to actors when the actor is positioned at the hub the choice originates from, and the hubs the choices link to have speakers that the actor "speaks as."
-
-If the speaker in the linked hub does not pass the above qualification, the choice may still appear if it would be the only choice to appear. Intuitively, this is a "spoke rule." Linear narratives get interrupted if they bounce between controllers over and over without actually transferring any agency, so this exception simplifies that out.
-
-Hubs may appear to the actor when the actor when the hub has a speaker that the actor "speaks as" or "listens to", or if that speaker is flagged Public.
+See Speakers, and then Choices to see how these settings interact with the engine.
 
 ## Flags
  - Spectate. All non-auto hubs appear to this actor, choices do not appear to
