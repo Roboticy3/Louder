@@ -5,6 +5,7 @@
 
 # Docs ignores
 docs/site/**
+docs/docs/rustdoc/**
 
 # Louder engine ignores
 **/target/**
