@@ -1,5 +1,11 @@
+use mod object::HomogeneousObject;
+use mod object::LouderName;
+
+/// Flag bits describing a speaker.
+pub type SpeakerFlags = i32;
+
 // Object defining a speaker in the conversation. Can be possessed or heard by actors
-struct Speaker {
+pub struct Speaker {
   name: LouderName,
   flags: SpeakerFlags,
   listen_to: Vec<LouderName>,

@@ -1,9 +1,10 @@
-pub mod homogeneous;
+pub mod object;
 
-pub use homogeneous::LouderVariantType;
-
-/// A generic hash map backing the engine's internal data stores.
-pub(crate) type Map<K, V> = std::collections::HashMap<K, V>;
+pub use actor::*;
+pub use conversation::*;
+pub use object::*;
+pub use simulator::*;
+pub use speaker::*;
 
 /// An error code returned by most operations.
 ///
@@ -16,28 +17,6 @@ pub type LouderError = i32;
 /// Standard JSON syntax errors are returned, as well as errors relating to the
 /// shape of the loaded document.
 pub type LoadError = i32;
-
-/// A name stored in the engine.
-///
-/// Names map strings to integers. Obtain ids with [`crate::get_named_id`] and
-/// [`crate::declare_name`], and read strings back with [`crate::read_name`].
-/// Conversations are id'd by names containing the file they were loaded from.
-pub type LouderName = i32;
-
-/// An actor participating in conversations.
-pub type LouderActor = i32;
-
-/// A position within a conversation network of hubs.
-pub type LouderPosition = i32;
-
-/// Flag bits describing an actor.
-pub type ActorFlags = i32;
-
-/// Flag bits describing a speaker.
-pub type SpeakerFlags = i32;
-
-/// Flag bits describing a hub.
-pub type HubFlags = i32;
 
 /// Flag bits describing an event.
 ///

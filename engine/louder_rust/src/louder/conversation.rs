@@ -1,5 +1,10 @@
+use mod object::HomogeneousObject;
+use mod object::LouderName;
+use mod hub::LouderPosition;
+
 //Interface for the contents of a conversation
-struct Conversation {
+pub struct Conversation {
   name: LouderName,
-  hubs: Map<LouderPosition, Hub>
+  hubs: Map<LouderPosition, Hub>,
+  additional_data: HomogeneousObject,
 }
