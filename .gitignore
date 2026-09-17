@@ -3,5 +3,9 @@
 /android/
 *.tmp
 
+# Docs ignores
 docs/site/**
+
+# Louder engine ignores
 **/target/**
+**.exe
