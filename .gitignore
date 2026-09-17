@@ -4,4 +4,4 @@
 *.tmp
 
 docs/site/**
-target/**
+**/target/**
