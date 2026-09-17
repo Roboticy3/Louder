@@ -1,7 +1,6 @@
-//Interface for the logic of traversing through a conversation
-use mod object::LouderName;
+use super::object::LouderName;
 
-struct Simulator {
+pub struct Simulator {
   conversation: LouderName,
   config: LouderName,
 }

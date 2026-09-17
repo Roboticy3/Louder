@@ -1,1 +1,1 @@
-pub type LouderExpression = String
+pub type LouderExpression = String;

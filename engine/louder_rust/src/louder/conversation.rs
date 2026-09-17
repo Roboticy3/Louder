@@ -1,6 +1,5 @@
-use mod object::HomogeneousObject;
-use mod object::LouderName;
-use mod hub::LouderPosition;
+use super::object::{HomogeneousObject, LouderName, Map};
+use super::hub::{Hub, LouderPosition};
 
 //Interface for the contents of a conversation
 pub struct Conversation {

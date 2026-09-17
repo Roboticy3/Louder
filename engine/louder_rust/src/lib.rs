@@ -1,12 +1,33 @@
-mod test_linkage;
-pub mod louder;
-
-use crate::louder::*;
 use std::ffi::c_char;
+
+mod louder;
+mod test_linkage;
+
+use louder::actor::*;
+use louder::context::*;
+use louder::conversation::*;
+use louder::event::*;
+use louder::hub::*;
+use louder::json_loader::*;
+use louder::object::*;
+use louder::simulator::*;
+use louder::speaker::*;
+
+/// An error code returned by most operations.
+///
+/// - [`LOUDER_ERROR_NONE`]: no error.
+/// - [`LOUDER_ERROR_NOT_FOUND`]: the requested object does not exist.
+pub type LouderError = i32;
+
+/// No error.
+pub const LOUDER_ERROR_NONE: LouderError = 0;
+/// The requested object does not exist.
+pub const LOUDER_ERROR_NOT_FOUND: LouderError = -1;
+
 
 #[unsafe(no_mangle)]
 extern "system" fn test_linkage() -> i32 {
-  test_linkage::test_linkage()
+  test_linkage::test_linkage::test_linkage()
 }
 
 /// Get the id of a string.

@@ -1,7 +1,5 @@
-use mod object::HomogeneousObject;
-use mod object::LouderName;
-
-use mod hub::LouderPosition;
+use super::object::{HomogeneousObject, LouderName};
+use super::hub::LouderPosition;
 
 /// An actor participating in conversations.
 pub type LouderActor = i32;

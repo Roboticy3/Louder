@@ -1,5 +1,4 @@
-use mod object::HomogeneousObject;
-use mod object::LouderName;
+use super::object::{HomogeneousObject, LouderName};
 
 /// Flag bits describing a speaker.
 pub type SpeakerFlags = i32;

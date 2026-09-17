@@ -1,9 +1,6 @@
-use mod object::HomogeneousObject;
-use mod object::LouderName;
-use mod object::Map;
-
-use mod expression::LouderExpression;
-use mod callback::LouderCallback;
+use super::object::{HomogeneousObject, LouderName, Map};
+use super::expression::{LouderExpression};
+use super::callback::{LouderCallback};
 
 /// Flag bits describing a hub.
 pub type HubFlags = i32;

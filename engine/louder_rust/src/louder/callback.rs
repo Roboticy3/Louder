@@ -1,1 +1,1 @@
-pub type LouderCallback = String
+pub type LouderCallback = String;
