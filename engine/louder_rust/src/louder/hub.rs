@@ -2,8 +2,11 @@ use super::object::{HomogeneousObject, LouderName, Map};
 use super::expression::{LouderExpression};
 use super::callback::{LouderCallback};
 
-/// Flag bits describing a hub.
-pub type HubFlags = i32;
+bitflags::bitflags! {
+  /// Flag bits describing a hub.
+  #[repr(transparent)]
+  pub struct HubFlags: i32 {}
+}
 
 /// A position within a conversation network of hubs.
 pub type LouderPosition = i32;

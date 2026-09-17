@@ -71,7 +71,7 @@ pub extern "system" fn is_event(ctx: *const LouderContext, index: i32) -> Louder
 /// Get the type flags of an event by index.
 ///
 /// Returns `0` ("no flags") if the index is invalid. Events with 0 flags are
-/// invalid and shouldn't appear. See the `EVENT_FLAG_*` constants.
+/// invalid and shouldn't appear. See [`EventFlags`].
 #[unsafe(no_mangle)]
 pub extern "system" fn get_event_flags(ctx: *const LouderContext, index: i32) -> EventFlags {
   todo!()
@@ -79,10 +79,10 @@ pub extern "system" fn get_event_flags(ctx: *const LouderContext, index: i32) ->
 
 /// Get a name by event index for a key.
 ///
-/// - [`EVENT_NAME_CONVERSATION`]: get the conversation associated with this event.
-/// - [`EVENT_NAME_CHANNEL`]: get the channel name if the event indicates a channel change.
-/// - [`EVENT_NAME_ACTOR_ADDITIONAL_DATA_CHANGED`]: get the key of data changed on an
-///   actor if the event is `EVENT_FLAG_ACTOR_ADDITIONAL_DATA_CHANGE`.
+/// - [`EventName::Conversation`]: get the conversation associated with this event.
+/// - [`EventName::Channel`]: get the channel name if the event indicates a channel change.
+/// - [`EventName::ActorAdditionalDataChanged`]: get the key of data changed on an
+///   actor if the event is `EventFlags::ACTOR_ADDITIONAL_DATA_CHANGE`.
 #[unsafe(no_mangle)]
 pub extern "system" fn get_event_name(ctx: *const LouderContext, index: i32, key: EventName) -> LouderName {
   todo!()
@@ -100,9 +100,9 @@ pub extern "system" fn get_event_actor(ctx: *const LouderContext, index: i32) ->
 ///
 /// Returns `-1` if not available.
 ///
-/// - [`EVENT_POSITION_SOURCE`]: the source position of this event's motion.
-/// - [`EVENT_POSITION_TARGET`]: the target position of this event's motion.
-/// - [`EVENT_POSITION_CHOICE_LINKED`]: the position linked to by the choice of
+/// - [`EventPosition::Source`]: the source position of this event's motion.
+/// - [`EventPosition::Target`]: the target position of this event's motion.
+/// - [`EventPosition::ChoiceLinked`]: the position linked to by the choice of
 ///   this event.
 #[unsafe(no_mangle)]
 pub extern "system" fn get_event_position(ctx: *const LouderContext, index: i32, key: EventPosition) -> LouderPosition {
@@ -113,9 +113,9 @@ pub extern "system" fn get_event_position(ctx: *const LouderContext, index: i32,
 ///
 /// Returns `-1` if not available.
 ///
-/// - [`EVENT_INT_SOURCE_CHOICE_SELECTED`]: index of the choice selected by the
+/// - [`EventInt::SourceChoiceSelected`]: index of the choice selected by the
 ///   actor of this event's motion.
-/// - [`EVENT_INT_CHOICE_INDEX`]: choice index of this event if it is a choice
+/// - [`EventInt::ChoiceIndex`]: choice index of this event if it is a choice
 ///   appearance, `-1` otherwise.
 #[unsafe(no_mangle)]
 pub extern "system" fn get_event_int(ctx: *const LouderContext, index: i32, key: EventInt) -> i32 {
@@ -127,13 +127,13 @@ pub extern "system" fn get_event_int(ctx: *const LouderContext, index: i32, key:
 /// Reads 0 bytes if the index is invalid or no object is associated with the
 /// key for this event.
 ///
-/// - [`EVENT_STRING_TEXT`]: the text of this event if it is a hub appearance.
-/// - [`EVENT_STRING_CHOICE_TEXT`]: the text of the choice if it is a choice appearance.
-/// - [`EVENT_STRING_CALLBACK`]: the callback if it is a hub appearance and
+/// - [`EventString::Text`]: the text of this event if it is a hub appearance.
+/// - [`EventString::ChoiceText`]: the text of the choice if it is a choice appearance.
+/// - [`EventString::Callback`]: the callback if it is a hub appearance and
 ///   indicates a callback.
-/// - [`EVENT_STRING_STATEMENT`]: the statement if it is a hub appearance and
+/// - [`EventString::Statement`]: the statement if it is a hub appearance and
 ///   indicates a statement.
-/// - [`EVENT_STRING_CONDITION`]: the condition if it is a hub appearance and
+/// - [`EventString::Condition`]: the condition if it is a hub appearance and
 ///   indicates a condition evaluation.
 #[unsafe(no_mangle)]
 pub extern "system" fn read_event_string(ctx: *const LouderContext, index: i32, key: EventString, buffer: *mut c_char, max_size: i32) -> i32 {
@@ -213,8 +213,8 @@ pub extern "system" fn is_ask(ctx: *const LouderContext, index: i32) -> i32 {
 
 /// Get a name by ask index for a key.
 ///
-/// - [`ASK_NAME_CONVERSATION`]: the conversation associated with this ask.
-/// - [`ASK_NAME_CHANNEL`]: the channel name if this ask indicates a channel change.
+/// - [`AskName::Conversation`]: the conversation associated with this ask.
+/// - [`AskName::Channel`]: the channel name if this ask indicates a channel change.
 #[unsafe(no_mangle)]
 pub extern "system" fn get_ask_name(ctx: *const LouderContext, index: i32, key: AskName) -> LouderName {
   todo!()
@@ -224,10 +224,10 @@ pub extern "system" fn get_ask_name(ctx: *const LouderContext, index: i32, key: 
 ///
 /// Returns `-1` if not available or the index is invalid.
 ///
-/// - [`ASK_INT_ACTOR`]: the actor associated with this ask's motion or just the actor.
-/// - [`ASK_INT_SOURCE_POSITION`]: the source position of this ask's motion.
-/// - [`ASK_INT_SOURCE_CHOICE_SELECTED`]: the choice selected on the source position.
-/// - [`ASK_INT_CALLBACK_POSITION`]: the position the callback originates from.
+/// - [`AskInt::Actor`]: the actor associated with this ask's motion or just the actor.
+/// - [`AskInt::SourcePosition`]: the source position of this ask's motion.
+/// - [`AskInt::SourceChoiceSelected`]: the choice selected on the source position.
+/// - [`AskInt::CallbackPosition`]: the position the callback originates from.
 #[unsafe(no_mangle)]
 pub extern "system" fn get_ask_int(ctx: *const LouderContext, index: i32, key: AskInt) -> i32 {
   todo!()
@@ -588,7 +588,7 @@ pub extern "system" fn deinit_louder(ctx: *mut LouderContext) -> i32 {
 ///   conversation.
 /// - Errors relating to individual objects, such as the duplicate id flag, are
 ///   emitted as events with the invalid hub's position available via
-///   `get_event_position(index, EVENT_POSITION_SOURCE)`.
+///   `get_event_position(index, EventPosition::Source)`.
 #[unsafe(no_mangle)]
 pub extern "system" fn load_conversation_json(ctx: *mut LouderContext, conversation: LouderName, buffer: *mut c_char, size: i32) -> LoadError {
   todo!()

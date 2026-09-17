@@ -4,8 +4,11 @@ use super::hub::LouderPosition;
 /// An actor participating in conversations.
 pub type LouderActor = i32;
 
-/// Flag bits describing an actor.
-pub type ActorFlags = i32;
+bitflags::bitflags! {
+  /// Flag bits describing an actor.
+  #[repr(transparent)]
+  pub struct ActorFlags: i32 {}
+}
 
 //Object representing a player in the conversation
 pub struct Actor {

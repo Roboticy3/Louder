@@ -5,15 +5,12 @@
 # 3. mkdocs build: emits the finished site under docs/site
 
 $rustCrate = Resolve-Path ..\engine\louder_rust
-$trimCss = Join-Path $PSScriptRoot rustdoc_trim.css
 $rustdocDir = Join-Path $PSScriptRoot docs\rustdoc
 
-$env:RUSTDOCFLAGS = "--html-in-header=$trimCss"
 Push-Location $rustCrate
 cargo doc -p louder_rust --no-deps
 $docExit = $LASTEXITCODE
 Pop-Location
-Remove-Item Env:\RUSTDOCFLAGS
 
 if ($docExit -ne 0) {
   exit $docExit

@@ -175,10 +175,10 @@ additional data, that additional data changes the actor's additional data. The
 actor then keeps this data until another hub changes it.
 
 # Homogeneous Objects
-A homogeneous object that contains a mapping between string names and Variants.
+A object object that contains a mapping between string names and Variants.
 
-The "additional properties" of hubs are homogeneous objects, the story state is
-a homogeneous object.
+The "additional properties" of hubs are object objects, the story state is
+a object object.
 
 ## Variants
 Variants are integers, floats, booleans, or strings.
@@ -215,7 +215,7 @@ Constant accessors. Channels are optional and default to "main".
  - From a actor and conversation, get choices currently appearing to this actor
  - From a channel, get current actors in channel
  - From a channel and position, get current actors in channel at that position
- - From a hub position and conversation, get any hub property, including homogeneous properties
+ - From a hub position and conversation, get any hub property, including object properties
  - From an actor and conversation, get any actor property including additional properties
  - From a speaker, get any speaker property including additional properties
  - From a conversation, get any Variant from the story state
