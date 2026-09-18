@@ -1,5 +1,3 @@
-use std::ffi::c_char;
-
 mod louder;
 mod test_linkage;
 
@@ -30,15 +28,47 @@ extern "system" fn test_linkage() -> i32 {
   test_linkage::test_linkage::test_linkage()
 }
 
+#[unsafe(no_mangle)]
+extern "system" fn get_next_encoding(start: LouderEncoding) -> LouderEncoding {
+  let e = encoding::all::encodings();
+  if start + 1 >= e.len() {
+    return 0;
+  }
+  return start + 1;
+}
+
+/// Get the name of an encoding... in utf-8
+#[unsafe(no_mangle)]
+extern "system" fn get_encoding_name(index: LouderEncoding, buffer: *mut u8, max_length: i32) -> () {
+  let e = encoding::all::encodings();
+  if index >= e.len() {
+    unsafe {
+      *buffer = 0;
+    }
+    return;
+  }
+  let name = &e[index].name();
+  let name_bytes = name.as_bytes();
+  let copy_length = std::cmp::min(name_bytes.len(), max_length as usize - 1);
+  unsafe {
+    std::ptr::copy_nonoverlapping(name_bytes.as_ptr(), buffer as *mut u8, copy_length);
+    *buffer.offset(copy_length as isize) = 0;
+  }
+}
+
 /// Get the id of a string.
 ///
 /// Returns `-1` if the string was never declared.
 ///
 /// - `name`: the string bytes to look up.
 /// - `name_length`: the length of `name` in bytes.
+/// - `encoding`: the encoding of the string.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_named_id(ctx: *const LouderContext, name: *const c_char, name_length: i32) -> LouderName {
-  todo!()
+pub extern "system" fn get_named_id(ctx: *const LouderContext, name: *const u8, name_length: i32, encoding: LouderEncoding) -> LouderName {
+  if ctx.is_null() || name.is_null() || name_length <= 0 {
+    return LOUDER_NAME_NONE;
+  }
+  0
 }
 
 /// Assign the id of a string.
@@ -46,7 +76,7 @@ pub extern "system" fn get_named_id(ctx: *const LouderContext, name: *const c_ch
 /// If the string was already declared, returns its existing id. Otherwise a new
 /// id is assigned.
 #[unsafe(no_mangle)]
-pub extern "system" fn declare_name(ctx: *mut LouderContext, name: *const c_char, name_length: i32) -> LouderName {
+pub extern "system" fn declare_name(ctx: *mut LouderContext, buffer: *const u8, max_length: i32, encoding: LouderEncoding) -> LouderName {
   todo!()
 }
 
@@ -54,7 +84,7 @@ pub extern "system" fn declare_name(ctx: *mut LouderContext, name: *const c_char
 ///
 /// Writes 0 bytes if no name is associated with the id.
 #[unsafe(no_mangle)]
-pub extern "system" fn read_name(ctx: *const LouderContext, name_id: LouderName, buffer: *mut c_char, max_length: i32) -> i32 {
+pub extern "system" fn read_name(ctx: *const LouderContext, name: LouderName, buffer: *mut u8, max_length: i32, encoding: LouderEncoding) -> i32 {
   todo!()
 }
 
@@ -83,6 +113,14 @@ pub extern "system" fn get_event_flags(ctx: *const LouderContext, index: i32) ->
 /// - [`EventName::Channel`]: get the channel name if the event indicates a channel change.
 /// - [`EventName::ActorAdditionalDataChanged`]: get the key of data changed on an
 ///   actor if the event is `EventFlags::ACTOR_ADDITIONAL_DATA_CHANGE`.
+/// - [`EventName::Text`]: the text of this event if it is a hub appearance.
+/// - [`EventName::ChoiceText`]: the text of the choice if it is a choice appearance.
+/// - [`EventName::Callback`]: the callback if it is a hub appearance and
+///   indicates a callback.
+/// - [`EventName::Statement`]: the statement if it is a hub appearance and
+///   indicates a statement.
+/// - [`EventName::Condition`]: the condition if it is a hub appearance and
+///   indicates a condition evaluation.
 #[unsafe(no_mangle)]
 pub extern "system" fn get_event_name(ctx: *const LouderContext, index: i32, key: EventName) -> LouderName {
   todo!()
@@ -127,18 +165,7 @@ pub extern "system" fn get_event_int(ctx: *const LouderContext, index: i32, key:
 /// Reads 0 bytes if the index is invalid or no object is associated with the
 /// key for this event.
 ///
-/// - [`EventString::Text`]: the text of this event if it is a hub appearance.
-/// - [`EventString::ChoiceText`]: the text of the choice if it is a choice appearance.
-/// - [`EventString::Callback`]: the callback if it is a hub appearance and
-///   indicates a callback.
-/// - [`EventString::Statement`]: the statement if it is a hub appearance and
-///   indicates a statement.
-/// - [`EventString::Condition`]: the condition if it is a hub appearance and
-///   indicates a condition evaluation.
-#[unsafe(no_mangle)]
-pub extern "system" fn read_event_string(ctx: *const LouderContext, index: i32, key: EventString, buffer: *mut c_char, max_size: i32) -> i32 {
-  todo!()
-}
+
 
 /// Get the priority of this event if it indicates a hub appearance.
 ///
@@ -148,51 +175,51 @@ pub extern "system" fn get_event_priority(ctx: *const LouderContext, index: i32)
   todo!()
 }
 
-/// Get the variant type of this event's condition.
+/// If [`EventFlags::CONDITION`] is set, then get the type of value this event's condition(s) evaluates to.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_event_condition_variant_type(ctx: *const LouderContext, index: i32) -> LouderVariantType {
+pub extern "system" fn get_event_condition_variant_type(ctx: *const LouderContext, index: i32, condition_index: i32) -> LouderVariantType {
   todo!()
 }
 
-/// Get this event's condition as an integer.
+/// If [`EventFlags::CONDITION`] is set, then get this event's condition as an integer.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_event_condition_int(ctx: *const LouderContext, index: i32) -> i32 {
+pub extern "system" fn get_event_condition_int(ctx: *const LouderContext, index: i32, condition_index: i32) -> i32 {
   todo!()
 }
 
-/// Get this event's condition as a float.
+/// If [`EventFlags::CONDITION`] is set, then get this event's condition as an float.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_event_condition_float(ctx: *const LouderContext, index: i32) -> f32 {
+pub extern "system" fn get_event_condition_float(ctx: *const LouderContext, index: i32, condition_index: i32) -> f32 {
   todo!()
 }
 
-/// Read this event's condition string into `buffer`.
+/// If [`EventFlags::CONDITION`] is set, then get this event's condition as a name.
 #[unsafe(no_mangle)]
-pub extern "system" fn read_event_condition_string(ctx: *const LouderContext, index: i32, buffer: *mut c_char, max_size: i32) -> i32 {
+pub extern "system" fn get_event_condition_string(ctx: *const LouderContext, index: i32, condition_index: i32) -> LouderName {
   todo!()
 }
 
-/// Get the variant type of this event's additional data under `key`.
+/// If [`EventFlags::HUB_APPEARANCE`] is set, then get the type of the additional data of the hub at motion.target_position under `key`.
 #[unsafe(no_mangle)]
 pub extern "system" fn get_event_additional_variant_type(ctx: *const LouderContext, index: i32, key: LouderName) -> LouderVariantType {
   todo!()
 }
 
-/// Get this event's additional data under `key` as an integer.
+/// If [`EventFlags::HUB_APPEARANCE`] is set, then get the additional data of the hub at motion.target_position under `key` as an integer.
 #[unsafe(no_mangle)]
 pub extern "system" fn get_event_additional_int(ctx: *const LouderContext, index: i32, key: LouderName) -> i32 {
   todo!()
 }
 
-/// Get this event's additional data under `key` as a float.
+/// If [`EventFlags::HUB_APPEARANCE`] is set, then get the additional data of the hub at motion.target_position under `key` as a float.
 #[unsafe(no_mangle)]
 pub extern "system" fn get_event_additional_float(ctx: *const LouderContext, index: i32, key: LouderName) -> f32 {
   todo!()
 }
 
-/// Read this event's additional data string under `key` into `buffer`.
+/// If [`EventFlags::HUB_APPEARANCE`] is set, then get the additional data of the hub at motion.target_position under `key` as a string.
 #[unsafe(no_mangle)]
-pub extern "system" fn read_event_additional_string(ctx: *const LouderContext, index: i32, key: LouderName, buffer: *mut c_char, max_size: i32) -> i32 {
+pub extern "system" fn get_event_additional_string(ctx: *const LouderContext, index: i32, key: LouderName) -> LouderName {
   todo!()
 }
 
@@ -233,9 +260,9 @@ pub extern "system" fn get_ask_int(ctx: *const LouderContext, index: i32, key: A
   todo!()
 }
 
-/// Read the callback of an ask into `buffer`.
+/// Get the callback causing this ask as a name.
 #[unsafe(no_mangle)]
-pub extern "system" fn read_ask_callback(ctx: *const LouderContext, index: i32, buffer: *mut c_char, max_length: i32) -> i32 {
+pub extern "system" fn get_ask_callback(ctx: *const LouderContext, index: i32) -> LouderName {
   todo!()
 }
 
@@ -278,9 +305,9 @@ pub extern "system" fn get_speaker_additional_float(ctx: *const LouderContext, c
   todo!()
 }
 
-/// Read a speaker's additional data string under `key` into `buffer`.
+/// Get a speaker's additional data under `key` as a name.
 #[unsafe(no_mangle)]
-pub extern "system" fn read_speaker_additional_string(ctx: *const LouderContext, conversation: LouderName, speaker: LouderName, key: LouderName, buffer: *mut c_char, max_size: i32) -> i32 {
+pub extern "system" fn get_speaker_additional_string(ctx: *const LouderContext, conversation: LouderName, speaker: LouderName, key: LouderName) -> LouderName {
   todo!()
 }
 
@@ -347,9 +374,9 @@ pub extern "system" fn get_actor_additional_float(ctx: *const LouderContext, con
   todo!()
 }
 
-/// Read an actor's additional data string under `key` into `buffer`.
+/// Get an actor's additional data under `key` as a string.
 #[unsafe(no_mangle)]
-pub extern "system" fn read_actor_additional_string(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor, key: LouderName, buffer: *mut c_char, max_size: i32) -> i32 {
+pub extern "system" fn get_actor_additional_string(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor, key: LouderName) -> LouderName {
   todo!()
 }
 
@@ -400,9 +427,9 @@ pub extern "system" fn get_hub_speaker(ctx: *const LouderContext, conversation: 
   todo!()
 }
 
-/// Read the text of a hub into `text`.
+/// Get the text of a hub as a name.
 #[unsafe(no_mangle)]
-pub extern "system" fn read_hub_text(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition, text: *mut c_char, max_length: i32) -> i32 {
+pub extern "system" fn get_hub_text(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition) -> LouderName {
   todo!()
 }
 
@@ -412,9 +439,9 @@ pub extern "system" fn get_hub_choice_count(ctx: *const LouderContext, conversat
   todo!()
 }
 
-/// Read the text of a choice on a hub into `text`.
+/// Get the text of a choice on a hub as a name.
 #[unsafe(no_mangle)]
-pub extern "system" fn read_hub_choice_text(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition, actor_perspective: LouderActor, choice_index: i32, text: *mut c_char, max_length: i32) -> i32 {
+pub extern "system" fn get_hub_choice_text(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition, actor_perspective: LouderActor, choice_index: i32) -> LouderName {
   todo!()
 }
 
@@ -424,15 +451,15 @@ pub extern "system" fn get_hub_choice_link(ctx: *const LouderContext, conversati
   todo!()
 }
 
-/// Read the expressions associated with a hub into `expressions`.
+/// Get the expressions associated with a hub.
 #[unsafe(no_mangle)]
-pub extern "system" fn read_hub_expressions(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition, expressions: *mut c_char, max_length: i32) -> i32 {
+pub extern "system" fn get_hub_expressions(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition) -> LouderName {
   todo!()
 }
 
-/// Read the callbacks associated with a hub into `callbacks`.
+/// Get the callbacks associated with a hub.
 #[unsafe(no_mangle)]
-pub extern "system" fn read_hub_callbacks(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition, callbacks: *mut c_char, max_length: i32) -> i32 {
+pub extern "system" fn get_hub_callbacks(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition) -> LouderName {
   todo!()
 }
 
@@ -478,9 +505,9 @@ pub extern "system" fn get_hub_additional_float(ctx: *const LouderContext, conve
   todo!()
 }
 
-/// Read a hub's additional data string under `key` into `buffer`.
+/// Get a hub's additional data string under `key`.
 #[unsafe(no_mangle)]
-pub extern "system" fn read_hub_additional_string(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition, key: LouderName, buffer: *mut c_char, max_size: i32) -> i32 {
+pub extern "system" fn get_hub_additional_string(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition, key: LouderName) -> LouderName {
   todo!()
 }
 
@@ -544,22 +571,22 @@ pub extern "system" fn get_story_state_float(ctx: *const LouderContext, conversa
   todo!()
 }
 
-/// Read a story state string into `buffer`.
+/// Get a story state string.
 #[unsafe(no_mangle)]
-pub extern "system" fn read_story_state_string(ctx: *const LouderContext, conversation: LouderName, state: LouderName, buffer: *mut c_char, max_size: i32) -> i32 {
+pub extern "system" fn get_story_state_string(ctx: *const LouderContext, conversation: LouderName, state: LouderName) -> LouderName {
   todo!()
 }
 
 /// Serialize the story state in JSON into `buffer`.
 #[unsafe(no_mangle)]
-pub extern "system" fn read_state_json(ctx: *const LouderContext, conversation: LouderName, buffer: *mut c_char, max_size: i32) -> i32 {
+pub extern "system" fn read_state_json(ctx: *const LouderContext, conversation: LouderName, buffer: *mut u8, max_size: i32, encoding: LouderEncoding) -> i32 {
   todo!()
 }
 
 /// Serialize the story state, as well as the positions and details of all
 /// actors, in JSON into `buffer`.
 #[unsafe(no_mangle)]
-pub extern "system" fn read_snapshot_json(ctx: *const LouderContext, conversation: LouderName, buffer: *mut c_char, max_size: i32) -> i32 {
+pub extern "system" fn read_snapshot_json(ctx: *const LouderContext, conversation: LouderName, buffer: *mut u8, max_size: i32, encoding: LouderEncoding) -> i32 {
   todo!()
 }
 
@@ -590,7 +617,7 @@ pub extern "system" fn deinit_louder(ctx: *mut LouderContext) -> i32 {
 ///   emitted as events with the invalid hub's position available via
 ///   `get_event_position(index, EventPosition::Source)`.
 #[unsafe(no_mangle)]
-pub extern "system" fn load_conversation_json(ctx: *mut LouderContext, conversation: LouderName, buffer: *mut c_char, size: i32) -> LoadError {
+pub extern "system" fn load_conversation_json(ctx: *mut LouderContext, conversation: LouderName, buffer: *mut u8, max_size: i32, encoding: LouderEncoding) -> LoadError {
   todo!()
 }
 
@@ -609,7 +636,7 @@ pub extern "system" fn remove_conversation(ctx: *mut LouderContext, conversation
 /// - The config is a singleton as opposed to a named conversation instance.
 /// - Objects are speakers and their configurations.
 #[unsafe(no_mangle)]
-pub extern "system" fn load_conversation_config(ctx: *mut LouderContext, buffer: *mut c_char, size: i32) -> LoadError {
+pub extern "system" fn load_conversation_config(ctx: *mut LouderContext, buffer: *mut u8, max_size: i32, encoding: LouderEncoding) -> LoadError {
   todo!()
 }
 
@@ -673,6 +700,6 @@ pub extern "system" fn set_story_state_float(ctx: *mut LouderContext, conversati
 
 /// Set a story state value as a string.
 #[unsafe(no_mangle)]
-pub extern "system" fn set_story_state_string(ctx: *mut LouderContext, conversation: LouderName, key: LouderName, buffer: *const c_char, buf_size: i32) -> i32 {
+pub extern "system" fn set_story_state_string(ctx: *mut LouderContext, conversation: LouderName, key: LouderName, buffer: *const u8, size: i32, encoding: LouderEncoding) -> i32 {
   todo!()
 }

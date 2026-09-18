@@ -56,10 +56,23 @@ pub enum EventName {
   /// Get the conversation associated with this event.
   Conversation = 0,
   /// Get the channel name if the event indicates a channel change.
-  Channel = 1,
+  Channel,
   /// Get the key of the data changed on an actor if the event is
   /// `EventFlags::ACTOR_ADDITIONAL_DATA_CHANGE`.
-  ActorAdditionalDataChanged = 2,
+  ActorAdditionalDataChanged,
+    /// Get the text of this event if it is a hub appearance.
+  Text,
+  /// Get the text of the choice of this event if it is a choice appearance.
+  ChoiceText,
+  /// Get the callback of this event if it is a hub appearance and the event
+  /// indicates a callback.
+  Callback,
+  /// Get the statement of this event if it is a hub appearance and the event
+  /// indicates a statement.
+  Statement,
+  /// Get the condition of this event if it is a hub appearance and the event
+  /// indicates a condition evaluation.
+  Condition,
 }
 
 /// Key passed to [`crate::get_event_position`].
@@ -82,24 +95,6 @@ pub enum EventInt {
   /// Get the choice index of this event if it is a choice appearance. `-1`
   /// otherwise.
   ChoiceIndex = 1,
-}
-
-/// Key passed to [`crate::read_event_string`].
-#[repr(i32)]
-pub enum EventString {
-  /// Get the text of this event if it is a hub appearance.
-  Text = 0,
-  /// Get the text of the choice of this event if it is a choice appearance.
-  ChoiceText = 1,
-  /// Get the callback of this event if it is a hub appearance and the event
-  /// indicates a callback.
-  Callback = 2,
-  /// Get the statement of this event if it is a hub appearance and the event
-  /// indicates a statement.
-  Statement = 3,
-  /// Get the condition of this event if it is a hub appearance and the event
-  /// indicates a condition evaluation.
-  Condition = 4,
 }
 
 /// Key passed to [`crate::get_ask_name`].
