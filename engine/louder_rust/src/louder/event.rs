@@ -1,45 +1,52 @@
 use bitflags::bitflags;
 
+use crate::louder::callback::LouderCallback;
+
+use super::actor::LouderActor;
+use super::object::LouderName;
+use super::hub::LouderPosition;
+
 bitflags! {
   /// Flag bits describing an event.
   ///
   /// An event with 0 flags is invalid and shouldn't appear.
   #[repr(transparent)]
   pub struct EventFlags: i32 {
-    /// The main text of a hub is shown.
+    /// The hub at motion.target appeared. 
     const HUB_APPEARANCE = 1 << 0;
-    /// A hub appears outside of the focused conversation.
+    /// The hub at motion.target appeared in the background.
     const BACKGROUND_HUB_APPEARANCE = 1 << 1;
-    /// A choice is shown on a hub.
+    /// The choice at hub motion.target, index motion.choice_index appeared.
     const CHOICE_APPEARANCE = 1 << 2;
-    /// The event is a callback.
+    /// The hub at motion.target has a callback that needs to be evaluated.
+    /// If the hub had the `HubFlags::ASK` flag set, an ask event is emitted instead.
     const CALLBACK = 1 << 3;
-    /// The event is a statement.
+    /// The hub at motion.target contains a statement that has been evaluated by the engine.
     const STATEMENT = 1 << 4;
-    /// The event evaluates a condition.
+    /// The hub at motion.target contains a condition that has been evaluated by the engine.
     const CONDITION = 1 << 5;
-    /// The event indicates a channel change.
+    /// The hub at motion.target changed channels.
     const CHANNEL = 1 << 6;
-    /// The event is a warp.
+    /// The motion is a warp.
     const WARP = 1 << 7;
-    /// The event was caused by forcing a position update.
+    /// The motion is a forced position update.
     const FORCE_POSITION = 1 << 8;
-    /// Additional data changed on an actor.
+    /// Additional data changed on motion.actor
     const ACTOR_ADDITIONAL_DATA_CHANGE = 1 << 9;
-    /// An actor was added.
+    /// actor_added_or_removed was added.
     const ACTOR_ADDED = 1 << 10;
-    /// An actor was removed.
+    /// actor_added_or_removed was removed.
     const ACTOR_REMOVED = 1 << 11;
-    /// A conversation was added.
+    /// conversation_added_or_removed was added.
     const CONVERSATION_ADDED = 1 << 12;
-    /// A conversation was removed.
+    /// conversation_added_or_removed was removed.
     const CONVERSATION_REMOVED = 1 << 13;
-    /// A speaker was added.
+    /// speaker_added_or_removed was added.
     const SPEAKER_ADDED = 1 << 14;
-    /// A speaker was removed.
+    /// speaker_added_or_removed was removed.
     const SPEAKER_REMOVED = 1 << 15;
-    /// A duplicate id was found while loading.
-    const DUPLICATE_ID_LOADED = 1 << 16;
+    /// A duplicate hub was found while loading a conversation
+    const DUPLICATE_HUB_LOADED = 1 << 16;
   }
 }
 
@@ -116,4 +123,31 @@ pub enum AskInt {
   SourceChoiceSelected = 2,
   /// Get the position the callback originates from.
   CallbackPosition = 3,
+}
+
+pub struct Motion {
+  actor: LouderActor,
+  source_position: LouderName,
+  target_position: LouderName,
+  choice_index: i32,
+}
+
+pub struct LouderEvent {
+  flags: EventFlags,
+  conversation: LouderName,
+  channel: LouderName,
+  motion: Motion,
+  actor_added_or_removed: LouderActor,
+  speaker_added_or_removed: LouderName,
+  conversation_added_or_removed: LouderName,
+  duplicate_hub_loaded: LouderPosition,
+}
+
+pub struct LouderAsk {
+  flags: EventFlags,
+  conversation: LouderName,
+  position: LouderPosition,
+  channel: LouderName,
+  actor: LouderActor,
+  ask: LouderCallback,
 }

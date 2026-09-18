@@ -10,3 +10,4 @@ crate-type = ["cdylib"]
 
 [dependencies]
 bitflags = "2.13.2"
+encoding = "0.2.33"

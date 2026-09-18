@@ -5,7 +5,10 @@ use super::callback::{LouderCallback};
 bitflags::bitflags! {
   /// Flag bits describing a hub.
   #[repr(transparent)]
-  pub struct HubFlags: i32 {}
+  pub struct HubFlags: i32 {
+    const AUTO = 0b00000001;
+    const ASK = 0b00000010;
+  }
 }
 
 /// A position within a conversation network of hubs.
@@ -25,11 +28,16 @@ pub struct Hub {
   priority: i32,
 
   text: LouderText,
-  choices: Map<LouderText, LouderPosition>,
+  choices: Vec<Choice>,
 
   expression: LouderExpression,
   callback: LouderCallback,
   flags: HubFlags,
   
   additional_data: HomogeneousObject,
+}
+
+pub struct Choice {
+  text: LouderText,
+  position: LouderPosition,
 }

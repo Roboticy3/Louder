@@ -8,6 +8,22 @@ pub type Map<K, V> = std::collections::HashMap<K, V>;
 /// Conversations are id'd by names containing the file they were loaded from.
 pub type LouderName = i32;
 
+/// The value of a name stored in the engine.
+/// 
+/// Names map strings to integers. Obtain ids with [`crate::get_named_id`] and
+/// [`crate::declare_name`], and read strings back with [`crate::read_name`].
+/// Conversations are id'd by names containing the file they were loaded from.
+pub struct LouderNameContext {
+  bytes: Vec<u8>,
+}
+
+/// The map between names and their string values.
+/// 
+/// Names map strings to integers. Obtain ids with [`crate::get_named_id`] and
+/// [`crate::declare_name`], and read strings back with [`crate::read_name`].
+/// Conversations are id'd by names containing the file they were loaded from.
+pub type LouderNameMap = Map<LouderName, LouderNameContext>;
+
 
 /// Extra data attached to an actor, hub, or speaker, keyed by name.
 pub struct HomogeneousObject {
