@@ -1,5 +1,7 @@
 use strum_macros::EnumDiscriminants;
 
+use crate::louder::object::LouderVariant;
+
 use super::callback::LouderCallback;
 use super::expression::LouderExpression;
 
@@ -27,6 +29,12 @@ pub struct AdditionalDataChange {
   pub key: LouderName,
 }
 
+#[derive(Debug)]
+pub struct ConditionOutcome {
+  pub condition:LouderName,
+  pub outcome: LouderVariant,
+}
+
 #[derive(Debug, EnumDiscriminants)]
 #[strum_discriminants(name(EventCode), repr(u32))]
 pub enum EventData {
@@ -42,7 +50,7 @@ pub enum EventData {
   TextChange(LouderName),
 
   Statement(LouderExpression),
-  Condition(LouderExpression),
+  Condition(ConditionOutcome),
   Callback(LouderCallback),
   
   ActorAdded,

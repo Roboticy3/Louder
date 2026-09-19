@@ -302,10 +302,32 @@ pub extern "system" fn get_event_actor(ctx: *const LouderContext, index: usize) 
 ///
 /// - [`EventPosition::Source`]: the origin of this event's motion.
 /// - [`EventPosition::Target`]: the destination of this event's motion.
-/// - [`EventPosition::Position`]: the position this event's choice appearance is for.
+/// - [`EventPosition::ChoiceAppearance`]: the position this event's choice appearance is for.
 #[unsafe(no_mangle)]
 pub extern "system" fn get_event_position(ctx: *const LouderContext, index: usize, key: EventPosition) -> LouderPosition {
-  todo!()
+  if ctx.is_null() {
+    return -1;
+  }
+
+  let event : Option<&LouderEvent> = unsafe {
+    (*ctx).get_event(index)
+  };
+
+  match (event, key) {
+    (Some(event), EventPosition::Source) => match &event.data {
+      EventData::RegularMotion(m) | EventData::Warp(m) | EventData::ForceMotion(m) => m.source_position,
+      _ => -1,
+    },
+    (Some(event), EventPosition::Target) => match &event.data {
+      EventData::RegularMotion(m) | EventData::Warp(m) | EventData::ForceMotion(m) => m.target_position,
+      _ => -1,
+    },
+    (Some(event), EventPosition::ChoiceAppearance) => match &event.data {
+      EventData::ChoiceAppearance(c) => c.position,
+      _ => -1,
+    },
+    (None, _) => -1,
+  }
 }
 
 /// Get an integer by event index for a key.
@@ -317,8 +339,48 @@ pub extern "system" fn get_event_position(ctx: *const LouderContext, index: usiz
 /// - [`EventInt::ChoiceIndex`]: the index of the choice of this event's choice
 ///   appearance.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_event_int(ctx: *const LouderContext, index: i32, key: EventInt) -> i32 {
-  todo!()
+pub extern "system" fn get_event_int(ctx: *const LouderContext, index: usize, key: EventInt) -> i32 {
+  if ctx.is_null() {
+    return -1;
+  }
+
+  let event : Option<&LouderEvent> = unsafe {
+    (*ctx).get_event(index)
+  };
+
+  match (event, key) {
+    (Some(event), EventInt::SourceChoiceIndex) => match &event.data {
+      EventData::RegularMotion(m) | EventData::Warp(m) | EventData::ForceMotion(m) => m.choice_index,
+      _ => -1,
+    },
+    (Some(event), EventInt::ChoiceIndex) => match &event.data {
+      EventData::ChoiceAppearance(c) => c.choice_index,
+      _ => -1,
+    },
+    (None, _) => -1,
+  }
+}
+
+/// Get whether this event's motion happens in the background.
+///
+/// Returns `false` if this event has no motion.
+#[unsafe(no_mangle)]
+pub extern "system" fn get_event_background(ctx: *const LouderContext, index: usize) -> bool {
+  if ctx.is_null() {
+    return false;
+  }
+
+  let event : Option<&LouderEvent> = unsafe {
+    (*ctx).get_event(index)
+  };
+
+  match event {
+    Some(event) => match &event.data {
+      EventData::RegularMotion(m) | EventData::Warp(m) | EventData::ForceMotion(m) => m.background,
+      _ => false,
+    },
+    None => false,
+  }
 }
 
 /// Read a string by event index for a key into `buffer`.
@@ -336,52 +398,105 @@ pub extern "system" fn get_event_priority(ctx: *const LouderContext, index: i32)
   todo!()
 }
 
-/// If [`EventFlags::CONDITION`] is set, then get the type of value this event's condition(s) evaluates to.
+/// Get the type of the value this event's condition evaluates to.
+///
+/// Returns [`LouderVariantType::Int`] if this event has no condition at
+/// `condition_index`.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_event_condition_variant_type(ctx: *const LouderContext, index: i32, condition_index: i32) -> LouderVariantType {
-  todo!()
+pub extern "system" fn get_event_condition_variant_type(ctx: *const LouderContext, index: usize, condition_index: i32) -> LouderVariantType {
+  if ctx.is_null() {
+    return LouderVariantType::Int;
+  }
+
+  let event : Option<&LouderEvent> = unsafe {
+    (*ctx).get_event(index)
+  };
+
+  match event {
+    Some(event) => match &event.data {
+      EventData::Condition(c) if condition_index == 0 => LouderVariantType::from(&c.outcome),
+      _ => LouderVariantType::Int,
+    },
+    None => LouderVariantType::Int,
+  }
 }
 
-/// If [`EventFlags::CONDITION`] is set, then get this event's condition as an integer.
+/// Get this event's condition as an integer.
+///
+/// Returns `-1` if the condition at `condition_index` does not exist or is not
+/// an integer.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_event_condition_int(ctx: *const LouderContext, index: i32, condition_index: i32) -> i32 {
-  todo!()
+pub extern "system" fn get_event_condition_int(ctx: *const LouderContext, index: usize, condition_index: i32) -> i32 {
+  if ctx.is_null() {
+    return -1;
+  }
+
+  let event : Option<&LouderEvent> = unsafe {
+    (*ctx).get_event(index)
+  };
+
+  match event {
+    Some(event) => match &event.data {
+      EventData::Condition(c) if condition_index == 0 => match &c.outcome {
+        LouderVariant::Int(v) => *v,
+        _ => -1,
+      },
+      _ => -1,
+    },
+    None => -1,
+  }
 }
 
-/// If [`EventFlags::CONDITION`] is set, then get this event's condition as an float.
+/// Get this event's condition as a float.
+///
+/// Returns `-1.0` if the condition at `condition_index` does not exist or is
+/// not a float.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_event_condition_float(ctx: *const LouderContext, index: i32, condition_index: i32) -> f32 {
-  todo!()
+pub extern "system" fn get_event_condition_float(ctx: *const LouderContext, index: usize, condition_index: i32) -> f32 {
+  if ctx.is_null() {
+    return -1.0;
+  }
+
+  let event : Option<&LouderEvent> = unsafe {
+    (*ctx).get_event(index)
+  };
+
+  match event {
+    Some(event) => match &event.data {
+      EventData::Condition(c) if condition_index == 0 => match &c.outcome {
+        LouderVariant::Float(f) => *f,
+        _ => -1.0,
+      },
+      _ => -1.0,
+    },
+    None => -1.0,
+  }
 }
 
-/// If [`EventFlags::CONDITION`] is set, then get this event's condition as a name.
+/// Get this event's condition as a name.
+///
+/// Returns [`LOUDER_NAME_NONE`] if the condition at `condition_index` does not
+/// exist or is not a name.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_event_condition_string(ctx: *const LouderContext, index: i32, condition_index: i32) -> LouderName {
-  todo!()
-}
+pub extern "system" fn get_event_condition_string(ctx: *const LouderContext, index: usize, condition_index: i32) -> LouderName {
+  if ctx.is_null() {
+    return LOUDER_NAME_NONE;
+  }
 
-/// If [`EventFlags::HUB_APPEARANCE`] is set, then get the type of the additional data of the hub at motion.target_position under `key`.
-#[unsafe(no_mangle)]
-pub extern "system" fn get_event_additional_variant_type(ctx: *const LouderContext, index: i32, key: LouderName) -> LouderVariantType {
-  todo!()
-}
+  let event : Option<&LouderEvent> = unsafe {
+    (*ctx).get_event(index)
+  };
 
-/// If [`EventFlags::HUB_APPEARANCE`] is set, then get the additional data of the hub at motion.target_position under `key` as an integer.
-#[unsafe(no_mangle)]
-pub extern "system" fn get_event_additional_int(ctx: *const LouderContext, index: i32, key: LouderName) -> i32 {
-  todo!()
-}
-
-/// If [`EventFlags::HUB_APPEARANCE`] is set, then get the additional data of the hub at motion.target_position under `key` as a float.
-#[unsafe(no_mangle)]
-pub extern "system" fn get_event_additional_float(ctx: *const LouderContext, index: i32, key: LouderName) -> f32 {
-  todo!()
-}
-
-/// If [`EventFlags::HUB_APPEARANCE`] is set, then get the additional data of the hub at motion.target_position under `key` as a string.
-#[unsafe(no_mangle)]
-pub extern "system" fn get_event_additional_string(ctx: *const LouderContext, index: i32, key: LouderName) -> LouderName {
-  todo!()
+  match event {
+    Some(event) => match &event.data {
+      EventData::Condition(c) if condition_index == 0 => match &c.outcome {
+        LouderVariant::String(n) => *n,
+        _ => LOUDER_NAME_NONE,
+      },
+      _ => LOUDER_NAME_NONE,
+    },
+    None => LOUDER_NAME_NONE,
+  }
 }
 
 /// Flush all events from the queue.
@@ -389,42 +504,137 @@ pub extern "system" fn get_event_additional_string(ctx: *const LouderContext, in
 /// Returns the number of events flushed. Poll events with [`is_event`] until it
 /// stops returning an event, then call this.
 #[unsafe(no_mangle)]
-pub extern "system" fn flush_events(ctx: *mut LouderContext) -> i32 {
-  todo!()
+pub extern "system" fn flush_events(ctx: *mut LouderContext) {
+  if ctx.is_null() {
+    return;
+  }
+
+  unsafe {
+    (*ctx).clear_events()
+  }
 }
 
 /// Check whether an ask exists at `index`.
 #[unsafe(no_mangle)]
-pub extern "system" fn is_ask(ctx: *const LouderContext, index: i32) -> i32 {
-  todo!()
+pub extern "system" fn is_ask(ctx: *const LouderContext, index: usize) -> i32 {
+  if ctx.is_null() {
+    return LOUDER_NAME_NONE
+  }
+
+  let a : Option<&LouderAsk> = unsafe {
+    (*ctx).get_event(index)
+  };
+
+  match a {
+    Some(_) => LOUDER_SUCCESS,
+    None => LOUDER_ERROR_NOT_FOUND
+  }
 }
 
 /// Get a name by ask index for a key.
 ///
 /// - [`AskName::Conversation`]: the conversation associated with this ask.
 /// - [`AskName::Channel`]: the channel name if this ask indicates a channel change.
+/// - [`AskName::Callback`]: the callback that caused this ask.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_ask_name(ctx: *const LouderContext, index: i32, key: AskName) -> LouderName {
-  todo!()
+pub extern "system" fn get_ask_name(ctx: *const LouderContext, index: usize, key: AskName) -> LouderName {
+  if ctx.is_null() {
+    return LOUDER_NAME_NONE;
+  }
+
+  let ask : Option<&LouderAsk> = unsafe {
+    (*ctx).get_event(index)
+  };
+
+  match (ask, key) {
+    (Some(ask), AskName::Conversation) => ask.conversation,
+    (Some(ask), AskName::Channel) => ask.channel,
+    (Some(ask), AskName::Callback) => ask.ask,
+    (None, _) => LOUDER_NAME_NONE,
+  }
+}
+
+/// Get the actor associated with an ask.
+///
+/// Returns [`LOUDER_ACTOR_NONE`] if no actor is associated with this ask.
+#[unsafe(no_mangle)]
+pub extern "system" fn get_ask_actor(ctx: *const LouderContext, index: usize) -> LouderActor {
+  if ctx.is_null() {
+    return LOUDER_ACTOR_NONE;
+  }
+
+  let ask : Option<&LouderAsk> = unsafe {
+    (*ctx).get_event(index)
+  };
+
+  match ask {
+    Some(ask) => ask.actor,
+    None => LOUDER_ACTOR_NONE,
+  }
+}
+
+/// Get a position by ask index for a key.
+///
+/// Returns `-1` if not available.
+///
+/// - [`AskPosition::Source`]: the origin of this ask's motion.
+/// - [`AskPosition::Target`]: the destination of this ask's motion.
+#[unsafe(no_mangle)]
+pub extern "system" fn get_ask_position(ctx: *const LouderContext, index: usize, key: AskPosition) -> LouderPosition {
+  if ctx.is_null() {
+    return -1;
+  }
+
+  let ask : Option<&LouderAsk> = unsafe {
+    (*ctx).get_event(index)
+  };
+
+  match (ask, key) {
+    (Some(ask), AskPosition::Source) => ask.motion.source_position,
+    (Some(ask), AskPosition::Target) => ask.motion.target_position,
+    (None, _) => -1,
+  }
 }
 
 /// Get an integer by ask index for a key.
 ///
 /// Returns `-1` if not available or the index is invalid.
 ///
-/// - [`AskInt::Actor`]: the actor associated with this ask's motion or just the actor.
-/// - [`AskInt::SourcePosition`]: the source position of this ask's motion.
-/// - [`AskInt::SourceChoiceSelected`]: the choice selected on the source position.
-/// - [`AskInt::CallbackPosition`]: the position the callback originates from.
+/// - [`AskInt::Actor`]: the actor associated with this ask.
+/// - [`AskInt::SourceChoiceIndex`]: the index of the choice selected on the
+///   source position by the actor of this ask's motion.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_ask_int(ctx: *const LouderContext, index: i32, key: AskInt) -> i32 {
-  todo!()
+pub extern "system" fn get_ask_int(ctx: *const LouderContext, index: usize, key: AskInt) -> i32 {
+  if ctx.is_null() {
+    return -1;
+  }
+
+  let ask : Option<&LouderAsk> = unsafe {
+    (*ctx).get_event(index)
+  };
+
+  match (ask, key) {
+    (Some(ask), AskInt::Actor) => ask.actor,
+    (Some(ask), AskInt::SourceChoiceIndex) => ask.motion.choice_index,
+    (None, _) => -1,
+  }
 }
 
 /// Get the callback causing this ask as a name.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_ask_callback(ctx: *const LouderContext, index: i32) -> LouderName {
-  todo!()
+pub extern "system" fn get_ask_callback(ctx: *const LouderContext, index: usize) -> LouderName {
+  if ctx.is_null() {
+    return LOUDER_NAME_NONE;
+  }
+
+  let ask : Option<&LouderAsk> = unsafe {
+    (*ctx).get_event(index)
+  };
+
+  match ask {
+    Some(ask) => ask.ask,
+    None => LOUDER_NAME_NONE,
+  }
 }
 
 /// Answer an ask with a verdict.
