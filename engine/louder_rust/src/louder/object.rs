@@ -1,3 +1,7 @@
+use std::hash::Hash;
+
+use crate::louder::context::LouderContext;
+
 /// A generic hash map backing the engine's internal data stores.
 pub type Map<K, V> = std::collections::HashMap<K, V>;
 
@@ -18,8 +22,23 @@ pub const LOUDER_NAME_NONE: LouderName = -1;
 /// [`crate::declare_name`], and read strings back with [`crate::read_name`].
 /// Conversations are id'd by names containing the file they were loaded from.
 pub struct LouderNameContext {
-  bytes: Vec<u8>,
-  encoding: LouderEncoding,
+  pub bytes: Vec<u8>,
+  pub encoding: LouderEncoding,
+}
+
+impl PartialEq for LouderNameContext {
+  fn eq(&self, other: &Self) -> bool {
+    self.bytes == other.bytes && self.encoding == other.encoding
+  }
+}
+
+impl Clone for LouderNameContext {
+  fn clone(&self) -> Self {
+    LouderNameContext {
+      bytes: self.bytes.clone(),
+      encoding: self.encoding,
+    }
+  }
 }
 
 /// The map between names and their string values.

@@ -18,7 +18,7 @@ use louder::speaker::*;
 pub type LouderError = i32;
 
 /// No error.
-pub const LOUDER_ERROR_NONE: LouderError = 0;
+pub const LOUDER_SUCCESS: LouderError = 0;
 /// The requested object does not exist.
 pub const LOUDER_ERROR_NOT_FOUND: LouderError = -1;
 
@@ -39,7 +39,7 @@ extern "system" fn get_next_encoding(start: LouderEncoding) -> LouderEncoding {
 
 /// Get the name of an encoding... in utf-8
 #[unsafe(no_mangle)]
-extern "system" fn get_encoding_name(index: LouderEncoding, buffer: *mut u8, max_length: i32) -> () {
+extern "system" fn get_encoding_name(index: LouderEncoding, buffer: *mut u8, max_size: usize) -> () {
   let e = encoding::all::encodings();
   if index >= e.len() {
     unsafe {
@@ -49,43 +49,113 @@ extern "system" fn get_encoding_name(index: LouderEncoding, buffer: *mut u8, max
   }
   let name = &e[index].name();
   let name_bytes = name.as_bytes();
-  let copy_length = std::cmp::min(name_bytes.len(), max_length as usize - 1);
+  let copy_length = std::cmp::min(name_bytes.len(), max_size);
   unsafe {
     std::ptr::copy_nonoverlapping(name_bytes.as_ptr(), buffer as *mut u8, copy_length);
     *buffer.offset(copy_length as isize) = 0;
   }
 }
 
+#[unsafe(no_mangle)]
+extern "system" fn change_encoding(buffer: *mut u8, max_size: usize, from_encoding: LouderEncoding, to_encoding: LouderEncoding) -> usize {
+  let e = encoding::all::encodings();
+  if from_encoding >= e.len() || to_encoding >= e.len() {
+    return 0;
+  }
+  let from = &e[from_encoding];
+  let to = &e[to_encoding];
+  let input_bytes = unsafe { std::slice::from_raw_parts(buffer, max_size) };
+  let output_bytes = match from.decode(input_bytes, encoding::DecoderTrap::Replace) {
+    Ok(s) => match to.encode(&s, encoding::EncoderTrap::Replace) {
+      Ok(b) => b,
+      Err(_) => return 0,
+    },
+    Err(_) => return 0,
+  };
+  let copy_length = std::cmp::min(output_bytes.len(), max_size);
+  unsafe {
+    std::ptr::copy_nonoverlapping(output_bytes.as_ptr(), buffer as *mut u8, copy_length);
+    *buffer.offset(copy_length as isize) = 0;
+  }
+  copy_length
+}
+
 /// Get the id of a string.
 ///
-/// Returns `-1` if the string was never declared.
+/// Returns [`LOUDER_NAME_NONE`] if the string was never declared.
 ///
-/// - `name`: the string bytes to look up.
-/// - `name_length`: the length of `name` in bytes.
+/// - `buffer`: the string bytes to look up.
+/// - `max_size`: the maximum size of `buffer` in bytes.
 /// - `encoding`: the encoding of the string.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_named_id(ctx: *const LouderContext, name: *const u8, name_length: i32, encoding: LouderEncoding) -> LouderName {
-  if ctx.is_null() || name.is_null() || name_length <= 0 {
+pub extern "system" fn get_named_id(ctx: *const LouderContext, buffer: *const u8, max_size: usize, encoding: LouderEncoding) -> LouderName {
+  if ctx.is_null() || buffer.is_null() {
     return LOUDER_NAME_NONE;
   }
-  0
+  
+  let c = LouderNameContext {
+    bytes: unsafe { std::slice::from_raw_parts(buffer, max_size).to_vec() },
+    encoding,
+  };
+
+  unsafe { 
+    match (*ctx).find_name(&c) {
+      LouderContextResult::Found(name) => name,
+      LouderContextResult::NotFound(_) => LOUDER_NAME_NONE,
+    }
+  }
 }
 
 /// Assign the id of a string.
 ///
-/// If the string was already declared, returns its existing id. Otherwise a new
+/// If the string was already declared, returns [`LOUDER_NAME_NONE`]. Otherwise a new
 /// id is assigned.
 #[unsafe(no_mangle)]
-pub extern "system" fn declare_name(ctx: *mut LouderContext, buffer: *const u8, max_length: i32, encoding: LouderEncoding) -> LouderName {
-  todo!()
+pub extern "system" fn declare_name(ctx: *mut LouderContext, buffer: *const u8, max_size: usize, encoding: LouderEncoding) -> LouderName {
+  if ctx.is_null() || buffer.is_null() {
+    return LOUDER_NAME_NONE;
+  }
+
+  let c = LouderNameContext {
+    bytes: unsafe { std::slice::from_raw_parts(buffer, max_size).to_vec() },
+    encoding,
+  };
+
+  unsafe { 
+    match (*ctx).add_name(&c) {
+      LouderContextResult::Found(_) => LOUDER_NAME_NONE,
+      LouderContextResult::NotFound(name) => name,
+    }
+  }
 }
 
 /// Read the string associated with an id into `buffer`.
 ///
 /// Writes 0 bytes if no name is associated with the id.
+/// Returns number of bytes written.
 #[unsafe(no_mangle)]
-pub extern "system" fn read_name(ctx: *const LouderContext, name: LouderName, buffer: *mut u8, max_length: i32, encoding: LouderEncoding) -> i32 {
-  todo!()
+pub extern "system" fn read_name(ctx: *const LouderContext, name: LouderName, buffer: *mut u8, max_size: usize, encoding: LouderEncoding) -> i32 {
+  if ctx.is_null() || buffer.is_null() {
+    return 0;
+  }
+
+  let name_context = unsafe { (*ctx).get_name_context(&name) };
+  if name_context.is_none() {
+    return 0;
+  }
+
+  let name_context = name_context.unwrap();
+  if name_context.encoding != encoding {
+    return 0;
+  }
+
+  let copy_length = std::cmp::min(name_context.bytes.len(), max_size);
+  unsafe {
+    std::ptr::copy_nonoverlapping(name_context.bytes.as_ptr(), buffer as *mut u8, copy_length);
+    *buffer.offset(copy_length as isize) = 0;
+  }
+  
+  copy_length as i32
 }
 
 /// Check whether an event exists at `index`.
@@ -579,14 +649,14 @@ pub extern "system" fn get_story_state_string(ctx: *const LouderContext, convers
 
 /// Serialize the story state in JSON into `buffer`.
 #[unsafe(no_mangle)]
-pub extern "system" fn read_state_json(ctx: *const LouderContext, conversation: LouderName, buffer: *mut u8, max_size: i32, encoding: LouderEncoding) -> i32 {
+pub extern "system" fn read_state_json(ctx: *const LouderContext, conversation: LouderName, buffer: *mut u8, max_size: usize, encoding: LouderEncoding) -> i32 {
   todo!()
 }
 
 /// Serialize the story state, as well as the positions and details of all
 /// actors, in JSON into `buffer`.
 #[unsafe(no_mangle)]
-pub extern "system" fn read_snapshot_json(ctx: *const LouderContext, conversation: LouderName, buffer: *mut u8, max_size: i32, encoding: LouderEncoding) -> i32 {
+pub extern "system" fn read_snapshot_json(ctx: *const LouderContext, conversation: LouderName, buffer: *mut u8, max_size: usize, encoding: LouderEncoding) -> i32 {
   todo!()
 }
 
@@ -596,13 +666,19 @@ pub extern "system" fn read_snapshot_json(ctx: *const LouderContext, conversatio
 /// [`deinit_louder`].
 #[unsafe(no_mangle)]
 pub extern "system" fn init_louder() -> *mut LouderContext {
-  todo!()
+  Box::into_raw(Box::new(LouderContext::new()))
 }
 
 /// Remove all conversations, speaker objects, and the event queue.
 #[unsafe(no_mangle)]
 pub extern "system" fn deinit_louder(ctx: *mut LouderContext) -> i32 {
-  todo!()
+  if ctx.is_null() {
+    return LOUDER_ERROR_NOT_FOUND;
+  }
+  unsafe {
+    Box::from_raw(ctx); //allegedly this auto-destroys.
+  }
+  LOUDER_SUCCESS
 }
 
 /// Load a conversation from a JSON document into `buffer`.
@@ -617,7 +693,7 @@ pub extern "system" fn deinit_louder(ctx: *mut LouderContext) -> i32 {
 ///   emitted as events with the invalid hub's position available via
 ///   `get_event_position(index, EventPosition::Source)`.
 #[unsafe(no_mangle)]
-pub extern "system" fn load_conversation_json(ctx: *mut LouderContext, conversation: LouderName, buffer: *mut u8, max_size: i32, encoding: LouderEncoding) -> LoadError {
+pub extern "system" fn load_conversation_json(ctx: *mut LouderContext, conversation: LouderName, buffer: *mut u8, max_size: usize, encoding: LouderEncoding) -> LoadError {
   todo!()
 }
 
@@ -636,7 +712,7 @@ pub extern "system" fn remove_conversation(ctx: *mut LouderContext, conversation
 /// - The config is a singleton as opposed to a named conversation instance.
 /// - Objects are speakers and their configurations.
 #[unsafe(no_mangle)]
-pub extern "system" fn load_conversation_config(ctx: *mut LouderContext, buffer: *mut u8, max_size: i32, encoding: LouderEncoding) -> LoadError {
+pub extern "system" fn load_conversation_config(ctx: *mut LouderContext, buffer: *mut u8, max_size: usize, encoding: LouderEncoding) -> LoadError {
   todo!()
 }
 
@@ -700,6 +776,6 @@ pub extern "system" fn set_story_state_float(ctx: *mut LouderContext, conversati
 
 /// Set a story state value as a string.
 #[unsafe(no_mangle)]
-pub extern "system" fn set_story_state_string(ctx: *mut LouderContext, conversation: LouderName, key: LouderName, buffer: *const u8, size: i32, encoding: LouderEncoding) -> i32 {
+pub extern "system" fn set_story_state_string(ctx: *mut LouderContext, conversation: LouderName, key: LouderName, buffer: *const u8, size: usize, encoding: LouderEncoding) -> i32 {
   todo!()
 }
