@@ -1,4 +1,4 @@
-mod louder;
+pub mod louder;
 mod test_linkage;
 
 use louder::actor::*;
@@ -8,6 +8,7 @@ use louder::event::*;
 use louder::hub::*;
 use louder::json_loader::*;
 use louder::object::*;
+use louder::name::*;
 use louder::simulator::*;
 use louder::speaker::*;
 
@@ -93,7 +94,7 @@ pub extern "system" fn get_named_id(ctx: *const LouderContext, buffer: *const u8
     return LOUDER_NAME_NONE;
   }
   
-  let c = LouderNameContext {
+  let c = LouderNameContent {
     bytes: unsafe { std::slice::from_raw_parts(buffer, max_size).to_vec() },
     encoding,
   };
@@ -116,7 +117,7 @@ pub extern "system" fn declare_name(ctx: *mut LouderContext, buffer: *const u8, 
     return LOUDER_NAME_NONE;
   }
 
-  let c = LouderNameContext {
+  let c = LouderNameContent {
     bytes: unsafe { std::slice::from_raw_parts(buffer, max_size).to_vec() },
     encoding,
   };

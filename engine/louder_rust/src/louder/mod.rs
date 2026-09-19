@@ -5,6 +5,7 @@ pub mod event;
 pub mod hub;
 pub mod json_loader;
 pub mod object;
+pub mod name;
 pub mod simulator;
 pub mod speaker;
 

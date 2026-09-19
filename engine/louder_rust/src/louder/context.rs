@@ -1,8 +1,6 @@
 use std::hash::{DefaultHasher, Hash, Hasher};
 
-use crate::louder::object::LouderNameContext;
-
-use super::object::{LouderName, LouderNameMap, Map};
+use super::name::*;
 use super::speaker::Speaker;
 use super::actor::Actor;
 use super::conversation::Conversation;
@@ -41,7 +39,7 @@ impl LouderContext {
     }
   }
 
-  pub fn find_name(&self, name_context: &LouderNameContext) -> LouderContextResult {
+  pub fn find_name(&self, name_context: &LouderNameContent) -> LouderContextResult {
     let mut hasher = DefaultHasher::new();
     name_context.bytes.hash(&mut hasher);
     name_context.encoding.hash(&mut hasher);
@@ -64,11 +62,11 @@ impl LouderContext {
     self.names.contains_key(name)
   }
 
-  pub fn get_name_context(&self, name: &LouderName) -> Option<&LouderNameContext> {
+  pub fn get_name_context(&self, name: &LouderName) -> Option<&LouderNameContent> {
     self.names.get(name)
   }
 
-  pub fn add_name(&mut self, name_context: &LouderNameContext) -> LouderContextResult {
+  pub fn add_name(&mut self, name_context: &LouderNameContent) -> LouderContextResult {
     match self.find_name(name_context) {
       LouderContextResult::Found(name) => LouderContextResult::Found(name),
       LouderContextResult::NotFound(name) => {

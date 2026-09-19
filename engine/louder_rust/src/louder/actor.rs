@@ -1,4 +1,5 @@
-use super::object::{HomogeneousObject, LouderName};
+use super::name::LouderName;
+use super::object::HomogeneousObject;
 use super::hub::LouderPosition;
 
 /// An actor participating in conversations.

@@ -1,4 +1,5 @@
-use super::object::{HomogeneousObject, LouderName};
+use super::name::LouderName;
+use super::object::HomogeneousObject;
 
 bitflags::bitflags! {
   /// Flag bits describing a speaker.

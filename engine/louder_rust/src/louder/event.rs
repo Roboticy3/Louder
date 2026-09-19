@@ -3,7 +3,7 @@ use bitflags::bitflags;
 use crate::louder::callback::LouderCallback;
 
 use super::actor::LouderActor;
-use super::object::LouderName;
+use super::name::LouderName;
 use super::hub::LouderPosition;
 
 bitflags! {

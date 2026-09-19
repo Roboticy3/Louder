@@ -1,4 +1,5 @@
-use super::object::{HomogeneousObject, LouderName, Map};
+use super::name::LouderName;
+use super::object::HomogeneousObject;
 use super::expression::{LouderExpression};
 use super::callback::{LouderCallback};
 
