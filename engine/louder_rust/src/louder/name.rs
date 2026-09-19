@@ -45,3 +45,18 @@ impl Clone for LouderNameContent {
 /// [`crate::declare_name`], and read strings back with [`crate::read_name`].
 /// Conversations are id'd by names containing the file they were loaded from.
 pub type LouderNameMap = Map<LouderName, LouderNameContent>;
+
+pub enum LouderContextResult {
+  Found(LouderName),
+  NotFound(LouderName),
+}
+
+pub trait LouderNameContext {
+  fn find_name(&self, name_context: &LouderNameContent) -> LouderContextResult;
+
+  fn has_name(&self, name: &LouderName) -> bool;
+
+  fn get_name_context(&self, name: &LouderName) -> Option<&LouderNameContent>;
+
+  fn add_name(&mut self, name_context: &LouderNameContent) -> LouderContextResult;
+}

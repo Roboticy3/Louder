@@ -21,11 +21,6 @@ pub struct LouderContext {
   asks: Vec<LouderAsk>,
 }
 
-pub enum LouderContextResult {
-  Found(LouderName),
-  NotFound(LouderName),
-}
-
 impl LouderContext {
   pub fn new() -> LouderContext {
     LouderContext {
@@ -38,8 +33,10 @@ impl LouderContext {
       asks: Vec::new(),
     }
   }
+}
 
-  pub fn find_name(&self, name_context: &LouderNameContent) -> LouderContextResult {
+impl LouderNameContext for LouderContext {
+  fn find_name(&self, name_context: &LouderNameContent) -> LouderContextResult {
     let mut hasher = DefaultHasher::new();
     name_context.bytes.hash(&mut hasher);
     name_context.encoding.hash(&mut hasher);
@@ -58,15 +55,15 @@ impl LouderContext {
     LouderContextResult::NotFound(name)
   }
 
-  pub fn has_name(&self, name: &LouderName) -> bool {
+  fn has_name(&self, name: &LouderName) -> bool {
     self.names.contains_key(name)
   }
 
-  pub fn get_name_context(&self, name: &LouderName) -> Option<&LouderNameContent> {
+  fn get_name_context(&self, name: &LouderName) -> Option<&LouderNameContent> {
     self.names.get(name)
   }
 
-  pub fn add_name(&mut self, name_context: &LouderNameContent) -> LouderContextResult {
+  fn add_name(&mut self, name_context: &LouderNameContent) -> LouderContextResult {
     match self.find_name(name_context) {
       LouderContextResult::Found(name) => LouderContextResult::Found(name),
       LouderContextResult::NotFound(name) => {
