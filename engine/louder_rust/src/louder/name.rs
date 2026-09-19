@@ -56,7 +56,7 @@ pub trait LouderNameContext {
 
   fn has_name(&self, name: &LouderName) -> bool;
 
-  fn get_name_context(&self, name: &LouderName) -> Option<&LouderNameContent>;
+  fn get_name_content(&self, name: &LouderName) -> Option<&LouderNameContent>;
 
   fn add_name(&mut self, name_context: &LouderNameContent) -> LouderContextResult;
 }

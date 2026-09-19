@@ -11,3 +11,5 @@ crate-type = ["cdylib"]
 [dependencies]
 bitflags = "2.13.2"
 encoding = "0.2.33"
+strum = "0.28.0"
+strum_macros = "0.28.0"

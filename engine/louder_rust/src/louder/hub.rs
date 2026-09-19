@@ -6,6 +6,7 @@ use super::callback::{LouderCallback};
 bitflags::bitflags! {
   /// Flag bits describing a hub.
   #[repr(transparent)]
+  #[derive(Clone)]
   pub struct HubFlags: i32 {
     const AUTO = 0b00000001;
     const ASK = 0b00000010;

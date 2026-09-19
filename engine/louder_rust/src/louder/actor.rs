@@ -4,10 +4,12 @@ use super::hub::LouderPosition;
 
 /// An actor participating in conversations.
 pub type LouderActor = i32;
+pub const LOUDER_ACTOR_NONE : LouderActor = -1;
 
 bitflags::bitflags! {
   /// Flag bits describing an actor.
   #[repr(transparent)]
+  #[derive(Clone)]
   pub struct ActorFlags: i32 {}
 }
 

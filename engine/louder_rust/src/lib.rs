@@ -1,5 +1,6 @@
-pub mod louder;
 mod test_linkage;
+
+pub mod louder;
 
 use louder::actor::*;
 use louder::context::*;
@@ -23,6 +24,60 @@ pub const LOUDER_SUCCESS: LouderError = 0;
 /// The requested object does not exist.
 pub const LOUDER_ERROR_NOT_FOUND: LouderError = -1;
 
+/// Key passed to [`crate::get_event_position`].
+///
+/// Each variant names a [`LouderPosition`] field of an event's data.
+#[repr(i32)]
+pub enum EventPosition {
+  /// Get the position the actor of this event's motion starts from.
+  Source = 0,
+  /// Get the position the actor of this event's motion moves to.
+  Target = 1,
+  /// Get the position this event's choice appearance is for.
+  ChoiceAppearance = 2,
+}
+
+/// Key passed to [`crate::get_event_int`].
+///
+/// Each variant names an `i32` field of an event's data.
+#[repr(i32)]
+pub enum EventInt {
+  /// Get the index of the choice selected by the actor of this event's motion,
+  /// or `-1` if no choice was selected.
+  SourceChoiceIndex = 0,
+  /// Get the index of the choice of this event's choice appearance.
+  ChoiceIndex = 1,
+}
+
+/// Key passed to [`crate::get_ask_name`].
+#[repr(i32)]
+pub enum AskName {
+  /// Get the conversation associated with this ask.
+  Conversation = 0,
+  /// Get the channel name of this ask if it indicates a channel change.
+  Channel = 1,
+  /// Get the callback which caused this ask.
+  Callback = 2,
+}
+
+/// Key passed to [`crate::get_ask_int`].
+#[repr(i32)]
+pub enum AskInt {
+  /// Get the actor associated with this ask's motion, or just the actor.
+  Actor = 0,
+  /// Get the index of the choice selected on the source position by the actor of
+  /// this ask's motion.
+  SourceChoiceIndex = 2,
+}
+
+/// Key passed to [`crate::get_ask_position`]
+pub enum AskPosition {
+  /// Get the position the actor of this event's motion starts from.
+  Source = 0,
+  /// Get the position the actor of this event's motion moves to.
+  Target = 1,
+}
+
 
 #[unsafe(no_mangle)]
 extern "system" fn test_linkage() -> i32 {
@@ -40,13 +95,10 @@ extern "system" fn get_next_encoding(start: LouderEncoding) -> LouderEncoding {
 
 /// Get the name of an encoding... in utf-8
 #[unsafe(no_mangle)]
-extern "system" fn get_encoding_name(index: LouderEncoding, buffer: *mut u8, max_size: usize) -> () {
+extern "system" fn get_encoding_name(index: LouderEncoding, buffer: *mut u8, max_size: usize) -> usize {
   let e = encoding::all::encodings();
   if index >= e.len() {
-    unsafe {
-      *buffer = 0;
-    }
-    return;
+    return 0;
   }
   let name = &e[index].name();
   let name_bytes = name.as_bytes();
@@ -54,6 +106,7 @@ extern "system" fn get_encoding_name(index: LouderEncoding, buffer: *mut u8, max
   unsafe {
     std::ptr::copy_nonoverlapping(name_bytes.as_ptr(), buffer as *mut u8, copy_length);
     *buffer.offset(copy_length as isize) = 0;
+    return copy_length;
   }
 }
 
@@ -135,12 +188,12 @@ pub extern "system" fn declare_name(ctx: *mut LouderContext, buffer: *const u8, 
 /// Writes 0 bytes if no name is associated with the id.
 /// Returns number of bytes written.
 #[unsafe(no_mangle)]
-pub extern "system" fn read_name(ctx: *const LouderContext, name: LouderName, buffer: *mut u8, max_size: usize, encoding: LouderEncoding) -> i32 {
+pub extern "system" fn read_name(ctx: *const LouderContext, name: LouderName, buffer: *mut u8, max_size: usize, encoding: LouderEncoding) -> usize {
   if ctx.is_null() || buffer.is_null() {
     return 0;
   }
 
-  let name_context = unsafe { (*ctx).get_name_context(&name) };
+  let name_context = unsafe { (*ctx).get_name_content(&name) };
   if name_context.is_none() {
     return 0;
   }
@@ -156,7 +209,7 @@ pub extern "system" fn read_name(ctx: *const LouderContext, name: LouderName, bu
     *buffer.offset(copy_length as isize) = 0;
   }
   
-  copy_length as i32
+  copy_length
 }
 
 /// Check whether an event exists at `index`.
@@ -165,56 +218,93 @@ pub extern "system" fn read_name(ctx: *const LouderContext, name: LouderName, bu
 /// [`LOUDER_ERROR_NOT_FOUND`] if the index is invalid. Poll events with
 /// increasing indexes until this stops returning an event.
 #[unsafe(no_mangle)]
-pub extern "system" fn is_event(ctx: *const LouderContext, index: i32) -> LouderError {
-  todo!()
+pub extern "system" fn is_event(ctx: *const LouderContext, index: usize) -> LouderError {
+  if ctx.is_null() {
+    return LOUDER_NAME_NONE
+  }
+
+  let e : Option<&LouderEvent> = unsafe {
+    (*ctx).get_event(index)
+  };
+
+  match e {
+    Some(_) => LOUDER_SUCCESS,
+    None => LOUDER_ERROR_NOT_FOUND
+  }
 }
 
 /// Get the type flags of an event by index.
 ///
 /// Returns `0` ("no flags") if the index is invalid. Events with 0 flags are
-/// invalid and shouldn't appear. See [`EventFlags`].
+/// invalid and shouldn't appear. See [`EventCode`].
 #[unsafe(no_mangle)]
-pub extern "system" fn get_event_flags(ctx: *const LouderContext, index: i32) -> EventFlags {
-  todo!()
+pub extern "system" fn get_event_code(ctx: *const LouderContext, index: usize) -> EventCode {
+  if ctx.is_null() {
+    return EventCode::None
+  }
+
+  let e : Option<&LouderEvent> = unsafe {
+    (*ctx).get_event(index)
+  };
+
+  match e {
+    Some(event) => EventCode::from(&event.data),
+    None => EventCode::None
+  }
 }
 
-/// Get a name by event index for a key.
-///
-/// - [`EventName::Conversation`]: get the conversation associated with this event.
-/// - [`EventName::Channel`]: get the channel name if the event indicates a channel change.
-/// - [`EventName::ActorAdditionalDataChanged`]: get the key of data changed on an
-///   actor if the event is `EventFlags::ACTOR_ADDITIONAL_DATA_CHANGE`.
-/// - [`EventName::Text`]: the text of this event if it is a hub appearance.
-/// - [`EventName::ChoiceText`]: the text of the choice if it is a choice appearance.
-/// - [`EventName::Callback`]: the callback if it is a hub appearance and
-///   indicates a callback.
-/// - [`EventName::Statement`]: the statement if it is a hub appearance and
-///   indicates a statement.
-/// - [`EventName::Condition`]: the condition if it is a hub appearance and
-///   indicates a condition evaluation.
+/// Get the additional data changed by this event.
+/// Additional data is changed on the actor returned by get_event_actor.
+/// 
+/// Returns [`LOUDER_NAME_NONE`] if no data was changed by this event.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_event_name(ctx: *const LouderContext, index: i32, key: EventName) -> LouderName {
-  todo!()
+pub extern "system" fn get_event_additional_data_changed(ctx: *const LouderContext, index: usize) -> LouderName {
+  if ctx.is_null() {
+    return LOUDER_NAME_NONE
+  }
+
+  let e : Option<&LouderEvent> = unsafe {
+    (*ctx).get_event(index)
+  };
+
+  if let Some(event) = e {
+    if let EventData::AdditionalDataChange(a) = &event.data {
+      return a.key;
+    }
+  }
+
+  LOUDER_NAME_NONE
 }
 
 /// Get the actor associated with an event.
 ///
-/// Returns `-1` if not available.
+/// Returns [`LOUDER_ACTOR_NONE`] if no actor is associated with this event.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_event_actor(ctx: *const LouderContext, index: i32) -> LouderActor {
-  todo!()
+pub extern "system" fn get_event_actor(ctx: *const LouderContext, index: usize) -> LouderActor {
+  if ctx.is_null() {
+    return LOUDER_ACTOR_NONE
+  }
+
+  let e : Option<&LouderEvent> = unsafe {
+    (*ctx).get_event(index)
+  };
+
+  if let Some(event) = e {
+    return event.actor;
+  }
+
+  return LOUDER_ACTOR_NONE;
 }
 
 /// Get a position by event index for a key.
 ///
 /// Returns `-1` if not available.
 ///
-/// - [`EventPosition::Source`]: the source position of this event's motion.
-/// - [`EventPosition::Target`]: the target position of this event's motion.
-/// - [`EventPosition::ChoiceLinked`]: the position linked to by the choice of
-///   this event.
+/// - [`EventPosition::Source`]: the origin of this event's motion.
+/// - [`EventPosition::Target`]: the destination of this event's motion.
+/// - [`EventPosition::Position`]: the position this event's choice appearance is for.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_event_position(ctx: *const LouderContext, index: i32, key: EventPosition) -> LouderPosition {
+pub extern "system" fn get_event_position(ctx: *const LouderContext, index: usize, key: EventPosition) -> LouderPosition {
   todo!()
 }
 
@@ -222,10 +312,10 @@ pub extern "system" fn get_event_position(ctx: *const LouderContext, index: i32,
 ///
 /// Returns `-1` if not available.
 ///
-/// - [`EventInt::SourceChoiceSelected`]: index of the choice selected by the
-///   actor of this event's motion.
-/// - [`EventInt::ChoiceIndex`]: choice index of this event if it is a choice
-///   appearance, `-1` otherwise.
+/// - [`EventInt::SourceChoiceIndex`]: the index of the choice selected by the
+///   actor of this event's motion, or `-1` if none.
+/// - [`EventInt::ChoiceIndex`]: the index of the choice of this event's choice
+///   appearance.
 #[unsafe(no_mangle)]
 pub extern "system" fn get_event_int(ctx: *const LouderContext, index: i32, key: EventInt) -> i32 {
   todo!()

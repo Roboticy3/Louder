@@ -4,7 +4,7 @@ use super::name::*;
 use super::speaker::Speaker;
 use super::actor::Actor;
 use super::conversation::Conversation;
-use super::event::{LouderEvent, LouderAsk};
+use super::event::*;
 
 /// The opaque handle to the engine.
 ///
@@ -59,7 +59,7 @@ impl LouderNameContext for LouderContext {
     self.names.contains_key(name)
   }
 
-  fn get_name_context(&self, name: &LouderName) -> Option<&LouderNameContent> {
+  fn get_name_content(&self, name: &LouderName) -> Option<&LouderNameContent> {
     self.names.get(name)
   }
 
@@ -71,5 +71,25 @@ impl LouderNameContext for LouderContext {
         LouderContextResult::NotFound(name)
       }
     }
+  }
+}
+
+impl EventCache<LouderEvent> for LouderContext {
+  fn get_event(&self, index: usize) -> Option<&LouderEvent> {
+    self.events.get(index)
+  }
+
+  fn clear_events(&mut self) {
+    self.events.clear()
+  }
+}
+
+impl EventCache<LouderAsk> for LouderContext {
+  fn get_event(&self, index: usize) -> Option<&LouderAsk> {
+    self.asks.get(index)
+  }
+
+  fn clear_events(&mut self) {
+    self.asks.clear()
   }
 }

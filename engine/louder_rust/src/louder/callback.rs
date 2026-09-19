@@ -1,1 +1,3 @@
-pub type LouderCallback = String;
+use super::name::LouderName;
+
+pub type LouderCallback = LouderName;
