@@ -50,7 +50,6 @@ impl LouderNameContext for LouderContext {
   fn find_name(&self, name_context: &LouderNameContent) -> LouderContextResult {
     let mut hasher = DefaultHasher::new();
     name_context.bytes.hash(&mut hasher);
-    name_context.encoding.hash(&mut hasher);
     
     let mut name = hasher.finish() as LouderName;
     let mut iterations = 0;

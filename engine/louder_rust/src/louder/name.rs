@@ -19,24 +19,9 @@ pub const LOUDER_NAME_NONE: LouderName = -1;
 /// Names map strings to integers. Obtain ids with [`crate::get_named_id`] and
 /// [`crate::declare_name`], and read strings back with [`crate::read_name`].
 /// Conversations are id'd by names containing the file they were loaded from.
+#[derive(PartialEq, Clone)]
 pub struct LouderNameContent {
   pub bytes: Vec<u8>,
-  pub encoding: LouderEncoding,
-}
-
-impl PartialEq for LouderNameContent {
-  fn eq(&self, other: &Self) -> bool {
-    self.bytes == other.bytes && self.encoding == other.encoding
-  }
-}
-
-impl Clone for LouderNameContent {
-  fn clone(&self) -> Self {
-    LouderNameContent {
-      bytes: self.bytes.clone(),
-      encoding: self.encoding,
-    }
-  }
 }
 
 /// The map between names and their string values.

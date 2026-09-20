@@ -112,3 +112,16 @@ Conversation summaries:
 3. Street hustler. Future always suggests the perfect move after a tough dice check.
 4. Introduce merchant. Memory helps recall some basic things, but doesn't seem aware of how relieving this should be. Planets looks at the grains of sand on the merchant's face and describes where he's been.
 5. Divination. Stars can use a Divination technique to reveal that one of the friends are somewhere in East Breach, while the other is out in the desert. Future admits that divination can be inaccurate.
+
+# Additional Notes
+Street hustler: a chess match. The hustler adapts to the player's accuracy. Additionally, two player's can play against each other. Dialogue for each character should be present for:
+ - Making a threat
+ - Making a retreat
+ - Making a discovered attack
+ - Making a promotion
+ - Making a castle
+ - Making a check
+ - Making a double check
+ - Making a discovered check
+ - Being one move away from checkmate
+ - Making checkmate

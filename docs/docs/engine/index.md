@@ -1,13 +1,14 @@
 # Engine
 
 The Louder engine is an open-source program meant to interpret conversations
-created by the [editor](/editor/). The engine can manage, save, and load state
-for conversations, manage the flow of conversation, and save and load replays
-and checkpoints of a conversation. For details of how this works, see [architecture](./architecture)
+created by the [editor](../editor/). The engine can manage, save, and load state
+for conversations, manage the flow of conversations, and save and load replays
+and checkpoints of a conversation. For details of how this works, see the [api docs](../rustdoc/louder_rust/)
 
 This is very much a back-end tool, and does not help with rendering text, sound,
-character portraits, etc. This deficiency is the purpose of the [examples](/examples/)
-secion.
+character portraits, etc. This deficiency is the purpose of the [examples](../examples/)
+secion. Also, unless you are writing your game in Rust, you will probably be using
+one of the [adapters](./adapters)
 
 # Goals of Dialogue Rules
 The rules below essentially split dialogue into 3 non-mutually exclusive scenarios which may happen all at once in parallel.

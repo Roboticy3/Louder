@@ -56,75 +56,20 @@ extern "C" fn test_linkage() -> i32 {
   test_linkage::test_linkage::test_linkage()
 }
 
-#[unsafe(no_mangle)]
-extern "C" fn get_next_encoding(start: LouderEncoding) -> LouderEncoding {
-  let e = encoding::all::encodings();
-  if start + 1 >= e.len() {
-    return 0;
-  }
-  return start + 1;
-}
-
-/// Get the name of an encoding... in utf-8
-#[unsafe(no_mangle)]
-extern "C" fn get_encoding_name(index: LouderEncoding, buffer: *mut u8, max_size: usize) -> usize {
-  let e = encoding::all::encodings();
-  if index >= e.len() {
-    unsafe {
-      *buffer = 0;
-    }
-    return 0;
-  }
-  let name = &e[index].name();
-  let name_bytes = name.as_bytes();
-  let copy_length = std::cmp::min(name_bytes.len(), max_size);
-  unsafe {
-    std::ptr::copy_nonoverlapping(name_bytes.as_ptr(), buffer as *mut u8, copy_length);
-    *buffer.offset(copy_length as isize) = 0;
-    return copy_length;
-  }
-}
-
-#[unsafe(no_mangle)]
-extern "C" fn change_encoding(buffer: *mut u8, max_size: usize, from_encoding: LouderEncoding, to_encoding: LouderEncoding) -> usize {
-  let e = encoding::all::encodings();
-  if from_encoding >= e.len() || to_encoding >= e.len() {
-    return 0;
-  }
-  let from = &e[from_encoding];
-  let to = &e[to_encoding];
-  let input_bytes = unsafe { std::slice::from_raw_parts(buffer, max_size) };
-  let output_bytes = match from.decode(input_bytes, encoding::DecoderTrap::Replace) {
-    Ok(s) => match to.encode(&s, encoding::EncoderTrap::Replace) {
-      Ok(b) => b,
-      Err(_) => return 0,
-    },
-    Err(_) => return 0,
-  };
-  let copy_length = std::cmp::min(output_bytes.len(), max_size);
-  unsafe {
-    std::ptr::copy_nonoverlapping(output_bytes.as_ptr(), buffer as *mut u8, copy_length);
-    *buffer.offset(copy_length as isize) = 0;
-  }
-  copy_length
-}
-
 /// Get the id of a string.
 ///
 /// Returns [`LOUDER_NAME_NONE`] if the string was never declared.
 ///
 /// - `buffer`: the string bytes to look up.
 /// - `max_size`: the maximum size of `buffer` in bytes.
-/// - `encoding`: the encoding of the string.
 #[unsafe(no_mangle)]
-pub extern "C" fn get_named_id(ctx: *const LouderContext, buffer: *const u8, max_size: usize, encoding: LouderEncoding) -> LouderName {
+pub extern "C" fn get_named_id(ctx: *const LouderContext, buffer: *const u8, max_size: usize) -> LouderName {
   if ctx.is_null() || buffer.is_null() {
     return LOUDER_NAME_NONE;
   }
   
   let c = LouderNameContent {
     bytes: unsafe { std::slice::from_raw_parts(buffer, max_size).to_vec() },
-    encoding,
   };
 
   unsafe { 
@@ -140,14 +85,13 @@ pub extern "C" fn get_named_id(ctx: *const LouderContext, buffer: *const u8, max
 /// If the string was already declared, returns [`LOUDER_NAME_NONE`]. Otherwise a new
 /// id is assigned.
 #[unsafe(no_mangle)]
-pub extern "C" fn declare_name(ctx: *mut LouderContext, buffer: *const u8, max_size: usize, encoding: LouderEncoding) -> LouderName {
+pub extern "C" fn declare_name(ctx: *mut LouderContext, buffer: *const u8, max_size: usize) -> LouderName {
   if ctx.is_null() || buffer.is_null() {
     return LOUDER_NAME_NONE;
   }
 
   let c = LouderNameContent {
     bytes: unsafe { std::slice::from_raw_parts(buffer, max_size).to_vec() },
-    encoding,
   };
 
   unsafe { 
@@ -174,9 +118,6 @@ pub extern "C" fn read_name(ctx: *const LouderContext, name: LouderName, buffer:
   }
 
   let name_context = name_context.unwrap();
-  if name_context.encoding != encoding {
-    return 0;
-  }
 
   let copy_length = std::cmp::min(name_context.bytes.len(), max_size);
   unsafe {
