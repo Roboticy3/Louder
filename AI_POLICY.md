@@ -1,4 +1,4 @@
-I'm also enacting a No AI Policy on this project until further notice. I've been using OpenCode with Big Pickle. My friend has access to Claude MAX and it has the same issues from what I've seen.
+I'm also enacting a No AI Policy on the engine and documentation until further notice. I've been using OpenCode with Big Pickle. My friend has access to Claude MAX and it has the same issues from what I've seen. Demos/examples can use AI, but I'm only allowing this because I'm just one guy and can't do it all alone.
 
 AI is counterproductive for projects where I am navigating a space I don't fully understand. It is, essentially, a codegen automation tool. And it could be better at that. I get the sense that Big Pickle's actual goal is to harvest as much of my data as possible, even simple prompts make it "think" for ages, which inevitably leads to a deep dive on my git history to "locate the issue" which I already located for it in the prompt.
 
