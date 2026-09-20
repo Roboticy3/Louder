@@ -4,6 +4,7 @@ mod test_linkage;
 
 pub mod louder;
 
+use std::ops::Index;
 use std::usize;
 
 use louder::actor::*;
@@ -285,16 +286,43 @@ pub extern "C" fn push_ask(
 /// Get the flags of a speaker.
 #[unsafe(no_mangle)]
 pub extern "C" fn get_speaker_flags(ctx: *const LouderContext, speaker: LouderName) -> SpeakerFlags {
-  todo!()
+  if ctx.is_null() {
+    return SpeakerFlags::NONE;
+  }
+
+  if let Some(s) = unsafe { (*ctx).get_speaker(speaker) } {
+    return s.flags.clone();
+  }
+
+  return SpeakerFlags::NONE;
 }
 
 /// Iterate the speakers that `speaker` listens to.
 ///
-/// Pass `-1` as `start` to begin, then keep passing the previous result until
+/// Pass [`LOUDER_NAME_NONE`] as `start` to begin, then keep passing the previous result until
 /// the iteration ends.
 #[unsafe(no_mangle)]
-pub extern "C" fn next_speaker_listening(ctx: *const LouderContext, speaker: LouderName, start: LouderName) -> LouderName {
-  todo!()
+pub extern "C" fn get_next_speaker_listen_to(ctx: *const LouderContext, speaker: LouderName) -> LouderName {
+  if ctx.is_null() {
+    return LOUDER_NAME_NONE;
+  }
+
+  if let Some(s) = unsafe { (*ctx).get_speaker(speaker) } {
+    let listen_to = &s.listen_to;
+    if listen_to.is_empty() {
+      return LOUDER_NAME_NONE;
+    }
+
+    if let Some(index) = listen_to.iter().position(|l| l.clone() == speaker) { 
+      if index + 1 < listen_to.len() {
+        return listen_to[index + 1];
+      }
+    }
+
+    return listen_to[0];
+  }
+
+  return LOUDER_NAME_NONE;
 }
 
 /// Get a speaker's additional data under `key`.

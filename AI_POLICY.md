@@ -1,0 +1,5 @@
+I'm also enacting a No AI Policy on this project until further notice. I've been using OpenCode with Big Pickle. My friend has access to Claude MAX and it has the same issues from what I've seen.
+
+AI is counterproductive for projects where I am navigating a space I don't fully understand. It is, essentially, a codegen automation tool. And it could be better at that. I get the sense that Big Pickle's actual goal is to harvest as much of my data as possible, even simple prompts make it "think" for ages, which inevitably leads to a deep dive on my git history to "locate the issue" which I already located for it in the prompt.
+
+Secondly, one of the goals of this project is to make an open source narrative design and behavior modeling tool. The other is to envision my own video game project. I don't want details about that project to get leaked to the internet through prompting. There are unencrypted backups of that project's notes in an archive on my Google Drive. So depending on how aggressive Google is about Gemini's training, this is a moot point. But I would prefer if this process were undercover, and preventing AI use is the best way to do that.

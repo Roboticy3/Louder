@@ -1,4 +1,5 @@
 
+use crate::louder::event::EventData::None;
 use crate::louder::object::LouderVariant;
 
 use super::callback::LouderCallback;
@@ -41,6 +42,7 @@ pub struct ConditionOutcome {
 #[derive(Debug, Clone)]
 #[repr(C)] //creates a union structure in the C FFI.
 pub enum EventData {
+  None,
   RegularMotion(Motion),
   Warp(Motion),
   ForceMotion(Motion),
@@ -63,7 +65,13 @@ pub enum EventData {
   ConversationRemoved(LouderName),
 }
 
-#[derive(Debug, Clone)]
+impl Default for EventData {
+  fn default() -> Self {
+    return None
+  }
+}
+
+#[derive(Debug, Clone, Default)]
 #[repr(C)]
 pub struct LouderEvent {
   pub conversation: LouderName,

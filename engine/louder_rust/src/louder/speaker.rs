@@ -6,14 +6,19 @@ bitflags::bitflags! {
   #[repr(C)]
   #[derive(Clone)]
   pub struct SpeakerFlags: i32 {
+    const NONE = 0b0;
     const PUBLIC = 0b00000001;
   }
 }
 
 // Object defining a speaker in the conversation. Can be possessed or heard by actors
 pub struct Speaker {
-  name: LouderName,
-  flags: SpeakerFlags,
-  listen_to: Vec<LouderName>,
-  additional_data: HomogeneousObject,
+  pub name: LouderName,
+  pub flags: SpeakerFlags,
+  pub listen_to: Vec<LouderName>,
+  pub additional_data: HomogeneousObject,
+}
+
+pub trait SpeakerMap {
+  fn get_speaker(&self, speaker_name:LouderName) -> Option<&Speaker>;
 }

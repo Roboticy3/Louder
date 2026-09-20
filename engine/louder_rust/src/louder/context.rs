@@ -2,7 +2,7 @@ use std::hash::{DefaultHasher, Hash, Hasher};
 use std::todo;
 
 use super::name::*;
-use super::speaker::Speaker;
+use super::speaker::*;
 use super::actor::Actor;
 use super::conversation::Conversation;
 use super::event::*;
@@ -114,5 +114,11 @@ impl AskListener for LouderContext {
         },
         None => false
       }
+  }
+}
+
+impl SpeakerMap for LouderContext {
+  fn get_speaker(&self, speaker_name:LouderName) -> Option<&Speaker> {
+    self.speakers.get(&speaker_name)
   }
 }
