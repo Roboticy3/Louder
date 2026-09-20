@@ -1,4 +1,3 @@
-use strum_macros::EnumDiscriminants;
 
 use crate::louder::object::LouderVariant;
 
@@ -9,7 +8,8 @@ use super::actor::LouderActor;
 use super::name::LouderName;
 use super::hub::LouderPosition;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
+#[repr(C)]
 pub struct Motion {
   pub source_position: LouderPosition,
   pub target_position: LouderPosition,
@@ -18,27 +18,29 @@ pub struct Motion {
   pub background: bool,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
+#[repr(C)]
 pub struct ChoiceAppearance {
   pub position: LouderPosition,
   pub choice_index: i32
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
+#[repr(C)]
 pub struct AdditionalDataChange {
   pub key: LouderName,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
+#[repr(C)]
 pub struct ConditionOutcome {
   pub condition:LouderName,
   pub outcome: LouderVariant,
 }
 
-#[derive(Debug, EnumDiscriminants)]
-#[strum_discriminants(name(EventCode), repr(u32))]
+#[derive(Debug, Clone)]
+#[repr(C)] //creates a union structure in the C FFI.
 pub enum EventData {
-  None,
   RegularMotion(Motion),
   Warp(Motion),
   ForceMotion(Motion),
@@ -61,7 +63,8 @@ pub enum EventData {
   ConversationRemoved(LouderName),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
+#[repr(C)]
 pub struct LouderEvent {
   pub conversation: LouderName,
   pub channel: LouderName,
@@ -69,6 +72,8 @@ pub struct LouderEvent {
   pub data: EventData,
 }
 
+#[derive(Debug, Clone)]
+#[repr(C)]
 pub struct LouderAsk {
   pub conversation: LouderName,
   pub channel: LouderName,

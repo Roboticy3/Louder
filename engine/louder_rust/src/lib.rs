@@ -1,6 +1,10 @@
+
+
 mod test_linkage;
 
 pub mod louder;
+
+use std::usize;
 
 use louder::actor::*;
 use louder::callback::*;
@@ -17,19 +21,18 @@ use louder::speaker::*;
 
 /// An error code returned by most operations.
 ///
-/// - [`LOUDER_ERROR_NONE`]: no error.
-/// - [`LOUDER_ERROR_NOT_FOUND`]: the requested object does not exist.
-pub type LouderError = i32;
-
-/// No error.
-pub const LOUDER_SUCCESS: LouderError = 0;
-/// The requested object does not exist.
-pub const LOUDER_ERROR_NOT_FOUND: LouderError = -1;
+/// - [`LouderError::Ok`]: no error.
+/// - [`LouderError::Missing`]: the requested object does not exist.
+#[repr(usize)]
+pub enum LouderError {
+  Ok = 0,
+  Missing,
+}
 
 /// Key passed to [`crate::get_event_position`].
 ///
 /// Each variant names a [`LouderPosition`] field of an event's data.
-#[repr(i32)]
+#[repr(C)]
 pub enum EventPosition {
   /// Get the position the actor of this event's motion starts from.
   Source = 0,
@@ -39,55 +42,21 @@ pub enum EventPosition {
   ChoiceAppearance = 2,
 }
 
-/// Key passed to [`crate::get_event_int`].
-///
-/// Each variant names an `i32` field of an event's data.
-#[repr(i32)]
-pub enum EventInt {
-  /// Get the index of the choice selected by the actor of this event's motion,
-  /// or `-1` if no choice was selected.
-  SourceChoiceIndex = 0,
-  /// Get the index of the choice of this event's choice appearance.
-  ChoiceIndex = 1,
-}
-
-/// Key passed to [`crate::get_ask_name`].
-#[repr(i32)]
-pub enum AskName {
-  /// Get the conversation associated with this ask.
-  Conversation = 0,
-  /// Get the channel name of this ask if it indicates a channel change.
-  Channel = 1,
-  /// Get the callback which caused this ask.
-  Callback = 2,
-}
-
-/// Key passed to [`crate::get_ask_int`].
-#[repr(i32)]
-pub enum AskInt {
-  /// Get the actor associated with this ask's motion, or just the actor.
-  Actor = 0,
-  /// Get the index of the choice selected on the source position by the actor of
-  /// this ask's motion.
-  SourceChoiceIndex = 2,
-}
-
-/// Key passed to [`crate::get_ask_position`]
-pub enum AskPosition {
-  /// Get the position the actor of this event's motion starts from.
-  Source = 0,
-  /// Get the position the actor of this event's motion moves to.
-  Target = 1,
+/// Custom Option type exposed to the C FFI
+#[repr(C)]
+pub enum LouderOption<T> {
+  None,
+  Some(T)
 }
 
 
 #[unsafe(no_mangle)]
-extern "system" fn test_linkage() -> i32 {
+extern "C" fn test_linkage() -> i32 {
   test_linkage::test_linkage::test_linkage()
 }
 
 #[unsafe(no_mangle)]
-extern "system" fn get_next_encoding(start: LouderEncoding) -> LouderEncoding {
+extern "C" fn get_next_encoding(start: LouderEncoding) -> LouderEncoding {
   let e = encoding::all::encodings();
   if start + 1 >= e.len() {
     return 0;
@@ -97,9 +66,12 @@ extern "system" fn get_next_encoding(start: LouderEncoding) -> LouderEncoding {
 
 /// Get the name of an encoding... in utf-8
 #[unsafe(no_mangle)]
-extern "system" fn get_encoding_name(index: LouderEncoding, buffer: *mut u8, max_size: usize) -> usize {
+extern "C" fn get_encoding_name(index: LouderEncoding, buffer: *mut u8, max_size: usize) -> usize {
   let e = encoding::all::encodings();
   if index >= e.len() {
+    unsafe {
+      *buffer = 0;
+    }
     return 0;
   }
   let name = &e[index].name();
@@ -113,7 +85,7 @@ extern "system" fn get_encoding_name(index: LouderEncoding, buffer: *mut u8, max
 }
 
 #[unsafe(no_mangle)]
-extern "system" fn change_encoding(buffer: *mut u8, max_size: usize, from_encoding: LouderEncoding, to_encoding: LouderEncoding) -> usize {
+extern "C" fn change_encoding(buffer: *mut u8, max_size: usize, from_encoding: LouderEncoding, to_encoding: LouderEncoding) -> usize {
   let e = encoding::all::encodings();
   if from_encoding >= e.len() || to_encoding >= e.len() {
     return 0;
@@ -144,7 +116,7 @@ extern "system" fn change_encoding(buffer: *mut u8, max_size: usize, from_encodi
 /// - `max_size`: the maximum size of `buffer` in bytes.
 /// - `encoding`: the encoding of the string.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_named_id(ctx: *const LouderContext, buffer: *const u8, max_size: usize, encoding: LouderEncoding) -> LouderName {
+pub extern "C" fn get_named_id(ctx: *const LouderContext, buffer: *const u8, max_size: usize, encoding: LouderEncoding) -> LouderName {
   if ctx.is_null() || buffer.is_null() {
     return LOUDER_NAME_NONE;
   }
@@ -167,7 +139,7 @@ pub extern "system" fn get_named_id(ctx: *const LouderContext, buffer: *const u8
 /// If the string was already declared, returns [`LOUDER_NAME_NONE`]. Otherwise a new
 /// id is assigned.
 #[unsafe(no_mangle)]
-pub extern "system" fn declare_name(ctx: *mut LouderContext, buffer: *const u8, max_size: usize, encoding: LouderEncoding) -> LouderName {
+pub extern "C" fn declare_name(ctx: *mut LouderContext, buffer: *const u8, max_size: usize, encoding: LouderEncoding) -> LouderName {
   if ctx.is_null() || buffer.is_null() {
     return LOUDER_NAME_NONE;
   }
@@ -190,7 +162,7 @@ pub extern "system" fn declare_name(ctx: *mut LouderContext, buffer: *const u8, 
 /// Writes 0 bytes if no name is associated with the id.
 /// Returns number of bytes written.
 #[unsafe(no_mangle)]
-pub extern "system" fn read_name(ctx: *const LouderContext, name: LouderName, buffer: *mut u8, max_size: usize, encoding: LouderEncoding) -> usize {
+pub extern "C" fn read_name(ctx: *const LouderContext, name: LouderName, buffer: *mut u8, max_size: usize, encoding: LouderEncoding) -> usize {
   if ctx.is_null() || buffer.is_null() {
     return 0;
   }
@@ -220,9 +192,9 @@ pub extern "system" fn read_name(ctx: *const LouderContext, name: LouderName, bu
 /// [`LOUDER_ERROR_NOT_FOUND`] if the index is invalid. Poll events with
 /// increasing indexes until this stops returning an event.
 #[unsafe(no_mangle)]
-pub extern "system" fn is_event(ctx: *const LouderContext, index: usize) -> LouderError {
+pub extern "C" fn get_event(ctx: *const LouderContext, index: usize) -> LouderOption<LouderEvent> {
   if ctx.is_null() {
-    return LOUDER_NAME_NONE
+    return LouderOption::None
   }
 
   let e : Option<&LouderEvent> = unsafe {
@@ -230,260 +202,8 @@ pub extern "system" fn is_event(ctx: *const LouderContext, index: usize) -> Loud
   };
 
   match e {
-    Some(_) => LOUDER_SUCCESS,
-    None => LOUDER_ERROR_NOT_FOUND
-  }
-}
-
-/// Get the type flags of an event by index.
-///
-/// Returns `0` ("no flags") if the index is invalid. Events with 0 flags are
-/// invalid and shouldn't appear. See [`EventCode`].
-#[unsafe(no_mangle)]
-pub extern "system" fn get_event_code(ctx: *const LouderContext, index: usize) -> EventCode {
-  if ctx.is_null() {
-    return EventCode::None
-  }
-
-  let e : Option<&LouderEvent> = unsafe {
-    (*ctx).get_event(index)
-  };
-
-  match e {
-    Some(event) => EventCode::from(&event.data),
-    None => EventCode::None
-  }
-}
-
-/// Get the additional data changed by this event.
-/// Additional data is changed on the actor returned by get_event_actor.
-/// 
-/// Returns [`LOUDER_NAME_NONE`] if no data was changed by this event.
-#[unsafe(no_mangle)]
-pub extern "system" fn get_event_additional_data_changed(ctx: *const LouderContext, index: usize) -> LouderName {
-  if ctx.is_null() {
-    return LOUDER_NAME_NONE
-  }
-
-  let e : Option<&LouderEvent> = unsafe {
-    (*ctx).get_event(index)
-  };
-
-  if let Some(event) = e {
-    if let EventData::AdditionalDataChange(a) = &event.data {
-      return a.key;
-    }
-  }
-
-  LOUDER_NAME_NONE
-}
-
-/// Get the actor associated with an event.
-///
-/// Returns [`LOUDER_ACTOR_NONE`] if no actor is associated with this event.
-#[unsafe(no_mangle)]
-pub extern "system" fn get_event_actor(ctx: *const LouderContext, index: usize) -> LouderActor {
-  if ctx.is_null() {
-    return LOUDER_ACTOR_NONE
-  }
-
-  let e : Option<&LouderEvent> = unsafe {
-    (*ctx).get_event(index)
-  };
-
-  if let Some(event) = e {
-    return event.actor;
-  }
-
-  return LOUDER_ACTOR_NONE;
-}
-
-/// Get a position by event index for a key.
-///
-/// Returns `-1` if not available.
-///
-/// - [`EventPosition::Source`]: the origin of this event's motion.
-/// - [`EventPosition::Target`]: the destination of this event's motion.
-/// - [`EventPosition::ChoiceAppearance`]: the position this event's choice appearance is for.
-#[unsafe(no_mangle)]
-pub extern "system" fn get_event_position(ctx: *const LouderContext, index: usize, key: EventPosition) -> LouderPosition {
-  if ctx.is_null() {
-    return -1;
-  }
-
-  let event : Option<&LouderEvent> = unsafe {
-    (*ctx).get_event(index)
-  };
-
-  match (event, key) {
-    (Some(event), EventPosition::Source) => match &event.data {
-      EventData::RegularMotion(m) | EventData::Warp(m) | EventData::ForceMotion(m) => m.source_position,
-      _ => -1,
-    },
-    (Some(event), EventPosition::Target) => match &event.data {
-      EventData::RegularMotion(m) | EventData::Warp(m) | EventData::ForceMotion(m) => m.target_position,
-      _ => -1,
-    },
-    (Some(event), EventPosition::ChoiceAppearance) => match &event.data {
-      EventData::ChoiceAppearance(c) => c.position,
-      _ => -1,
-    },
-    (None, _) => -1,
-  }
-}
-
-/// Get an integer by event index for a key.
-///
-/// Returns `-1` if not available.
-///
-/// - [`EventInt::SourceChoiceIndex`]: the index of the choice selected by the
-///   actor of this event's motion, or `-1` if none.
-/// - [`EventInt::ChoiceIndex`]: the index of the choice of this event's choice
-///   appearance.
-#[unsafe(no_mangle)]
-pub extern "system" fn get_event_int(ctx: *const LouderContext, index: usize, key: EventInt) -> i32 {
-  if ctx.is_null() {
-    return -1;
-  }
-
-  let event : Option<&LouderEvent> = unsafe {
-    (*ctx).get_event(index)
-  };
-
-  match (event, key) {
-    (Some(event), EventInt::SourceChoiceIndex) => match &event.data {
-      EventData::RegularMotion(m) | EventData::Warp(m) | EventData::ForceMotion(m) => m.choice_index,
-      _ => -1,
-    },
-    (Some(event), EventInt::ChoiceIndex) => match &event.data {
-      EventData::ChoiceAppearance(c) => c.choice_index,
-      _ => -1,
-    },
-    (None, _) => -1,
-  }
-}
-
-/// Get whether this event's motion happens in the background.
-///
-/// Returns `false` if this event has no motion.
-#[unsafe(no_mangle)]
-pub extern "system" fn get_event_background(ctx: *const LouderContext, index: usize) -> bool {
-  if ctx.is_null() {
-    return false;
-  }
-
-  let event : Option<&LouderEvent> = unsafe {
-    (*ctx).get_event(index)
-  };
-
-  match event {
-    Some(event) => match &event.data {
-      EventData::RegularMotion(m) | EventData::Warp(m) | EventData::ForceMotion(m) => m.background,
-      _ => false,
-    },
-    None => false,
-  }
-}
-
-
-/// Get the type of the value this event's condition evaluates to.
-///
-/// Returns [`LouderVariantType::Int`] if this event has no condition at
-/// `condition_index`.
-#[unsafe(no_mangle)]
-pub extern "system" fn get_event_condition_variant_type(ctx: *const LouderContext, index: usize, condition_index: i32) -> LouderVariantType {
-  if ctx.is_null() {
-    return LouderVariantType::Int;
-  }
-
-  let event : Option<&LouderEvent> = unsafe {
-    (*ctx).get_event(index)
-  };
-
-  match event {
-    Some(event) => match &event.data {
-      EventData::Condition(c) if condition_index == 0 => LouderVariantType::from(&c.outcome),
-      _ => LouderVariantType::Int,
-    },
-    None => LouderVariantType::Int,
-  }
-}
-
-/// Get this event's condition as an integer.
-///
-/// Returns `-1` if the condition at `condition_index` does not exist or is not
-/// an integer.
-#[unsafe(no_mangle)]
-pub extern "system" fn get_event_condition_int(ctx: *const LouderContext, index: usize, condition_index: i32) -> i32 {
-  if ctx.is_null() {
-    return -1;
-  }
-
-  let event : Option<&LouderEvent> = unsafe {
-    (*ctx).get_event(index)
-  };
-
-  match event {
-    Some(event) => match &event.data {
-      EventData::Condition(c) if condition_index == 0 => match &c.outcome {
-        LouderVariant::Int(v) => *v,
-        _ => -1,
-      },
-      _ => -1,
-    },
-    None => -1,
-  }
-}
-
-/// Get this event's condition as a float.
-///
-/// Returns `-1.0` if the condition at `condition_index` does not exist or is
-/// not a float.
-#[unsafe(no_mangle)]
-pub extern "system" fn get_event_condition_float(ctx: *const LouderContext, index: usize, condition_index: i32) -> f32 {
-  if ctx.is_null() {
-    return -1.0;
-  }
-
-  let event : Option<&LouderEvent> = unsafe {
-    (*ctx).get_event(index)
-  };
-
-  match event {
-    Some(event) => match &event.data {
-      EventData::Condition(c) if condition_index == 0 => match &c.outcome {
-        LouderVariant::Float(f) => *f,
-        _ => -1.0,
-      },
-      _ => -1.0,
-    },
-    None => -1.0,
-  }
-}
-
-/// Get this event's condition as a name.
-///
-/// Returns [`LOUDER_NAME_NONE`] if the condition at `condition_index` does not
-/// exist or is not a name.
-#[unsafe(no_mangle)]
-pub extern "system" fn get_event_condition_string(ctx: *const LouderContext, index: usize, condition_index: i32) -> LouderName {
-  if ctx.is_null() {
-    return LOUDER_NAME_NONE;
-  }
-
-  let event : Option<&LouderEvent> = unsafe {
-    (*ctx).get_event(index)
-  };
-
-  match event {
-    Some(event) => match &event.data {
-      EventData::Condition(c) if condition_index == 0 => match &c.outcome {
-        LouderVariant::String(n) => *n,
-        _ => LOUDER_NAME_NONE,
-      },
-      _ => LOUDER_NAME_NONE,
-    },
-    None => LOUDER_NAME_NONE,
+    Some(e) => LouderOption::Some(e.clone()),
+    None => LouderOption::None
   }
 }
 
@@ -492,14 +212,13 @@ pub extern "system" fn get_event_condition_string(ctx: *const LouderContext, ind
 /// Returns the number of events flushed. Poll events with [`is_event`] until it
 /// stops returning an event, then call this.
 #[unsafe(no_mangle)]
-pub extern "system" fn flush_events(ctx: *mut LouderContext) {
+pub extern "C" fn flush_events(ctx: *mut LouderContext) {
   if ctx.is_null() {
     return;
   }
 
   unsafe {
     <LouderContext as EventCache<LouderEvent>>::clear_events(&mut *ctx);
-    <LouderContext as EventCache<LouderAsk>>::clear_events(&mut *ctx);
   }
 }
 
@@ -509,95 +228,27 @@ pub extern "system" fn flush_events(ctx: *mut LouderContext) {
 /// arguments for other variants are ignored. Returns the index of the pushed
 /// event, or [`LOUDER_ERROR_NOT_FOUND`] if `ctx` is null.
 #[unsafe(no_mangle)]
-pub extern "system" fn test_push_event(
+pub extern "C" fn test_push_event(
   ctx: *mut LouderContext,
-  conversation: LouderName,
-  channel: LouderName,
-  actor: LouderActor,
-  code: EventCode,
-  source_position: LouderPosition,
-  target_position: LouderPosition,
-  choice_index: i32,
-  background: bool,
-  choice_position: LouderPosition,
-  key: LouderName,
-  name: LouderName,
-  statement: LouderExpression,
-  condition: LouderName,
-  condition_variant_type: LouderVariantType,
-  condition_int: i32,
-  condition_float: f32,
-  condition_string: LouderName,
-  callback: LouderCallback,
-) -> i32 {
-  if ctx.is_null() {
-    return LOUDER_ERROR_NOT_FOUND;
+  event: *const LouderEvent,
+) -> LouderError {
+  if ctx.is_null() || event.is_null() {
+    return LouderError::Missing;
   }
-
-  let data = match code {
-    EventCode::None => EventData::None,
-    EventCode::RegularMotion => EventData::RegularMotion(Motion {
-      source_position,
-      target_position,
-      choice_index,
-      background,
-    }),
-    EventCode::Warp => EventData::Warp(Motion {
-      source_position,
-      target_position,
-      choice_index,
-      background,
-    }),
-    EventCode::ForceMotion => EventData::ForceMotion(Motion {
-      source_position,
-      target_position,
-      choice_index,
-      background,
-    }),
-    EventCode::ChoiceAppearance => EventData::ChoiceAppearance(ChoiceAppearance {
-      position: choice_position,
-      choice_index,
-    }),
-    EventCode::ChannelChange => EventData::ChannelChange,
-    EventCode::AdditionalDataChange => EventData::AdditionalDataChange(AdditionalDataChange {
-      key,
-    }),
-    EventCode::SpeakerChange => EventData::SpeakerChange(name),
-    EventCode::TextChange => EventData::TextChange(name),
-    EventCode::Statement => EventData::Statement(statement),
-    EventCode::Condition => EventData::Condition(ConditionOutcome {
-      condition,
-      outcome: match condition_variant_type {
-        LouderVariantType::Int => LouderVariant::Int(condition_int),
-        LouderVariantType::Float => LouderVariant::Float(condition_float),
-        LouderVariantType::String => LouderVariant::String(condition_string),
-      },
-    }),
-    EventCode::Callback => EventData::Callback(callback),
-    EventCode::ActorAdded => EventData::ActorAdded,
-    EventCode::ActorRemoved => EventData::ActorRemoved,
-    EventCode::SpeakerAdded => EventData::SpeakerAdded(name),
-    EventCode::SpeakerRemoved => EventData::SpeakerRemoved(name),
-    EventCode::ConversationAdded => EventData::ConversationAdded(name),
-    EventCode::ConversationRemoved => EventData::ConversationRemoved(name),
-  };
 
   unsafe {
-    (*ctx).push_event(LouderEvent {
-      conversation,
-      channel,
-      actor,
-      data,
-    }) as i32
+    (*ctx).push_event((*event).clone());
   }
+  
+  LouderError::Ok
 }
 
 
 /// Check whether an ask exists at `index`.
 #[unsafe(no_mangle)]
-pub extern "system" fn is_ask(ctx: *const LouderContext, index: usize) -> i32 {
+pub extern "C" fn get_ask(ctx: *const LouderContext, index: usize) -> LouderOption<LouderAsk> {
   if ctx.is_null() {
-    return LOUDER_NAME_NONE
+    return LouderOption::None
   }
 
   let a : Option<&LouderAsk> = unsafe {
@@ -605,129 +256,9 @@ pub extern "system" fn is_ask(ctx: *const LouderContext, index: usize) -> i32 {
   };
 
   match a {
-    Some(_) => LOUDER_SUCCESS,
-    None => LOUDER_ERROR_NOT_FOUND
+    Some(a) => LouderOption::Some(a.clone()),
+    None => LouderOption::None
   }
-}
-
-/// Get a name by ask index for a key.
-///
-/// - [`AskName::Conversation`]: the conversation associated with this ask.
-/// - [`AskName::Channel`]: the channel name if this ask indicates a channel change.
-/// - [`AskName::Callback`]: the callback that caused this ask.
-#[unsafe(no_mangle)]
-pub extern "system" fn get_ask_name(ctx: *const LouderContext, index: usize, key: AskName) -> LouderName {
-  if ctx.is_null() {
-    return LOUDER_NAME_NONE;
-  }
-
-  let ask : Option<&LouderAsk> = unsafe {
-    (*ctx).get_event(index)
-  };
-
-  match (ask, key) {
-    (Some(ask), AskName::Conversation) => ask.conversation,
-    (Some(ask), AskName::Channel) => ask.channel,
-    (Some(ask), AskName::Callback) => ask.ask,
-    (None, _) => LOUDER_NAME_NONE,
-  }
-}
-
-/// Get the actor associated with an ask.
-///
-/// Returns [`LOUDER_ACTOR_NONE`] if no actor is associated with this ask.
-#[unsafe(no_mangle)]
-pub extern "system" fn get_ask_actor(ctx: *const LouderContext, index: usize) -> LouderActor {
-  if ctx.is_null() {
-    return LOUDER_ACTOR_NONE;
-  }
-
-  let ask : Option<&LouderAsk> = unsafe {
-    (*ctx).get_event(index)
-  };
-
-  match ask {
-    Some(ask) => ask.actor,
-    None => LOUDER_ACTOR_NONE,
-  }
-}
-
-/// Get a position by ask index for a key.
-///
-/// Returns `-1` if not available.
-///
-/// - [`AskPosition::Source`]: the origin of this ask's motion.
-/// - [`AskPosition::Target`]: the destination of this ask's motion.
-#[unsafe(no_mangle)]
-pub extern "system" fn get_ask_position(ctx: *const LouderContext, index: usize, key: AskPosition) -> LouderPosition {
-  if ctx.is_null() {
-    return -1;
-  }
-
-  let ask : Option<&LouderAsk> = unsafe {
-    (*ctx).get_event(index)
-  };
-
-  match (ask, key) {
-    (Some(ask), AskPosition::Source) => ask.motion.source_position,
-    (Some(ask), AskPosition::Target) => ask.motion.target_position,
-    (None, _) => -1,
-  }
-}
-
-/// Get an integer by ask index for a key.
-///
-/// Returns `-1` if not available or the index is invalid.
-///
-/// - [`AskInt::Actor`]: the actor associated with this ask.
-/// - [`AskInt::SourceChoiceIndex`]: the index of the choice selected on the
-///   source position by the actor of this ask's motion.
-#[unsafe(no_mangle)]
-pub extern "system" fn get_ask_int(ctx: *const LouderContext, index: usize, key: AskInt) -> i32 {
-  if ctx.is_null() {
-    return -1;
-  }
-
-  let ask : Option<&LouderAsk> = unsafe {
-    (*ctx).get_event(index)
-  };
-
-  match (ask, key) {
-    (Some(ask), AskInt::Actor) => ask.actor,
-    (Some(ask), AskInt::SourceChoiceIndex) => ask.motion.choice_index,
-    (None, _) => -1,
-  }
-}
-
-/// Get the callback causing this ask as a name.
-#[unsafe(no_mangle)]
-pub extern "system" fn get_ask_callback(ctx: *const LouderContext, index: usize) -> LouderName {
-  if ctx.is_null() {
-    return LOUDER_NAME_NONE;
-  }
-
-  let ask : Option<&LouderAsk> = unsafe {
-    (*ctx).get_event(index)
-  };
-
-  match ask {
-    Some(ask) => ask.ask,
-    None => LOUDER_NAME_NONE,
-  }
-}
-
-/// Answer an ask with a verdict.
-#[unsafe(no_mangle)]
-pub extern "system" fn answer_ask(ctx: *mut LouderContext, index: usize, verdict: i32) -> i32 {
-  if ctx.is_null() {
-    return LOUDER_ERROR_NOT_FOUND;
-  }
-
-  if unsafe {(*ctx).answer_ask(index, verdict)} {
-    return LOUDER_SUCCESS;
-  }
-
-  LOUDER_ERROR_NOT_FOUND
 }
 
 /// Push an ask onto the ask cache, used for testing.
@@ -735,41 +266,25 @@ pub extern "system" fn answer_ask(ctx: *mut LouderContext, index: usize, verdict
 /// Returns the index of the pushed ask, or [`LOUDER_ERROR_NOT_FOUND`] if `ctx`
 /// is null.
 #[unsafe(no_mangle)]
-pub extern "system" fn push_ask(
+pub extern "C" fn push_ask(
   ctx: *mut LouderContext,
-  conversation: LouderName,
-  channel: LouderName,
-  actor: LouderActor,
-  source_position: LouderPosition,
-  target_position: LouderPosition,
-  choice_index: i32,
-  background: bool,
-  callback: LouderCallback,
-) -> i32 {
-  if ctx.is_null() {
-    return LOUDER_ERROR_NOT_FOUND;
+  ask: *const LouderAsk
+) -> LouderError {
+  if ctx.is_null() || ask.is_null() {
+    return LouderError::Missing;
   }
 
   unsafe {
-    (*ctx).push_ask(LouderAsk {
-      conversation,
-      channel,
-      actor,
-      motion: Motion {
-        source_position,
-        target_position,
-        choice_index,
-        background,
-      },
-      ask: callback,
-    }) as i32
+    (*ctx).push_ask((*ask).clone());
   }
+
+  LouderError::Ok
 }
 
 
 /// Get the flags of a speaker.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_speaker_flags(ctx: *const LouderContext, speaker: LouderName) -> SpeakerFlags {
+pub extern "C" fn get_speaker_flags(ctx: *const LouderContext, speaker: LouderName) -> SpeakerFlags {
   todo!()
 }
 
@@ -778,55 +293,37 @@ pub extern "system" fn get_speaker_flags(ctx: *const LouderContext, speaker: Lou
 /// Pass `-1` as `start` to begin, then keep passing the previous result until
 /// the iteration ends.
 #[unsafe(no_mangle)]
-pub extern "system" fn next_speaker_listening(ctx: *const LouderContext, speaker: LouderName, start: LouderName) -> LouderName {
+pub extern "C" fn next_speaker_listening(ctx: *const LouderContext, speaker: LouderName, start: LouderName) -> LouderName {
   todo!()
 }
 
-/// Get the variant type of a speaker's additional data under `key`.
+/// Get a speaker's additional data under `key`.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_speaker_additional_type(ctx: *const LouderContext, conversation: LouderName, speaker: LouderName, key: LouderName) -> LouderVariantType {
-  todo!()
-}
-
-/// Get a speaker's additional data under `key` as an integer.
-#[unsafe(no_mangle)]
-pub extern "system" fn get_speaker_additional_int(ctx: *const LouderContext, conversation: LouderName, speaker: LouderName, key: LouderName) -> i32 {
-  todo!()
-}
-
-/// Get a speaker's additional data under `key` as a float.
-#[unsafe(no_mangle)]
-pub extern "system" fn get_speaker_additional_float(ctx: *const LouderContext, conversation: LouderName, speaker: LouderName, key: LouderName) -> f32 {
-  todo!()
-}
-
-/// Get a speaker's additional data under `key` as a name.
-#[unsafe(no_mangle)]
-pub extern "system" fn get_speaker_additional_string(ctx: *const LouderContext, conversation: LouderName, speaker: LouderName, key: LouderName) -> LouderName {
+pub extern "C" fn get_speaker_additional(ctx: *const LouderContext, conversation: LouderName, speaker: LouderName, key: LouderName) -> LouderVariant {
   todo!()
 }
 
 /// Get the channel of an actor.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_actor_channel(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor) -> LouderName {
+pub extern "C" fn get_actor_channel(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor) -> LouderName {
   todo!()
 }
 
 /// Get the position of an actor.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_actor_position(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor) -> LouderPosition {
+pub extern "C" fn get_actor_position(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor) -> LouderPosition {
   todo!()
 }
 
 /// Iterate the speakers an actor speaks as.
 #[unsafe(no_mangle)]
-pub extern "system" fn next_actor_speak_as(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor, start: LouderName) -> LouderName {
+pub extern "C" fn next_actor_speak_as(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor, start: LouderName) -> LouderName {
   todo!()
 }
 
 /// Iterate the base speakers an actor listens to.
 #[unsafe(no_mangle)]
-pub extern "system" fn next_actor_listening_base(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor, start: LouderName) -> LouderName {
+pub extern "C" fn next_actor_listening_base(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor, start: LouderName) -> LouderName {
   todo!()
 }
 
@@ -835,61 +332,43 @@ pub extern "system" fn next_actor_listening_base(ctx: *const LouderContext, conv
 /// Includes the actors' `listen_to` speakers plus the listening speakers of the
 /// speakers it speaks as.
 #[unsafe(no_mangle)]
-pub extern "system" fn next_actor_listening(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor, start: LouderName) -> LouderName {
+pub extern "C" fn next_actor_listening(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor, start: LouderName) -> LouderName {
   todo!()
 }
 
 /// Get the flags of an actor.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_actor_flags(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor) -> ActorFlags {
+pub extern "C" fn get_actor_flags(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor) -> ActorFlags {
   todo!()
 }
 
 /// Get the priority of an actor.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_actor_priority(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor) -> i32 {
+pub extern "C" fn get_actor_priority(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor) -> i32 {
   todo!()
 }
 
-/// Get the variant type of an actor's additional data under `key`.
+/// Get an actor's additional data under `key`.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_actor_additional_type(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor, key: LouderName) -> LouderVariantType {
-  todo!()
-}
-
-/// Get an actor's additional data under `key` as an integer.
-#[unsafe(no_mangle)]
-pub extern "system" fn get_actor_additional_int(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor, key: LouderName) -> i32 {
-  todo!()
-}
-
-/// Get an actor's additional data under `key` as a float.
-#[unsafe(no_mangle)]
-pub extern "system" fn get_actor_additional_float(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor, key: LouderName) -> f32 {
-  todo!()
-}
-
-/// Get an actor's additional data under `key` as a string.
-#[unsafe(no_mangle)]
-pub extern "system" fn get_actor_additional_string(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor, key: LouderName) -> LouderName {
+pub extern "C" fn get_actor_additional(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor, key: LouderName) -> LouderVariant {
   todo!()
 }
 
 /// Iterate the actors in a channel.
 #[unsafe(no_mangle)]
-pub extern "system" fn next_actor_in_channel(ctx: *const LouderContext, conversation: LouderName, channel: LouderName, start: LouderActor) -> LouderActor {
+pub extern "C" fn next_actor_in_channel(ctx: *const LouderContext, conversation: LouderName, channel: LouderName, start: LouderActor) -> LouderActor {
   todo!()
 }
 
 /// Iterate the actors in a channel at a specific position.
 #[unsafe(no_mangle)]
-pub extern "system" fn next_actor_in_channel_and_position(ctx: *const LouderContext, conversation: LouderName, channel: LouderName, position: LouderPosition, start: LouderActor) -> LouderActor {
+pub extern "C" fn next_actor_in_channel_and_position(ctx: *const LouderContext, conversation: LouderName, channel: LouderName, position: LouderPosition, start: LouderActor) -> LouderActor {
   todo!()
 }
 
 /// Iterate the actors speaking as a speaker.
 #[unsafe(no_mangle)]
-pub extern "system" fn next_actor_speaking_as(ctx: *const LouderContext, conversation: LouderName, speaker: LouderName, start: LouderActor) -> LouderActor {
+pub extern "C" fn next_actor_speaking_as(ctx: *const LouderContext, conversation: LouderName, speaker: LouderName, start: LouderActor) -> LouderActor {
   todo!()
 }
 
@@ -898,7 +377,7 @@ pub extern "system" fn next_actor_speaking_as(ctx: *const LouderContext, convers
 /// Includes `listen_to` and listening actors derived from the listening
 /// speakers of the speaker's `speak_as`.
 #[unsafe(no_mangle)]
-pub extern "system" fn next_actor_listening_to(ctx: *const LouderContext, conversation: LouderName, speaker: LouderName, start: LouderActor) -> LouderActor {
+pub extern "C" fn next_actor_listening_to(ctx: *const LouderContext, conversation: LouderName, speaker: LouderName, start: LouderActor) -> LouderActor {
   todo!()
 }
 
@@ -906,115 +385,97 @@ pub extern "system" fn next_actor_listening_to(ctx: *const LouderContext, conver
 ///
 /// `exact` nonzero requires the actor flags to match exactly.
 #[unsafe(no_mangle)]
-pub extern "system" fn next_actor_from_flags(ctx: *const LouderContext, conversation: LouderName, include: ActorFlags, exact: i32, start: LouderActor) -> LouderActor {
+pub extern "C" fn next_actor_from_flags(ctx: *const LouderContext, conversation: LouderName, include: ActorFlags, exact: i32, start: LouderActor) -> LouderActor {
   todo!()
 }
 
 /// Iterate the tags of a position.
 #[unsafe(no_mangle)]
-pub extern "system" fn next_hub_tag(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition, start: LouderName) -> LouderName {
+pub extern "C" fn next_hub_tag(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition, start: LouderName) -> LouderName {
   todo!()
 }
 
 /// Get the speaker of a hub position.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_hub_speaker(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition) -> LouderName {
+pub extern "C" fn get_hub_speaker(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition) -> LouderName {
   todo!()
 }
 
 /// Get the text of a hub as a name.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_hub_text(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition) -> LouderName {
+pub extern "C" fn get_hub_text(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition) -> LouderName {
   todo!()
 }
 
 /// Get the number of choices on a hub from an actor's perspective.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_hub_choice_count(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition, actor_perspective: LouderActor) -> i32 {
+pub extern "C" fn get_hub_choice_count(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition, actor_perspective: LouderActor) -> i32 {
   todo!()
 }
 
 /// Get the text of a choice on a hub as a name.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_hub_choice_text(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition, actor_perspective: LouderActor, choice_index: i32) -> LouderName {
+pub extern "C" fn get_hub_choice_text(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition, actor_perspective: LouderActor, choice_index: i32) -> LouderName {
   todo!()
 }
 
 /// Get the position a choice on a hub links to.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_hub_choice_link(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition, actor_perspective: LouderActor, choice_index: i32) -> i32 {
+pub extern "C" fn get_hub_choice_link(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition, actor_perspective: LouderActor, choice_index: i32) -> i32 {
   todo!()
 }
 
 /// Get the expressions associated with a hub.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_hub_expressions(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition) -> LouderName {
+pub extern "C" fn get_hub_expressions(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition) -> LouderName {
   todo!()
 }
 
 /// Get the callbacks associated with a hub.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_hub_callbacks(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition) -> LouderName {
+pub extern "C" fn get_hub_callbacks(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition) -> LouderName {
   todo!()
 }
 
 /// Get the flags of a hub.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_hub_flags(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition) -> HubFlags {
+pub extern "C" fn get_hub_flags(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition) -> HubFlags {
   todo!()
 }
 
 /// Iterate the recipients of a hub.
 #[unsafe(no_mangle)]
-pub extern "system" fn next_hub_recipient(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition, start: LouderName) -> LouderName {
+pub extern "C" fn next_hub_recipient(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition, start: LouderName) -> LouderName {
   todo!()
 }
 
 /// Get the channel of a hub.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_hub_channel(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition) -> LouderName {
+pub extern "C" fn get_hub_channel(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition) -> LouderName {
   todo!()
 }
 
 /// Get the priority of a hub.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_hub_priority(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition) -> i32 {
+pub extern "C" fn get_hub_priority(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition) -> i32 {
   todo!()
 }
 
-/// Get the variant type of a hub's additional data under `key`.
+/// Get a hub's additional data under `key`.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_hub_additional_type(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition, key: LouderName) -> LouderVariantType {
-  todo!()
-}
-
-/// Get a hub's additional data under `key` as an integer.
-#[unsafe(no_mangle)]
-pub extern "system" fn get_hub_additional_int(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition, key: LouderName) -> i32 {
-  todo!()
-}
-
-/// Get a hub's additional data under `key` as a float.
-#[unsafe(no_mangle)]
-pub extern "system" fn get_hub_additional_float(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition, key: LouderName) -> f32 {
-  todo!()
-}
-
-/// Get a hub's additional data string under `key`.
-#[unsafe(no_mangle)]
-pub extern "system" fn get_hub_additional_string(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition, key: LouderName) -> LouderName {
+pub extern "C" fn get_hub_additional(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition, key: LouderName) -> LouderVariant {
   todo!()
 }
 
 /// Iterate the hubs in a channel.
 #[unsafe(no_mangle)]
-pub extern "system" fn next_hub_by_channel(ctx: *const LouderContext, conversation: LouderName, channel: LouderName, start: LouderPosition) -> LouderPosition {
+pub extern "C" fn next_hub_by_channel(ctx: *const LouderContext, conversation: LouderName, channel: LouderName, start: LouderPosition) -> LouderPosition {
   todo!()
 }
 
 /// Iterate the hubs spoken by a speaker.
 #[unsafe(no_mangle)]
-pub extern "system" fn next_hub_spoken_by(ctx: *const LouderContext, conversation: LouderName, speaker: LouderName, start: LouderPosition) -> LouderPosition {
+pub extern "C" fn next_hub_spoken_by(ctx: *const LouderContext, conversation: LouderName, speaker: LouderName, start: LouderPosition) -> LouderPosition {
   todo!()
 }
 
@@ -1023,20 +484,20 @@ pub extern "system" fn next_hub_spoken_by(ctx: *const LouderContext, conversatio
 /// Uses the speakers' listening speakers to search for hubs that may appear to
 /// actors speaking as this speaker.
 #[unsafe(no_mangle)]
-pub extern "system" fn next_hub_heard_by(ctx: *const LouderContext, conversation: LouderName, speaker: LouderName, start: LouderPosition) -> LouderPosition {
+pub extern "C" fn next_hub_heard_by(ctx: *const LouderContext, conversation: LouderName, speaker: LouderName, start: LouderPosition) -> LouderPosition {
   todo!()
 }
 
 /// Iterate the hubs with a priority within `[priority_min, priority_max]`.
 #[unsafe(no_mangle)]
-pub extern "system" fn next_hub_by_priority(ctx: *const LouderContext, conversation: LouderName, priority_min: i32, priority_max: i32, start: LouderPosition) -> LouderPosition {
+pub extern "C" fn next_hub_by_priority(ctx: *const LouderContext, conversation: LouderName, priority_min: i32, priority_max: i32, start: LouderPosition) -> LouderPosition {
   todo!()
 }
 
 /// Iterate the hubs containing all (or exactly, if `exact` is nonzero) the given
 /// tags.
 #[unsafe(no_mangle)]
-pub extern "system" fn next_hub_from_tags(ctx: *const LouderContext, conversation: LouderName, include: *const LouderName, include_count: i32, exact: i32, start: LouderPosition) -> LouderPosition {
+pub extern "C" fn next_hub_from_tags(ctx: *const LouderContext, conversation: LouderName, include: *const LouderName, include_count: i32, exact: i32, start: LouderPosition) -> LouderPosition {
   todo!()
 }
 
@@ -1044,44 +505,26 @@ pub extern "system" fn next_hub_from_tags(ctx: *const LouderContext, conversatio
 ///
 /// `exact` nonzero requires the hub flags to match exactly.
 #[unsafe(no_mangle)]
-pub extern "system" fn next_hub_from_flags(ctx: *const LouderContext, conversation: LouderName, include: HubFlags, exact: i32, start: LouderPosition) -> LouderPosition {
+pub extern "C" fn next_hub_from_flags(ctx: *const LouderContext, conversation: LouderName, include: HubFlags, exact: i32, start: LouderPosition) -> LouderPosition {
   todo!()
 }
 
-/// Get the variant type of a story state value.
+/// Get a story state value under `state`.
 #[unsafe(no_mangle)]
-pub extern "system" fn get_story_state_type(ctx: *const LouderContext, conversation: LouderName, state: LouderName) -> LouderVariantType {
-  todo!()
-}
-
-/// Get a story state value as an integer.
-#[unsafe(no_mangle)]
-pub extern "system" fn get_story_state_int(ctx: *const LouderContext, conversation: LouderName, state: LouderName) -> i32 {
-  todo!()
-}
-
-/// Get a story state value as a float.
-#[unsafe(no_mangle)]
-pub extern "system" fn get_story_state_float(ctx: *const LouderContext, conversation: LouderName, state: LouderName) -> f32 {
-  todo!()
-}
-
-/// Get a story state string.
-#[unsafe(no_mangle)]
-pub extern "system" fn get_story_state_string(ctx: *const LouderContext, conversation: LouderName, state: LouderName) -> LouderName {
+pub extern "C" fn get_story_state(ctx: *const LouderContext, conversation: LouderName, state: LouderName) -> LouderVariant {
   todo!()
 }
 
 /// Serialize the story state in JSON into `buffer`.
 #[unsafe(no_mangle)]
-pub extern "system" fn read_state_json(ctx: *const LouderContext, conversation: LouderName, buffer: *mut u8, max_size: usize, encoding: LouderEncoding) -> i32 {
+pub extern "C" fn read_state_json(ctx: *const LouderContext, conversation: LouderName, buffer: *mut u8, max_size: usize, encoding: LouderEncoding) -> i32 {
   todo!()
 }
 
 /// Serialize the story state, as well as the positions and details of all
 /// actors, in JSON into `buffer`.
 #[unsafe(no_mangle)]
-pub extern "system" fn read_snapshot_json(ctx: *const LouderContext, conversation: LouderName, buffer: *mut u8, max_size: usize, encoding: LouderEncoding) -> i32 {
+pub extern "C" fn read_snapshot_json(ctx: *const LouderContext, conversation: LouderName, buffer: *mut u8, max_size: usize, encoding: LouderEncoding) -> i32 {
   todo!()
 }
 
@@ -1090,20 +533,20 @@ pub extern "system" fn read_snapshot_json(ctx: *const LouderContext, conversatio
 /// Initializes the event queue and ask cache. Release the returned handle with
 /// [`deinit_louder`].
 #[unsafe(no_mangle)]
-pub extern "system" fn init_louder() -> *mut LouderContext {
+pub extern "C" fn init_louder() -> *mut LouderContext {
   Box::into_raw(Box::new(LouderContext::new()))
 }
 
 /// Remove all conversations, speaker objects, and the event queue.
 #[unsafe(no_mangle)]
-pub extern "system" fn deinit_louder(ctx: *mut LouderContext) -> i32 {
+pub extern "C" fn deinit_louder(ctx: *mut LouderContext) -> LouderError {
   if ctx.is_null() {
-    return LOUDER_ERROR_NOT_FOUND;
+    return LouderError::Missing;
   }
   unsafe {
     Box::from_raw(ctx); //allegedly this auto-destroys.
   }
-  LOUDER_SUCCESS
+  LouderError::Ok
 }
 
 /// Load a conversation from a JSON document into `buffer`.
@@ -1118,7 +561,7 @@ pub extern "system" fn deinit_louder(ctx: *mut LouderContext) -> i32 {
 ///   emitted as events with the invalid hub's position available via
 ///   `get_event_position(index, EventPosition::Source)`.
 #[unsafe(no_mangle)]
-pub extern "system" fn load_conversation_json(ctx: *mut LouderContext, conversation: LouderName, buffer: *mut u8, max_size: usize, encoding: LouderEncoding) -> LoadError {
+pub extern "C" fn load_conversation_json(ctx: *mut LouderContext, conversation: LouderName, buffer: *mut u8, max_size: usize, encoding: LouderEncoding) -> LoadError {
   todo!()
 }
 
@@ -1126,7 +569,7 @@ pub extern "system" fn load_conversation_json(ctx: *mut LouderContext, conversat
 ///
 /// Returns an error if the conversation name was not loaded.
 #[unsafe(no_mangle)]
-pub extern "system" fn remove_conversation(ctx: *mut LouderContext, conversation: LouderName) -> i32 {
+pub extern "C" fn remove_conversation(ctx: *mut LouderContext, conversation: LouderName) -> i32 {
   todo!()
 }
 
@@ -1137,31 +580,31 @@ pub extern "system" fn remove_conversation(ctx: *mut LouderContext, conversation
 /// - The config is a singleton as opposed to a named conversation instance.
 /// - Objects are speakers and their configurations.
 #[unsafe(no_mangle)]
-pub extern "system" fn load_conversation_config(ctx: *mut LouderContext, buffer: *mut u8, max_size: usize, encoding: LouderEncoding) -> LoadError {
+pub extern "C" fn load_conversation_config(ctx: *mut LouderContext, buffer: *mut u8, max_size: usize, encoding: LouderEncoding) -> LoadError {
   todo!()
 }
 
 /// Remove all speakers in the config.
 #[unsafe(no_mangle)]
-pub extern "system" fn clear_config(ctx: *mut LouderContext) -> i32 {
+pub extern "C" fn clear_config(ctx: *mut LouderContext) -> i32 {
   todo!()
 }
 
 /// Add an actor to a conversation and return the integer id-ing it.
 #[unsafe(no_mangle)]
-pub extern "system" fn add_actor(ctx: *mut LouderContext, conversation: LouderName, start_position: LouderPosition, flags: ActorFlags, speak_as: *const LouderName, speak_as_count: i32, listen_to: *const LouderName, listen_to_count: i32) -> i32 {
+pub extern "C" fn add_actor(ctx: *mut LouderContext, conversation: LouderName, start_position: LouderPosition, flags: ActorFlags, speak_as: *const LouderName, speak_as_count: i32, listen_to: *const LouderName, listen_to_count: i32) -> i32 {
   todo!()
 }
 
 /// Remove an actor from a conversation.
 #[unsafe(no_mangle)]
-pub extern "system" fn remove_actor(ctx: *mut LouderContext, conversation: LouderName, actor: LouderActor) -> i32 {
+pub extern "C" fn remove_actor(ctx: *mut LouderContext, conversation: LouderName, actor: LouderActor) -> i32 {
   todo!()
 }
 
 /// Select a choice on an actor's current hub.
 #[unsafe(no_mangle)]
-pub extern "system" fn select_choice(ctx: *mut LouderContext, conversation: LouderName, actor: LouderActor, choice_index: i32) -> i32 {
+pub extern "C" fn select_choice(ctx: *mut LouderContext, conversation: LouderName, actor: LouderActor, choice_index: i32) -> i32 {
   todo!()
 }
 
@@ -1172,7 +615,7 @@ pub extern "system" fn select_choice(ctx: *mut LouderContext, conversation: Loud
 /// - `fake_channel` is unused if `-1`, otherwise overrides the channel of the
 ///   destination.
 #[unsafe(no_mangle)]
-pub extern "system" fn force_warp(ctx: *mut LouderContext, conversation: LouderName, actor: LouderActor, target_position: LouderPosition, fake_channel: LouderName, fake_priority: i32) -> i32 {
+pub extern "C" fn force_warp(ctx: *mut LouderContext, conversation: LouderName, actor: LouderActor, target_position: LouderPosition, fake_channel: LouderName, fake_priority: i32) -> i32 {
   todo!()
 }
 
@@ -1183,24 +626,12 @@ pub extern "system" fn force_warp(ctx: *mut LouderContext, conversation: LouderN
 /// - `fake_channel` is unused if `-1`, otherwise overrides the channel of the
 ///   destination.
 #[unsafe(no_mangle)]
-pub extern "system" fn force_position(ctx: *mut LouderContext, conversation: LouderName, actor: LouderActor, target_position: LouderPosition, fake_channel: LouderName, fake_priority: i32) -> i32 {
+pub extern "C" fn force_position(ctx: *mut LouderContext, conversation: LouderName, actor: LouderActor, target_position: LouderPosition, fake_channel: LouderName, fake_priority: i32) -> i32 {
   todo!()
 }
 
 /// Set a story state value as an integer.
 #[unsafe(no_mangle)]
-pub extern "system" fn set_story_state_int(ctx: *mut LouderContext, conversation: LouderName, key: LouderName, value: i32) -> i32 {
-  todo!()
-}
-
-/// Set a story state value as a float.
-#[unsafe(no_mangle)]
-pub extern "system" fn set_story_state_float(ctx: *mut LouderContext, conversation: LouderName, key: LouderName, value: f32) -> i32 {
-  todo!()
-}
-
-/// Set a story state value as a string.
-#[unsafe(no_mangle)]
-pub extern "system" fn set_story_state_string(ctx: *mut LouderContext, conversation: LouderName, key: LouderName, buffer: *const u8, size: usize, encoding: LouderEncoding) -> i32 {
+pub extern "C" fn set_story_state(ctx: *mut LouderContext, conversation: LouderName, key: LouderName, value: LouderVariant) {
   todo!()
 }

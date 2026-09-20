@@ -8,9 +8,12 @@ pub const LOUDER_ACTOR_NONE : LouderActor = -1;
 
 bitflags::bitflags! {
   /// Flag bits describing an actor.
-  #[repr(transparent)]
+  #[repr(C)]
   #[derive(Clone)]
-  pub struct ActorFlags: i32 {}
+  pub struct ActorFlags: i32 {
+    const SPECTATOR = 0x1b;
+    const DEBUG = 0x10b;
+  }
 }
 
 //Object representing a player in the conversation

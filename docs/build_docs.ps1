@@ -8,7 +8,7 @@ $rustCrate = Resolve-Path ..\engine\louder_rust
 $rustdocDir = Join-Path $PSScriptRoot docs\rustdoc
 
 Push-Location $rustCrate
-cargo doc -p louder_rust --no-deps
+cargo doc -p louder_rust --no-deps --document-private-items
 $docExit = $LASTEXITCODE
 Pop-Location
 

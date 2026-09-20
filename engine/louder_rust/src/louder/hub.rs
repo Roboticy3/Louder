@@ -5,7 +5,7 @@ use super::callback::{LouderCallback};
 
 bitflags::bitflags! {
   /// Flag bits describing a hub.
-  #[repr(transparent)]
+  #[repr(C)]
   #[derive(Clone)]
   pub struct HubFlags: i32 {
     const AUTO = 0b00000001;

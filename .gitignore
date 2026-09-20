@@ -10,3 +10,4 @@ docs/docs/rustdoc/**
 # Louder engine ignores
 **/target/**
 **.exe
+**louder_rust.h

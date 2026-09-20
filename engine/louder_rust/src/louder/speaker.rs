@@ -3,7 +3,7 @@ use super::object::HomogeneousObject;
 
 bitflags::bitflags! {
   /// Flag bits describing a speaker.
-  #[repr(transparent)]
+  #[repr(C)]
   #[derive(Clone)]
   pub struct SpeakerFlags: i32 {
     const PUBLIC = 0b00000001;

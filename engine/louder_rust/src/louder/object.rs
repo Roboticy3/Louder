@@ -1,5 +1,3 @@
-use strum_macros::EnumDiscriminants;
-
 use super::name::{Map, LouderName};
 
 
@@ -9,8 +7,8 @@ pub struct HomogeneousObject {
 }
 
 /// One unit of data in an actor, hub, speaker, or story state.
-#[derive(Debug, EnumDiscriminants)]
-#[strum_discriminants(name(LouderVariantType), repr(u32))]
+#[derive(Debug, Clone)]
+#[repr(C)]
 pub enum LouderVariant {
   Int(i32),
   Float(f32),
