@@ -1,4 +1,5 @@
 use std::hash::{DefaultHasher, Hash, Hasher};
+use std::todo;
 
 use super::name::*;
 use super::speaker::Speaker;
@@ -32,6 +33,16 @@ impl LouderContext {
       events: Vec::new(),
       asks: Vec::new(),
     }
+  }
+
+  pub fn push_event(&mut self, event: LouderEvent) -> usize {
+    self.events.push(event);
+    self.events.len() - 1
+  }
+
+  pub fn push_ask(&mut self, ask: LouderAsk) -> usize {
+    self.asks.push(ask);
+    self.asks.len() - 1
   }
 }
 
@@ -91,5 +102,17 @@ impl EventCache<LouderAsk> for LouderContext {
 
   fn clear_events(&mut self) {
     self.asks.clear()
+  }
+}
+
+impl AskListener for LouderContext {
+  fn answer_ask(&self, index: usize, verdict: i32) -> bool {
+      let ask: Option<&LouderAsk> = self.get_event(index);
+      match ask {
+        Some(ask) => {
+          todo!()
+        },
+        None => false
+      }
   }
 }

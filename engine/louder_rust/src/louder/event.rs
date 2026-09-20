@@ -86,3 +86,7 @@ pub trait EventCache<E> {
 pub trait EventMap<K, T : Clone> {
   fn get_event_key(&self, index: usize, key: &K) -> T;
 }
+
+pub trait AskListener {
+  fn answer_ask(&self, index: usize, verdict: i32) -> bool;
+}

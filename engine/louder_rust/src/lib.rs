@@ -3,9 +3,11 @@ mod test_linkage;
 pub mod louder;
 
 use louder::actor::*;
+use louder::callback::*;
 use louder::context::*;
 use louder::conversation::*;
 use louder::event::*;
+use louder::expression::*;
 use louder::hub::*;
 use louder::json_loader::*;
 use louder::object::*;
@@ -383,20 +385,6 @@ pub extern "system" fn get_event_background(ctx: *const LouderContext, index: us
   }
 }
 
-/// Read a string by event index for a key into `buffer`.
-///
-/// Reads 0 bytes if the index is invalid or no object is associated with the
-/// key for this event.
-///
-
-
-/// Get the priority of this event if it indicates a hub appearance.
-///
-/// Returns `0` otherwise, or for an invalid index.
-#[unsafe(no_mangle)]
-pub extern "system" fn get_event_priority(ctx: *const LouderContext, index: i32) -> i32 {
-  todo!()
-}
 
 /// Get the type of the value this event's condition evaluates to.
 ///
@@ -510,9 +498,100 @@ pub extern "system" fn flush_events(ctx: *mut LouderContext) {
   }
 
   unsafe {
-    (*ctx).clear_events()
+    <LouderContext as EventCache<LouderEvent>>::clear_events(&mut *ctx);
+    <LouderContext as EventCache<LouderAsk>>::clear_events(&mut *ctx);
   }
 }
+
+/// Push an event onto the event queue, used for testing.
+///
+/// The event's data is built from the `code` and the argument that matches it;
+/// arguments for other variants are ignored. Returns the index of the pushed
+/// event, or [`LOUDER_ERROR_NOT_FOUND`] if `ctx` is null.
+#[unsafe(no_mangle)]
+pub extern "system" fn test_push_event(
+  ctx: *mut LouderContext,
+  conversation: LouderName,
+  channel: LouderName,
+  actor: LouderActor,
+  code: EventCode,
+  source_position: LouderPosition,
+  target_position: LouderPosition,
+  choice_index: i32,
+  background: bool,
+  choice_position: LouderPosition,
+  key: LouderName,
+  name: LouderName,
+  statement: LouderExpression,
+  condition: LouderName,
+  condition_variant_type: LouderVariantType,
+  condition_int: i32,
+  condition_float: f32,
+  condition_string: LouderName,
+  callback: LouderCallback,
+) -> i32 {
+  if ctx.is_null() {
+    return LOUDER_ERROR_NOT_FOUND;
+  }
+
+  let data = match code {
+    EventCode::None => EventData::None,
+    EventCode::RegularMotion => EventData::RegularMotion(Motion {
+      source_position,
+      target_position,
+      choice_index,
+      background,
+    }),
+    EventCode::Warp => EventData::Warp(Motion {
+      source_position,
+      target_position,
+      choice_index,
+      background,
+    }),
+    EventCode::ForceMotion => EventData::ForceMotion(Motion {
+      source_position,
+      target_position,
+      choice_index,
+      background,
+    }),
+    EventCode::ChoiceAppearance => EventData::ChoiceAppearance(ChoiceAppearance {
+      position: choice_position,
+      choice_index,
+    }),
+    EventCode::ChannelChange => EventData::ChannelChange,
+    EventCode::AdditionalDataChange => EventData::AdditionalDataChange(AdditionalDataChange {
+      key,
+    }),
+    EventCode::SpeakerChange => EventData::SpeakerChange(name),
+    EventCode::TextChange => EventData::TextChange(name),
+    EventCode::Statement => EventData::Statement(statement),
+    EventCode::Condition => EventData::Condition(ConditionOutcome {
+      condition,
+      outcome: match condition_variant_type {
+        LouderVariantType::Int => LouderVariant::Int(condition_int),
+        LouderVariantType::Float => LouderVariant::Float(condition_float),
+        LouderVariantType::String => LouderVariant::String(condition_string),
+      },
+    }),
+    EventCode::Callback => EventData::Callback(callback),
+    EventCode::ActorAdded => EventData::ActorAdded,
+    EventCode::ActorRemoved => EventData::ActorRemoved,
+    EventCode::SpeakerAdded => EventData::SpeakerAdded(name),
+    EventCode::SpeakerRemoved => EventData::SpeakerRemoved(name),
+    EventCode::ConversationAdded => EventData::ConversationAdded(name),
+    EventCode::ConversationRemoved => EventData::ConversationRemoved(name),
+  };
+
+  unsafe {
+    (*ctx).push_event(LouderEvent {
+      conversation,
+      channel,
+      actor,
+      data,
+    }) as i32
+  }
+}
+
 
 /// Check whether an ask exists at `index`.
 #[unsafe(no_mangle)]
@@ -639,9 +718,54 @@ pub extern "system" fn get_ask_callback(ctx: *const LouderContext, index: usize)
 
 /// Answer an ask with a verdict.
 #[unsafe(no_mangle)]
-pub extern "system" fn answer_ask(ctx: *mut LouderContext, index: i32, verdict: i32) -> i32 {
-  todo!()
+pub extern "system" fn answer_ask(ctx: *mut LouderContext, index: usize, verdict: i32) -> i32 {
+  if ctx.is_null() {
+    return LOUDER_ERROR_NOT_FOUND;
+  }
+
+  if unsafe {(*ctx).answer_ask(index, verdict)} {
+    return LOUDER_SUCCESS;
+  }
+
+  LOUDER_ERROR_NOT_FOUND
 }
+
+/// Push an ask onto the ask cache, used for testing.
+///
+/// Returns the index of the pushed ask, or [`LOUDER_ERROR_NOT_FOUND`] if `ctx`
+/// is null.
+#[unsafe(no_mangle)]
+pub extern "system" fn push_ask(
+  ctx: *mut LouderContext,
+  conversation: LouderName,
+  channel: LouderName,
+  actor: LouderActor,
+  source_position: LouderPosition,
+  target_position: LouderPosition,
+  choice_index: i32,
+  background: bool,
+  callback: LouderCallback,
+) -> i32 {
+  if ctx.is_null() {
+    return LOUDER_ERROR_NOT_FOUND;
+  }
+
+  unsafe {
+    (*ctx).push_ask(LouderAsk {
+      conversation,
+      channel,
+      actor,
+      motion: Motion {
+        source_position,
+        target_position,
+        choice_index,
+        background,
+      },
+      ask: callback,
+    }) as i32
+  }
+}
+
 
 /// Get the flags of a speaker.
 #[unsafe(no_mangle)]
