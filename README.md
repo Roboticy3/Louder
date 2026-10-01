@@ -1,25 +1,5 @@
-Multiplayer Dialog Experiment in Godot.
+# Project Update
 
-# MVP:
- - [x] basic interface
- - [x] serialization
- - [ ] simulation
- - [ ] documentation
- - [ ] portability
- - [ ] multiplayer
+This project is going undercover at least until I finish some strong examples to push the engine with. I'm going to archive this repo and work on the engine privately, then replace the repo when things are ready.
 
-# Goal:
-Current interactive fiction tools like twine and yarn rely on a single-point
-simulation where the player inhabits one part of a dialogue tree. I had an idea
-for a game that required multiple players to be able to navigate a shared,
-scripted dialogue tree and wasn't able to eek that out of the current tools.
-
-While it's definitely possible to get that functionality eventually, I was also
-not happy with the workflow in existing tools in general, and wanted something
-I had more control over so I could build a faster UI.
-
-My stretch goal is to implement the simulator in a way that it's portable- not
-just to other godot projects but around the web and such, maybe in a web server
-format so other programs can query it and run it in the background, or import
-the raw javascript as a library. But that would be very unfamiliar territory for
-me so I'm going to make sure the simulation works in Godot world first.
+I don't think anybody is following this project, but I've been trying to work in a robust enough way that someone could anyway. It was a lot of pressure and it clouded where I wanted to place my priorities.
