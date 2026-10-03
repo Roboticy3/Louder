@@ -6,6 +6,8 @@ takes advantage of all the engine's features:
  - Multiple conversation loading
  - Complex branching conversations
 
+RPG will be mostly text based with some images displaying over the main text-based display.
+
 ## Main Menu
 The demo starts with a menu that describes the area where the player is standing
 and lists interactable objects. There are three playable characters: Geno, Reka
@@ -231,11 +233,73 @@ And all the behind-the-scenes structures to power that also, including:
  - <Server> accepts commands from clients and checks with the allocator
  and the lobby. Synchronizes data with clients over the network.
  - <Client> sends commands to the server and listens for replies.
+ - <CharacterEntity> An object representing a character in the scene. Handles logic
+ for skill leveling, inventory items, and money.
 
 # Server Logic
 How the server accepts and rejects requests. 
 
-TODO!
+The client sends:
+ - Character selections
+ - Skill levelups
+ - Equipment changes
+ - Dialogue entering
+ - Dialogue exiting
+ - Dialogue choices
+
+All clients are then repeated these signals by the server, including an error
+code indicating if the request passed the server logic. Clients only update their
+state when the repeated signal is received.
+
+There are also query signals. Generally, this game hides information through the
+UI, not through the server, so the client can ask for information such as:
+ - List of connected clients
+ - Get characters of connected client
+ - Get dialogue conversation and position of connected clients
+ - Read story state variables
+ - Read character state: inventory, skills, and money
+
+
+## Character Selection
+<Server> passes the request to <Lobby>. If the character is already selected,
+<Lobby> declines. Otherwise, <Lobby> assigns the character to the client.
+
+While this isn't needed for the demo, the lobby should not prevent multiple
+characters from being allocated to the same client. This is instead enforced by
+the UI flow.
+
+## Skill Leveling
+<Server> checks the source of the request against the <Lobby>. If the skill being
+leveled is available among the characters allocated to the client making the request,
+the request is passed to the appriopriate <CharacterEntity>.
+
+## Equipment Changes
+<Server> checks the source of the request against <Lobby> and the appropriate <CharacterEntity>. 
+If the equipment is among the inventories of the characters allocated to the client making the request,
+that equipment piece is swapped.
+
+## Dialogue Entering/Exiting
+<Server> passes the request to <Lobby>. <Lobby> checks if the associated characters
+can enter/leave the requested conversation.
+
+## Dialogue Choices
+<Server> passes the request to <Engine>. This may cause multiple signals to be
+repeated depending on the behavior of the engine. Typically, at the very least
+a hub appearance event is repeated to all clients. 
+
+These dialogue events also update state on the <CharacterEntity> objects on the
+<Server>. These will not cause an immediate update over the network, but <Client>
+s will read this state using their character state readers when displaying menus
+later.
+
+The `show` and `hide` callbacks also send signals to the clients when
+processed, to control the display of images.
+
+`kick` is handled by the server then causes a Dialogue exiting signal.
+
+## Polling
+The clients also poll the server to maintain their presence, getting dropped and
+losing their character otherwise.
 
 # Implementation Order
 The most core mechanics are-
