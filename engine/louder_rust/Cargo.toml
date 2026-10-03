@@ -1,0 +1,16 @@
+[package]
+name = "louder_rust"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "louder_rust"
+path = "src/lib.rs"
+crate-type = ["cdylib"]
+
+[dependencies]
+bitflags = "2.13.2"
+encoding = "0.2.33"
+serde_json = "1.0.151"
+strum = "0.28.0"
+strum_macros = "0.28.0"

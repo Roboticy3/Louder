@@ -1,0 +1,29 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "bash": {
+      "*": "ask",
+
+      "rm *": "deny",
+      "git *": "deny",
+
+      "cargo *": "allow",
+      "g++ *": "allow",
+
+      "Get-*": "allow",
+      "Set-*": "allow",
+      "Select-*": "allow",
+      "Foreach-*": "allow",
+      "Copy-*": "allow",
+
+      ".*\\build*": "allow",
+
+    },
+    "read": {
+      "*": "ask",
+      "*src*": "allow",
+      "logs/*": "deny",
+    },
+    "external_directory": "deny",
+  }
+}

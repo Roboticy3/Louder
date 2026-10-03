@@ -3,4 +3,13 @@
 /android/
 *.tmp
 
+# Docs ignores
 docs/site/**
+docs/docs/rustdoc/**
+
+# Louder engine ignores
+**/target/**
+**.exe
+**.dll
+**louder_rust.h
+**louder_rust.dll

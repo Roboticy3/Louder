@@ -11,3 +11,4 @@ This project is in development, and will come in 3 parts.
  turn them into gameplay.
  - [Example](./examples/). Starter projects to guide you through using the tool and inspire
  project ideas.
+ - [API](./rustdoc/louder_rust/). API reference for the base engine.

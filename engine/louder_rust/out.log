@@ -1,0 +1,1603 @@
+﻿cargo :    Compiling louder_rust v0.1.0 
+(C:\Users\friba\Documents\lang_experiments\godot_experiments\custom-graph\engine\louder_rust)
+At line:1 char:1
++ cargo build -p louder_rust 2>&1 | Out-File -FilePath out.log -Encodin ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (   Compiling lo...ne\louder_rust):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+warning: unused import: `std::hash::Hash`
+ --> src\louder\name.rs:1:5
+  |
+1 | use std::hash::Hash;
+  |     ^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default
+
+warning: unused import: `louder::callback::*`
+ --> src\lib.rs:8:5
+  |
+8 | use louder::callback::*;
+  |     ^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `louder::conversation::*`
+  --> src\lib.rs:10:5
+   |
+10 | use louder::conversation::*;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `louder::expression::*`
+  --> src\lib.rs:12:5
+   |
+12 | use louder::expression::*;
+   |     ^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `louder::simulator::*`
+  --> src\lib.rs:17:5
+   |
+17 | use louder::simulator::*;
+   |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: unused variable: `ask`
+   --> src\louder\context.rs:112:14
+    |
+112 |         Some(ask) => {
+    |              ^^^ help: if this is intentional, prefix it with an underscore: `_ask`
+    |
+    = note: `#[warn(unused_variables)]` on by default
+
+warning: unused variable: `verdict`
+   --> src\louder\context.rs:109:38
+    |
+109 |   fn answer_ask(&self, index: usize, verdict: i32) -> bool {
+    |                                      ^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_verdict`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:279:37
+    |
+279 | pub extern "C" fn get_speaker_flags(ctx: *const LouderContext, speaker: LouderName) -> SpeakerFlags {
+    |                                     ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `speaker`
+   --> src\lib.rs:279:64
+    |
+279 | pub extern "C" fn get_speaker_flags(ctx: *const LouderContext, speaker: LouderName) -> SpeakerFlags {
+    |                                                                ^^^^^^^ help: if this is intentional, prefix it 
+with an underscore: `_speaker`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:288:42
+    |
+288 | pub extern "C" fn next_speaker_listening(ctx: *const LouderContext, speaker: LouderName, start: LouderName) -> 
+LouderName {
+    |                                          ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `speaker`
+   --> src\lib.rs:288:69
+    |
+288 | pub extern "C" fn next_speaker_listening(ctx: *const LouderContext, speaker: LouderName, start: LouderName) -> 
+LouderName {
+    |                                                                     ^^^^^^^ help: if this is intentional, prefix 
+it with an underscore: `_speaker`
+
+warning: unused variable: `start`
+   --> src\lib.rs:288:90
+    |
+288 | pub extern "C" fn next_speaker_listening(ctx: *const LouderContext, speaker: LouderName, start: LouderName) -> 
+LouderName {
+    |                                                                                          ^^^^^ help: if this is 
+intentional, prefix it with an underscore: `_start`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:294:42
+    |
+294 | pub extern "C" fn get_speaker_additional(ctx: *const LouderContext, conversation: LouderName, speaker: 
+LouderName, key: LouderName) -> Lo...
+    |                                          ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:294:69
+    |
+294 | ... *const LouderContext, conversation: LouderName, speaker: LouderName, key: LouderName) -> LouderVariant {
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_conversation`
+
+warning: unused variable: `speaker`
+   --> src\lib.rs:294:95
+    |
+294 | ..., conversation: LouderName, speaker: LouderName, key: LouderName) -> LouderVariant {
+    |                                ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_speaker`
+
+warning: unused variable: `key`
+   --> src\lib.rs:294:116
+    |
+294 | ...ouderName, speaker: LouderName, key: LouderName) -> LouderVariant {
+    |                                    ^^^ help: if this is intentional, prefix it with an underscore: `_key`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:300:37
+    |
+300 | pub extern "C" fn get_actor_channel(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor) -> 
+LouderName {
+    |                                     ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:300:64
+    |
+300 | pub extern "C" fn get_actor_channel(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor) -> 
+LouderName {
+    |                                                                ^^^^^^^^^^^^ help: if this is intentional, prefix 
+it with an underscore: `_conversation`
+
+warning: unused variable: `actor`
+   --> src\lib.rs:300:90
+    |
+300 | pub extern "C" fn get_actor_channel(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor) -> 
+LouderName {
+    |                                                                                          ^^^^^ help: if this is 
+intentional, prefix it with an underscore: `_actor`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:306:38
+    |
+306 | pub extern "C" fn get_actor_position(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor) -> 
+LouderPosition {
+    |                                      ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:306:65
+    |
+306 | pub extern "C" fn get_actor_position(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor) -> 
+LouderPosition {
+    |                                                                 ^^^^^^^^^^^^ help: if this is intentional, 
+prefix it with an underscore: `_conversation`
+
+warning: unused variable: `actor`
+   --> src\lib.rs:306:91
+    |
+306 | pub extern "C" fn get_actor_position(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor) -> 
+LouderPosition {
+    |                                                                                           ^^^^^ help: if this is 
+intentional, prefix it with an underscore: `_actor`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:312:39
+    |
+312 | pub extern "C" fn next_actor_speak_as(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor, 
+start: LouderName) -> Loud...
+    |                                       ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:312:66
+    |
+312 | ... *const LouderContext, conversation: LouderName, actor: LouderActor, start: LouderName) -> LouderName {
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_conversation`
+
+warning: unused variable: `actor`
+   --> src\lib.rs:312:92
+    |
+312 | ...xt, conversation: LouderName, actor: LouderActor, start: LouderName) -> LouderName {
+    |                                  ^^^^^ help: if this is intentional, prefix it with an underscore: `_actor`
+
+warning: unused variable: `start`
+   --> src\lib.rs:312:112
+    |
+312 | ...uderName, actor: LouderActor, start: LouderName) -> LouderName {
+    |                                  ^^^^^ help: if this is intentional, prefix it with an underscore: `_start`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:318:45
+    |
+318 | pub extern "C" fn next_actor_listening_base(ctx: *const LouderContext, conversation: LouderName, actor: 
+LouderActor, start: LouderName) -...
+    |                                             ^^^ help: if this is intentional, prefix it with an underscore: 
+`_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:318:72
+    |
+318 | ... *const LouderContext, conversation: LouderName, actor: LouderActor, start: LouderName) -> LouderName {
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_conversation`
+
+warning: unused variable: `actor`
+   --> src\lib.rs:318:98
+    |
+318 | ...xt, conversation: LouderName, actor: LouderActor, start: LouderName) -> LouderName {
+    |                                  ^^^^^ help: if this is intentional, prefix it with an underscore: `_actor`
+
+warning: unused variable: `start`
+   --> src\lib.rs:318:118
+    |
+318 | ...uderName, actor: LouderActor, start: LouderName) -> LouderName {
+    |                                  ^^^^^ help: if this is intentional, prefix it with an underscore: `_start`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:327:40
+    |
+327 | pub extern "C" fn next_actor_listening(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor, 
+start: LouderName) -> Lou...
+    |                                        ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:327:67
+    |
+327 | ... *const LouderContext, conversation: LouderName, actor: LouderActor, start: LouderName) -> LouderName {
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_conversation`
+
+warning: unused variable: `actor`
+   --> src\lib.rs:327:93
+    |
+327 | ...xt, conversation: LouderName, actor: LouderActor, start: LouderName) -> LouderName {
+    |                                  ^^^^^ help: if this is intentional, prefix it with an underscore: `_actor`
+
+warning: unused variable: `start`
+   --> src\lib.rs:327:113
+    |
+327 | ...uderName, actor: LouderActor, start: LouderName) -> LouderName {
+    |                                  ^^^^^ help: if this is intentional, prefix it with an underscore: `_start`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:333:35
+    |
+333 | pub extern "C" fn get_actor_flags(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor) -> 
+ActorFlags {
+    |                                   ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:333:62
+    |
+333 | pub extern "C" fn get_actor_flags(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor) -> 
+ActorFlags {
+    |                                                              ^^^^^^^^^^^^ help: if this is intentional, prefix 
+it with an underscore: `_conversation`
+
+warning: unused variable: `actor`
+   --> src\lib.rs:333:88
+    |
+333 | pub extern "C" fn get_actor_flags(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor) -> 
+ActorFlags {
+    |                                                                                        ^^^^^ help: if this is 
+intentional, prefix it with an underscore: `_actor`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:339:38
+    |
+339 | pub extern "C" fn get_actor_priority(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor) -> 
+i32 {
+    |                                      ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:339:65
+    |
+339 | pub extern "C" fn get_actor_priority(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor) -> 
+i32 {
+    |                                                                 ^^^^^^^^^^^^ help: if this is intentional, 
+prefix it with an underscore: `_conversation`
+
+warning: unused variable: `actor`
+   --> src\lib.rs:339:91
+    |
+339 | pub extern "C" fn get_actor_priority(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor) -> 
+i32 {
+    |                                                                                           ^^^^^ help: if this is 
+intentional, prefix it with an underscore: `_actor`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:345:40
+    |
+345 | pub extern "C" fn get_actor_additional(ctx: *const LouderContext, conversation: LouderName, actor: LouderActor, 
+key: LouderName) -> Loude...
+    |                                        ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:345:67
+    |
+345 | ... *const LouderContext, conversation: LouderName, actor: LouderActor, key: LouderName) -> LouderVariant {
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_conversation`
+
+warning: unused variable: `actor`
+   --> src\lib.rs:345:93
+    |
+345 | ...xt, conversation: LouderName, actor: LouderActor, key: LouderName) -> LouderVariant {
+    |                                  ^^^^^ help: if this is intentional, prefix it with an underscore: `_actor`
+
+warning: unused variable: `key`
+   --> src\lib.rs:345:113
+    |
+345 | ...LouderName, actor: LouderActor, key: LouderName) -> LouderVariant {
+    |                                    ^^^ help: if this is intentional, prefix it with an underscore: `_key`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:351:41
+    |
+351 | pub extern "C" fn next_actor_in_channel(ctx: *const LouderContext, conversation: LouderName, channel: 
+LouderName, start: LouderActor) -> ...
+    |                                         ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:351:68
+    |
+351 | ... *const LouderContext, conversation: LouderName, channel: LouderName, start: LouderActor) -> LouderActor {
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_conversation`
+
+warning: unused variable: `channel`
+   --> src\lib.rs:351:94
+    |
+351 | ..., conversation: LouderName, channel: LouderName, start: LouderActor) -> LouderActor {
+    |                                ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_channel`
+
+warning: unused variable: `start`
+   --> src\lib.rs:351:115
+    |
+351 | ...derName, channel: LouderName, start: LouderActor) -> LouderActor {
+    |                                  ^^^^^ help: if this is intentional, prefix it with an underscore: `_start`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:357:54
+    |
+357 | pub extern "C" fn next_actor_in_channel_and_position(ctx: *const LouderContext, conversation: LouderName, 
+channel: LouderName, position: ...
+    |                                                      ^^^ help: if this is intentional, prefix it with an 
+underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:357:81
+    |
+357 | ... *const LouderContext, conversation: LouderName, channel: LouderName, position: LouderPosition, start: 
+LouderActor) -> LouderActor {
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_conversation`
+
+warning: unused variable: `channel`
+   --> src\lib.rs:357:107
+    |
+357 | ..., conversation: LouderName, channel: LouderName, position: LouderPosition, start: LouderActor) -> LouderActor 
+{
+    |                                ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_channel`
+
+warning: unused variable: `position`
+   --> src\lib.rs:357:128
+    |
+357 | ...Name, channel: LouderName, position: LouderPosition, start: LouderActor) -> LouderActor {
+    |                               ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_position`
+
+warning: unused variable: `start`
+   --> src\lib.rs:357:154
+    |
+357 | ...me, position: LouderPosition, start: LouderActor) -> LouderActor {
+    |                                  ^^^^^ help: if this is intentional, prefix it with an underscore: `_start`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:363:42
+    |
+363 | pub extern "C" fn next_actor_speaking_as(ctx: *const LouderContext, conversation: LouderName, speaker: 
+LouderName, start: LouderActor) ->...
+    |                                          ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:363:69
+    |
+363 | ... *const LouderContext, conversation: LouderName, speaker: LouderName, start: LouderActor) -> LouderActor {
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_conversation`
+
+warning: unused variable: `speaker`
+   --> src\lib.rs:363:95
+    |
+363 | ..., conversation: LouderName, speaker: LouderName, start: LouderActor) -> LouderActor {
+    |                                ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_speaker`
+
+warning: unused variable: `start`
+   --> src\lib.rs:363:116
+    |
+363 | ...derName, speaker: LouderName, start: LouderActor) -> LouderActor {
+    |                                  ^^^^^ help: if this is intentional, prefix it with an underscore: `_start`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:372:43
+    |
+372 | pub extern "C" fn next_actor_listening_to(ctx: *const LouderContext, conversation: LouderName, speaker: 
+LouderName, start: LouderActor) -...
+    |                                           ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:372:70
+    |
+372 | ... *const LouderContext, conversation: LouderName, speaker: LouderName, start: LouderActor) -> LouderActor {
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_conversation`
+
+warning: unused variable: `speaker`
+   --> src\lib.rs:372:96
+    |
+372 | ..., conversation: LouderName, speaker: LouderName, start: LouderActor) -> LouderActor {
+    |                                ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_speaker`
+
+warning: unused variable: `start`
+   --> src\lib.rs:372:117
+    |
+372 | ...derName, speaker: LouderName, start: LouderActor) -> LouderActor {
+    |                                  ^^^^^ help: if this is intentional, prefix it with an underscore: `_start`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:380:41
+    |
+380 | pub extern "C" fn next_actor_from_flags(ctx: *const LouderContext, conversation: LouderName, include: 
+ActorFlags, exact: i32, start: Loud...
+    |                                         ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:380:68
+    |
+380 | ... *const LouderContext, conversation: LouderName, include: ActorFlags, exact: i32, start: LouderActor) -> 
+LouderActor {
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_conversation`
+
+warning: unused variable: `include`
+   --> src\lib.rs:380:94
+    |
+380 | ..., conversation: LouderName, include: ActorFlags, exact: i32, start: LouderActor) -> LouderActor {
+    |                                ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_include`
+
+warning: unused variable: `exact`
+   --> src\lib.rs:380:115
+    |
+380 | ...derName, include: ActorFlags, exact: i32, start: LouderActor) -> LouderActor {
+    |                                  ^^^^^ help: if this is intentional, prefix it with an underscore: `_exact`
+
+warning: unused variable: `start`
+   --> src\lib.rs:380:127
+    |
+380 | ...lude: ActorFlags, exact: i32, start: LouderActor) -> LouderActor {
+    |                                  ^^^^^ help: if this is intentional, prefix it with an underscore: `_start`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:386:32
+    |
+386 | pub extern "C" fn next_hub_tag(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition, 
+start: LouderName) -> Loude...
+    |                                ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:386:59
+    |
+386 | ... *const LouderContext, conversation: LouderName, position: LouderPosition, start: LouderName) -> LouderName {
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_conversation`
+
+warning: unused variable: `position`
+   --> src\lib.rs:386:85
+    |
+386 | ... conversation: LouderName, position: LouderPosition, start: LouderName) -> LouderName {
+    |                               ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_position`
+
+warning: unused variable: `start`
+   --> src\lib.rs:386:111
+    |
+386 | ...me, position: LouderPosition, start: LouderName) -> LouderName {
+    |                                  ^^^^^ help: if this is intentional, prefix it with an underscore: `_start`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:392:35
+    |
+392 | pub extern "C" fn get_hub_speaker(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition) 
+-> LouderName {
+    |                                   ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:392:62
+    |
+392 | pub extern "C" fn get_hub_speaker(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition) 
+-> LouderName {
+    |                                                              ^^^^^^^^^^^^ help: if this is intentional, prefix 
+it with an underscore: `_conversation`
+
+warning: unused variable: `position`
+   --> src\lib.rs:392:88
+    |
+392 | pub extern "C" fn get_hub_speaker(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition) 
+-> LouderName {
+    |                                                                                        ^^^^^^^^ help: if this is 
+intentional, prefix it with an underscore: `_position`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:398:32
+    |
+398 | pub extern "C" fn get_hub_text(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition) -> 
+LouderName {
+    |                                ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:398:59
+    |
+398 | pub extern "C" fn get_hub_text(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition) -> 
+LouderName {
+    |                                                           ^^^^^^^^^^^^ help: if this is intentional, prefix it 
+with an underscore: `_conversation`
+
+warning: unused variable: `position`
+   --> src\lib.rs:398:85
+    |
+398 | pub extern "C" fn get_hub_text(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition) -> 
+LouderName {
+    |                                                                                     ^^^^^^^^ help: if this is 
+intentional, prefix it with an underscore: `_position`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:404:40
+    |
+404 | pub extern "C" fn get_hub_choice_count(ctx: *const LouderContext, conversation: LouderName, position: 
+LouderPosition, actor_perspective: ...
+    |                                        ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:404:67
+    |
+404 | ... *const LouderContext, conversation: LouderName, position: LouderPosition, actor_perspective: LouderActor) -> 
+i32 {
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_conversation`
+
+warning: unused variable: `position`
+   --> src\lib.rs:404:93
+    |
+404 | ... conversation: LouderName, position: LouderPosition, actor_perspective: LouderActor) -> i32 {
+    |                               ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_position`
+
+warning: unused variable: `actor_perspective`
+   --> src\lib.rs:404:119
+    |
+404 | ...: LouderPosition, actor_perspective: LouderActor) -> i32 {
+    |                      ^^^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_actor_perspective`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:410:39
+    |
+410 | pub extern "C" fn get_hub_choice_text(ctx: *const LouderContext, conversation: LouderName, position: 
+LouderPosition, actor_perspective: L...
+    |                                       ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:410:66
+    |
+410 | ... *const LouderContext, conversation: LouderName, position: LouderPosition, actor_perspective: LouderActor, 
+choice_index: i32) -> Loude...
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_conversation`
+
+warning: unused variable: `position`
+   --> src\lib.rs:410:92
+    |
+410 | ... conversation: LouderName, position: LouderPosition, actor_perspective: LouderActor, choice_index: i32) -> 
+LouderName {
+    |                               ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_position`
+
+warning: unused variable: `actor_perspective`
+   --> src\lib.rs:410:118
+    |
+410 | ...: LouderPosition, actor_perspective: LouderActor, choice_index: i32) -> LouderName {
+    |                      ^^^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_actor_perspective`
+
+warning: unused variable: `choice_index`
+   --> src\lib.rs:410:150
+    |
+410 | ...spective: LouderActor, choice_index: i32) -> LouderName {
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_choice_index`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:416:39
+    |
+416 | pub extern "C" fn get_hub_choice_link(ctx: *const LouderContext, conversation: LouderName, position: 
+LouderPosition, actor_perspective: L...
+    |                                       ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:416:66
+    |
+416 | ... *const LouderContext, conversation: LouderName, position: LouderPosition, actor_perspective: LouderActor, 
+choice_index: i32) -> i32 {
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_conversation`
+
+warning: unused variable: `position`
+   --> src\lib.rs:416:92
+    |
+416 | ... conversation: LouderName, position: LouderPosition, actor_perspective: LouderActor, choice_index: i32) -> 
+i32 {
+    |                               ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_position`
+
+warning: unused variable: `actor_perspective`
+   --> src\lib.rs:416:118
+    |
+416 | ...: LouderPosition, actor_perspective: LouderActor, choice_index: i32) -> i32 {
+    |                      ^^^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_actor_perspective`
+
+warning: unused variable: `choice_index`
+   --> src\lib.rs:416:150
+    |
+416 | ...spective: LouderActor, choice_index: i32) -> i32 {
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_choice_index`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:422:39
+    |
+422 | pub extern "C" fn get_hub_expressions(ctx: *const LouderContext, conversation: LouderName, position: 
+LouderPosition) -> LouderName {
+    |                                       ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:422:66
+    |
+422 | pub extern "C" fn get_hub_expressions(ctx: *const LouderContext, conversation: LouderName, position: 
+LouderPosition) -> LouderName {
+    |                                                                  ^^^^^^^^^^^^ help: if this is intentional, 
+prefix it with an underscore: `_conversation`
+
+warning: unused variable: `position`
+   --> src\lib.rs:422:92
+    |
+422 | pub extern "C" fn get_hub_expressions(ctx: *const LouderContext, conversation: LouderName, position: 
+LouderPosition) -> LouderName {
+    |                                                                                            ^^^^^^^^ help: if 
+this is intentional, prefix it with an underscore: `_position`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:428:37
+    |
+428 | pub extern "C" fn get_hub_callbacks(ctx: *const LouderContext, conversation: LouderName, position: 
+LouderPosition) -> LouderName {
+    |                                     ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:428:64
+    |
+428 | pub extern "C" fn get_hub_callbacks(ctx: *const LouderContext, conversation: LouderName, position: 
+LouderPosition) -> LouderName {
+    |                                                                ^^^^^^^^^^^^ help: if this is intentional, prefix 
+it with an underscore: `_conversation`
+
+warning: unused variable: `position`
+   --> src\lib.rs:428:90
+    |
+428 | pub extern "C" fn get_hub_callbacks(ctx: *const LouderContext, conversation: LouderName, position: 
+LouderPosition) -> LouderName {
+    |                                                                                          ^^^^^^^^ help: if this 
+is intentional, prefix it with an underscore: `_position`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:434:33
+    |
+434 | pub extern "C" fn get_hub_flags(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition) 
+-> HubFlags {
+    |                                 ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:434:60
+    |
+434 | pub extern "C" fn get_hub_flags(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition) 
+-> HubFlags {
+    |                                                            ^^^^^^^^^^^^ help: if this is intentional, prefix it 
+with an underscore: `_conversation`
+
+warning: unused variable: `position`
+   --> src\lib.rs:434:86
+    |
+434 | pub extern "C" fn get_hub_flags(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition) 
+-> HubFlags {
+    |                                                                                      ^^^^^^^^ help: if this is 
+intentional, prefix it with an underscore: `_position`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:440:38
+    |
+440 | pub extern "C" fn next_hub_recipient(ctx: *const LouderContext, conversation: LouderName, position: 
+LouderPosition, start: LouderName) ->...
+    |                                      ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:440:65
+    |
+440 | ... *const LouderContext, conversation: LouderName, position: LouderPosition, start: LouderName) -> LouderName {
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_conversation`
+
+warning: unused variable: `position`
+   --> src\lib.rs:440:91
+    |
+440 | ... conversation: LouderName, position: LouderPosition, start: LouderName) -> LouderName {
+    |                               ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_position`
+
+warning: unused variable: `start`
+   --> src\lib.rs:440:117
+    |
+440 | ...me, position: LouderPosition, start: LouderName) -> LouderName {
+    |                                  ^^^^^ help: if this is intentional, prefix it with an underscore: `_start`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:446:35
+    |
+446 | pub extern "C" fn get_hub_channel(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition) 
+-> LouderName {
+    |                                   ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:446:62
+    |
+446 | pub extern "C" fn get_hub_channel(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition) 
+-> LouderName {
+    |                                                              ^^^^^^^^^^^^ help: if this is intentional, prefix 
+it with an underscore: `_conversation`
+
+warning: unused variable: `position`
+   --> src\lib.rs:446:88
+    |
+446 | pub extern "C" fn get_hub_channel(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition) 
+-> LouderName {
+    |                                                                                        ^^^^^^^^ help: if this is 
+intentional, prefix it with an underscore: `_position`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:452:36
+    |
+452 | pub extern "C" fn get_hub_priority(ctx: *const LouderContext, conversation: LouderName, position: 
+LouderPosition) -> i32 {
+    |                                    ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:452:63
+    |
+452 | pub extern "C" fn get_hub_priority(ctx: *const LouderContext, conversation: LouderName, position: 
+LouderPosition) -> i32 {
+    |                                                               ^^^^^^^^^^^^ help: if this is intentional, prefix 
+it with an underscore: `_conversation`
+
+warning: unused variable: `position`
+   --> src\lib.rs:452:89
+    |
+452 | pub extern "C" fn get_hub_priority(ctx: *const LouderContext, conversation: LouderName, position: 
+LouderPosition) -> i32 {
+    |                                                                                         ^^^^^^^^ help: if this 
+is intentional, prefix it with an underscore: `_position`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:458:38
+    |
+458 | pub extern "C" fn get_hub_additional(ctx: *const LouderContext, conversation: LouderName, position: 
+LouderPosition, key: LouderName) -> L...
+    |                                      ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:458:65
+    |
+458 | ... *const LouderContext, conversation: LouderName, position: LouderPosition, key: LouderName) -> LouderVariant {
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_conversation`
+
+warning: unused variable: `position`
+   --> src\lib.rs:458:91
+    |
+458 | ... conversation: LouderName, position: LouderPosition, key: LouderName) -> LouderVariant {
+    |                               ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_position`
+
+warning: unused variable: `key`
+   --> src\lib.rs:458:117
+    |
+458 | ...Name, position: LouderPosition, key: LouderName) -> LouderVariant {
+    |                                    ^^^ help: if this is intentional, prefix it with an underscore: `_key`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:464:39
+    |
+464 | pub extern "C" fn next_hub_by_channel(ctx: *const LouderContext, conversation: LouderName, channel: LouderName, 
+start: LouderPosition) ->...
+    |                                       ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:464:66
+    |
+464 | ... *const LouderContext, conversation: LouderName, channel: LouderName, start: LouderPosition) -> 
+LouderPosition {
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_conversation`
+
+warning: unused variable: `channel`
+   --> src\lib.rs:464:92
+    |
+464 | ..., conversation: LouderName, channel: LouderName, start: LouderPosition) -> LouderPosition {
+    |                                ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_channel`
+
+warning: unused variable: `start`
+   --> src\lib.rs:464:113
+    |
+464 | ...derName, channel: LouderName, start: LouderPosition) -> LouderPosition {
+    |                                  ^^^^^ help: if this is intentional, prefix it with an underscore: `_start`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:470:38
+    |
+470 | pub extern "C" fn next_hub_spoken_by(ctx: *const LouderContext, conversation: LouderName, speaker: LouderName, 
+start: LouderPosition) -> ...
+    |                                      ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:470:65
+    |
+470 | ... *const LouderContext, conversation: LouderName, speaker: LouderName, start: LouderPosition) -> 
+LouderPosition {
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_conversation`
+
+warning: unused variable: `speaker`
+   --> src\lib.rs:470:91
+    |
+470 | ..., conversation: LouderName, speaker: LouderName, start: LouderPosition) -> LouderPosition {
+    |                                ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_speaker`
+
+warning: unused variable: `start`
+   --> src\lib.rs:470:112
+    |
+470 | ...derName, speaker: LouderName, start: LouderPosition) -> LouderPosition {
+    |                                  ^^^^^ help: if this is intentional, prefix it with an underscore: `_start`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:479:37
+    |
+479 | pub extern "C" fn next_hub_heard_by(ctx: *const LouderContext, conversation: LouderName, speaker: LouderName, 
+start: LouderPosition) -> L...
+    |                                     ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:479:64
+    |
+479 | ... *const LouderContext, conversation: LouderName, speaker: LouderName, start: LouderPosition) -> 
+LouderPosition {
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_conversation`
+
+warning: unused variable: `speaker`
+   --> src\lib.rs:479:90
+    |
+479 | ..., conversation: LouderName, speaker: LouderName, start: LouderPosition) -> LouderPosition {
+    |                                ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_speaker`
+
+warning: unused variable: `start`
+   --> src\lib.rs:479:111
+    |
+479 | ...derName, speaker: LouderName, start: LouderPosition) -> LouderPosition {
+    |                                  ^^^^^ help: if this is intentional, prefix it with an underscore: `_start`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:485:40
+    |
+485 | pub extern "C" fn next_hub_by_priority(ctx: *const LouderContext, conversation: LouderName, priority_min: i32, 
+priority_max: i32, start: ...
+    |                                        ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:485:67
+    |
+485 | ... *const LouderContext, conversation: LouderName, priority_min: i32, priority_max: i32, start: LouderPosition) 
+-> LouderPosition {
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_conversation`
+
+warning: unused variable: `priority_min`
+   --> src\lib.rs:485:93
+    |
+485 | ...versation: LouderName, priority_min: i32, priority_max: i32, start: LouderPosition) -> LouderPosition {
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_priority_min`
+
+warning: unused variable: `priority_max`
+   --> src\lib.rs:485:112
+    |
+485 | ...me, priority_min: i32, priority_max: i32, start: LouderPosition) -> LouderPosition {
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_priority_max`
+
+warning: unused variable: `start`
+   --> src\lib.rs:485:131
+    |
+485 | ..._min: i32, priority_max: i32, start: LouderPosition) -> LouderPosition {
+    |                                  ^^^^^ help: if this is intentional, prefix it with an underscore: `_start`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:492:38
+    |
+492 | pub extern "C" fn next_hub_from_tags(ctx: *const LouderContext, conversation: LouderName, include: *const 
+LouderName, include_count: i32,...
+    |                                      ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:492:65
+    |
+492 | ... *const LouderContext, conversation: LouderName, include: *const LouderName, include_count: i32, exact: i32, 
+start: LouderPosition) ->...
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_conversation`
+
+warning: unused variable: `include`
+   --> src\lib.rs:492:91
+    |
+492 | ..., conversation: LouderName, include: *const LouderName, include_count: i32, exact: i32, start: 
+LouderPosition) -> LouderPosition {
+    |                                ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_include`
+
+warning: unused variable: `include_count`
+   --> src\lib.rs:492:119
+    |
+492 | ...e: *const LouderName, include_count: i32, exact: i32, start: LouderPosition) -> LouderPosition {
+    |                          ^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_include_count`
+
+warning: unused variable: `exact`
+   --> src\lib.rs:492:139
+    |
+492 | ...uderName, include_count: i32, exact: i32, start: LouderPosition) -> LouderPosition {
+    |                                  ^^^^^ help: if this is intentional, prefix it with an underscore: `_exact`
+
+warning: unused variable: `start`
+   --> src\lib.rs:492:151
+    |
+492 | ...clude_count: i32, exact: i32, start: LouderPosition) -> LouderPosition {
+    |                                  ^^^^^ help: if this is intentional, prefix it with an underscore: `_start`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:500:39
+    |
+500 | pub extern "C" fn next_hub_from_flags(ctx: *const LouderContext, conversation: LouderName, include: HubFlags, 
+exact: i32, start: LouderPo...
+    |                                       ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:500:66
+    |
+500 | ... *const LouderContext, conversation: LouderName, include: HubFlags, exact: i32, start: LouderPosition) -> 
+LouderPosition {
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_conversation`
+
+warning: unused variable: `include`
+   --> src\lib.rs:500:92
+    |
+500 | ..., conversation: LouderName, include: HubFlags, exact: i32, start: LouderPosition) -> LouderPosition {
+    |                                ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_include`
+
+warning: unused variable: `exact`
+   --> src\lib.rs:500:111
+    |
+500 | ...ouderName, include: HubFlags, exact: i32, start: LouderPosition) -> LouderPosition {
+    |                                  ^^^^^ help: if this is intentional, prefix it with an underscore: `_exact`
+
+warning: unused variable: `start`
+   --> src\lib.rs:500:123
+    |
+500 | ...nclude: HubFlags, exact: i32, start: LouderPosition) -> LouderPosition {
+    |                                  ^^^^^ help: if this is intentional, prefix it with an underscore: `_start`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:506:35
+    |
+506 | pub extern "C" fn get_story_state(ctx: *const LouderContext, conversation: LouderName, state: LouderName) -> 
+LouderVariant {
+    |                                   ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:506:62
+    |
+506 | pub extern "C" fn get_story_state(ctx: *const LouderContext, conversation: LouderName, state: LouderName) -> 
+LouderVariant {
+    |                                                              ^^^^^^^^^^^^ help: if this is intentional, prefix 
+it with an underscore: `_conversation`
+
+warning: unused variable: `state`
+   --> src\lib.rs:506:88
+    |
+506 | pub extern "C" fn get_story_state(ctx: *const LouderContext, conversation: LouderName, state: LouderName) -> 
+LouderVariant {
+    |                                                                                        ^^^^^ help: if this is 
+intentional, prefix it with an underscore: `_state`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:512:35
+    |
+512 | pub extern "C" fn read_state_json(ctx: *const LouderContext, conversation: LouderName, buffer: *mut u8, 
+max_size: usize, encoding: Louder...
+    |                                   ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:512:62
+    |
+512 | ... *const LouderContext, conversation: LouderName, buffer: *mut u8, max_size: usize, encoding: LouderEncoding) 
+-> i32 {
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_conversation`
+
+warning: unused variable: `buffer`
+   --> src\lib.rs:512:88
+    |
+512 | ...t, conversation: LouderName, buffer: *mut u8, max_size: usize, encoding: LouderEncoding) -> i32 {
+    |                                 ^^^^^^ help: if this is intentional, prefix it with an underscore: `_buffer`
+
+warning: unused variable: `max_size`
+   --> src\lib.rs:512:105
+    |
+512 | ...uderName, buffer: *mut u8, max_size: usize, encoding: LouderEncoding) -> i32 {
+    |                               ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_max_size`
+
+warning: unused variable: `encoding`
+   --> src\lib.rs:512:122
+    |
+512 | ... *mut u8, max_size: usize, encoding: LouderEncoding) -> i32 {
+    |                               ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_encoding`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:519:38
+    |
+519 | pub extern "C" fn read_snapshot_json(ctx: *const LouderContext, conversation: LouderName, buffer: *mut u8, 
+max_size: usize, encoding: Lou...
+    |                                      ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:519:65
+    |
+519 | ... *const LouderContext, conversation: LouderName, buffer: *mut u8, max_size: usize, encoding: LouderEncoding) 
+-> i32 {
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_conversation`
+
+warning: unused variable: `buffer`
+   --> src\lib.rs:519:91
+    |
+519 | ...t, conversation: LouderName, buffer: *mut u8, max_size: usize, encoding: LouderEncoding) -> i32 {
+    |                                 ^^^^^^ help: if this is intentional, prefix it with an underscore: `_buffer`
+
+warning: unused variable: `max_size`
+   --> src\lib.rs:519:108
+    |
+519 | ...uderName, buffer: *mut u8, max_size: usize, encoding: LouderEncoding) -> i32 {
+    |                               ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_max_size`
+
+warning: unused variable: `encoding`
+   --> src\lib.rs:519:125
+    |
+519 | ... *mut u8, max_size: usize, encoding: LouderEncoding) -> i32 {
+    |                               ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_encoding`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:556:42
+    |
+556 | pub extern "C" fn load_conversation_json(ctx: *mut LouderContext, conversation: LouderName, buffer: *mut u8, 
+max_size: usize, encoding: L...
+    |                                          ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:556:67
+    |
+556 | ...x: *mut LouderContext, conversation: LouderName, buffer: *mut u8, max_size: usize, encoding: LouderEncoding) 
+-> LoadError {
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_conversation`
+
+warning: unused variable: `buffer`
+   --> src\lib.rs:556:93
+    |
+556 | ...t, conversation: LouderName, buffer: *mut u8, max_size: usize, encoding: LouderEncoding) -> LoadError {
+    |                                 ^^^^^^ help: if this is intentional, prefix it with an underscore: `_buffer`
+
+warning: unused variable: `max_size`
+   --> src\lib.rs:556:110
+    |
+556 | ...uderName, buffer: *mut u8, max_size: usize, encoding: LouderEncoding) -> LoadError {
+    |                               ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_max_size`
+
+warning: unused variable: `encoding`
+   --> src\lib.rs:556:127
+    |
+556 | ... *mut u8, max_size: usize, encoding: LouderEncoding) -> LoadError {
+    |                               ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_encoding`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:564:39
+    |
+564 | pub extern "C" fn remove_conversation(ctx: *mut LouderContext, conversation: LouderName) -> i32 {
+    |                                       ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:564:64
+    |
+564 | pub extern "C" fn remove_conversation(ctx: *mut LouderContext, conversation: LouderName) -> i32 {
+    |                                                                ^^^^^^^^^^^^ help: if this is intentional, prefix 
+it with an underscore: `_conversation`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:575:44
+    |
+575 | pub extern "C" fn load_conversation_config(ctx: *mut LouderContext, buffer: *mut u8, max_size: usize, encoding: 
+LouderEncoding) -> LoadEr...
+    |                                            ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `buffer`
+   --> src\lib.rs:575:69
+    |
+575 | ...fig(ctx: *mut LouderContext, buffer: *mut u8, max_size: usize, encoding: LouderEncoding) -> LoadError {
+    |                                 ^^^^^^ help: if this is intentional, prefix it with an underscore: `_buffer`
+
+warning: unused variable: `max_size`
+   --> src\lib.rs:575:86
+    |
+575 | ...rContext, buffer: *mut u8, max_size: usize, encoding: LouderEncoding) -> LoadError {
+    |                               ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_max_size`
+
+warning: unused variable: `encoding`
+   --> src\lib.rs:575:103
+    |
+575 | ... *mut u8, max_size: usize, encoding: LouderEncoding) -> LoadError {
+    |                               ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_encoding`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:581:32
+    |
+581 | pub extern "C" fn clear_config(ctx: *mut LouderContext) -> i32 {
+    |                                ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:587:29
+    |
+587 | pub extern "C" fn add_actor(ctx: *mut LouderContext, conversation: LouderName, start_position: LouderPosition, 
+flags: ActorFlags, speak_a...
+    |                             ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:587:54
+    |
+587 | ...x: *mut LouderContext, conversation: LouderName, start_position: LouderPosition, flags: ActorFlags, speak_as: 
+*const LouderName, speak...
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_conversation`
+
+warning: unused variable: `start_position`
+   --> src\lib.rs:587:80
+    |
+587 | ...rsation: LouderName, start_position: LouderPosition, flags: ActorFlags, speak_as: *const LouderName, 
+speak_as_count: i32, listen_to: *...
+    |                         ^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_start_position`
+
+warning: unused variable: `flags`
+   --> src\lib.rs:587:112
+    |
+587 | ...art_position: LouderPosition, flags: ActorFlags, speak_as: *const LouderName, speak_as_count: i32, listen_to: 
+*const LouderName, liste...
+    |                                  ^^^^^ help: if this is intentional, prefix it with an underscore: `_flags`
+
+warning: unused variable: `speak_as`
+   --> src\lib.rs:587:131
+    |
+587 | ...sition, flags: ActorFlags, speak_as: *const LouderName, speak_as_count: i32, listen_to: *const LouderName, 
+listen_to_count: i32) -> i32 {
+    |                               ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_speak_as`
+
+warning: unused variable: `speak_as_count`
+   --> src\lib.rs:587:160
+    |
+587 | ...: *const LouderName, speak_as_count: i32, listen_to: *const LouderName, listen_to_count: i32) -> i32 {
+    |                         ^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_speak_as_count`
+
+warning: unused variable: `listen_to`
+   --> src\lib.rs:587:181
+    |
+587 | ...ame, speak_as_count: i32, listen_to: *const LouderName, listen_to_count: i32) -> i32 {
+    |                              ^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_listen_to`
+
+warning: unused variable: `listen_to_count`
+   --> src\lib.rs:587:211
+    |
+587 | ... *const LouderName, listen_to_count: i32) -> i32 {
+    |                        ^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_listen_to_count`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:593:32
+    |
+593 | pub extern "C" fn remove_actor(ctx: *mut LouderContext, conversation: LouderName, actor: LouderActor) -> i32 {
+    |                                ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:593:57
+    |
+593 | pub extern "C" fn remove_actor(ctx: *mut LouderContext, conversation: LouderName, actor: LouderActor) -> i32 {
+    |                                                         ^^^^^^^^^^^^ help: if this is intentional, prefix it 
+with an underscore: `_conversation`
+
+warning: unused variable: `actor`
+   --> src\lib.rs:593:83
+    |
+593 | pub extern "C" fn remove_actor(ctx: *mut LouderContext, conversation: LouderName, actor: LouderActor) -> i32 {
+    |                                                                                   ^^^^^ help: if this is 
+intentional, prefix it with an underscore: `_actor`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:599:33
+    |
+599 | pub extern "C" fn select_choice(ctx: *mut LouderContext, conversation: LouderName, actor: LouderActor, 
+choice_index: i32) -> i32 {
+    |                                 ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:599:58
+    |
+599 | pub extern "C" fn select_choice(ctx: *mut LouderContext, conversation: LouderName, actor: LouderActor, 
+choice_index: i32) -> i32 {
+    |                                                          ^^^^^^^^^^^^ help: if this is intentional, prefix it 
+with an underscore: `_conversation`
+
+warning: unused variable: `actor`
+   --> src\lib.rs:599:84
+    |
+599 | pub extern "C" fn select_choice(ctx: *mut LouderContext, conversation: LouderName, actor: LouderActor, 
+choice_index: i32) -> i32 {
+    |                                                                                    ^^^^^ help: if this is 
+intentional, prefix it with an underscore: `_actor`
+
+warning: unused variable: `choice_index`
+   --> src\lib.rs:599:104
+    |
+599 | pub extern "C" fn select_choice(ctx: *mut LouderContext, conversation: LouderName, actor: LouderActor, 
+choice_index: i32) -> i32 {
+    |                                                                                                        
+^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_choice_index`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:610:30
+    |
+610 | pub extern "C" fn force_warp(ctx: *mut LouderContext, conversation: LouderName, actor: LouderActor, 
+target_position: LouderPosition, fake...
+    |                              ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:610:55
+    |
+610 | ...x: *mut LouderContext, conversation: LouderName, actor: LouderActor, target_position: LouderPosition, 
+fake_channel: LouderName, fake_p...
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_conversation`
+
+warning: unused variable: `actor`
+   --> src\lib.rs:610:81
+    |
+610 | ...xt, conversation: LouderName, actor: LouderActor, target_position: LouderPosition, fake_channel: LouderName, 
+fake_priority: i32) -> i32 {
+    |                                  ^^^^^ help: if this is intentional, prefix it with an underscore: `_actor`
+
+warning: unused variable: `target_position`
+   --> src\lib.rs:610:101
+    |
+610 | ...actor: LouderActor, target_position: LouderPosition, fake_channel: LouderName, fake_priority: i32) -> i32 {
+    |                        ^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_target_position`
+
+warning: unused variable: `fake_channel`
+   --> src\lib.rs:610:134
+    |
+610 | ...ition: LouderPosition, fake_channel: LouderName, fake_priority: i32) -> i32 {
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_fake_channel`
+
+warning: unused variable: `fake_priority`
+   --> src\lib.rs:610:160
+    |
+610 | ..._channel: LouderName, fake_priority: i32) -> i32 {
+    |                          ^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_fake_priority`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:621:34
+    |
+621 | pub extern "C" fn force_position(ctx: *mut LouderContext, conversation: LouderName, actor: LouderActor, 
+target_position: LouderPosition, ...
+    |                                  ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:621:59
+    |
+621 | ...x: *mut LouderContext, conversation: LouderName, actor: LouderActor, target_position: LouderPosition, 
+fake_channel: LouderName, fake_p...
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_conversation`
+
+warning: unused variable: `actor`
+   --> src\lib.rs:621:85
+    |
+621 | ...xt, conversation: LouderName, actor: LouderActor, target_position: LouderPosition, fake_channel: LouderName, 
+fake_priority: i32) -> i32 {
+    |                                  ^^^^^ help: if this is intentional, prefix it with an underscore: `_actor`
+
+warning: unused variable: `target_position`
+   --> src\lib.rs:621:105
+    |
+621 | ...actor: LouderActor, target_position: LouderPosition, fake_channel: LouderName, fake_priority: i32) -> i32 {
+    |                        ^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_target_position`
+
+warning: unused variable: `fake_channel`
+   --> src\lib.rs:621:138
+    |
+621 | ...ition: LouderPosition, fake_channel: LouderName, fake_priority: i32) -> i32 {
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_fake_channel`
+
+warning: unused variable: `fake_priority`
+   --> src\lib.rs:621:164
+    |
+621 | ..._channel: LouderName, fake_priority: i32) -> i32 {
+    |                          ^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_fake_priority`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:627:39
+    |
+627 | pub extern "C" fn set_story_state_int(ctx: *mut LouderContext, conversation: LouderName, key: LouderName, value: 
+i32) -> i32 {
+    |                                       ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:627:64
+    |
+627 | pub extern "C" fn set_story_state_int(ctx: *mut LouderContext, conversation: LouderName, key: LouderName, value: 
+i32) -> i32 {
+    |                                                                ^^^^^^^^^^^^ help: if this is intentional, prefix 
+it with an underscore: `_conversation`
+
+warning: unused variable: `key`
+   --> src\lib.rs:627:90
+    |
+627 | pub extern "C" fn set_story_state_int(ctx: *mut LouderContext, conversation: LouderName, key: LouderName, value: 
+i32) -> i32 {
+    |                                                                                          ^^^ help: if this is 
+intentional, prefix it with an underscore: `_key`
+
+warning: unused variable: `value`
+   --> src\lib.rs:627:107
+    |
+627 | pub extern "C" fn set_story_state_int(ctx: *mut LouderContext, conversation: LouderName, key: LouderName, value: 
+i32) -> i32 {
+    |                                                                                                           ^^^^^ 
+help: if this is intentional, prefix it with an underscore: `_value`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:633:41
+    |
+633 | pub extern "C" fn set_story_state_float(ctx: *mut LouderContext, conversation: LouderName, key: LouderName, 
+value: f32) -> i32 {
+    |                                         ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:633:66
+    |
+633 | pub extern "C" fn set_story_state_float(ctx: *mut LouderContext, conversation: LouderName, key: LouderName, 
+value: f32) -> i32 {
+    |                                                                  ^^^^^^^^^^^^ help: if this is intentional, 
+prefix it with an underscore: `_conversation`
+
+warning: unused variable: `key`
+   --> src\lib.rs:633:92
+    |
+633 | pub extern "C" fn set_story_state_float(ctx: *mut LouderContext, conversation: LouderName, key: LouderName, 
+value: f32) -> i32 {
+    |                                                                                            ^^^ help: if this is 
+intentional, prefix it with an underscore: `_key`
+
+warning: unused variable: `value`
+   --> src\lib.rs:633:109
+    |
+633 | pub extern "C" fn set_story_state_float(ctx: *mut LouderContext, conversation: LouderName, key: LouderName, 
+value: f32) -> i32 {
+    |                                                                                                             
+^^^^^ help: if this is intentional, prefix it with an underscore: `_value`
+
+warning: unused variable: `ctx`
+   --> src\lib.rs:639:42
+    |
+639 | pub extern "C" fn set_story_state_string(ctx: *mut LouderContext, conversation: LouderName, key: LouderName, 
+buffer: *const u8, size: usi...
+    |                                          ^^^ help: if this is intentional, prefix it with an underscore: `_ctx`
+
+warning: unused variable: `conversation`
+   --> src\lib.rs:639:67
+    |
+639 | ...x: *mut LouderContext, conversation: LouderName, key: LouderName, buffer: *const u8, size: usize, encoding: 
+LouderEncoding) -> i32 {
+    |                           ^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: 
+`_conversation`
+
+warning: unused variable: `key`
+   --> src\lib.rs:639:93
+    |
+639 | ...text, conversation: LouderName, key: LouderName, buffer: *const u8, size: usize, encoding: LouderEncoding) -> 
+i32 {
+    |                                    ^^^ help: if this is intentional, prefix it with an underscore: `_key`
+
+warning: unused variable: `buffer`
+   --> src\lib.rs:639:110
+    |
+639 | ...LouderName, key: LouderName, buffer: *const u8, size: usize, encoding: LouderEncoding) -> i32 {
+    |                                 ^^^^^^ help: if this is intentional, prefix it with an underscore: `_buffer`
+
+warning: unused variable: `size`
+   --> src\lib.rs:639:129
+    |
+639 | ...LouderName, buffer: *const u8, size: usize, encoding: LouderEncoding) -> i32 {
+    |                                   ^^^^ help: if this is intentional, prefix it with an underscore: `_size`
+
+warning: unused variable: `encoding`
+   --> src\lib.rs:639:142
+    |
+639 | ...r: *const u8, size: usize, encoding: LouderEncoding) -> i32 {
+    |                               ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_encoding`
+
+warning: fields `id`, `speak_as`, `listen_to`, `flags`, and `state` are never read
+  --> src\louder\actor.rs:21:3
+   |
+20 | pub struct Actor {
+   |            ----- fields in this struct
+21 |   id: LouderActor,
+   |   ^^
+22 |   speak_as: Vec<LouderName>,
+   |   ^^^^^^^^
+23 |   listen_to: Vec<LouderName>,
+   |   ^^^^^^^^^
+24 |   flags: ActorFlags,
+   |   ^^^^^
+25 |
+26 |   state: ActorState,
+   |   ^^^^^
+   |
+   = note: `#[warn(dead_code)]` on by default
+
+warning: fields `channel`, `position`, `priority`, and `additional_data` are never read
+  --> src\louder\actor.rs:30:3
+   |
+29 | pub struct ActorState {
+   |            ---------- fields in this struct
+30 |   channel: LouderName,
+   |   ^^^^^^^
+31 |   position: LouderPosition,
+   |   ^^^^^^^^
+32 |   priority: i32,
+   |   ^^^^^^^^
+33 |   additional_data: HomogeneousObject,
+   |   ^^^^^^^^^^^^^^^
+
+warning: fields `name`, `hubs`, and `additional_data` are never read
+ --> src\louder\conversation.rs:7:3
+  |
+6 | pub struct Conversation {
+  |            ------------ fields in this struct
+7 |   name: LouderName,
+  |   ^^^^
+8 |   hubs: Map<LouderPosition, Hub>,
+  |   ^^^^
+9 |   additional_data: HomogeneousObject,
+  |   ^^^^^^^^^^^^^^^
+
+warning: fields `hasher`, `speakers`, `actors`, and `conversations` are never read
+  --> src\louder\context.rs:16:3
+   |
+15 | pub struct LouderContext {
+   |            ------------- fields in this struct
+16 |   hasher: DefaultHasher,
+   |   ^^^^^^
+17 |   names: LouderNameMap,
+18 |   speakers: Map<LouderName, Speaker>,
+   |   ^^^^^^^^
+19 |   actors: Map<LouderName, Actor>,
+   |   ^^^^^^
+20 |   conversations: Map<LouderName, Conversation>,
+   |   ^^^^^^^^^^^^^
+
+warning: multiple fields are never read
+  --> src\louder\hub.rs:23:3
+   |
+22 | pub struct Hub {
+   |            --- fields in this struct
+23 |   position: LouderPosition,
+   |   ^^^^^^^^
+24 |
+25 |   speaker: LouderName,
+   |   ^^^^^^^
+26 |   tags: Vec<LouderName>,
+   |   ^^^^
+27 |   recipients: Vec<LouderName>,
+   |   ^^^^^^^^^^
+28 |
+29 |   channel: LouderName,
+   |   ^^^^^^^
+30 |   priority: i32,
+   |   ^^^^^^^^
+31 |
+32 |   text: LouderText,
+   |   ^^^^
+33 |   choices: Vec<Choice>,
+   |   ^^^^^^^
+34 |
+35 |   expression: LouderExpression,
+   |   ^^^^^^^^^^
+36 |   callback: LouderCallback,
+   |   ^^^^^^^^
+37 |   flags: HubFlags,
+   |   ^^^^^
+38 |   
+39 |   additional_data: HomogeneousObject,
+   |   ^^^^^^^^^^^^^^^
+
+warning: fields `text` and `position` are never read
+  --> src\louder\hub.rs:43:3
+   |
+42 | pub struct Choice {
+   |            ------ fields in this struct
+43 |   text: LouderText,
+   |   ^^^^
+44 |   position: LouderPosition,
+   |   ^^^^^^^^
+
+warning: field `data` is never read
+ --> src\louder\object.rs:6:3
+  |
+5 | pub struct HomogeneousObject {
+  |            ----------------- field in this struct
+6 |   data: Map<LouderName, LouderVariant>,
+  |   ^^^^
+
+warning: fields `conversation` and `config` are never read
+ --> src\louder\simulator.rs:4:3
+  |
+3 | pub struct Simulator {
+  |            --------- fields in this struct
+4 |   conversation: LouderName,
+  |   ^^^^^^^^^^^^
+5 |   config: LouderName,
+  |   ^^^^^^
+
+warning: fields `name`, `flags`, `listen_to`, and `additional_data` are never read
+  --> src\louder\speaker.rs:15:3
+   |
+14 | pub struct Speaker {
+   |            ------- fields in this struct
+15 |   name: LouderName,
+   |   ^^^^
+16 |   flags: SpeakerFlags,
+   |   ^^^^^
+17 |   listen_to: Vec<LouderName>,
+   |   ^^^^^^^^^
+18 |   additional_data: HomogeneousObject,
+   |   ^^^^^^^^^^^^^^^
+
+warning: unused return value of `Box::<T>::from_raw` that must be used
+   --> src\lib.rs:539:5
+    |
+539 |     Box::from_raw(ctx); //allegedly this auto-destroys.
+    |     ^^^^^^^^^^^^^^^^^^
+    |
+    = note: call `drop(Box::from_raw(ptr))` if you intend to drop the `Box`
+    = note: `#[warn(unused_must_use)]` on by default
+help: use `let _ = ...` to ignore the resulting value
+    |
+539 |     let _ = Box::from_raw(ctx); //allegedly this auto-destroys.
+    |     +++++++
+
+warning: `louder_rust` (lib) generated 217 warnings (run `cargo fix --lib -p louder_rust` to apply 5 suggestions)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.54s

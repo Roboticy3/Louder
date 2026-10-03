@@ -1,13 +1,29 @@
 # Engine
 
 The Louder engine is an open-source program meant to interpret conversations
-created by the [editor](/editor/). The engine can manage, save, and load state
-for conversations, manage the flow of conversation, and save and load replays
-and checkpoints of a conversation. For details of how this works, see [architecture](./architecture)
+created by the [editor](../editor/). The engine can manage, save, and load state
+for conversations, manage the flow of conversations, and save and load replays
+and checkpoints of a conversation. For details of how this works, see the [api docs](../rustdoc/louder_rust/)
 
 This is very much a back-end tool, and does not help with rendering text, sound,
-character portraits, etc. This deficiency is the purpose of the [examples](/examples/)
-secion.
+character portraits, etc. This deficiency is the purpose of the [examples](../examples/)
+secion. Also, unless you are writing your game in Rust, you will probably be using
+one of the [adapters](./adapters)
+
+# Goals of Dialogue Rules
+The rules below essentially split dialogue into 3 non-mutually exclusive scenarios which may happen all at once in parallel.
+
+The goal is to make a dialogue system that is friendly to multiple players.
+
+The 3 scenarios are the following:
+ - Synchronous dialogue. 1 or more actors moves through a dialogue tree synchronously in a single channel. Story priority and appearance rules drive who is "leading" the conversation at any given time and lower-priority sections are intended to be displayed on the side of the "main" flow, where the leading actor is making decisions. The leading actor can change freely.
+ - Spoke dialogue/spoke rule. Subset of synchronous dialogue where the leading actor cannot change for the portion of time where no meaningful choices can be made. This makes it so the leading actor decides when dialogue proceeds, but still can't make any meaningful choices on behalf of other actors who may be in the scene.
+ - Asynchronous dialogue. 2 or more actors split into multiple channels to explore different parts of a conversation independenlty.
+
+The consequence of these scenarios is that dialogue is:
+ - Visible. Synchronous dialogue is mostly centered on the rules which make dialogue appear/not appear to different actors.
+ - Extensible. Choices can be added to break the spoke rule. Actors can then be assigned to speakers not previously intended to be possessed by players to "bring them to life." Choices can also be removed and the spoke rule would "fix" the flow of a complex section, turning it into a simple one.
+ - Concurrent. Like in real conversations, channels allow for actors to "break out" into separate flows which can be explored independently. This allows more actors to be in control at the same time. Priority rules allow these flows to cleanly merge with each other, too, without interrupting any one channel's flow unless absolutely necessary.
 
 # Dialogue Rules
 Conversations are made up of hubs connected by choices. 
@@ -16,6 +32,8 @@ Conversations are interfaced with via Conversation Actors, entities which can sp
 and listen to different speakers.
 
 As actors make dialogue choices, hubs "appear" to them.
+
+To see how the objects of dialogue are encoded by the editor, see [schema](/editor/schema.md)
 
 # Hubs
 Hubs have a position, tags, speakers,
@@ -57,8 +75,14 @@ Actors traverse through dialogue by "making choices" or "selecting choices",
 which changes their position and all relevant information to match the linked
 hub under an available choice.
 
-Choices should only appear to an actor if their linked hub would appear. So,
-if a hub were private to another actor, for example, the choice would not appear.
+Choices should only appear to an actor if their linked hub would appear, and the
+speaker of the linked hub matches one of the four cases:
+1. The speaker is in the actor's "speak as" list
+2. The speaker is in the actor's "listen to" list and no other actor has that speaker in it's "speak as" list.
+3. The speaker is public and no other actor has that speaker in it's "speak as" list.
+4. (toggleable via config) The speaker is in the actor's "speak as" list, "listen to" list, or is public, and that choice is the only choice on this hub. This is called the "spoke rule" and it prevents linear dialogue from switching "leading" actors too frequently. 
+
+If the hub has "recipients", these checks are done on the recipient speakers instead of the hub's speaker.
 
 ## Expressions
 Snippets of code sent to the engine's expression parser. Can directly manipulate
@@ -81,15 +105,25 @@ Space-separated commands that are exposed to the program using the engine and
 
 Callbacks are assumed to be mutable and only run once unless flagged as "repeating."
 
+## Asks
+Expressions can contain callbacks using the syntax `$(<callback>)`. For example:
+`$(get hero money)`. These callbacks are called "asks." The engine provides an
+interface for getting queued asks and replying to them. When evaluating an
+expression, the engine will _wait_ until all contained asks are replied to.
+
+Asks happen as a result of choices in dialogue, like other events. However,
+the engine will keep track of which tasks are being held up by which ask routines.
+When matching verdicts are returned, the task is completed, emitting regular
+events and completing the dialogue action.
+
+This is good for complex logic or if the user does not want to use variable
+naming rules. See Story State for variable naming rules.
+
 ## Flags
 Checkboxes that hubs can have checked:
  - Auto. Auto hubs automatically select the first choice available from the
  perspective of the actor that entered them. Auto nodes never appear. If no
  choices are available, this is considered an error.
- - Ask. Ask hubs send callbacks to the user when checking if they should appear,
- rather than when an actor travels into them. These hubs then _wait_ until the
- user sends an answer back to them about the hub before coming to a conclusion
- on whether they should appear or not.
 
 ## Recipients
 List of names, like tags. If not empty, the hub may only appear to actors
@@ -137,11 +171,7 @@ Actors have a list of speakers they "speak as", "listen to", flags, current
 position, current channel and priority, and additional data.
 
 ## Speak as and Listening
-See Speakers. Choices may appear to actors when the actor is positioned at the hub the choice originates from, and the hubs the choices link to have speakers that the actor "speaks as."
-
-If the speaker in the linked hub does not pass the above qualification, the choice may still appear if it would be the only choice to appear. Intuitively, this is a "spoke rule." Linear narratives get interrupted if they bounce between controllers over and over without actually transferring any agency, so this exception simplifies that out.
-
-Hubs may appear to the actor when the actor when the hub has a speaker that the actor "speaks as" or "listens to", or if that speaker is flagged Public.
+See Speakers, and then Choices to see how these settings interact with the engine.
 
 ## Flags
  - Spectate. All non-auto hubs appear to this actor, choices do not appear to
@@ -160,8 +190,25 @@ actor then keeps this data until another hub changes it.
 # Homogeneous Objects
 A homogeneous object that contains a mapping between string names and Variants.
 
-The "additional properties" of hubs are homogeneous objects, the story state is
-a homogeneous object.
+The "additional properties" of hubs are homogeneous objects.
+
+# Story State
+The story state is the memory where variables are mapped to values. It is
+composed of homogeneous objects.
+
+Variable names starting with `/_+[A-Z]/` (`_A` or `__Shared`) are shared across conversations and not saved.
+
+Variable names starting with `/_+[a-z0-9]?/` (`_a` or `__1`) are local to each conversation and
+not saved.
+
+Variable names starting with `/[A-Z]/` are shared and saved.
+
+Variable names starting with `/[a-z0-9]?/` are local and saved.
+
+The user can also specify their own naming rules, like variables "Inventory_..."
+can be items in the player's inventory. However, naming rules can cause conflicts
+and become hard to manage and synchronize. If this becomes the case, use Asks
+instead.
 
 ## Variants
 Variants are integers, floats, booleans, or strings.
@@ -198,7 +245,7 @@ Constant accessors. Channels are optional and default to "main".
  - From a actor and conversation, get choices currently appearing to this actor
  - From a channel, get current actors in channel
  - From a channel and position, get current actors in channel at that position
- - From a hub position and conversation, get any hub property, including homogeneous properties
+ - From a hub position and conversation, get any hub property, including object properties
  - From an actor and conversation, get any actor property including additional properties
  - From a speaker, get any speaker property including additional properties
  - From a conversation, get any Variant from the story state
