@@ -3,10 +3,10 @@ Multiplayer Dialog Experiment in Godot.
 # MVP:
  - [x] basic interface
  - [x] serialization
- - [ ] simulation
- - [ ] documentation
+ - [x] simulation
+ - [x] documentation
  - [ ] portability
- - [ ] multiplayer
+ - [x] multiplayer
 
 # Goal:
 Current interactive fiction tools like twine and yarn rely on a single-point

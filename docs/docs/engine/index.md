@@ -103,15 +103,20 @@ Space-separated commands that are exposed to the program using the engine and
 
 Callbacks are assumed to be mutable and only run once unless flagged as "repeating."
 
+## Asks
+Expressions can contain callbacks using the syntax `$(<callback>)`. For example:
+`$(get hero money)`. These callbacks are called "asks." The engine provides an
+interface for getting queued asks and replying to them. When evaluating an
+expression, the engine will _wait_ until all contained asks are replied to.
+
+This is good for complex logic or if the user does not want to use variable
+naming rules. See Story State for variable naming rules.
+
 ## Flags
 Checkboxes that hubs can have checked:
  - Auto. Auto hubs automatically select the first choice available from the
  perspective of the actor that entered them. Auto nodes never appear. If no
  choices are available, this is considered an error.
- - Ask. Ask hubs send callbacks to the user when checking if they should appear,
- rather than when an actor travels into them. These hubs then _wait_ until the
- user sends an answer back to them about the hub before coming to a conclusion
- on whether they should appear or not.
 
 ## Recipients
 List of names, like tags. If not empty, the hub may only appear to actors
@@ -176,10 +181,27 @@ additional data, that additional data changes the actor's additional data. The
 actor then keeps this data until another hub changes it.
 
 # Homogeneous Objects
-A object object that contains a mapping between string names and Variants.
+A homogeneous object that contains a mapping between string names and Variants.
 
-The "additional properties" of hubs are object objects, the story state is
-a object object.
+The "additional properties" of hubs are homogeneous objects.
+
+# Story State
+The story state is the memory where variables are mapped to values. It is
+composed of homogeneous objects.
+
+Variable names starting with `/_+[a-z0-9]/` (`_a` or `__1`) are local to each conversation and
+not saved.
+
+Variable names starting with `/_+[A-Z]/` (`_A` or `__Shared`) are shared across conversations and not saved.
+
+Variable names starting with `/[a-z0-9]/` are local and saved.
+
+Variable names starting with `/[A-Z]/` are shared and saved.
+
+The user can also specify their own naming rules, like variables "Inventory_..."
+can be items in the player's inventory. However, naming rules can cause conflicts
+and become hard to manage and synchronize. If this becomes the case, use Asks
+instead.
 
 ## Variants
 Variants are integers, floats, booleans, or strings.

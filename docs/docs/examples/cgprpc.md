@@ -1,4 +1,4 @@
-# Cursed Godot Plus Renpy Client
+# Cursed Godot Plus Renpy Client Demo
 
 A short demo about walking your dog. Demonstrates godot [adapters](../engine/adapters)
 and stretches integration for a simple renpy conversation also.

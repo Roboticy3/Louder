@@ -125,3 +125,17 @@ Street hustler: a chess match. The hustler adapts to the player's accuracy. Addi
  - Making a discovered check
  - Being one move away from checkmate
  - Making checkmate
+
+# Callbacks and Variable Name Rules
+One purpose of this example is to serve as a template for other people's projects.
+
+Callbacks:
+ - `kick <character>` remove the actor for a player-character from the conversation
+ - `show <tag> <...attributes> <at position> <fade_time>` show an image. similar syntax to renpy. Limited to fade transition with an adjustable time.
+ - `hide <tag>` hide an image. Limited to fade transition with an adjustable time.
+
+Asks:
+ - `dc <character> <skill> <dice_expression> <threshold>` dice check with a given expression (like `2d6`), skill bonus and threshold
+ - `has_item <character> <item>` check if the character has an item in their inventory.
+ - `get_money <character>` get the money of a particular character.
+
