@@ -101,5 +101,7 @@ pub trait EventMap<K, T : Clone> {
 }
 
 pub trait AskListener {
-  fn answer_ask(&self, index: usize, verdict: i32) -> bool;
+  /// Record `verdict` for the ask at `index`, returning false when that ask
+  /// was out of range or already answered.
+  fn answer_ask(&mut self, index: usize, verdict: i32) -> bool;
 }

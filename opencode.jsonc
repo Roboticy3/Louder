@@ -3,9 +3,25 @@
   "permission": {
     "bash": {
       "*": "ask",
+
       "rm *": "deny",
       "git *": "deny",
-      
+
+      "cargo *": "allow",
+      "g++ *": "allow",
+
+      "Get-*": "allow",
+      "Set-*": "allow",
+      "Select-*": "allow",
+      "Foreach-*": "allow",
+      "Copy-*": "allow",
+
+      ".*\\build*": "allow",
+
+    },
+    "read": {
+      "*": "ask",
+      "*src*": "allow",
     },
     "external_directory": "deny",
   }

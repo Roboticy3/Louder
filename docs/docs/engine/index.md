@@ -33,6 +33,8 @@ and listen to different speakers.
 
 As actors make dialogue choices, hubs "appear" to them.
 
+To see how the objects of dialogue are encoded by the editor, see [schema](/editor/schema.md)
+
 # Hubs
 Hubs have a position, tags, speakers,
 text content, choices, expressions, callbacks, flags, recipients, channels, priority, and user-defined properties.
@@ -189,14 +191,14 @@ The "additional properties" of hubs are homogeneous objects.
 The story state is the memory where variables are mapped to values. It is
 composed of homogeneous objects.
 
-Variable names starting with `/_+[a-z0-9]/` (`_a` or `__1`) are local to each conversation and
-not saved.
-
 Variable names starting with `/_+[A-Z]/` (`_A` or `__Shared`) are shared across conversations and not saved.
 
-Variable names starting with `/[a-z0-9]/` are local and saved.
+Variable names starting with `/_+[a-z0-9]?/` (`_a` or `__1`) are local to each conversation and
+not saved.
 
 Variable names starting with `/[A-Z]/` are shared and saved.
+
+Variable names starting with `/[a-z0-9]?/` are local and saved.
 
 The user can also specify their own naming rules, like variables "Inventory_..."
 can be items in the player's inventory. However, naming rules can cause conflicts
