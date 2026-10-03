@@ -1,5 +1,4 @@
-# Text Based CRPG
-
+# Simplified CRPG
 The purpose of this example is to provide the simplest possible demo which
 takes advantage of all the engine's features:
  - Linking to other programming languages
@@ -7,6 +6,7 @@ takes advantage of all the engine's features:
  - Multiple conversation loading
  - Complex branching conversations
 
+## Main Menu
 The demo starts with a menu that describes the area where the player is standing
 and lists interactable objects. There are three playable characters: Geno, Reka
 and REDACTED.
@@ -19,10 +19,11 @@ and REDACTED.
  5. Speak to pilgrim (visible to Geno and REDACTED- speaks to Reka)
  6. Speak to fish-man (visible to Geno and Reka- speaks to REDACTED)
  7. Check inventory
- 8. Check equipment
  9. Check skills
+ 0. Change character
 
-Each of these opens a short conversation and sends the message "blank and blank start talking to each other" to all players. If Geno speaks to Reka, that will open
+## Dialogue
+Options 1-6 open a short conversation and sends the message "blank and blank start talking to each other" to all players. If Geno speaks to Reka, that will open
 the same conversation as Reka speaking to Geno, though it may start at a
 different point (located using the [tags](/engine##Tags) system). And for any player character that speaks to one of the 3 npcs,
 the same is true. 
@@ -39,18 +40,76 @@ concludes, the conversation will change to the conversation between whichever 2
 pcs spoke to the npc first. Other pcs will get the message that "blank and blank
 start talking to each other" and return to the menu.
 
+If multiple channels are visible to a player at a given time, the player will see
+two columns of dialogue. One where they are making choices, and another where
+the "background" hub events are being recieved.
+
+## Skills Menu
 Reaching key points in conversations will give a player experience points, which
-become levels in the skills menu. When the player gains experience, they will
-get a message saying "x points to next level up." or "Level point gained!". They
-can then enter the Check Skills menu to see "x points to next level up." or 
-"x level points to allocated." plus another menu of skills. Selecting a skill
-will show its description and the same level points message. If level points are
-available, an option will be available in the skill description menu to allocate
-a point to this skill.
+become Levels after certain thresholds (see Levels). When the player gains experience, they will
+get a message saying "x points to next level up." or "Level point gained!". 
+
+In the main menu, they will be shown their current total level and number of
+unallocated level points. e.g. the total number of times they have passed a
+level threshold the the total number of times they have passed a level threshold
+without spending the point they got from that.
+
+Selecting "Check Skills" will show a list of the character's skills, along with
+the current level of each skill. When the player presses 1-6, the skill's 
+description will display to the right of the list.
+
+If level points are available, the player can press Enter after allocating a
+skill to make an "Are you sure you want to spend a skill point to upgrade \[Skill Name]?".
+If the player presses enter again, the the level point is spent and the skill
+level is permanently upgraded.
 
 Certain points in conversations will initiate a callback for a "dice check",
 where a 2d6 will be rolled, and a skill's level added, then checked against a 
 threshold before the result is sent back to the engine.
+
+## Inventory Menu
+Checking inventory will show a screen with the player's items. This demo should
+only have so many items as can appear on screen at one time. Some items are
+"Equipment." Equipment has a named Equipment slot:
+ 1. Head
+ 2. Neck
+ 3. Torso
+ 4. Belt
+ 5. Pants
+ 6. Shoes
+ 7. Jacket
+ 8. Left Hand
+ 9. Right Hand
+And each character is wearing 0 or 1 items in each of these slots. Equipment has
+an array of
+additive bonuses/penalties to certain skills, each followed by 3-10 word explanations
+of why that equipment piece has that effect.
+
+Items display in a 3x6 grid and can be focused with Tab/Shift+Tab and Equipment can be equipped/swapped for
+worn equipment using the Enter key. The focused item will have its description
+displayed to the right of the menu. Equipment with skill bonuses/penalties will have its explanations
+displayed along with its description.
+
+Bonuses can be applied to a skill name or category. To the player, the bonus
+will always appear to be for their skill either matching the skill name or in the appropriate category.
+Items with bonuses applied to a specific skill name are intended to only be held/equipped by
+the character which has that skill.
+
+The player can also press the number keys to either remove equipment or, if the
+focused item can fit in the same equipment slot, swap the current equipment in
+that slot with the focused item.
+
+Finally, the player can press the arrow keys to move items around in the grid,
+swapping with whichever items are in the way.
+
+## Additional notes on menu functionality
+Checking Inventory and Checking Skills can be escaped using the Esc key. If a
+player can leave a conversation, they will be presented the option to leave
+as a choice bound to a number button, or they can leave by pressing Esc.
+
+"Change Character" will return the player to character selection. The flow of
+connecting to server -> selecting a character -> going to the menu is described
+in more detail in the Architecture section.
 
 # Characters
 ## Geno
@@ -114,7 +173,7 @@ Conversation summaries:
 5. Divination. Stars can use a Divination technique to reveal that one of the friends are somewhere in East Breach, while the other is out in the desert. Future admits that divination can be inaccurate.
 
 # Additional Notes
-Street hustler: a chess match. The hustler adapts to the player's accuracy. Additionally, two player's can play against each other. Dialogue for each character should be present for:
+Street hustler: a chess match. The hustler adapts to the player's accuracy. Players who win against the hustler gain an amount of money they bet in for at the beginning. Additionally, two player's can play against each other. Dialogue for each character should be present for:
  - Making a threat
  - Making a retreat
  - Making a discovered attack
@@ -126,11 +185,16 @@ Street hustler: a chess match. The hustler adapts to the player's accuracy. Addi
  - Being one move away from checkmate
  - Making checkmate
 
+Merchant: Reka starts with enough money to purchase items she wants, and Benjamin cannot buy over her. Money becomes more a decorative mechanic for the purposes of the example in this way.
+
 # Callbacks and Variable Name Rules
-One purpose of this example is to serve as a template for other people's projects.
+One purpose of this example is to serve as a template for other people's projects, with common rpg functions implemented on the engine.
 
 Callbacks:
- - `kick <character>` remove the actor for a player-character from the conversation
+ - `kick <character?>` Remove the character from the conversation. If no character is provided, remove the character who last acted. For example, if character A selects a node with the `kick` callback, character A is kicked.
+ - `exp <amount> <character?>` Give an amount of experience to a character by name. Same character argument logic as `kick`.
+ - `give <item> <character?>` Give an item to a character by name. Same character argument logic as `kick`.
+ - `givemoney <amount> <character?>` Give an amount of money to a character by name. Same character argument logic as `kick`.
  - `show <tag> <...attributes> <at position> <fade_time>` show an image. similar syntax to renpy. Limited to fade transition with an adjustable time.
  - `hide <tag>` hide an image. Limited to fade transition with an adjustable time.
 
@@ -139,3 +203,62 @@ Asks:
  - `has_item <character> <item>` check if the character has an item in their inventory.
  - `get_money <character>` get the money of a particular character.
 
+
+# Items and Equipment
+
+TODO! Fill this out.
+
+# Architecture
+These examples are part of the design process for the [engine](/engine/).
+
+Outside of the "core" engine, which handles dialogue flow, this program also needs:
+ - <NetworkingUI>. Menu for connecting to/creating a server over the network.
+ - <CharacterSelectionUI>. Menu for selecting a character once connected to a server.
+ - <GameWorldUI>. Menu for navigating the main area menu and dialogue that spawns from it after character selection, using number keys to select choices. Referred to in the previous sections as "the menu".
+ - <ItemMenuUI>. Menu for inspecting items and changing equipment after reaching the game world.
+ - <SkillsMenuUI>. Menu for inspecting skills and leveling up.
+ - <MessageQueue>. A short message queue. When a "message" is described above, it's pushed to the bottom of this queue and the other messages are pushed up, deleting old messages if the maximum capacity of 3 is reached.
+
+And all the behind-the-scenes structures to power that also, including:
+ - <NetworkHandler> Syncronizes game state in a server authoritative manner
+ - <CharacterAllocator> Handles character selection requests,
+ provides information on allocated characters and prevents multiple allocations
+ of one character.
+ - <Engine> (or engine wrapper) which takes a conversation, position, etc. and
+ returns relevant information.
+ - <Lobby> manages the state of which characters are currently engaged
+ in which conversation.
+ - <Server> accepts commands from clients and checks with the allocator
+ and the lobby. Synchronizes data with clients over the network.
+ - <Client> sends commands to the server and listens for replies.
+
+# Server Logic
+How the server accepts and rejects requests. 
+
+TODO!
+
+# Implementation Order
+The most core mechanics are-
+ - networking
+ - character selection
+ - dialogue
+These should be implemented just with code first, then tested, then connected to
+an interface.
+
+Items and skills are desirable eventually but add a lot of unnecessary complexity.
+If and only if networking, character selection, and dialogue are robust enough
+to tolerate:
+ - random disconnects
+ - invalid requests (changing character mid conversation, leaving a conversation in which a character is an active participant, acting as a character other than the character selected, invalid choices, see Server Logic)
+
+# Desireable result
+The Louder engine should be a drop-in solution for all things dialogue. It exposes
+functions for selecting dialogue choices by index, which is the same approach used
+by the dialogue interface described in earlier sections. It can manage multiple
+conversations on the server at the same time, and the server can send all relevant
+information about dialogue to the clients, while translating the callbacks
+described in Callbacks and Variable Name Rules into special "game events".
+
+If there's a place where the engine cannot do this, with the first step of
+implementation especially, that is a flaw of the engine that needs to be
+addressed.
