@@ -22,6 +22,7 @@
     "read": {
       "*": "ask",
       "*src*": "allow",
+      "logs/*": "deny",
     },
     "external_directory": "deny",
   }
