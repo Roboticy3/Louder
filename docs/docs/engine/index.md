@@ -111,6 +111,11 @@ Expressions can contain callbacks using the syntax `$(<callback>)`. For example:
 interface for getting queued asks and replying to them. When evaluating an
 expression, the engine will _wait_ until all contained asks are replied to.
 
+Asks happen as a result of choices in dialogue, like other events. However,
+the engine will keep track of which tasks are being held up by which ask routines.
+When matching verdicts are returned, the task is completed, emitting regular
+events and completing the dialogue action.
+
 This is good for complex logic or if the user does not want to use variable
 naming rules. See Story State for variable naming rules.
 
