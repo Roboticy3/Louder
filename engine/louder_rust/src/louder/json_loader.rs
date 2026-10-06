@@ -53,7 +53,7 @@ const HUB_KEYS: &[&str] = &[
   "speaker",
   "text",
   "tags",
-  "ports",
+  "choices",
   "expressions",
   "callbacks",
   "flags",
