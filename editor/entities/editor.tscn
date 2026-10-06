@@ -15,6 +15,7 @@
 [ext_resource type="Script" uid="uid://dfhadrloniwdc" path="res://scripts/user_config.gd" id="10_07l17"]
 [ext_resource type="Script" uid="uid://con35qofw6gny" path="res://scripts/goto_logic.gd" id="10_ueupe"]
 [ext_resource type="PackedScene" uid="uid://dr7rs8c2sfbde" path="res://entities/menus/edit_menu.tscn" id="10_vvcdv"]
+[ext_resource type="Script" uid="uid://cjaj3mc6mypsy" path="res://scripts/code_completion_logic.gd" id="11_d0vfh"]
 [ext_resource type="PackedScene" uid="uid://sc3ddjdaefp1" path="res://entities/knowledge_graph.tscn" id="13_6vlff"]
 [ext_resource type="Script" uid="uid://pwpqkvjlfq62" path="res://demos/september/ui/main_menu_button.gd" id="16_cou0q"]
 
@@ -73,6 +74,14 @@ script = ExtResource("10_ueupe")
 go_to_id = NodePath("../Control/Footer/SearchBar/LineEdit2")
 editor = NodePath("../Control/GridContainer/GraphEdit")
 
+[node name="CodeCompletionLogic" type="Node" parent="." unique_id=1195495807 node_paths=PackedStringArray("editor", "editor_frame")]
+script = ExtResource("11_d0vfh")
+editor = NodePath("../Control/GridContainer/GraphEdit")
+editor_frame = NodePath("../Control")
+identifier_regex = Dictionary[StringName, String]({
+&"completion_speaker": "[a-zA-Z0-9]+"
+})
+
 [node name="Control" type="Control" parent="." unique_id=2092511738]
 layout_mode = 1
 anchors_preset = 15
@@ -121,15 +130,12 @@ layout_mode = 0
 offset_left = -1.0
 offset_top = 139.0
 offset_right = 391.0
-offset_bottom = 626.0
+offset_bottom = 752.0
 position_offset = Vector2(-1, 139)
 selected = true
 hub_data = {
 NodePath("ChoicesSection/CheckBox"): true
 }
-
-[node name="start" parent="Control/GridContainer/GraphEdit/Hub/ChoicesSection" parent_id_path=PackedInt32Array(1992437552, 255423357) index="0" unique_id=628973272]
-button_pressed = true
 
 [node name="RichTextLabel" type="RichTextLabel" parent="Control" unique_id=409667951]
 layout_mode = 1

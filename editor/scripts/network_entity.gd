@@ -50,13 +50,7 @@ func _compare_data(x:Dictionary, y:Dictionary, key):
 
 func _export_node(node: Node) -> Variant:
 	if node is ChoicesSectionLogic:
-		var choices: PackedStringArray = []
-		for c in node.choices:
-			var text:String = c.text
-			if text.is_empty():
-				text = c.placeholder_text
-			choices.append(text)
-		return choices
+		return node.choices.size()
 	elif node is CodeEdit:
 		return node.text
 	elif node is ColorPickerButton:
@@ -74,11 +68,7 @@ func _export_node(node: Node) -> Variant:
 
 func _import_node(node: Node, value: Variant) -> void:
 	if node is ChoicesSectionLogic:
-		var choices: PackedStringArray = value
-		node.set_choice_count(choices.size())
-		for i in choices.size():
-			if choices[i] != node.choices[i].placeholder_text:
-				node.choices[i].text = choices[i]
+		node.set_choice_count(float(value))
 	elif node is CodeEdit:
 		node.text = value
 	elif node is ColorPickerButton:

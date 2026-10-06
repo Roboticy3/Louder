@@ -101,7 +101,6 @@ func save_project_to_file(path:String) -> bool:
 		connections.append({
 			ProjectManagerHelpers.OBJECT_TYPE: ProjectManagerHelpers.TYPE_CONNECTION,
 			"from_id": str(from_hub.id),
-			"from_choice": from_hub.get_choices_logic().port_out_to_choice(c["from_port"]),
 			"from_port": c["from_port"],
 			"to_id": str(to_hub.id),
 		})
@@ -181,14 +180,12 @@ func load_project_from_file(path:String, make_current:=true) -> bool:
 		var from_hub := IdSystem.get_assigned(int(connection.get("from_id", "-1")))
 		var to_hub := IdSystem.get_assigned(int(connection.get("to_id", "-1")))
 		if (from_hub is NetworkEntity) && (to_hub is NetworkEntity):
-			var from_port:int = from_hub.get_choices_logic().choice_to_port_out(connection.get("from_choice", ""))
-			var to_port:int = to_hub.get_choices_logic().port_in()
 			
 			new_connections.append({
 				"from_node": String(from_hub.name),
-				"from_port": from_port,
+				"from_port": connection.get("from_port"),
 				"to_node": String(to_hub.name),
-				"to_port": to_port,
+				"to_port": connection.get("to_port"),
 				"keep_alive": false
 			})
 	editor.connections = new_connections

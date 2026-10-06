@@ -9,7 +9,7 @@ A position in the conversation.
  - speaker: the speaker who "says" this hub. Default ""
  - text: the text content of this hub. Default ""
  - tags: tags that can be used to search for this hub. Separated by commas or whitespace. Default ""
- - ports: number of ports (choices) going out from this hub. Default 0
+ - choices: number of choices going out from this hub. Default 0
  - expressions: newline-separated code snippets that can be used to check against the story state before visiting this hub, or check against the story state after visiting this hub for the first time. Default ""
  - callbacks: newline-separated command-line style callbacks to the engine to do arbitrary actions after visiting this hub for the first time. Default ""
  - flags: integer bitflags of this hub. Affects dialogue flow and can be used to search for hubs by flags. Default 0

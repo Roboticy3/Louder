@@ -1,110 +1,63 @@
 [
 	{
-		"auto": false,
-		"conditions": "",
-		"conversation_id": "3",
-		"dice_fail": false,
-		"dice_level": "0.0",
-		"dice_skill": "",
-		"is_choice": false,
-		"position_offset:x": "320.0",
-		"position_offset:y": "380.0",
-		"recipient": "",
-		"speaker": "b",
-		"start": false,
-		"statements": "",
-		"text": "b",
-		"type": "hub"
-	},
-	{
-		"auto": false,
-		"conditions": "",
-		"conversation_id": "4",
-		"dice_fail": false,
-		"dice_level": "0.0",
-		"dice_skill": "",
-		"is_choice": false,
-		"position_offset:x": "852.884948730469",
-		"position_offset:y": "377.706207275391",
-		"recipient": "",
-		"speaker": "d",
-		"start": false,
-		"statements": "",
-		"text": "d",
-		"type": "hub"
-	},
-	{
-		"auto": false,
-		"choices": [
-			"to b",
-			"to a"
-		],
-		"conditions": "",
+		"choices": "3",
 		"conversation_id": "0",
-		"dice_fail": false,
-		"dice_level": "0.0",
-		"dice_skill": "",
-		"is_choice": false,
-		"position_offset:x": "-120.0",
-		"position_offset:y": "380.0",
-		"recipient": "",
-		"speaker": "a",
-		"start": true,
-		"statements": "",
-		"text": "a",
+		"position_offset:x": "-1.0",
+		"position_offset:y": "139.0",
 		"type": "hub"
 	},
 	{
-		"auto": false,
-		"conditions": "",
-		"conversation_id": "5",
-		"dice_fail": false,
-		"dice_level": "0.0",
-		"dice_skill": "",
-		"is_choice": true,
-		"position_offset:x": "300.0",
-		"position_offset:y": "660.0",
-		"recipient": "",
-		"speaker": "c",
-		"start": false,
-		"statements": "",
-		"text": "c",
+		"conversation_id": "2",
+		"position_offset:x": "480.0",
+		"position_offset:y": "40.0",
 		"type": "hub"
 	},
 	{
-		"from_choice": "",
-		"from_id": "3",
-		"to_id": "4",
+		"conversation_id": "3",
+		"position_offset:x": "446.0",
+		"position_offset:y": "560.5",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "4",
+		"position_offset:x": "1054.791015625",
+		"position_offset:y": "285.240966796875",
+		"type": "hub"
+	},
+	{
+		"from_id": "0",
+		"from_port": 0,
+		"to_id": "2",
 		"type": "connection"
 	},
 	{
-		"from_choice": "to b",
 		"from_id": "0",
+		"from_port": 1,
 		"to_id": "3",
 		"type": "connection"
 	},
 	{
-		"from_choice": "to a",
 		"from_id": "0",
-		"to_id": "5",
-		"type": "connection"
-	},
-	{
-		"from_choice": "",
-		"from_id": "5",
+		"from_port": 2,
 		"to_id": "4",
 		"type": "connection"
 	},
 	{
-		"from_choice": "",
-		"from_id": "4",
-		"to_id": "0",
+		"from_id": "2",
+		"from_port": 0,
+		"to_id": "4",
 		"type": "connection"
 	},
 	{
-		"position:x": "-207.463470458984",
-		"position:y": "179.545227050781",
+		"from_id": "3",
+		"from_port": 0,
+		"to_id": "4",
+		"type": "connection"
+	},
+	{
+		"position:x": "-292.491882324219",
+		"position:y": "-18.0364379882813",
 		"type": "camera",
-		"zoom": "1.06864309310913"
+		"zoom": "0.68301337957382"
 	}
 ]

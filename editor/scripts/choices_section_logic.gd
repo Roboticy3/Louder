@@ -5,12 +5,11 @@ class_name ChoicesSectionLogic extends Node
 @export var start_check_default:bool = false
 @export var child_index := 4
 @export var spoke_child_index := 2
-@export var text_content_packed:PackedScene
 
 @export var port_change_listener_group := &"port_change_listener"
 @export var port_change_listener_method := &"_on_port_changed"
 
-var choices:Array[TextEdit] = []
+var choices:Array[Label] = []
 signal choices_changed()
 
 func is_start_checked():
@@ -23,7 +22,7 @@ func add_choice_auto():
 	add_choice("", placeholder_text)
 
 func add_choice(text:String, placeholder_text:String = "(Choice)"):
-	var le:Node = text_content_packed.instantiate()
+	var le := Label.new()
 	le.set("text", text)
 	le.set("placeholder_text", placeholder_text)
 	le.set("inliner", true)
@@ -96,27 +95,24 @@ func set_choice_count(to:float):
 		await get_tree().process_frame
 		hub.reset_size()
 
-func get_choice_from_text_edit(text_edit:TextEdit):
-	var text := text_edit.text
-	if text.is_empty():
-		text = text_edit.placeholder_text
-	else:
-		pass
-	return text
+func get_choice_from_label(label:Label) -> String:
+	if !is_instance_valid(label):
+		return ""
+	return label.text
 
 func choice_to_port_out(choice:String) -> int:
 	if choice.is_empty() and choices.is_empty():
 		return 0 #"default" or "continue"
 	
 	for i in choices.size():
-		var text_edit := choices[i]
-		if get_choice_from_text_edit(text_edit) == choice:
+		var label := choices[i]
+		if get_choice_from_label(label) == choice:
 			return i
 	return -1
 
 func port_out_to_choice(port:int) -> String:
 	if port >= 0 && port < choices.size():
-		return get_choice_from_text_edit(choices[port])
+		return get_choice_from_label(choices[port])
 	return ""
 
 func port_in() -> int:

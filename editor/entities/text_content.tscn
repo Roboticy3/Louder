@@ -3,6 +3,8 @@
 [ext_resource type="Script" uid="uid://njuhx76nyuqd" path="res://scripts/hub_text_edit.gd" id="1_4ufmg"]
 
 [node name="text" type="CodeEdit" unique_id=42355890]
+offset_right = 8.0
+offset_bottom = 35.0
 size_flags_horizontal = 3
 placeholder_text = "Text Content"
 wrap_mode = 1
