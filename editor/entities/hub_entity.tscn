@@ -6,7 +6,6 @@
 [ext_resource type="Script" uid="uid://87y4efdm8bdm" path="res://scripts/hub_properties_folder.gd" id="4_jhl5y"]
 [ext_resource type="Script" uid="uid://njuhx76nyuqd" path="res://scripts/hub_text_edit.gd" id="5_hw554"]
 [ext_resource type="Script" uid="uid://ctb32vrbjkrsg" path="res://scripts/arrow_keys_spin_box.gd" id="6_vwbjy"]
-[ext_resource type="Script" uid="uid://derdgutm4a213" path="res://scripts/start_check.gd" id="7_212te"]
 [ext_resource type="Script" uid="uid://dabkdaqchjesv" path="res://scripts/choices_section_logic.gd" id="8_7pvce"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f0jtb"]
@@ -77,8 +76,8 @@ slot/3/right_icon = null
 slot/3/draw_stylebox = true
 script = ExtResource("1_so4sa")
 grabber = NodePath("TextSectionWrapper/TextSection/speaker")
-start_check = NodePath("ChoicesSection/start")
-auto_check = NodePath("ChoicesSection/auto")
+start_check = NodePath("")
+auto_check = NodePath("")
 component_group = null
 default_source = null
 choices_section_logic = NodePath("ChoicesSection/choices")
@@ -90,51 +89,63 @@ layout_mode = 2
 [node name="TextSection" type="VBoxContainer" parent="TextSectionWrapper" unique_id=2073740871]
 layout_mode = 2
 
+[node name="textSection" type="Label" parent="TextSectionWrapper/TextSection" unique_id=1351469422]
+layout_mode = 2
+text = "Text Section"
+
 [node name="HBoxContainer" type="HBoxContainer" parent="TextSectionWrapper/TextSection" unique_id=1509009445]
 layout_mode = 2
 
-[node name="textSection" type="Label" parent="TextSectionWrapper/TextSection/HBoxContainer" unique_id=1351469422]
+[node name="branch" parent="TextSectionWrapper/TextSection/HBoxContainer" unique_id=1664207967 groups=["autocomplete_speaker", "hub_component"] instance=ExtResource("3_f5yrs")]
 layout_mode = 2
-text = "Text Section"
+size_flags_horizontal = 2
+size_flags_vertical = 0
+placeholder_text = "Channel"
+wrap_mode = 0
+scroll_fit_content_width = true
+oneliner = true
+inliner = true
 
 [node name="Spacer" type="Control" parent="TextSectionWrapper/TextSection/HBoxContainer" unique_id=2082381832]
 custom_minimum_size = Vector2(30, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="branch" parent="TextSectionWrapper/TextSection/HBoxContainer" unique_id=1664207967 groups=["autocomplete_speaker", "hub_component"] instance=ExtResource("3_f5yrs")]
+[node name="Label" type="Label" parent="TextSectionWrapper/TextSection/HBoxContainer" unique_id=714348908]
 layout_mode = 2
-size_flags_vertical = 0
-placeholder_text = "Branch"
-wrap_mode = 0
-scroll_fit_content_width = true
-oneliner = true
-inliner = true
+size_flags_horizontal = 8
+text = "Priority: "
+
+[node name="priority" type="SpinBox" parent="TextSectionWrapper/TextSection/HBoxContainer" unique_id=1081366637]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="tags" parent="TextSectionWrapper/TextSection" unique_id=327118808 groups=["autocomplete_expression", "hub_component"] instance=ExtResource("3_f5yrs")]
+layout_mode = 2
+placeholder_text = "tag1, tag2, ..."
+delimiter_strings = Array[String](["\" \"", "' '"])
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="TextSectionWrapper/TextSection" unique_id=1219292361]
 layout_mode = 2
 
-[node name="is_choice" type="CheckBox" parent="TextSectionWrapper/TextSection/HBoxContainer2" unique_id=1659837714 node_paths=PackedStringArray("mutual_exclusive") groups=["hub_component"]]
+[node name="auto" type="CheckBox" parent="TextSectionWrapper/TextSection/HBoxContainer2" unique_id=1220902079 groups=["hub_component"]]
 layout_mode = 2
-size_flags_vertical = 4
 theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
-text = "Is Choice"
-script = ExtResource("2_6jgyt")
-mutual_exclusive = [NodePath("../../../../ChoicesSection")]
+text = "Auto"
 
-[node name="once" type="CheckBox" parent="TextSectionWrapper/TextSection/HBoxContainer2" unique_id=622107123 groups=["hub_component"]]
+[node name="once" type="CheckBox" parent="TextSectionWrapper/TextSection/HBoxContainer2" unique_id=1795645920 groups=["hub_component"]]
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
 text = "Once"
 
-[node name="private" type="CheckBox" parent="TextSectionWrapper/TextSection/HBoxContainer2" unique_id=1575580911 node_paths=PackedStringArray("mutual_exclusive") groups=["hub_component"]]
+[node name="_private" type="CheckBox" parent="TextSectionWrapper/TextSection/HBoxContainer2" unique_id=1575580911 node_paths=PackedStringArray("mutual_exclusive") groups=["hub_component"]]
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
 text = "Private"
 script = ExtResource("2_6jgyt")
-mutual_exclusive = [NodePath("../../recipient")]
+mutual_exclusive = [NodePath("../../recipients")]
 inverted = true
 
 [node name="speaker" parent="TextSectionWrapper/TextSection" unique_id=42355890 groups=["autocomplete_speaker", "hub_component"] instance=ExtResource("3_f5yrs")]
@@ -146,12 +157,13 @@ scroll_fit_content_width = true
 oneliner = true
 inliner = true
 
-[node name="recipient" parent="TextSectionWrapper/TextSection" unique_id=849750180 groups=["autocomplete_speaker", "hub_component"] instance=ExtResource("3_f5yrs")]
+[node name="recipients" parent="TextSectionWrapper/TextSection" unique_id=849750180 groups=["autocomplete_speaker", "hub_component"] instance=ExtResource("3_f5yrs")]
 layout_mode = 2
 size_flags_vertical = 0
-placeholder_text = "Recipient"
+placeholder_text = "Recipient 1
+Recipient 2
+..."
 wrap_mode = 0
-oneliner = true
 inliner = true
 
 [node name="text" parent="TextSectionWrapper/TextSection" unique_id=778728203 groups=["hub_component"] instance=ExtResource("3_f5yrs")]
@@ -205,32 +217,29 @@ script = ExtResource("2_6jgyt")
 layout_mode = 2
 text = "Fail"
 
-[node name="conditions" parent="OtherSection/VBoxContainer" unique_id=647734270 groups=["autocomplete_expression", "hub_component"] instance=ExtResource("3_f5yrs")]
+[node name="expressions" parent="OtherSection/VBoxContainer" unique_id=647734270 groups=["autocomplete_expression", "hub_component"] instance=ExtResource("3_f5yrs")]
 layout_mode = 2
-placeholder_text = "Conditions"
+placeholder_text = "Expression 1
+Expression 2
+..."
 
-[node name="statements" parent="OtherSection/VBoxContainer" unique_id=1321863141 groups=["autocomplete_expression", "hub_component"] instance=ExtResource("3_f5yrs")]
+[node name="callbacks" parent="OtherSection/VBoxContainer" unique_id=1893842039 groups=["autocomplete_expression", "hub_component"] instance=ExtResource("3_f5yrs")]
 layout_mode = 2
-placeholder_text = "Statements"
+placeholder_text = "Callback 1
+Callback 2
+..."
+delimiter_strings = Array[String](["\" \"", "' '"])
 
-[node name="ChoicesSection" type="GridContainer" parent="." unique_id=255423357]
+[node name="ChoicesSection" type="HBoxContainer" parent="." unique_id=356226356]
 layout_mode = 2
-columns = 4
-
-[node name="start" type="CheckBox" parent="ChoicesSection" unique_id=628973272 groups=["hub_component"]]
-layout_mode = 2
-size_flags_vertical = 4
-theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
-text = "Start"
-script = ExtResource("7_212te")
-
-[node name="ChoicesSpacer" type="Control" parent="ChoicesSection" unique_id=321633302]
-layout_mode = 2
-size_flags_horizontal = 3
 
 [node name="Label2" type="Label" parent="ChoicesSection" unique_id=1647028317]
 layout_mode = 2
 text = "Choices"
+
+[node name="Control" type="Control" parent="ChoicesSection" unique_id=583098758]
+layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="ChoicesSpinBox" type="SpinBox" parent="ChoicesSection" unique_id=272973745]
 layout_mode = 2
@@ -238,19 +247,13 @@ size_flags_horizontal = 0
 size_flags_vertical = 0
 script = ExtResource("6_vwbjy")
 
-[node name="auto" type="CheckBox" parent="ChoicesSection" unique_id=412385513 groups=["hub_component"]]
-layout_mode = 2
-theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
-text = "Auto"
-
 [node name="choices" type="Node" parent="ChoicesSection" unique_id=889900628 node_paths=PackedStringArray("hub", "spin_box", "start_check") groups=["hub_component"]]
 script = ExtResource("8_7pvce")
 hub = NodePath("../..")
 spin_box = NodePath("../ChoicesSpinBox")
-start_check = NodePath("../start")
+start_check = NodePath("")
 spoke_child_index = 1
 text_content_packed = ExtResource("3_f5yrs")
 
-[connection signal="pressed" from="TextSectionWrapper/TextSection/HBoxContainer2/is_choice" to="." method="reset_size" flags=3]
 [connection signal="folding_changed" from="OtherSection" to="." method="reset_size" flags=3 unbinds=1]
 [connection signal="choices_changed" from="ChoicesSection/choices" to="." method="reset_size" flags=3]
