@@ -22,6 +22,10 @@
     "read": {
       "*": "ask",
       "*src*": "allow",
+      "editor/*.gd": "allow",
+      "editor/*.tscn": "allow",
+      "editor/*.tres": "allow",
+      "editor/*.godot": "allow",
       "logs/*": "deny",
     },
     "external_directory": "deny",
