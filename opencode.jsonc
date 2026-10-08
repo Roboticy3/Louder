@@ -14,14 +14,16 @@
       "Set-*": "allow",
       "Select-*": "allow",
       "Foreach-*": "allow",
+      "Where-*": "allow",
       "Copy-*": "allow",
+      "Out-*": "allow",
 
       ".*\\build*": "allow",
 
     },
     "read": {
       "*": "ask",
-      "*src*": "allow",
+      "engine/*": "allow",
       "editor/*.gd": "allow",
       "editor/*.tscn": "allow",
       "editor/*.tres": "allow",

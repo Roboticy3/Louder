@@ -3,8 +3,10 @@ mod test_linkage;
 pub mod louder;
 
 use louder::actor::*;
+use louder::callback::*;
 use louder::context::*;
 use louder::event::*;
+use louder::expression::*;
 use louder::hub::*;
 use louder::json_loader::*;
 use louder::object::*;
@@ -48,6 +50,171 @@ pub enum EventPosition {
 pub enum LouderOption<T> {
   None,
   Some(T)
+}
+
+// Constructors for the tagged unions above.
+//
+// cbindgen lowers each of these enums to a C++ struct of a tag and an anonymous
+// union of bodies, which the FFI offers no way to fill in: a caller that wants
+// to build an EventData has to know the tag order and the name of the body
+// member, and gets no compiler help if either is wrong. Building the value here
+// and returning it keeps that layout inside the engine, so any host can
+// construct one of these without repeating it.
+//
+// A union is only produced here, never consumed: nothing in the engine takes one
+// as an argument, so there is no constructor for a LouderOption::None. Rust
+// generics cannot cross the FFI, so LouderOption has one constructor per type
+// the engine hands back. These are calls rather than constants, so a union
+// cannot be built in a constexpr or a static initialiser.
+
+/// Build a [`LouderVariant::Int`].
+#[unsafe(no_mangle)]
+pub extern "C" fn make_variant_int(value: i32) -> LouderVariant {
+  LouderVariant::from_i32(value)
+}
+
+/// Build a [`LouderVariant::Float`].
+#[unsafe(no_mangle)]
+pub extern "C" fn make_variant_float(value: f32) -> LouderVariant {
+  LouderVariant::from_f32(value)
+}
+
+/// Build a [`LouderVariant::String`], naming the string rather than carrying it.
+#[unsafe(no_mangle)]
+pub extern "C" fn make_variant_string(value: LouderName) -> LouderVariant {
+  LouderVariant::from_name(value)
+}
+
+/// Build a boolean as a [`LouderVariant::Int`] of 1 or 0.
+#[unsafe(no_mangle)]
+pub extern "C" fn make_variant_bool(value: bool) -> LouderVariant {
+  LouderVariant::from_bool(value)
+}
+
+/// Build the [`LouderVariant::Int`] of 0 that an unwritten variable reads as.
+#[unsafe(no_mangle)]
+pub extern "C" fn make_variant_zero() -> LouderVariant {
+  LouderVariant::zero()
+}
+
+/// Build a [`LouderOption::Some`] holding an event.
+#[unsafe(no_mangle)]
+pub extern "C" fn make_some_event(value: LouderEvent) -> LouderOption<LouderEvent> {
+  LouderOption::Some(value)
+}
+
+/// Build a [`LouderOption::Some`] holding an ask.
+#[unsafe(no_mangle)]
+pub extern "C" fn make_some_ask(value: LouderAsk) -> LouderOption<LouderAsk> {
+  LouderOption::Some(value)
+}
+
+/// Build the [`EventData::None`] variant, which carries nothing.
+#[unsafe(no_mangle)]
+pub extern "C" fn make_event_data_none() -> EventData {
+  EventData::None
+}
+
+/// Build an [`EventData::RegularMotion`].
+#[unsafe(no_mangle)]
+pub extern "C" fn make_event_data_regular_motion(motion: Motion) -> EventData {
+  EventData::RegularMotion(motion)
+}
+
+/// Build an [`EventData::Warp`].
+#[unsafe(no_mangle)]
+pub extern "C" fn make_event_data_warp(motion: Motion) -> EventData {
+  EventData::Warp(motion)
+}
+
+/// Build an [`EventData::ForceMotion`].
+#[unsafe(no_mangle)]
+pub extern "C" fn make_event_data_force_motion(motion: Motion) -> EventData {
+  EventData::ForceMotion(motion)
+}
+
+/// Build an [`EventData::ChoiceAppearance`].
+#[unsafe(no_mangle)]
+pub extern "C" fn make_event_data_choice_appearance(appearance: ChoiceAppearance) -> EventData {
+  EventData::ChoiceAppearance(appearance)
+}
+
+/// Build an [`EventData::ChannelChange`].
+#[unsafe(no_mangle)]
+pub extern "C" fn make_event_data_channel_change() -> EventData {
+  EventData::ChannelChange
+}
+
+/// Build an [`EventData::AdditionalDataChange`].
+#[unsafe(no_mangle)]
+pub extern "C" fn make_event_data_additional_data_change(change: AdditionalDataChange) -> EventData {
+  EventData::AdditionalDataChange(change)
+}
+
+/// Build an [`EventData::SpeakerChange`], naming the speaker.
+#[unsafe(no_mangle)]
+pub extern "C" fn make_event_data_speaker_change(speaker: LouderName) -> EventData {
+  EventData::SpeakerChange(speaker)
+}
+
+/// Build an [`EventData::TextChange`], naming the text.
+#[unsafe(no_mangle)]
+pub extern "C" fn make_event_data_text_change(text: LouderName) -> EventData {
+  EventData::TextChange(text)
+}
+
+/// Build an [`EventData::Statement`], naming the expression.
+#[unsafe(no_mangle)]
+pub extern "C" fn make_event_data_statement(expression: LouderExpression) -> EventData {
+  EventData::Statement(expression)
+}
+
+/// Build an [`EventData::Condition`].
+#[unsafe(no_mangle)]
+pub extern "C" fn make_event_data_condition(outcome: ConditionOutcome) -> EventData {
+  EventData::Condition(outcome)
+}
+
+/// Build an [`EventData::Callback`], naming the callback.
+#[unsafe(no_mangle)]
+pub extern "C" fn make_event_data_callback(callback: LouderCallback) -> EventData {
+  EventData::Callback(callback)
+}
+
+/// Build an [`EventData::ActorAdded`].
+#[unsafe(no_mangle)]
+pub extern "C" fn make_event_data_actor_added() -> EventData {
+  EventData::ActorAdded
+}
+
+/// Build an [`EventData::ActorRemoved`].
+#[unsafe(no_mangle)]
+pub extern "C" fn make_event_data_actor_removed() -> EventData {
+  EventData::ActorRemoved
+}
+
+/// Build an [`EventData::SpeakerAdded`], naming the speaker.
+#[unsafe(no_mangle)]
+pub extern "C" fn make_event_data_speaker_added(speaker: LouderName) -> EventData {
+  EventData::SpeakerAdded(speaker)
+}
+
+/// Build an [`EventData::SpeakerRemoved`], naming the speaker.
+#[unsafe(no_mangle)]
+pub extern "C" fn make_event_data_speaker_removed(speaker: LouderName) -> EventData {
+  EventData::SpeakerRemoved(speaker)
+}
+
+/// Build an [`EventData::ConversationAdded`], naming the conversation.
+#[unsafe(no_mangle)]
+pub extern "C" fn make_event_data_conversation_added(conversation: LouderName) -> EventData {
+  EventData::ConversationAdded(conversation)
+}
+
+/// Build an [`EventData::ConversationRemoved`], naming the conversation.
+#[unsafe(no_mangle)]
+pub extern "C" fn make_event_data_conversation_removed(conversation: LouderName) -> EventData {
+  EventData::ConversationRemoved(conversation)
 }
 
 /// The blank starting value for an iterator over positions.

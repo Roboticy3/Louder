@@ -10,6 +10,9 @@
 #include <string>
 #include <vector>
 
+// The unions come out of the generated header as a tag and an anonymous union,
+// so the engine builds them through make_* rather than leaving the layout to
+// this side to repeat.
 #include "louder_rust.h"
 
 static int g_failures = 0;
@@ -30,34 +33,22 @@ namespace {
 
 LouderContext* g_ctx = nullptr;
 
-// The generated header exposes LouderVariant as a tagged union rather than
-// with constructors, so build one by hand.
-LouderVariant MakeInt(int32_t value) {
-  LouderVariant variant;
-  variant.tag = LouderVariant::Tag::Int;
-  variant.int_._0 = value;
-  return variant;
-}
-
-LouderVariant MakeFloat(float value) {
-  LouderVariant variant;
-  variant.tag = LouderVariant::Tag::Float;
-  variant.float_._0 = value;
-  return variant;
-}
-
-LouderVariant MakeString(LouderName value) {
-  LouderVariant variant;
-  variant.tag = LouderVariant::Tag::String;
-  variant.string._0 = value;
-  return variant;
-}
-
+// The integer a variant carries, or -1 if it is carrying something else.
 int32_t AsInt(LouderVariant variant) {
   if (variant.tag != LouderVariant::Tag::Int) {
     return -1;
   }
   return variant.int_._0;
+}
+
+// An event with nothing attached to it, carrying only the data given.
+LouderEvent BareEvent(EventData data) {
+  LouderEvent event{};
+  event.conversation = LOUDER_NAME_NONE;
+  event.channel = LOUDER_NAME_NONE;
+  event.actor = LOUDER_ACTOR_NONE;
+  event.data = data;
+  return event;
 }
 
 // Read a name back out of the engine as a std::string.
@@ -233,11 +224,11 @@ void TestStoryState() {
   LouderName conversation = Lookup("conversation under test");
 
   LouderName local_lower = Declare("local_lower");
-  set_story_state(g_ctx, conversation, local_lower, MakeInt(7));
+  set_story_state(g_ctx, conversation, local_lower, make_variant_int(7));
   CHECK(AsInt(get_story_state(g_ctx, conversation, local_lower)) == 7, "a local variable should store its value");
 
   LouderName shared_upper = Declare("Shared");
-  set_story_state(g_ctx, conversation, shared_upper, MakeInt(9));
+  set_story_state(g_ctx, conversation, shared_upper, make_variant_int(9));
   CHECK(AsInt(get_story_state(g_ctx, conversation, shared_upper)) == 9, "a shared variable should store its value");
 
   // An unwritten variable reads as zero rather than being absent.
@@ -421,9 +412,9 @@ void TestSerialization() {
   LouderName speak_a[1] = {a};
   add_actor(g_ctx, conversation, 0, ActorFlags(), speak_a, 1, nullptr, 0);
 
-  set_story_state(g_ctx, conversation, Declare("counter"), MakeInt(3));
-  set_story_state(g_ctx, conversation, Declare("ratio"), MakeFloat(1.5f));
-  set_story_state(g_ctx, conversation, Declare("label"), MakeString(Declare("hello")));
+  set_story_state(g_ctx, conversation, Declare("counter"), make_variant_int(3));
+  set_story_state(g_ctx, conversation, Declare("ratio"), make_variant_float(1.5f));
+  set_story_state(g_ctx, conversation, Declare("label"), make_variant_string(Declare("hello")));
 
   std::string state = ReadJson(read_state_json, conversation);
   CHECK(state.find("\"counter\":3") != std::string::npos, "state should carry the counter, got %s", state.c_str());
@@ -435,6 +426,33 @@ void TestSerialization() {
   CHECK(snapshot.find("\"position\":0") != std::string::npos, "snapshot should carry positions, got %s", snapshot.c_str());
   CHECK(snapshot.find("\"channel\":\"main\"") != std::string::npos,
         "snapshot should carry channels, got %s", snapshot.c_str());
+}
+
+void TestBuiltEvents() {
+  std::printf("built events\n");
+
+  flush_events(g_ctx);
+
+  // Events the engine built itself and handed back through the queue, which is
+  // what says the make_* constructors agree with the layout it uses.
+  LouderEvent callback = BareEvent(make_event_data_callback(Declare("on_arrival")));
+  CHECK(test_push_event(g_ctx, &callback) == LouderError::Ok, "pushing a built event should succeed");
+
+  LouderEvent motion = BareEvent(make_event_data_regular_motion(Motion{0, 5, 1, false}));
+  CHECK(test_push_event(g_ctx, &motion) == LouderError::Ok, "pushing a built motion should succeed");
+
+  std::vector<LouderEvent> events = DrainEvents();
+  CHECK(events.size() == 2, "both pushed events should come back, saw %zu", events.size());
+  CHECK(events.size() == 2 && events[0].data.tag == EventData::Tag::Callback,
+        "the first event should still read as a callback");
+  CHECK(events.size() == 2 && ReadName(events[0].data.callback._0) == "on_arrival",
+        "the callback should still carry its name");
+  CHECK(events.size() == 2 && events[1].data.tag == EventData::Tag::RegularMotion,
+        "the second event should still read as a motion");
+  CHECK(events.size() == 2 && events[1].data.regular_motion._0.target_position == 5,
+        "the motion should still carry its target position");
+  CHECK(events.size() == 2 && events[1].data.regular_motion._0.choice_index == 1,
+        "the motion should still carry its choice index");
 }
 
 void TestNullSafety() {
@@ -449,7 +467,7 @@ void TestNullSafety() {
   CHECK(get_story_state(nullptr, 0, 0).tag == LouderVariant::Tag::Int, "get_story_state should reject null");
   CHECK(read_name(nullptr, 0, nullptr, 0, 0) == 0, "read_name should reject null");
   flush_events(nullptr);
-  set_story_state(nullptr, 0, 0, MakeInt(0));
+  set_story_state(nullptr, 0, 0, make_variant_zero());
   CHECK(deinit_louder(nullptr) == LouderError::Missing, "deinit should reject null");
 }
 
@@ -471,6 +489,7 @@ int main(int argc, char** argv) {
   TestChoices();
   TestAsks();
   TestSerialization();
+  TestBuiltEvents();
   TestNullSafety();
 
   deinit_louder(g_ctx);
