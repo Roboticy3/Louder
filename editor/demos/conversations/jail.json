@@ -5,6 +5,7 @@
 		"position_offset:x": "80.0",
 		"position_offset:y": "180.0",
 		"speaker": "Freya",
+		"tags": "start",
 		"text": "\"Are you willing to identify yourself?\"",
 		"type": "hub"
 	},
@@ -13,7 +14,7 @@
 		"position_offset:x": "-240.0",
 		"position_offset:y": "-600.0",
 		"speaker": "Note",
-		"text": "Conversation between Freya and Benjamin in the jail",
+		"text": "Conversation between Freya and Benjamin in the jail. Start is tagged \"start\"",
 		"type": "hub"
 	},
 	{
@@ -190,19 +191,119 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "23",
-		"position_offset:x": "500.0",
-		"position_offset:y": "-1940.0",
-		"speaker": "Note",
-		"text": "Success",
-		"type": "hub"
-	},
-	{
 		"conversation_id": "25",
 		"position_offset:x": "500.0",
 		"position_offset:y": "-1220.0",
 		"speaker": "Note",
 		"text": "Secret third thing idk",
+		"type": "hub"
+	},
+	{
+		"_private": true,
+		"choices": "5",
+		"conversation_id": "26",
+		"position_offset:x": "2360.0",
+		"position_offset:y": "240.0",
+		"recipients": "Benjamin",
+		"speaker": "Freya",
+		"text": "She looks up from her paperwork. She doesn't realize that her attention has changed. You are a curiosity, and may be able to use that to your advantage.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "29",
+		"position_offset:x": "3460.0",
+		"position_offset:y": "-620.0",
+		"speaker": "Memory",
+		"text": "Your honorable people look down on you for this infraction. Good. At least you remember something.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "28",
+		"position_offset:x": "3460.0",
+		"position_offset:y": "-220.0",
+		"speaker": "Benjamin",
+		"text": "\"Yes, the fish men are a nameless species!\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "30",
+		"position_offset:x": "2940.0",
+		"position_offset:y": "120.0",
+		"speaker": "Benjamin",
+		"text": "\"Maybe you're right. I'm not sure but, it's possible I never had a name.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "31",
+		"position_offset:x": "4060.0",
+		"position_offset:y": "-320.0",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "32",
+		"position_offset:x": "3860.0",
+		"position_offset:y": "-940.0",
+		"speaker": "Note",
+		"text": "On moving from 26 to 27, Benjamin is routed to 29 and Freya to 28, hiding that Benjamin is lying and giving Benjamin some flavor text. Freya moving from 28 to 31, since the story priority at 31 is greater than or equal to 29, and 31 is visible to Benjamin, moves Benjamin to 31 also.",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"choices": "2",
+		"conversation_id": "27",
+		"position_offset:x": "2940.0",
+		"position_offset:y": "-520.0",
+		"speaker": "Benjamin",
+		"text": "\"Yes, the fish men are a nameless species!\" (Lie)",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "23",
+		"position_offset:x": "500.0",
+		"position_offset:y": "-1980.0",
+		"speaker": "Note",
+		"text": "Success. this branch has the most fun with node visibility and control flow.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "34",
+		"position_offset:x": "2960.0",
+		"position_offset:y": "940.0",
+		"speaker": "Freya",
+		"text": "Test node. This node should not be visible because the node it comes out of is not visible to \"Freya.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "33",
+		"position_offset:x": "3360.0",
+		"position_offset:y": "400.0",
+		"speaker": "Benjamin",
+		"text": "\"No, no. I definitely had a name. I just don't remember. I swear.\"",
+		"type": "hub"
+	},
+	{
+		"auto": true,
+		"conversation_id": "35",
+		"position_offset:x": "3360.0",
+		"position_offset:y": "800.0",
+		"speaker": "Benjamin",
+		"text": "(Make up a name.)",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "36",
+		"position_offset:x": "-636.333312988281",
+		"position_offset:y": "-1496.46520996094",
+		"speaker": "Note",
+		"text": "This conversation is unfinished. That is intentional.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "37",
+		"position_offset:x": "3732.80078125",
+		"position_offset:y": "697.241394042969",
+		"speaker": "Note",
+		"text": "35 has no exit. Getting stuck in an auto node should be caught as an error and displayed to the user.",
 		"type": "hub"
 	},
 	{
@@ -251,6 +352,18 @@
 		"from_id": "11",
 		"from_port": 2,
 		"to_id": "14",
+		"type": "connection"
+	},
+	{
+		"from_id": "12",
+		"from_port": 0,
+		"to_id": "26",
+		"type": "connection"
+	},
+	{
+		"from_id": "13",
+		"from_port": 0,
+		"to_id": "26",
 		"type": "connection"
 	},
 	{
@@ -332,6 +445,54 @@
 		"type": "connection"
 	},
 	{
+		"from_id": "26",
+		"from_port": 0,
+		"to_id": "27",
+		"type": "connection"
+	},
+	{
+		"from_id": "26",
+		"from_port": 1,
+		"to_id": "30",
+		"type": "connection"
+	},
+	{
+		"from_id": "26",
+		"from_port": 2,
+		"to_id": "33",
+		"type": "connection"
+	},
+	{
+		"from_id": "26",
+		"from_port": 3,
+		"to_id": "35",
+		"type": "connection"
+	},
+	{
+		"from_id": "26",
+		"from_port": 4,
+		"to_id": "34",
+		"type": "connection"
+	},
+	{
+		"from_id": "27",
+		"from_port": 0,
+		"to_id": "29",
+		"type": "connection"
+	},
+	{
+		"from_id": "27",
+		"from_port": 1,
+		"to_id": "28",
+		"type": "connection"
+	},
+	{
+		"from_id": "28",
+		"from_port": 0,
+		"to_id": "31",
+		"type": "connection"
+	},
+	{
 		"from_id": "3",
 		"from_port": 0,
 		"to_id": "21",
@@ -380,9 +541,9 @@
 		"type": "connection"
 	},
 	{
-		"position:x": "171.449157714844",
-		"position:y": "-1398.73071289063",
+		"position:x": "-628.147094726563",
+		"position:y": "-746.47021484375",
 		"type": "camera",
-		"zoom": "0.90909057855606"
+		"zoom": "0.38554298877716"
 	}
 ]

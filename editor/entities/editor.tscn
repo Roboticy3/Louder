@@ -137,6 +137,12 @@ hub_data = {
 NodePath("ChoicesSection/CheckBox"): true
 }
 
+[node name="tags" parent="Control/GridContainer/GraphEdit/Hub/TextSectionWrapper/TextSection" parent_id_path=PackedInt32Array(1992437552, 2073740871) index="2" unique_id=327118808]
+delimiter_strings = Array[String](["' '", "\" \""])
+
+[node name="callbacks" parent="Control/GridContainer/GraphEdit/Hub/OtherSection/VBoxContainer" parent_id_path=PackedInt32Array(1992437552, 72269939) index="2" unique_id=1893842039]
+delimiter_strings = Array[String](["' '", "\" \""])
+
 [node name="RichTextLabel" type="RichTextLabel" parent="Control" unique_id=409667951]
 layout_mode = 1
 anchors_preset = 2
