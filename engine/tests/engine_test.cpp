@@ -123,6 +123,36 @@ const char* ConfigJson() {
   ])";
 }
 
+// A private hub whose speaker is not its recipient. Hub 5 is spoken by A but
+// addressed to B, so B owns it and may lead it without speaking it.
+//
+// Every speaker here is non-public, so nothing reaches an actor by default: an
+// actor only sees or leads what it actually hears. That way a passing test
+// cannot be an accident of a public speaker leaking the hub.
+const char* PrivateJson() {
+  return R"([
+    {"type":"hub","conversation_id":0,"speaker":"A","text":"ask","tags":"start","flags":0},
+    {"type":"hub","conversation_id":5,"speaker":"A","text":"aside","recipients":"B","choices":"1","flags":0},
+    {"type":"hub","conversation_id":9,"speaker":"C","text":"secret","flags":0},
+    {"type":"connection","from_id":0,"from_port":0,"to_id":5},
+    {"type":"connection","from_id":5,"from_port":0,"to_id":9}
+  ])";
+}
+
+// B listens to A and to C, and both for the same reason: an actor may only
+// decide from a hub that appears to it, and may only take a choice that leads
+// somewhere that appears to it. So B hears A's speech in order to stand on hub 0
+// and walk into the aside addressed to it, and hears C in order to lead out of
+// that aside and into the secret. A and C hear nobody but themselves, which is
+// what leaves them unable to hear anything else.
+const char* PrivateConfigJson() {
+  return R"([
+    {"type":"speaker","name":"A","flags":0},
+    {"type":"speaker","name":"B","flags":0,"listening":"A\nC"},
+    {"type":"speaker","name":"C","flags":0}
+  ])";
+}
+
 void TestNames() {
   std::printf("names\n");
 
@@ -513,17 +543,424 @@ void TestAutoCycle() {
         "resolving through hub 4 should land on hub 3, saw %d",
         get_actor_position(g_ctx, conversation, actor));
 
-  // An auto hub is never something an actor can choose onto, so the one choice
-  // on hub 0 offers nothing, and choosing is refused rather than looping.
+  // An auto hub is never something an actor can stand on, but choosing *into* one
+  // is how the auto logic gets entered. It is offered, and the move is then
+  // refused only because this hub has no way out.
   flush_events(g_ctx);
-  CHECK(get_hub_choice_count(g_ctx, conversation, 0, actor) == 0,
-        "a choice onto an auto hub should not be offered, saw %d",
-        get_hub_choice_count(g_ctx, conversation, 0, actor));
+  CHECK(get_hub_choice_count(g_ctx, conversation, 0, actor) == 1,
+        "a choice into an auto hub should be offered, since entering one is how the actor moves, "
+        "saw %d", get_hub_choice_count(g_ctx, conversation, 0, actor));
   CHECK(select_choice(g_ctx, conversation, actor, 0) != 0,
-        "choosing onto an auto hub should be refused");
+        "but choosing into a closed cycle of auto hubs should be refused");
   CHECK(get_actor_position(g_ctx, conversation, actor) == 3,
         "a refused choice should leave the actor where it was, saw %d",
         get_actor_position(g_ctx, conversation, actor));
+}
+
+void TestPrivateHubIsOwnedByItsRecipients() {
+  std::printf("private hub ownership\n");
+
+  // This fixture only means anything under its own config. Another one would
+  // leave speaker C undefined, and an undefined speaker is public, so every hub
+  // below would reach every actor and the blocks would pass for reasons that
+  // have nothing to do with ownership. Loading it here, rather than inheriting
+  // whatever an earlier test left, is what makes the rest of this meaningful.
+  clear_config(g_ctx);
+  CHECK(load_conversation_config(
+            g_ctx,
+            reinterpret_cast<uint8_t*>(const_cast<char*>(PrivateConfigJson())),
+            std::strlen(PrivateConfigJson()), 0) == 0,
+        "the private hub config should load");
+
+  LouderName conversation = Declare("private conversation");
+  std::string json = PrivateJson();
+  CHECK(load_conversation_json(g_ctx, conversation,
+                               reinterpret_cast<uint8_t*>(&json[0]), json.size(), 0) == 0,
+        "loading the private conversation returned %d", 0);
+
+  LouderName a = Lookup("A");
+  LouderName b = Lookup("B");
+  LouderName c = Lookup("C");
+  CHECK(c != LOUDER_NAME_NONE, "hub 9's speaker should be interned");
+
+  // The flags alone cannot show that the config above is the one in effect: an
+  // undeclared speaker reports no flags, and no flags also reads as public. So
+  // the listening list is checked too, since that is a declaration nothing else
+  // in the suite would have left behind.
+  CHECK(get_speaker_flags(g_ctx, a).bits != SpeakerFlags_PUBLIC.bits,
+        "A should not be public here, or A would hear its own speech through the back door");
+  CHECK(get_speaker_flags(g_ctx, b).bits != SpeakerFlags_PUBLIC.bits,
+        "B should not be public here, or this would not be testing a private hub");
+  CHECK(get_speaker_flags(g_ctx, c).bits != SpeakerFlags_PUBLIC.bits,
+        "C should not be public here, or hub 9 would reach actors that never heard it");
+  CHECK(get_next_speaker_listen_to(g_ctx, b, LOUDER_NAME_NONE) == a &&
+            get_next_speaker_listen_to(g_ctx, b, a) == c,
+        "B should listen to A then C; if this fails then PrivateConfigJson is not the config "
+        "in effect");
+
+  // Hub 5 is spoken by A and addressed to B. With a B actor alone, hub 5 must be
+  // reachable and leadable: B speaks as B, which is how B owns it.
+  {
+    LouderName speak_b[1] = {b};
+    LouderActor actor = add_actor(g_ctx, conversation, 5, ActorFlags(), speak_b, 1, nullptr, 0);
+    CHECK(actor == 0, "the first actor should get id 0, got %d", actor);
+    CHECK(get_hub_choice_count(g_ctx, conversation, 5, actor) == 1,
+          "the recipient should own the private hub and be offered its choice, saw %d",
+          get_hub_choice_count(g_ctx, conversation, 5, actor));
+    CHECK(get_hub_choice_link(g_ctx, conversation, 5, actor, 0) == 9,
+          "and that choice should lead to 9");
+  }
+
+  // An A actor does not own it: A speaks the hub but is not a recipient, and
+  // ownership is not the speaker. A must be offered nothing at all, and must not
+  // be able to stand there either.
+  {
+    LouderName speak_a[1] = {a};
+    LouderActor actor = add_actor(g_ctx, conversation, 5, ActorFlags(), speak_a, 1, nullptr, 0);
+    CHECK(get_hub_choice_count(g_ctx, conversation, 5, actor) == 0,
+          "the speaker of a private hub is not its owner and should get no choices, saw %d",
+          get_hub_choice_count(g_ctx, conversation, 5, actor));
+
+    // The choice into it from hub 0 is equally closed to A.
+    CHECK(get_hub_choice_count(g_ctx, conversation, 0, actor) == 0,
+          "A should not be offered the choice into its own speech addressed to B, saw %d",
+          get_hub_choice_count(g_ctx, conversation, 0, actor));
+  }
+
+  // With both actors present, the recipient still owns it and the speaker still
+  // does not. This is the case the demo conversation runs into.
+  {
+    LouderName speak_a[1] = {a};
+    LouderName speak_b[1] = {b};
+    LouderActor actor_a = add_actor(g_ctx, conversation, 0, ActorFlags(), speak_a, 1, nullptr, 0);
+    LouderActor actor_b = add_actor(g_ctx, conversation, 0, ActorFlags(), speak_b, 1, nullptr, 0);
+
+    CHECK(get_hub_choice_count(g_ctx, conversation, 0, actor_a) == 0,
+          "with a B actor in the conversation, A should have no way into the private hub");
+    CHECK(get_hub_choice_count(g_ctx, conversation, 0, actor_b) == 1,
+          "with an A actor in the conversation, B should still own the private hub, saw %d",
+          get_hub_choice_count(g_ctx, conversation, 0, actor_b));
+
+    CHECK(select_choice(g_ctx, conversation, actor_b, 0) == 0,
+          "the owner should be able to walk onto the private hub");
+    CHECK(get_actor_position(g_ctx, conversation, actor_b) == 5,
+          "and should land on it, got %d", get_actor_position(g_ctx, conversation, actor_b));
+    CHECK(get_actor_position(g_ctx, conversation, actor_a) != 5,
+          "the non-owner should not be dragged onto a hub it does not own, got %d",
+          get_actor_position(g_ctx, conversation, actor_a));
+  }
+
+  // And a private hub has no owner at all among the actors, so nothing can be
+  // taken out of it.
+  {
+    LouderName speak_c[1] = {c};
+    LouderActor actor_c = add_actor(g_ctx, conversation, 5, ActorFlags(), speak_c, 1, nullptr, 0);
+    CHECK(get_hub_choice_count(g_ctx, conversation, 5, actor_c) == 0,
+          "an actor who neither speaks as nor listens to the recipient owns nothing, saw %d",
+          get_hub_choice_count(g_ctx, conversation, 5, actor_c));
+  }
+
+  remove_conversation(g_ctx, conversation);
+  clear_config(g_ctx);
+}
+
+// The worked example from the engine guide's "Example Flows" section, verbatim:
+//
+//   Hubs 0, 1, 2, 3, 4.
+//   Speakers: 2: "Speaker A", 3: "Speaker B"
+//   Choices:  0: "A Choice to Make" -> 1
+//             1: "(invisible choice 1)" -> 2, "(invisible choice 2)" -> 3
+//             2: "Finish Conversation" -> 4
+//   Flags:    1: Auto
+//   Channels: 2: "Channel A"
+//   Tags:     0: "Start"
+//   Callbacks: 4: "exit"
+//
+// Two actors, one speaking as A and one as B, both starting on the start hub in
+// the main channel.
+const char* ExampleFlowJson() {
+  return R"([
+    {"type":"hub","conversation_id":0,"speaker":"A","text":"Ask something","tags":"Start","flags":0},
+    {"type":"hub","conversation_id":1,"text":"","choices":"2","flags":1},
+    {"type":"hub","conversation_id":2,"speaker":"A","text":"Finish Conversation","channel":"Channel A","choices":"1","flags":0},
+    {"type":"hub","conversation_id":3,"speaker":"B","text":"B's answer","flags":0},
+    {"type":"hub","conversation_id":4,"text":"The end","callbacks":"exit","flags":0},
+    {"type":"connection","from_id":0,"from_port":0,"to_id":1},
+    {"type":"connection","from_id":1,"from_port":0,"to_id":2},
+    {"type":"connection","from_id":1,"from_port":1,"to_id":3},
+    {"type":"connection","from_id":2,"from_port":0,"to_id":4}
+  ])";
+}
+
+const char* ExampleFlowConfigJson() {
+  return R"([
+    {"type":"speaker","name":"A","flags":1},
+    {"type":"speaker","name":"B","flags":1},
+    {"type":"speaker","name":"Channel A","flags":0}
+  ])";
+}
+
+// The guide's worked example, checked move by move. The point it pins down is
+// the divergence: both actors choose the same thing from hub 0, both enter auto
+// hub 1, and auto logic then resolves each of them *separately*, so actor 0 lands
+// on hub 2 and actor 1 on hub 3. A follower that replayed the leader's choice
+// instead would have copied hub 2, and the conversation would have collapsed
+// into one actor talking to itself.
+void TestExampleFlow() {
+  std::printf("example flow from the guide\n");
+
+  clear_config(g_ctx);
+  CHECK(load_conversation_config(
+            g_ctx,
+            reinterpret_cast<uint8_t*>(const_cast<char*>(ExampleFlowConfigJson())),
+            std::strlen(ExampleFlowConfigJson()), 0) == 0,
+        "the example flow config should load");
+
+  LouderName conversation = Declare("example flow conversation");
+  std::string json = ExampleFlowJson();
+  CHECK(load_conversation_json(g_ctx, conversation,
+                               reinterpret_cast<uint8_t*>(&json[0]), json.size(), 0) == 0,
+        "loading the example flow conversation returned %d", 0);
+
+  LouderName a = Lookup("A");
+  LouderName b = Lookup("B");
+  LouderName speak_a[1] = {a};
+  LouderName speak_b[1] = {b};
+
+  // The guide has actor 0 speaking as A and actor 1 speaking as B, both on the
+  // start hub.
+  LouderActor actor_a = add_actor(g_ctx, conversation, 0, ActorFlags(), speak_a, 1, nullptr, 0);
+  LouderActor actor_b = add_actor(g_ctx, conversation, 0, ActorFlags(), speak_b, 1, nullptr, 0);
+  CHECK(actor_a == 0 && actor_b == 1, "the actors should be 0 and 1, got %d and %d", actor_a, actor_b);
+
+  // A debug spectator, as the guide describes, to watch the auto hub arrive.
+  LouderActor debug = add_actor(g_ctx, conversation, 0, ActorFlags_SPECTATOR | ActorFlags_DEBUG,
+                                nullptr, 0, nullptr, 0);
+
+  flush_events(g_ctx);
+
+  // Both actors see hub 0's single choice, and the auto hub it leads to is
+  // offered to them even though auto hubs never appear.
+  CHECK(get_hub_choice_count(g_ctx, conversation, 0, actor_a) == 1,
+        "actor 0 should be offered the choice out of hub 0, saw %d",
+        get_hub_choice_count(g_ctx, conversation, 0, actor_a));
+  CHECK(get_hub_choice_count(g_ctx, conversation, 0, actor_b) == 1,
+        "actor 1 should be offered the same choice, saw %d",
+        get_hub_choice_count(g_ctx, conversation, 0, actor_b));
+
+  // Client 0 sends the choice at index 0.
+  CHECK(select_choice(g_ctx, conversation, actor_a, 0) == 0,
+        "actor 0's choice should be accepted");
+
+  // Auto logic for actor 0: "(invisible choice 1)" links to hub 2, which is
+  // spoken by A, and actor 0 speaks as A, so that branch is its to take.
+  CHECK(get_actor_position(g_ctx, conversation, actor_a) == 2,
+        "actor 0 should resolve through the auto hub onto hub 2, saw %d",
+        get_actor_position(g_ctx, conversation, actor_a));
+  CHECK(ReadName(get_actor_channel(g_ctx, conversation, actor_a)) == "Channel A",
+        "hub 2 should have put actor 0 in Channel A, saw %s",
+        ReadName(get_actor_channel(g_ctx, conversation, actor_a)).c_str());
+
+  // The warping that follows. Actor 1 was in the main channel, the same channel
+  // actor 0 left, and actor 0 passed through the auto hub, so actor 1 is warped
+  // *through hub 1* rather than replaying actor 0's choice.
+  //
+  // Auto logic for actor 1: the first branch links to hub 2, spoken by A. Actor 1
+  // does not speak as A, and allowing it would leave two choices available, so it
+  // is skipped. The second branch links to hub 3, spoken by B, which actor 1
+  // does speak as, so that one is taken.
+  CHECK(get_actor_position(g_ctx, conversation, actor_b) == 3,
+        "actor 1 should diverge onto hub 3, saw %d", get_actor_position(g_ctx, conversation, actor_b));
+  CHECK(ReadName(get_actor_channel(g_ctx, conversation, actor_b)) == "main",
+        "hub 3 should have left actor 1 on the main channel, saw %s",
+        ReadName(get_actor_channel(g_ctx, conversation, actor_b)).c_str());
+
+  // The two actors are now in different channels and in different places, which
+  // is the summary the guide gives: actor 0 in position 2 with one choice in a
+  // newly created channel, actor 1 in position 3 with no choices.
+  CHECK(get_hub_choice_count(g_ctx, conversation, 2, actor_a) == 1,
+        "actor 0 should have one choice left, saw %d",
+        get_hub_choice_count(g_ctx, conversation, 2, actor_a));
+  CHECK(get_hub_choice_count(g_ctx, conversation, 3, actor_b) == 0,
+        "actor 1 should have no choices, saw %d",
+        get_hub_choice_count(g_ctx, conversation, 3, actor_b));
+
+  // The divergence is announced as a warp, so a host can tell it apart from a
+// second player choosing.
+  std::vector<LouderEvent> events = DrainEvents();
+  CHECK(CountEventsOfKind(events, EventData::Tag::Warp) == 1,
+        "actor 1's divergence should be one warp event, saw %d",
+        CountEventsOfKind(events, EventData::Tag::Warp));
+
+  // The auto hub itself is announced to nobody but the debug actor, which is the
+  // one thing the guide says it appears to. It is a regular motion like any
+  // other appearance, so it is counted per actor rather than in total.
+  bool debug_saw_the_auto_hub = false;
+  bool player_saw_the_auto_hub = false;
+  int actor_a_motions = 0;
+  for (const auto& event : events) {
+    if (event.data.tag == EventData::Tag::Warp || event.data.tag == EventData::Tag::ForceMotion) {
+      continue;
+    }
+    if (event.data.tag != EventData::Tag::RegularMotion) continue;
+
+    const Motion& motion = event.data.regular_motion._0;
+    if (event.actor == actor_a) ++actor_a_motions;
+    if (motion.target_position != 1) continue;
+    if (event.actor == debug) debug_saw_the_auto_hub = true;
+    else player_saw_the_auto_hub = true;
+  }
+  CHECK(actor_a_motions == 1, "actor 0 should have announced one move of its own, saw %d",
+        actor_a_motions);
+  CHECK(debug_saw_the_auto_hub, "the auto hub should be announced to the debug actor");
+  CHECK(!player_saw_the_auto_hub, "the auto hub should not be announced to the players");
+
+  // The guide's last step: actor 0 takes its remaining choice to hub 4, which
+  // fires the "exit" callback. Hub 4 has no speaker, so it is public and appears
+  // to actor 1 too, but actor 1 is in another channel, so it is not warped.
+  flush_events(g_ctx);
+  CHECK(select_choice(g_ctx, conversation, actor_a, 0) == 0,
+        "actor 0 should be able to finish the conversation");
+  CHECK(get_actor_position(g_ctx, conversation, actor_a) == 4,
+        "actor 0 should be at hub 4, saw %d", get_actor_position(g_ctx, conversation, actor_a));
+  CHECK(get_actor_position(g_ctx, conversation, actor_b) == 3,
+        "actor 1 should have stayed in its own channel at hub 3, saw %d",
+        get_actor_position(g_ctx, conversation, actor_b));
+
+  events = DrainEvents();
+  CHECK(CountEventsOfKind(events, EventData::Tag::Callback) == 1,
+        "the exit callback should fire once, saw %d",
+        CountEventsOfKind(events, EventData::Tag::Callback));
+  bool saw_exit = false;
+  for (const auto& event : events) {
+    if (event.data.tag == EventData::Tag::Callback && ReadName(event.data.callback._0) == "exit") {
+      saw_exit = true;
+    }
+  }
+  CHECK(saw_exit, "and the callback that fired should be the exit callback");
+
+  remove_conversation(g_ctx, conversation);
+  clear_config(g_ctx);
+}
+
+// The shape the demo conversation's auto hub 27 has, which is the case that
+// needs both halves of the auto rules at once:
+//
+//   0: -> 27 (auto) -> [0] 29 (private voice)  [1] 28 (public, spoken by B)
+//   2: -> 26
+//
+// B listens to a private voice, which is only B's. When B chooses into the auto
+// hub, auto logic takes the first branch available to B, which is 29 because B
+// hears it. B cannot see the second branch as unavailable-for-B (B speaks 28),
+// so this pins that a multi-choice auto hub still resolves for the actor who
+// owns the branch it leads to.
+//
+// A second actor who does not hear the private voice must not be routed to 29.
+// When B leaves the auto hub, that actor is warped through 27 and emulates it as
+// itself. It has no claim on branch 0 (29 does not appear to it), and branch 1
+// (28, public, spoken by B) is B's, so emulation falls back to the first branch
+// that appears: 28. That is the whole point of the split: B sees their own
+// private voice, the other actor sees only the public line.
+const char* AutoSplitJson() {
+  return R"([
+    {"type":"hub","conversation_id":0,"text":"start","tags":"Start","flags":0},
+    {"type":"hub","conversation_id":26,"text":"lie","choices":"1","flags":0},
+    {"type":"hub","conversation_id":27,"text":"","choices":"2","flags":1},
+    {"type":"hub","conversation_id":28,"speaker":"B","text":"the public line","flags":0},
+    {"type":"hub","conversation_id":29,"speaker":"Whisper","text":"the private line","flags":0},
+    {"type":"connection","from_id":0,"from_port":0,"to_id":26},
+    {"type":"connection","from_id":26,"from_port":0,"to_id":27},
+    {"type":"connection","from_id":27,"from_port":0,"to_id":29},
+    {"type":"connection","from_id":27,"from_port":1,"to_id":28}
+  ])";
+}
+
+// B is public and listens to Whisper; the second actor speaks as C, which is
+// public and hears neither. C is standing on the same hub as B so both share
+// the main channel and B drags C along when it moves.
+const char* AutoSplitConfigJson() {
+  return R"([
+    {"type":"speaker","name":"B","flags":1,"listening":"Whisper"},
+    {"type":"speaker","name":"C","flags":1},
+    {"type":"speaker","name":"Whisper","flags":0}
+  ])";
+}
+
+void TestAutoSplitOnPrivateVoice() {
+  std::printf("auto hub split on a private voice\n");
+
+  clear_config(g_ctx);
+  CHECK(load_conversation_config(
+            g_ctx,
+            reinterpret_cast<uint8_t*>(const_cast<char*>(AutoSplitConfigJson())),
+            std::strlen(AutoSplitConfigJson()), 0) == 0,
+        "the auto split config should load");
+
+  LouderName conversation = Declare("auto split conversation");
+  std::string json = AutoSplitJson();
+  CHECK(load_conversation_json(g_ctx, conversation,
+                               reinterpret_cast<uint8_t*>(&json[0]), json.size(), 0) == 0,
+        "loading the auto split conversation returned %d", 0);
+
+  LouderName b = Lookup("B");
+  LouderName c = Lookup("C");
+  LouderName speak_b[1] = {b};
+  LouderName speak_c[1] = {c};
+
+  LouderActor actor_b = add_actor(g_ctx, conversation, 26, ActorFlags(), speak_b, 1, nullptr, 0);
+  LouderActor actor_c = add_actor(g_ctx, conversation, 26, ActorFlags(), speak_c, 1, nullptr, 0);
+  CHECK(actor_b == 0 && actor_c == 1, "the actors should be 0 and 1, got %d and %d", actor_b, actor_c);
+
+  flush_events(g_ctx);
+
+  // Both the choice into the auto hub and the private-voice branch are offered
+  // to B, in that order. The private branch is available because B listens to
+  // Whisper even though B does not speak it; without that, the auto hub would
+  // have no branch B may take other than the public one and would send B to 28.
+  CHECK(get_hub_choice_count(g_ctx, conversation, 26, actor_b) == 1,
+        "B should be offered the single choice into the auto hub, saw %d",
+        get_hub_choice_count(g_ctx, conversation, 26, actor_b));
+  CHECK(get_hub_choice_count(g_ctx, conversation, 27, actor_b) == 2,
+        "B should be offered both branches out of the auto hub, the private voice and the public "
+        "line, saw %d",
+        get_hub_choice_count(g_ctx, conversation, 27, actor_b));
+  CHECK(get_hub_choice_link(g_ctx, conversation, 27, actor_b, 0) == 29,
+        "B's first branch should be the private voice");
+  CHECK(get_hub_choice_link(g_ctx, conversation, 27, actor_b, 1) == 28,
+        "B's second branch should be the public line");
+
+  // The other actor hears neither the private voice nor a claim on the public
+  // line, so neither branch is available to it and auto logic falls back to the
+  // public line for it. Emulation, not the leader's choice, is what gets it
+  // there.
+  CHECK(get_hub_choice_count(g_ctx, conversation, 27, actor_c) == 0,
+        "the other actor has no claim on either branch of the auto hub, saw %d",
+        get_hub_choice_count(g_ctx, conversation, 27, actor_c));
+
+  // B chooses into the auto hub. B should resolve through it onto the private
+  // voice, 29, because that is the first branch available to B.
+  CHECK(select_choice(g_ctx, conversation, actor_b, 0) == 0,
+        "B's choice into the auto hub should be accepted");
+  CHECK(get_actor_position(g_ctx, conversation, actor_b) == 29,
+        "B should resolve through the auto hub onto the private voice it hears, saw %d",
+        get_actor_position(g_ctx, conversation, actor_b));
+
+  // C is warped through the same auto hub and emulates it as itself. C's first
+  // available branch is none, so C takes the first branch that appears to it:
+  // the public line, 28. This is the divergence the demo's note describes.
+  CHECK(get_actor_position(g_ctx, conversation, actor_c) == 28,
+        "the other actor should diverge onto the public line, saw %d",
+        get_actor_position(g_ctx, conversation, actor_c));
+
+  // The divergence is a warp, not a second choice, so a host can tell it apart
+  // from B leading.
+  std::vector<LouderEvent> events = DrainEvents();
+  CHECK(CountEventsOfKind(events, EventData::Tag::Warp) == 1,
+        "the other actor's divergence should be exactly one warp, saw %d",
+        CountEventsOfKind(events, EventData::Tag::Warp));
+
+  remove_conversation(g_ctx, conversation);
+  clear_config(g_ctx);
 }
 
 void TestAsks() {
@@ -630,8 +1067,11 @@ int main(int argc, char** argv) {
   TestStoryState();
   TestActors();
   TestChoices();
+  TestPrivateHubIsOwnedByItsRecipients();
   TestWarpRecursion();
   TestAutoCycle();
+  TestExampleFlow();
+  TestAutoSplitOnPrivateVoice();
   TestAsks();
   TestSerialization();
   TestBuiltEvents();

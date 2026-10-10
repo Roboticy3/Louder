@@ -22,7 +22,7 @@
 		"conversation_id": "7",
 		"position_offset:x": "1160.0",
 		"position_offset:y": "2280.0",
-		"speaker": "Freya",
+		"speaker": "2Freya",
 		"text": "\"Don't play games.\"",
 		"type": "hub"
 	},
@@ -31,7 +31,7 @@
 		"position_offset:x": "1760.0",
 		"position_offset:y": "1980.0",
 		"speaker": "Freya",
-		"text": "\"What were you doing in the restricted area. Those caves are both a protected anthropological site and a dangerous place to hang out shirtless.\"",
+		"text": "\"What were you doing in the restricted area. Those caves are both a protected anthropological site and a dangerous place to be.\"",
 		"type": "hub"
 	},
 	{
@@ -121,7 +121,7 @@
 		"position_offset:x": "3840.0",
 		"position_offset:y": "1520.0",
 		"speaker": "Freya",
-		"text": "\"Sounds like you have a pretty solid grasp to me. Any identification?\"",
+		"text": "\"That doesn't answer my questions. Who are you and what were you doing last night.\"",
 		"type": "hub"
 	},
 	{
@@ -415,6 +415,12 @@
 		"type": "connection"
 	},
 	{
+		"from_id": "20",
+		"from_port": 0,
+		"to_id": "0",
+		"type": "connection"
+	},
+	{
 		"from_id": "21",
 		"from_port": 0,
 		"to_id": "13",
@@ -541,9 +547,9 @@
 		"type": "connection"
 	},
 	{
-		"position:x": "-628.147094726563",
-		"position:y": "-746.47021484375",
+		"position:x": "1486.24487304688",
+		"position:y": "-415.163421630859",
 		"type": "camera",
-		"zoom": "0.38554298877716"
+		"zoom": "0.66071236133575"
 	}
 ]
