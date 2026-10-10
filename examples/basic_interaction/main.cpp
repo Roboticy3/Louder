@@ -60,8 +60,23 @@ int main(int argc, char** argv) {
   // Paths default to the copies beside the executable and can be overridden for
   // testing against other documents. Either way they are handed to the engine as
   // absolute-ish filesystem paths rather than as anything Godot-specific.
-  std::string conversation_path = argc > 1 ? argv[1] : "jail.json";
-  std::string config_path = argc > 2 ? argv[2] : "speakers.json";
+  std::string conversation_path = "jail.json";
+  std::string config_path = "speakers.json";
+
+  // --check sets everything up, draws one frame and exits, so the whole startup
+  // path can be exercised without a human at the keyboard.
+  bool check_only = false;
+  int first_positional = 1;
+  if (argc > 1 && std::string(argv[1]) == "--check") {
+    check_only = true;
+    first_positional = 2;
+  }
+  if (argc > first_positional) {
+    conversation_path = argv[first_positional];
+  }
+  if (argc > first_positional + 1) {
+    config_path = argv[first_positional + 1];
+  }
 
   Engine engine;
   if (!engine.ready()) {
@@ -126,7 +141,27 @@ int main(int argc, char** argv) {
   view.consume({});
 
   louder_demo::Screen screen;
-  draw(screen, view, view.left(), view.right());
+
+  // The console is asked for its size each frame rather than cached, so
+  // resizing the window takes effect immediately.
+  auto paint = [&]() {
+    int width = screen.width();
+    int height = screen.height();
+    draw(screen, render(view, view.left(), view.right(), width, height), width, height);
+  };
+
+  paint();
+
+  if (check_only) {
+    std::printf("\nleft  : %s at %d, %zu choices\n", view.left().display_name.c_str(),
+                view.left().position, view.left().choices.size());
+    std::printf("right : %s at %d, %zu choices\n", view.right().display_name.c_str(),
+                view.right().position, view.right().choices.size());
+    for (const std::string& error : view.errors()) {
+      std::printf("error : %s\n", error.c_str());
+    }
+    return 0;
+  }
 
   // One blocking keypress per frame. ESC quits; every other key is offered to
   // the view, which ignores anything that is not one of its choice keys.
@@ -136,7 +171,7 @@ int main(int argc, char** argv) {
       break;
     }
     view.handle_key(key);
-    draw(screen, view, view.left(), view.right());
+    paint();
   }
 
   return 0;

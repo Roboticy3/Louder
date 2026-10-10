@@ -157,10 +157,10 @@ void DialogueView::refresh() {
     viewport->text = engine_->text_at(position);
     viewport->choices = engine_->available_choices(conversation_, position, viewport->actor);
 
-    // The engine's own count is the authority on how many choices exist. A
-    // mismatch means the walk in available_choices and the engine disagree
-    // about availability, which is worth surfacing rather than hiding behind a
-    // silently wrong list.
+// The engine's own count is the authority on how many choices exist, and
+    // available_choices probes until it has found that many. A mismatch means
+    // the probe hit its bound, which is worth surfacing rather than hiding
+    // behind a silently short list.
     int32_t expected = engine_->choice_count(conversation_, position, viewport->actor);
     if (expected != static_cast<int32_t>(viewport->choices.size())) {
       fail(*viewport, "engine reports " + std::to_string(expected) + " choices at position " +

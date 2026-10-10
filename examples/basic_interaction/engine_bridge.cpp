@@ -10,10 +10,9 @@ namespace {
 // a terminator, so this is passed as size - 1.
 constexpr size_t kNameBuffer = 8192;
 
-// The engine stops reporting choices past this many. It has no "how many choices
-// does this hub have in total" call, so the available list is discovered by
-// walking indices until one is refused. The bound keeps a mistake in the
-// document from turning into an unbounded loop.
+// An upper bound on how far to probe for available choices, so that a hub
+// claiming more choices than any real document would carry cannot turn the
+// walk into an unbounded loop.
 constexpr int32_t kMaxChoices = 64;
 
 }  // namespace
@@ -96,12 +95,23 @@ bool Engine::is_auto(Position position) {
 
 std::vector<Choice> Engine::available_choices(NameId conversation, Position position, ActorId actor) {
   std::vector<Choice> choices;
-  for (int32_t index = 0; index < kMaxChoices; ++index) {
-    // The engine refuses indices that are out of range *or* that this actor may
-    // not take, and reports both as BLANK_POSITION, so a refusal ends the walk.
+
+  // The engine has no "how many choices does this hub have" call, and it
+  // reports an index it will not serve as BLANK_POSITION whether that is because
+  // the index is past the end of the list or because this actor may not take it.
+  // The two are indistinguishable, so a refusal cannot be used to end the walk.
+  //
+  // Available indices are also not contiguous. Hub 26 in the demo conversation
+  // has five raw choices and offers Freya only index 4, and Benjamin indices 1
+  // and 2. So every index is probed and the engine's own count is what says when
+  // the list is complete.
+  int32_t expected = choice_count(conversation, position, actor);
+  for (int32_t index = 0;
+       index < kMaxChoices && static_cast<int32_t>(choices.size()) < expected;
+       ++index) {
     int32_t link = get_hub_choice_link(ctx_, conversation, position, actor, index);
     if (link == kNoPosition) {
-      break;
+      continue;
     }
     Choice choice;
     choice.general_index = index;

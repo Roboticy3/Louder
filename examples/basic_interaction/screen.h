@@ -5,10 +5,53 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include "dialogue_view.h"
 
 namespace louder_demo {
+
+// How a run of text is coloured. Applied per line rather than inline, so the
+// layout can be computed and inspected as plain text before any escape
+// sequences exist.
+enum class Style {
+  Normal,
+  Bold,
+  Dim,
+  Idle,   // the "the other side is thinking" line
+  Error,  // an engine refusal
+};
+
+// One row of the body, with a cell per column.
+struct FrameRow {
+  std::string left;
+  std::string right;
+  Style left_style = Style::Normal;
+  Style right_style = Style::Normal;
+};
+
+// A whole frame, already laid out and truncated to fit.
+//
+// Row 0 is the header. The body follows. The footer is drawn separately on the
+// last console row so that a long conversation cannot push it off screen.
+//
+// Every string here is plain text no wider than the column it will be drawn in,
+// which is what keeps the frame from writing past the last cell of a row. A
+// console that wraps at the right margin scrolls the whole screen up by one,
+// which is how a stale line ends up where the header belongs.
+struct Frame {
+  std::vector<FrameRow> rows;
+  std::string footer;
+  Style footer_style = Style::Dim;
+};
+
+// Lay out both columns for a console of the given size.
+//
+// `width` and `height` are the usable console dimensions. The result never
+// addresses a row at or beyond `height`, and never produces a line wider than
+// the column, so drawing it cannot scroll the screen.
+Frame render(const DialogueView& view, const Viewport& left, const Viewport& right,
+             int width, int height);
 
 // Owns the console for the lifetime of the object: switches the window into
 // virtual terminal mode, hides the cursor, and restores both on destruction.
@@ -20,20 +63,16 @@ class Screen {
   Screen(const Screen&) = delete;
   Screen& operator=(const Screen&) = delete;
 
-  // The usable width of the console, and the number of rows.
   int width() const;
   int height() const;
 
-  // Erase and redraw from the top left.
+  // Move the cursor to the top left. Everything is drawn from there in one go.
   void begin_frame();
 
-  // Move to a row and column and write there. Coordinates are zero-based.
+  // Write `text` at a zero-based row and column, then erase the rest of that
+  // line. Nothing is written past the last column, so the cursor cannot wrap.
   void put(int row, int column, const std::string& text);
 
-  // Fill a horizontal run with spaces, for clearing a column's old contents.
-  void clear_row(int row, int from_column, int to_column);
-
-  // Force the frame out to the terminal.
   void end_frame();
 
   // True when a key is waiting. Does not block.
@@ -48,18 +87,10 @@ class Screen {
   bool owns_console_ = false;
   void* out_ = nullptr;
   void* in_ = nullptr;
-  void* saved_out_mode_ = nullptr;
 };
 
-// Draw both columns, the header, and the footer.
-//
-// `left` and `right` are the two viewports. Each is drawn in its own half of the
-// terminal with a vertical rule between them. When a side has no choices but the
-// other does, the idle side says so, which is the "X is thinking" line the spec
-// asks for.
-void draw(Screen& screen, const DialogueView& view, const Viewport& left, const Viewport& right);
-
-// Draw the single column of lines a batch of events produced, for the log.
-std::string format_lines(const std::vector<Line>& lines);
+// Paint a laid-out frame. Separated from render so the layout can be checked
+// against plain text in tests.
+void draw(Screen& screen, const Frame& frame, int width, int height);
 
 }  // namespace louder_demo
