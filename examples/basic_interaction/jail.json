@@ -1,0 +1,468 @@
+[
+	{
+		"choices": "4",
+		"conversation_id": "0",
+		"speaker": "Freya",
+		"tags": "start",
+		"text": "\"Are you willing to identify yourself?\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "2",
+		"speaker": "Note",
+		"text": "Conversation between Freya and Benjamin in the jail. Start is tagged \"start\"",
+		"type": "hub"
+	},
+	{
+		"choices": "2",
+		"conversation_id": "7",
+		"speaker": "Freya",
+		"text": "\"Don't play games.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "9",
+		"speaker": "Freya",
+		"text": "\"What were you doing in the restricted area. Those caves are both a protected anthropological site and a dangerous place to hang out shirtless.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "3",
+		"speaker": "Benjamin",
+		"text": "\"I said, I really don't know who I am.\"",
+		"type": "hub"
+	},
+	{
+		"choices": "3",
+		"conversation_id": "11",
+		"speaker": "Structure",
+		"text": "This is, possibly, factual. Freya was unfamiliar with the culture of Fish-men. She knew they were highly collectivist, perhaps it was possible for one to not have a name at all?",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "6",
+		"speaker": "Benjamin",
+		"text": "\"I will identify myself if you release me.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "5",
+		"speaker": "Benjamin",
+		"text": "\"I don't know my name.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "13",
+		"speaker": "Freya",
+		"text": "\"Well, I suppose it's possible to not have your name on you.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "14",
+		"speaker": "Freya",
+		"text": "\"I still don't buy it. It would be rather convenient for you if I couldn't charge you with anything just because you don't have a name.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "8",
+		"speaker": "Freya",
+		"text": "\"You said earlier that you didn't know who you were. If you were lying, I'm not letting you go now.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "15",
+		"speaker": "Freya",
+		"text": "\"We have many acceptable forms of identification here. Capital ID coin, student or work keys, badges for various organizations. People don't just happen out of nowhere. Do you have any of these forms on you? Where were you last night?\"",
+		"type": "hub"
+	},
+	{
+		"choices": "3",
+		"conversation_id": "16",
+		"speaker": "Stars",
+		"text": "A meak constellation of concepts binds your soul to your body. The memories aren't necessarily missing, but they've gone dim. I don't know what happened last night, but I can infer. I see characteristic networks of...",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "17",
+		"speaker": "Benjamin",
+		"text": "\"I was drinking.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "20",
+		"speaker": "Freya",
+		"text": "\"Sounds like you have a pretty solid grasp to me. Any identification?\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "18",
+		"speaker": "Benjamin",
+		"text": "\"I was walking through the depths of the Earth.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "19",
+		"speaker": "Benjamin",
+		"text": "\"I was about to perform the greatest act of Divination in the history of the entire universe, then I went blank.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "4",
+		"speaker": "Benjamin",
+		"text": "\"I am the second coming of Shiva\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "12",
+		"speaker": "Freya",
+		"text": "\"Are you sure you had one in the first place?\"",
+		"type": "hub"
+	},
+	{
+		"choices": "2",
+		"conversation_id": "21",
+		"speaker": "Volition",
+		"text": "A memory of Freya's battles came to light. A brother looking up at her. Shocked by the violence and cruelty, so much that they could not even move from their muddied corner. Those eyes. You see a shadow of them here.  ",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "10",
+		"speaker": "Sight",
+		"text": "The religion of the Fish-men predicts a day of the apocalypse, when a 10-armed God of war, Shiva, will awaken among their people and bring wrath upon the world and its subjects. The sad man in handcuffs across from your desk is at best unawakened, and at worst psychotic.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "24",
+		"speaker": "Note",
+		"text": "Failure",
+		"type": "hub"
+	},
+	{
+		"choices": "3",
+		"conversation_id": "22",
+		"speaker": "Note",
+		"text": "Benjamin tries to convince Freya that he's actually forgotten who he is.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "25",
+		"speaker": "Note",
+		"text": "Secret third thing idk",
+		"type": "hub"
+	},
+	{
+		"choices": "5",
+		"conversation_id": "26",
+		"recipients": "Benjamin",
+		"speaker": "Freya",
+		"text": "She looks up from her paperwork. She doesn't realize that her attention has changed. You are a curiosity, and may be able to use that to your advantage.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "29",
+		"speaker": "Memory",
+		"text": "Your honorable people look down on you for this infraction. Good. At least you remember something.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "28",
+		"speaker": "Benjamin",
+		"text": "\"Yes, the fish men are a nameless species!\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "30",
+		"speaker": "Benjamin",
+		"text": "\"Maybe you're right. I'm not sure but, it's possible I never had a name.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "31",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "32",
+		"speaker": "Note",
+		"text": "On moving from 26 to 27, Benjamin is routed to 29 and Freya to 28, hiding that Benjamin is lying and giving Benjamin some flavor text. Freya moving from 28 to 31, since the story priority at 31 is greater than or equal to 29, and 31 is visible to Benjamin, moves Benjamin to 31 also.",
+		"type": "hub"
+	},
+	{
+		"choices": "2",
+		"conversation_id": "27",
+		"flags": 1,
+		"speaker": "Benjamin",
+		"text": "\"Yes, the fish men are a nameless species!\" (Lie)",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "23",
+		"speaker": "Note",
+		"text": "Success. this branch has the most fun with node visibility and control flow.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "34",
+		"speaker": "Freya",
+		"text": "Test node. This node should not be visible because the node it comes out of is not visible to \"Freya.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "33",
+		"speaker": "Benjamin",
+		"text": "\"No, no. I definitely had a name. I just don't remember. I swear.\"",
+		"type": "hub"
+	},
+	{
+		"flags": 1,
+		"conversation_id": "35",
+		"speaker": "Benjamin",
+		"text": "(Make up a name.)",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "36",
+		"speaker": "Note",
+		"text": "This conversation is unfinished. That is intentional.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "37",
+		"speaker": "Note",
+		"text": "35 has no exit. Getting stuck in an auto node should be caught as an error and displayed to the user.",
+		"type": "hub"
+	},
+	{
+		"from_id": "0",
+		"from_port": 0,
+		"to_id": "3",
+		"type": "connection"
+	},
+	{
+		"from_id": "0",
+		"from_port": 1,
+		"to_id": "4",
+		"type": "connection"
+	},
+	{
+		"from_id": "0",
+		"from_port": 2,
+		"to_id": "5",
+		"type": "connection"
+	},
+	{
+		"from_id": "0",
+		"from_port": 3,
+		"to_id": "6",
+		"type": "connection"
+	},
+	{
+		"from_id": "10",
+		"from_port": 0,
+		"to_id": "14",
+		"type": "connection"
+	},
+	{
+		"from_id": "11",
+		"from_port": 0,
+		"to_id": "12",
+		"type": "connection"
+	},
+	{
+		"from_id": "11",
+		"from_port": 1,
+		"to_id": "13",
+		"type": "connection"
+	},
+	{
+		"from_id": "11",
+		"from_port": 2,
+		"to_id": "14",
+		"type": "connection"
+	},
+	{
+		"from_id": "12",
+		"from_port": 0,
+		"to_id": "26",
+		"type": "connection"
+	},
+	{
+		"from_id": "13",
+		"from_port": 0,
+		"to_id": "26",
+		"type": "connection"
+	},
+	{
+		"from_id": "14",
+		"from_port": 0,
+		"to_id": "15",
+		"type": "connection"
+	},
+	{
+		"from_id": "15",
+		"from_port": 0,
+		"to_id": "16",
+		"type": "connection"
+	},
+	{
+		"from_id": "16",
+		"from_port": 0,
+		"to_id": "17",
+		"type": "connection"
+	},
+	{
+		"from_id": "16",
+		"from_port": 1,
+		"to_id": "18",
+		"type": "connection"
+	},
+	{
+		"from_id": "16",
+		"from_port": 2,
+		"to_id": "19",
+		"type": "connection"
+	},
+	{
+		"from_id": "17",
+		"from_port": 0,
+		"to_id": "20",
+		"type": "connection"
+	},
+	{
+		"from_id": "18",
+		"from_port": 0,
+		"to_id": "20",
+		"type": "connection"
+	},
+	{
+		"from_id": "19",
+		"from_port": 0,
+		"to_id": "20",
+		"type": "connection"
+	},
+	{
+		"from_id": "21",
+		"from_port": 0,
+		"to_id": "13",
+		"type": "connection"
+	},
+	{
+		"from_id": "21",
+		"from_port": 1,
+		"to_id": "14",
+		"type": "connection"
+	},
+	{
+		"from_id": "22",
+		"from_port": 0,
+		"to_id": "23",
+		"type": "connection"
+	},
+	{
+		"from_id": "22",
+		"from_port": 1,
+		"to_id": "24",
+		"type": "connection"
+	},
+	{
+		"from_id": "22",
+		"from_port": 2,
+		"to_id": "25",
+		"type": "connection"
+	},
+	{
+		"from_id": "26",
+		"from_port": 0,
+		"to_id": "27",
+		"type": "connection"
+	},
+	{
+		"from_id": "26",
+		"from_port": 1,
+		"to_id": "30",
+		"type": "connection"
+	},
+	{
+		"from_id": "26",
+		"from_port": 2,
+		"to_id": "33",
+		"type": "connection"
+	},
+	{
+		"from_id": "26",
+		"from_port": 3,
+		"to_id": "35",
+		"type": "connection"
+	},
+	{
+		"from_id": "26",
+		"from_port": 4,
+		"to_id": "34",
+		"type": "connection"
+	},
+	{
+		"from_id": "27",
+		"from_port": 0,
+		"to_id": "29",
+		"type": "connection"
+	},
+	{
+		"from_id": "27",
+		"from_port": 1,
+		"to_id": "28",
+		"type": "connection"
+	},
+	{
+		"from_id": "28",
+		"from_port": 0,
+		"to_id": "31",
+		"type": "connection"
+	},
+	{
+		"from_id": "3",
+		"from_port": 0,
+		"to_id": "21",
+		"type": "connection"
+	},
+	{
+		"from_id": "4",
+		"from_port": 0,
+		"to_id": "10",
+		"type": "connection"
+	},
+	{
+		"from_id": "5",
+		"from_port": 0,
+		"to_id": "11",
+		"type": "connection"
+	},
+	{
+		"from_id": "6",
+		"from_port": 0,
+		"to_id": "7",
+		"type": "connection"
+	},
+	{
+		"from_id": "7",
+		"from_port": 0,
+		"to_id": "8",
+		"type": "connection"
+	},
+	{
+		"from_id": "7",
+		"from_port": 1,
+		"to_id": "9",
+		"type": "connection"
+	},
+	{
+		"from_id": "8",
+		"from_port": 0,
+		"to_id": "15",
+		"type": "connection"
+	},
+	{
+		"from_id": "9",
+		"from_port": 0,
+		"to_id": "16",
+		"type": "connection"
+	}
+]
