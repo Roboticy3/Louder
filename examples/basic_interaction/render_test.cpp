@@ -63,6 +63,20 @@ int column_width_for(int width) {
   return half;
 }
 
+// Pull the key out of a line rendered as "[key] text". Only single-character
+// keys count: the CONTINUE state renders "[1 or Tab]", which is a different
+// shape and is checked separately.
+bool bracketed_key(const std::string& line, std::string* key) {
+  if (line.size() < 4 || line[0] != '[' || line[2] != ']') {
+    return false;
+  }
+  if (line.find(" or ") != std::string::npos) {
+    return false;
+  }
+  *key = line.substr(1, 1);
+  return true;
+}
+
 // A loaded engine, two actors at the start hub, and a view over them.
 struct Fixture {
   Engine engine;
@@ -193,13 +207,12 @@ void TestChoicesAreKeyedInOrder() {
   // Benjamin has four choices at the start hub and they must be labelled q, w,
   // e, r in that order. Reading them in the frame is the only way to catch a
   // labelling bug, since the view state alone does not carry the keys.
+  // Each choice renders as "[key] text".
   std::vector<std::string> keys_in_order;
   for (size_t row = 0; row < frame.rows.size(); ++row) {
-    const std::string& text = frame.rows[row].right;
-    if (text.size() >= 2 && text[1] == ')' &&
-        (text[0] == 'q' || text[0] == 'w' || text[0] == 'e' || text[0] == 'r' ||
-         text[0] == 't' || text[0] == 'y')) {
-      keys_in_order.push_back(std::string(1, text[0]));
+    std::string key;
+    if (bracketed_key(frame.rows[row].right, &key)) {
+      keys_in_order.push_back(key);
     }
   }
   CHECK(keys_in_order.size() == 4, "expected four keyed choices in the right column, saw %zu",
@@ -209,6 +222,13 @@ void TestChoicesAreKeyedInOrder() {
               keys_in_order[3] == "r",
           "choices should be keyed q, w, e, r, got %s %s %s %s", keys_in_order[0].c_str(),
           keys_in_order[1].c_str(), keys_in_order[2].c_str(), keys_in_order[3].c_str());
+  }
+
+  // Freya has none, so her column must show no keyed choice at all.
+  for (size_t row = 0; row < frame.rows.size(); ++row) {
+    std::string key;
+    CHECK(!bracketed_key(frame.rows[row].left, &key),
+          "Freya has no choices, but row %zu reads '%s'", row, frame.rows[row].left.c_str());
   }
 }
 
@@ -242,12 +262,30 @@ void TestIdleSideSaysWhoIsThinking() {
 void TestStalledSideSaysSo() {
   std::printf("a stalled conversation says so\n");
 
-  // Walk to hub 3, where neither actor has a choice. Both columns must report
-  // the stall rather than accusing each other of thinking.
-  Fixture f;
-  f.view().handle_key('q');
-  Frame frame = louder_demo::render(f.view(), f.view().left(), f.view().right(), 80, 24);
+  // Hub 31 has no choices at all and no way out, so standing there leaves both
+  // sides empty. Both columns must report the stall rather than accusing each
+  // other of thinking.
+  Engine engine;
+  engine.load_config(read_file("speakers.json"));
+  engine.load_conversation("jail", read_file("jail.json"));
+  NameId conversation = engine.name("jail");
+  ActorId freya = engine.add_actor(conversation, 31, "Freya");
+  ActorId ben = engine.add_actor(conversation, 31, "Benjamin");
 
+  Viewport left;
+  left.actor = freya;
+  left.display_name = "Freya";
+  Viewport right;
+  right.actor = ben;
+  right.display_name = "REDACTED";
+  engine.drain_events();
+  DialogueView view(&engine, left, right);
+  view.consume({});
+
+  CHECK(view.left().choices.empty(), "hub 31 should offer Freya nothing");
+  CHECK(view.right().choices.empty(), "hub 31 should offer Benjamin nothing");
+
+  Frame frame = louder_demo::render(view, view.left(), view.right(), 80, 24);
   bool left_says = false;
   bool right_says = false;
   for (size_t row = 0; row < frame.rows.size(); ++row) {
@@ -256,6 +294,91 @@ void TestStalledSideSaysSo() {
   }
   CHECK(left_says, "the left column should report the stall");
   CHECK(right_says, "the right column should report the stall");
+}
+
+void TestSingleChoiceRendersAsContinue() {
+  std::printf("a lone choice renders as CONTINUE with both keys\n");
+
+  // Hub 3 offers Freya exactly one choice, into Volition's thought, after
+  // Benjamin has moved them both there. That single choice has to read as
+  // CONTINUE and name both of her keys.
+  Engine engine;
+  engine.load_config(read_file("speakers.json"));
+  engine.load_conversation("jail", read_file("jail.json"));
+  NameId conversation = engine.name("jail");
+  Position start = engine.find_tag("start");
+  ActorId freya = engine.add_actor(conversation, start, "Freya");
+  ActorId ben = engine.add_actor(conversation, start, "Benjamin");
+  engine.drain_events();
+
+  Viewport left;
+  left.actor = freya;
+  left.display_name = "Freya";
+  Viewport right;
+  right.actor = ben;
+  right.display_name = "REDACTED";
+  DialogueView view(&engine, left, right);
+  view.consume({});
+
+  CHECK(view.right().choices.size() == 4, "Benjamin should lead with four choices, saw %zu",
+        view.right().choices.size());
+  CHECK(!view.left().is_continue(), "with four choices on the other side, Freya is not continuing");
+
+  view.handle_key('q');  // Benjamin: 0 -> 3, Freya dragged along
+
+  CHECK(view.left().position == 3, "Freya should be at 3, got %d", view.left().position);
+  CHECK(view.left().choices.size() == 1, "Freya should have one choice at 3, saw %zu",
+        view.left().choices.size());
+  CHECK(view.left().is_continue(), "a side with one choice should be in the continue state");
+
+  Frame frame = louder_demo::render(view, view.left(), view.right(), 80, 24);
+
+  bool found = false;
+  for (size_t row = 0; row < frame.rows.size(); ++row) {
+    if (frame.rows[row].left.find(louder_demo::kContinueLabel) != std::string::npos) {
+      found = true;
+      CHECK(frame.rows[row].left.find("1") != std::string::npos,
+            "the CONTINUE line should name her number key, got '%s'", frame.rows[row].left.c_str());
+      CHECK(frame.rows[row].left.find("backtick") != std::string::npos,
+            "the CONTINUE line should name her backtick, got '%s'", frame.rows[row].left.c_str());
+      CHECK(frame.rows[row].left.find("Volition") == std::string::npos,
+            "the choice's own text should be replaced by CONTINUE, got '%s'",
+            frame.rows[row].left.c_str());
+    }
+  }
+  CHECK(found, "Freya's column should show CONTINUE");
+
+  // Benjamin has no choices here, so his column must not claim to be continuing
+  // and must not name a CONTINUE key.
+  for (size_t row = 0; row < frame.rows.size(); ++row) {
+    CHECK(frame.rows[row].right.find(louder_demo::kContinueLabel) == std::string::npos,
+          "a side with no choices should not show CONTINUE, got '%s'",
+          frame.rows[row].right.c_str());
+  }
+}
+
+void TestContinueKeyIsOnlyLiveInTheContinueState() {
+  std::printf("the CONTINUE key is inert otherwise\n");
+
+  // The backtick and Tab are context sensitive: with several choices they must
+  // do nothing at all, not move an actor and not raise an error.
+  Fixture f;
+  CHECK(f.view().right().choices.size() == 4, "the premise is four choices on the right");
+
+  size_t errors_before = f.view().errors().size();
+  Position left_before = f.view().left().position;
+  Position right_before = f.view().right().position;
+
+  CHECK(!f.view().handle_key(louder_demo::kLeftContinueKey),
+        "the backtick should not be claimed while Freya has several choices");
+  CHECK(!f.view().handle_key(louder_demo::kRightContinueKey),
+        "Tab should not be claimed while Benjamin has several choices");
+
+  CHECK(f.view().errors().size() == errors_before,
+        "an inert continue key should not be reported as an error, saw %zu new",
+        f.view().errors().size() - errors_before);
+  CHECK(f.view().left().position == left_before, "Freya should not have moved");
+  CHECK(f.view().right().position == right_before, "Benjamin should not have moved");
 }
 
 void TestErrorsAreShownOnTheOffendingSide() {
@@ -304,6 +427,8 @@ int main() {
   TestHeaderNamesBothColumnsWithTheirKeys();
   TestChoicesAreKeyedInOrder();
   TestIdleSideSaysWhoIsThinking();
+  TestSingleChoiceRendersAsContinue();
+  TestContinueKeyIsOnlyLiveInTheContinueState();
   TestStalledSideSaysSo();
   TestErrorsAreShownOnTheOffendingSide();
   TestFooterAlwaysOffersAWayOut();

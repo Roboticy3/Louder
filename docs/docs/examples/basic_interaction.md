@@ -23,6 +23,7 @@ And demonstrates the ability of an interface to:
  - Relay choices to the engine
  - Show if the other view has choices currently by printing "Benjamin is thinking" in Freya's column or "Freya is thinking" in Benjamin's column respectively.
  - Aliasing. "Benjamin" appears as REDACTED to both parties despite being named in the config.
+ - Continuing. When only 1 choice is available, it should be rendered as "CONTINUE", and bound to both 1 and ` for Freya and both q and Tab for Benjamin.
 
 Even in this simple example, there are some subtleties to the engine that stand
 out. The "Note" nodes in the conversation explain specific examples of these cases in more detail:

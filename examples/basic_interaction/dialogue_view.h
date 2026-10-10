@@ -21,6 +21,23 @@ namespace louder_demo {
 constexpr char kLeftKeys[] = {'1', '2', '3', '4', '5', '6', '7', '8', '9'};
 constexpr char kRightKeys[] = {'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'};
 
+// A side with exactly one choice available is not making a decision, so the spec
+// asks for that choice to be presented as CONTINUE and bound to both of that
+// side's keys: 1 and ` for Freya, q and Tab for Benjamin.
+//
+// These keys only mean anything in that state. Pressing them while the side has
+// several choices is ignored rather than reported, since they are context
+// sensitive and not really mistyped.
+constexpr char kLeftContinueKey = '`';
+constexpr char kRightContinueKey = '\t';
+
+// What the single available choice is labelled on screen, and how the extra key
+// is named to the player. The backtick and the word "backtick" both read badly,
+// so it is spelled out.
+constexpr const char* kContinueLabel = "CONTINUE";
+constexpr const char* kLeftContinueKeyName = "backtick (`)";
+constexpr const char* kRightContinueKeyName = "Tab";
+
 // What a column needs to know about its owner, which the engine supplies.
 struct Viewport {
   // The engine actor id behind this column.
@@ -47,8 +64,27 @@ struct Viewport {
   // The choices this actor may take, in visible order.
   std::vector<Choice> choices;
 
-  // Set when the engine refused the last choice this actor tried to make.
+// Set when the engine refused the last choice this actor tried to make.
   std::string error;
+
+  // The extra key bound to this side's CONTINUE choice, and its name for the
+  // player. Empty when the side is not in the single-choice state.
+  char continue_key = '\0';
+  std::string continue_key_name;
+
+  // True when this side has exactly one choice available and is therefore
+  // showing CONTINUE rather than the choice's own text.
+  bool is_continue() const { return choices.size() == 1; }
+
+  // This side's number keys, so that rendering knows which block to label
+  // choices with. Freya's column uses 1..9 and Benjamin's uses q..p.
+  const char* number_keys = kLeftKeys;
+  size_t number_key_count = sizeof(kLeftKeys) - 1;
+
+  // The key that selects visible choice `index`, numbering the visible list.
+  char key_for(size_t index) const {
+    return index < number_key_count ? number_keys[index] : '?';
+  }
 };
 
 // One thing that happened, in a form the view can react to without knowing the

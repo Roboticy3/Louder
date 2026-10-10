@@ -23,6 +23,18 @@ const Motion& motion_of(const LouderEvent& event) {
 DialogueView::DialogueView(Engine* engine, Viewport left, Viewport right)
     : engine_(engine), left_(std::move(left)), right_(std::move(right)) {
   conversation_ = engine_->name("jail");
+
+  // Each column gets its own number keys and its own CONTINUE key, so the two
+  // sides can never both answer to the same key.
+  left_.number_keys = kLeftKeys;
+  left_.number_key_count = sizeof(kLeftKeys) - 1;
+  left_.continue_key = kLeftContinueKey;
+  left_.continue_key_name = kLeftContinueKeyName;
+
+  right_.number_keys = kRightKeys;
+  right_.number_key_count = sizeof(kRightKeys) - 1;
+  right_.continue_key = kRightContinueKey;
+  right_.continue_key_name = kRightContinueKeyName;
 }
 
 int DialogueView::side_for_key(char key) {
@@ -35,6 +47,13 @@ int DialogueView::side_for_key(char key) {
     if (key == kRightKeys[i]) {
       return 1;
     }
+  }
+  // The CONTINUE keys belong to a fixed side each, so a Tab is never ambiguous.
+  if (key == kLeftContinueKey) {
+    return 0;
+  }
+  if (key == kRightContinueKey) {
+    return 1;
   }
   return -1;
 }
@@ -178,11 +197,21 @@ bool DialogueView::handle_key(char key) {
 
   Viewport& viewport = side == 0 ? left_ : right_;
 
+  // The extra CONTINUE key is only meaningful while this side has exactly one
+  // choice. Otherwise it is not a mistyped choice key but a context-sensitive
+  // one, so it is ignored rather than reported as an error.
+  if (key == viewport.continue_key && !viewport.is_continue()) {
+    return false;
+  }
+
   // The number on screen is the index into this actor's *visible* choices. The
   // engine wants the index into the hub's full choice list, which conversation
   // logic has offset by hiding some of them. Conflating the two is the classic
   // mistake this example exists to demonstrate, so the mapping is explicit.
-  int visible_index = key_index_for(key);
+  //
+  // In the single-choice state the extra key also selects that one choice, so it
+  // maps to visible index 0.
+  int visible_index = key == viewport.continue_key ? 0 : key_index_for(key);
   if (visible_index < 0 || visible_index >= static_cast<int>(viewport.choices.size())) {
     fail(viewport, "no choice " + std::string(1, key) + " for " + viewport.display_name);
     return true;

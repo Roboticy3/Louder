@@ -251,6 +251,11 @@ impl Simulator {
   /// deciding. The spoke rule additionally allows a lone choice on a hub when
   /// the actor has any claim to the speaker at all, which is what stops linear
   /// dialogue from handing the lead back and forth between every actor.
+  ///
+  /// A claim is measured against [`Self::speakers_heard_by`], the same set
+  /// [`Self::hub_appears`] uses, so that an actor is never shown a hub it has no
+  /// way to move on from. An actor that hears a speaker only through the
+  /// speaker it plays can therefore be led by that voice.
   pub fn choice_available(
     context: &LouderContext,
     conversation: LouderName,
@@ -258,7 +263,7 @@ impl Simulator {
     hub_position: LouderPosition,
     choice_index: usize,
   ) -> bool {
-    let (hub, target, is_debug, is_spectator, speak_as_list, listen_to_list) = {
+    let (hub, target, is_debug, is_spectator, speak_as_list) = {
       let Some(conversation_ref) = context.get_conversation(conversation) else {
         return false;
       };
@@ -280,7 +285,6 @@ impl Simulator {
         entry.is_debug(),
         entry.is_spectator(),
         entry.speak_as().to_vec(),
-        entry.listen_to().to_vec(),
       )
     };
 
@@ -301,14 +305,22 @@ impl Simulator {
     }
 
     let speaker = target.speaker();
+    // The speak-as list still matters on its own: an actor leading as a speaker
+    // is never subject to the spoke rule.
     let speak_as = speak_as_list.contains(&speaker);
-    let listen_to = listen_to_list.contains(&speaker);
     let taken = Self::speaker_is_taken(context, conversation, speaker);
     let is_public = speaker == LOUDER_NAME_NONE || context.is_speaker_public(speaker);
 
+    // Listening reaches further than the actor's own list. Speaking as a speaker
+    // drags in whatever that speaker is listening to, so an actor can be led by
+    // a voice it only hears through the one it plays. This is the same heard set
+    // that decides whether the hub appears at all, and the two must agree: a hub
+    // an actor can see but no choice can reach would dead-end the conversation.
+    let heard = Self::speakers_heard_by(context, conversation, actor);
+    let listen_to = heard.contains(&speaker);
+
     // Recipients stand in for the speaker when deciding who may decide.
     let claim = if target.has_recipients() {
-      let heard = Self::speakers_heard_by(context, conversation, actor);
       target.recipients().iter().any(|r| heard.contains(r))
     } else {
       speak_as || listen_to || is_public

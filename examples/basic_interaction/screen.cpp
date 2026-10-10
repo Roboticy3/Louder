@@ -21,6 +21,29 @@ constexpr int kMaxColumnWidth = 58;
 // Rows reserved below the body: one blank, then the footer.
 constexpr int kReservedRows = 2;
 
+// The label and key hint for a choice list.
+//
+// A side with exactly one choice available is not deciding anything, so the spec
+// asks for it to read CONTINUE rather than the choice's own text, and for both of
+// that side's keys to be named. Anything else keeps the choice's own text and
+// its numbered key.
+struct ChoiceLabel {
+  std::string text;
+  std::string keys;
+};
+
+ChoiceLabel label_for(const Viewport& viewport, size_t index) {
+  ChoiceLabel label;
+  if (viewport.is_continue()) {
+    label.text = kContinueLabel;
+    label.keys = std::string(1, viewport.key_for(index)) + " or " + viewport.continue_key_name;
+    return label;
+  }
+  label.text = viewport.choices[index].text;
+  label.keys = std::string(1, viewport.key_for(index));
+  return label;
+}
+
 // How many characters of styling to wrap a run in.
 const char* style_code(Style style) {
   switch (style) {
@@ -94,11 +117,7 @@ struct BodyLine {
 };
 
 // Render one column into lines of text, without the header.
-//
-// `keys` is the key column for that side, indexed by position in the visible
-// choice list, so choice 0 gets keys[0] rather than the column's header key.
-std::vector<BodyLine> column_body(const Viewport& viewport, const Viewport& other,
-                              const char* keys, int width) {
+std::vector<BodyLine> column_body(const Viewport& viewport, const Viewport& other, int width) {
   std::vector<BodyLine> lines;
 
   if (!viewport.has_position) {
@@ -141,21 +160,17 @@ std::vector<BodyLine> column_body(const Viewport& viewport, const Viewport& othe
     return lines;
   }
 
-  lines.push_back({"", Style::Normal});
+lines.push_back({"", Style::Normal});
   for (size_t i = 0; i < viewport.choices.size(); ++i) {
-    size_t key_index = i;
-    char key = '?';
-    for (size_t k = 0; kRightKeys[k] != '\0'; ++k) {
-      if (k == key_index) {
-        key = keys[k];
-      }
-    }
+    ChoiceLabel label = label_for(viewport, i);
 
-    std::string prefix = std::string(1, key) + ") ";
-    std::vector<std::string> wrapped = wrap(prefix + viewport.choices[i].text, width);
+    // "[1 or backtick (`)] CONTINUE" in the single-choice state, and just
+    // "[1] <choice text>" otherwise. Naming the keys here is what makes the
+    // CONTINUE binding discoverable without a manual.
+    std::string prefix = "[" + label.keys + "] ";
+    std::vector<std::string> wrapped = wrap(prefix + label.text, width);
     for (size_t row = 0; row < wrapped.size(); ++row) {
-      // Continuation rows line up under the choice text rather than under the
-      // key.
+      // Continuation rows line up under the label rather than under the keys.
       std::string text = row == 0 ? wrapped[row] : std::string(prefix.size(), ' ') + wrapped[row];
       lines.push_back({truncate(text, width), Style::Normal});
     }
@@ -187,8 +202,8 @@ Frame render(const DialogueView& view, const Viewport& left, const Viewport& rig
   header.right_style = Style::Bold;
   frame.rows.push_back(header);
 
-  std::vector<BodyLine> left_lines = column_body(left, right, kLeftKeys, column_width);
-  std::vector<BodyLine> right_lines = column_body(right, left, kRightKeys, column_width);
+std::vector<BodyLine> left_lines = column_body(left, right, column_width);
+  std::vector<BodyLine> right_lines = column_body(right, left, column_width);
 
   // How many body rows fit between the header and the footer.
   const int body_capacity = std::max(height - 1 - kReservedRows, 0);
