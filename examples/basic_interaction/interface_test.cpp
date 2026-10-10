@@ -285,11 +285,34 @@ void TestHiddenChoicesOffsetTheVisibleList() {
 
     // 'q' is his first visible choice, engine index 0, which leads into the
     // auto hub 27. Auto hubs are never rested on, so he comes out the far side.
+    //
+    // Which far side is the whole point of that hub. Its first branch leads to
+    // hub 29, which is Memory's, and Benjamin's config lists Memory among the
+    // speakers he listens to, so that branch is available to him and auto logic
+    // takes it. He lands on 29, not on 28, which is the line he said out loud.
     CHECK(view.handle_key('q'), "'q' should be acted on");
-    CHECK(view.right().position == 28,
-          "'q' should enter auto hub 27 and come out at 28, got %d", view.right().position);
+    CHECK(view.right().position == 29,
+          "'q' should enter auto hub 27 and come out at 29, got %d", view.right().position);
     CHECK(view.errors().empty(), "the move should not error, saw: %s",
           view.errors().empty() ? "" : view.errors().back().c_str());
+
+    // Freya follows him through the same auto hub, but she does not listen to
+    // Memory, so branch 29 is not hers. Hub 28 is Benjamin's public line, so it
+    // appears to her and it is where she lands. The two actors deliberately end
+    // up apart: he hears the thought, she hears only the spoken line, which is
+    // how the conversation keeps his lie from her.
+    CHECK(view.left().position == 28,
+          "Freya should be carried through auto hub 27 to the public line at 28, got %d",
+          view.left().position);
+    CHECK(view.left().choices.size() == 1,
+          "Freya should have hub 28's single choice out, saw %zu",
+          view.left().choices.size());
+    CHECK(view.left().choices.empty() || view.left().choices[0].link == 31,
+          "and that choice should lead to 31, got %d",
+          view.left().choices.empty() ? -1 : view.left().choices[0].link);
+    CHECK(view.right().choices.empty(),
+          "Benjamin should have nothing to choose at hub 29, which has no exits, saw %zu",
+          view.right().choices.size());
 
     // 'w', the second visible choice, is engine index 1 and leads straight to 30.
     Engine engine2;
