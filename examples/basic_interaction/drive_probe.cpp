@@ -70,8 +70,10 @@ int main(int argc, char** argv) {
   std::printf("=== initial (console %dx%d) ===\n", width, height);
   print_frame(render(view, view.left(), view.right(), width, height), width, height);
 
-  // A plausible play sequence: Benjamin leads from the start hub.
-  const char* keys = "qqqqq";
+  // A plausible play sequence. Benjamin leads from the start hub with q, which
+  // leaves Freya a single CONTINUE into her Volition thought; she takes it with
+  // her backtick key rather than 1, to exercise the second binding.
+  const char* keys = "q`ww1";
   for (int i = 0; keys[i] != '\0'; ++i) {
     std::printf("=== after '%c' ===\n", keys[i]);
     bool handled = view.handle_key(keys[i]);
