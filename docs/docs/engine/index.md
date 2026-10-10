@@ -158,7 +158,15 @@ When one actor, the "source," warps to another, the "target," they will change t
 and change all information they have that depends on the hub at their position
 to match the hub under the target.
 
-If the warping is happening due to the target making a choice, the source is warped instead to the result of the source actor making the same choice on the same position that the target just did. This is the main mechanism by which splitting happens between actors, since the replayed choice can end up going down different paths through Auto logic.
+If the warping is happening due to the target leaving an Auto hub, the source is warped instead to the result of the source actor making passing through the same Auto hub. This special "emulation" warp choice can be made regardless of whether the Auto hub should be available to the source actor. This is the main mechanism by which splitting happens between actors, since the replayed choice can end up going down different paths through Auto logic.
+
+An emulating actor is not deciding anything, so the first branch available to
+it may be none: every branch may be a voice someone else is playing, which is
+exactly the case where the Auto hub is meant to send the two actors apart. The
+source then takes the first branch that would *appear* to it, and only if no
+branch appears either does it end up where the target did. The source is
+therefore gated on its own landing rather than the target's, since the two are
+the whole point of the split.
 
 ## Changing position
 Simply changing the position of an actor is relatively simple. If the actor lands
@@ -295,7 +303,7 @@ Speakers:
 3: "Speaker B"
 
 Choices:
-0: "Choice index 0" -> 1
+0: "A Choice to Make" -> 1
 1: "(invisible choice 1)" -> 2, "(invisible choice 2)" -> 3
 2: "Finish Conversation" -> 4
 
@@ -362,11 +370,7 @@ Therefore:
 
 Now, the warping logic happens. 
  1. Because Actor 0 started in channel "main", the same channel as actor 1, actor 1 warps to actor 0. 
- 2. Because Actor 0 started from the same position as Actor 1, the warp is an emulation warp.
-Therefore, "Choice index 0" is forced on Actor 1.
-
-Choice at index 0:
- - One hub appearance event happens immediately for actor 2: the Auto node 1. This is ignored by the other actors.
+ 2. Because Actor 0 moved into an Auto hub, this is an emulation warp of actor 1 through hub 1.
 
 Auto logic happens again, but this time the first choice does not pass.
 "(invisible choice 1)" may *not* appear to actor 1 because:

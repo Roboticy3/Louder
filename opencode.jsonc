@@ -2,26 +2,34 @@
   "$schema": "https://opencode.ai/config.json",
   "permission": {
     "bash": {
-      "*": "ask",
-
-      "rm *": "deny",
-      "git *": "deny",
+      "*": "deny",
 
       "cargo *": "allow",
       "g++ *": "allow",
+      "python *": "allow",
+      "go *": "allow",
+      "node *": "allow",
+      "java*": "allow",
 
       "Get-*": "allow",
       "Set-*": "allow",
       "Select-*": "allow",
       "Foreach-*": "allow",
+      "Where-*": "allow",
       "Copy-*": "allow",
+      "Out-*": "allow",
 
-      ".*\\build*": "allow",
+      ".\\*ps1": "allow",
+      ".\\*exe": "allow",
+
+      "*cpp *": "allow",
 
     },
     "read": {
       "*": "ask",
-      "*src*": "allow",
+      "docs/*": "allow",
+      "engine/*": "allow",
+      "examples/*": "allow",
       "editor/*.gd": "allow",
       "editor/*.tscn": "allow",
       "editor/*.tres": "allow",

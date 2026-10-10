@@ -1,0 +1,152 @@
+[
+	{
+		"flags": 0,
+		"listening": "",
+		"name": "Heart",
+		"type": "speaker"
+	},
+	{
+		"flags": 0,
+		"listening": "",
+		"name": "Stars",
+		"type": "speaker"
+	},
+	{
+		"flags": 0,
+		"listening": "",
+		"name": "Planets",
+		"type": "speaker"
+	},
+	{
+		"flags": 0,
+		"listening": "",
+		"name": "Memory",
+		"type": "speaker"
+	},
+	{
+		"flags": 0,
+		"listening": "",
+		"name": "Rhythm",
+		"type": "speaker"
+	},
+	{
+		"flags": 1,
+		"listening": "",
+		"name": "Fosser",
+		"type": "speaker"
+	},
+	{
+		"flags": 0,
+		"listening": "",
+		"name": "Note",
+		"type": "speaker"
+	},
+	{
+		"flags": 0,
+		"listening": "",
+		"name": "Life",
+		"type": "speaker"
+	},
+	{
+		"flags": 0,
+		"listening": "",
+		"name": "Strategy",
+		"type": "speaker"
+	},
+	{
+		"flags": 0,
+		"listening": "",
+		"name": "Sight",
+		"type": "speaker"
+	},
+	{
+		"flags": 0,
+		"listening": "",
+		"name": "Structure",
+		"type": "speaker"
+	},
+	{
+		"flags": 0,
+		"listening": "",
+		"name": "Volition",
+		"type": "speaker"
+	},
+	{
+		"flags": 0,
+		"listening": "",
+		"name": "Future",
+		"type": "speaker"
+	},
+	{
+		"flags": 0,
+		"listening": "",
+		"name": "Death",
+		"type": "speaker"
+	},
+	{
+		"flags": 0,
+		"listening": "Cage\nInspiration\nGood\nRhetoric\nSpeed\nEvil",
+		"name": "Geno",
+		"type": "speaker"
+	},
+	{
+		"flags": 1,
+		"listening": "Volition\nStructure\nSight\nStrategy\nLife\nDeath",
+		"name": "Freya",
+		"type": "speaker"
+	},
+	{
+		"flags": 1,
+		"listening": "Power\nSoul\nBody\nNervous System\nIntegumetary System\nSkeletal System",
+		"name": "Reka",
+		"type": "speaker"
+	},
+	{
+		"flags": 0,
+		"listening": "",
+		"name": "Power",
+		"type": "speaker"
+	},
+	{
+		"flags": 0,
+		"listening": "",
+		"name": "Soul",
+		"type": "speaker"
+	},
+	{
+		"flags": 0,
+		"listening": "",
+		"name": "Body",
+		"type": "speaker"
+	},
+	{
+		"flags": 0,
+		"listening": "",
+		"name": "Nervous System",
+		"type": "speaker"
+	},
+	{
+		"flags": 0,
+		"listening": "",
+		"name": "Integumetary System",
+		"type": "speaker"
+	},
+	{
+		"flags": 0,
+		"listening": "",
+		"name": "Skeletal System",
+		"type": "speaker"
+	},
+	{
+		"flags": 0,
+		"listening": "",
+		"name": "Cage",
+		"type": "speaker"
+	},
+	{
+		"flags": 1,
+		"listening": "Heart\nStars\nPlanets\nMemory\nRhythm\nFuture",
+		"name": "Benjamin",
+		"type": "speaker"
+	}
+]
