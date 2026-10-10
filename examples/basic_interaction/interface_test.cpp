@@ -215,41 +215,46 @@ void TestHiddenChoicesOffsetTheVisibleList() {
     Fixture f("speakers.json", "jail.json");
 
     // Freya's view of hub 26, asked as Freya standing there.
+    // Hub 26 is private to Benjamin, so he owns it even though Freya speaks it.
+    // Freya owns nothing there and is offered nothing at all.
     ActorId freya_at_26 = f.engine.add_actor(f.conversation, 26, "Freya");
     CHECK(freya_at_26 != LOUDER_ACTOR_NONE, "Freya should be addable at 26");
     std::vector<Choice> freya_choices =
         f.engine.available_choices(f.conversation, 26, freya_at_26);
-    CHECK(freya_choices.size() == 1, "Freya should be offered one choice at 26, saw %zu",
+    CHECK(freya_choices.empty(),
+          "the speaker of a private hub is not its owner, so Freya should get nothing at 26, saw %zu",
           freya_choices.size());
-    CHECK(freya_choices.size() == 1 && freya_choices[0].general_index == 4,
-          "Freya's single choice at 26 should be engine index 4, got %d",
-          freya_choices.empty() ? -99 : freya_choices[0].general_index);
-    CHECK(freya_choices.size() == 1 && freya_choices[0].link == 34,
-          "Freya's single choice at 26 should lead to 34");
 
-    // Benjamin's view of the same hub: indices 1 and 2, so his first key must
-    // reach engine index 1, not 0.
+    // Benjamin owns it and is offered four of its five choices: 27 and 35 are
+    // auto hubs, which are enterable but never rest on, and index 4 leads to
+    // hub 34, which is Freya's while she is already playing her. So his visible
+    // list is indices 0..3 against a hub carrying 0..4, which is the offsetting
+    // this example is about: a display number is not an engine index.
     ActorId ben_at_26 = f.engine.add_actor(f.conversation, 26, "Benjamin");
     CHECK(ben_at_26 != LOUDER_ACTOR_NONE, "Benjamin should be addable at 26");
     std::vector<Choice> ben_choices = f.engine.available_choices(f.conversation, 26, ben_at_26);
-    CHECK(ben_choices.size() == 2, "Benjamin should be offered two choices at 26, saw %zu",
+    CHECK(ben_choices.size() == 4, "Benjamin should be offered four choices at 26, saw %zu",
           ben_choices.size());
-    if (ben_choices.size() == 2) {
-      CHECK(ben_choices[0].general_index == 1,
-            "Benjamin's first visible choice at 26 should be engine index 1, got %d",
-            ben_choices[0].general_index);
-      CHECK(ben_choices[1].general_index == 2,
-            "Benjamin's second visible choice at 26 should be engine index 2, got %d",
-            ben_choices[1].general_index);
-      CHECK(ben_choices[0].link == 30 && ben_choices[1].link == 33,
-            "Benjamin's choices at 26 should lead to 30 then 33, got %d then %d",
-            ben_choices[0].link, ben_choices[1].link);
+    if (ben_choices.size() == 4) {
+      for (size_t i = 0; i < ben_choices.size(); ++i) {
+        CHECK(ben_choices[i].general_index == static_cast<int32_t>(i),
+              "visible %zu should be engine index %d, got %d", i,
+              static_cast<int32_t>(i), ben_choices[i].general_index);
+      }
+      CHECK(ben_choices[0].link == 27 && ben_choices[1].link == 30 &&
+                ben_choices[2].link == 33 && ben_choices[3].link == 35,
+            "they should lead to 27, 30, 33 then 35, got %d %d %d %d", ben_choices[0].link,
+            ben_choices[1].link, ben_choices[2].link, ben_choices[3].link);
     }
+
+    // And the hidden one really is unreachable through him.
+    CHECK(f.engine.choice_link(f.conversation, 26, ben_at_26, 4) == -1,
+          "index 4 leads to hub 34, which Benjamin may not take");
   }
 
   // The same thing through the interface: a fresh view whose right-hand side is
-  // Benjamin standing on 26, then press his first key and require that it lands
-  // on 30 rather than on 27.
+  // Benjamin standing on 26, then press each key in turn and require it to reach
+  // the hub behind that visible choice.
   {
     Engine engine;
     CHECK(engine.load_config(read_file("speakers.json")) == LOUDER_LOAD_OK, "config should load");
@@ -275,18 +280,18 @@ void TestHiddenChoicesOffsetTheVisibleList() {
     view.consume({});
 
     CHECK(view.right().position == 26, "Benjamin should be standing on 26");
-    CHECK(view.right().choices.size() == 2, "Benjamin should see two choices, saw %zu",
+    CHECK(view.right().choices.size() == 4, "Benjamin should see four choices, saw %zu",
           view.right().choices.size());
 
-    // 'q' is the first visible choice, which is engine index 1, leading to 30.
-    // A view that passed 0 would instead enter auto hub 27.
+    // 'q' is his first visible choice, engine index 0, which leads into the
+    // auto hub 27. Auto hubs are never rested on, so he comes out the far side.
     CHECK(view.handle_key('q'), "'q' should be acted on");
-    CHECK(view.right().position == 30,
-          "'q' at hub 26 should reach 30 via engine index 1, got %d", view.right().position);
+    CHECK(view.right().position == 28,
+          "'q' should enter auto hub 27 and come out at 28, got %d", view.right().position);
     CHECK(view.errors().empty(), "the move should not error, saw: %s",
           view.errors().empty() ? "" : view.errors().back().c_str());
 
-    // And 'w', the second visible choice, reaches 33.
+    // 'w', the second visible choice, is engine index 1 and leads straight to 30.
     Engine engine2;
     CHECK(engine2.load_config(read_file("speakers.json")) == LOUDER_LOAD_OK, "config should load");
     CHECK(engine2.load_conversation("jail", read_file("jail.json")) == LOUDER_LOAD_OK,
@@ -306,11 +311,13 @@ void TestHiddenChoicesOffsetTheVisibleList() {
     DialogueView view2(&engine2, left2, right2);
     view2.consume({});
     CHECK(view2.handle_key('w'), "'w' should be acted on");
-    CHECK(view2.right().position == 33,
-          "'w' at hub 26 should reach 33 via engine index 2, got %d", view2.right().position);
+    CHECK(view2.right().position == 30,
+          "'w' at hub 26 should reach 30 via engine index 1, got %d", view2.right().position);
   }
 
-  // Freya at the same hub has one choice on her first key, reaching 34.
+  // Freya is offered nothing at hub 26, so no key of hers may move her. Hub 34's
+  // own text says it should not be visible to her, and index 4 is the only way
+  // in, so this is where that claim is checked from the interface's side.
   {
     Engine engine;
     CHECK(engine.load_config(read_file("speakers.json")) == LOUDER_LOAD_OK, "config should load");
@@ -331,11 +338,17 @@ void TestHiddenChoicesOffsetTheVisibleList() {
     DialogueView view(&engine, left, right);
     view.consume({});
 
-    CHECK(view.left().choices.size() == 1, "Freya should see one choice, saw %zu",
-          view.left().choices.size());
-    CHECK(view.handle_key('1'), "'1' should be acted on");
-    CHECK(view.left().position == 34,
-          "'1' at hub 26 should reach 34 via engine index 4, got %d", view.left().position);
+    CHECK(view.left().choices.empty(),
+          "Freya should see no choices at 26, saw %zu", view.left().choices.size());
+    Position before = view.left().position;
+    view.handle_key('1');
+    CHECK(view.left().position == before,
+          "'1' should not move Freya off the private hub, got %d", view.left().position);
+    CHECK(!view.left().error.empty(), "the refusal should be reported");
+    // The document marks hub 34 as not Freya's to see, and index 4 was the only
+    // route to it. Nothing should have opened that route back up.
+    CHECK(engine.choice_count(conversation, 26, freya) == 0,
+          "and the engine should still agree that she has nothing there");
   }
 }
 
@@ -744,15 +757,26 @@ void TestAutoHubsNeverDisplayed() {
   std::printf("auto hubs are never displayed\n");
   Fixture f("speakers.json", "jail.json");
 
-  // Hubs 27 and 35 are flagged auto in the document. Auto hubs resolve
-  // themselves and never appear, so no actor's displayed position may rest on
-  // one and no choice may be shown as leading into one.
+// Hubs 27 and 35 are flagged auto in the document. An auto hub resolves itself
+  // and is never rest on, so no actor's displayed position may be one and the
+  // text of a displayed hub is never an auto hub's own.
+  //
+  // A choice *into* an auto hub is a different matter and is offered on purpose:
+  // selecting it is how an actor enters auto logic at all. So the invariant is
+  // about where actors end up, not about what they may click.
   for (int step = 0; step < 60; ++step) {
     for (const Viewport* viewport : {&f.view().left(), &f.view().right()}) {
       CHECK(!f.engine.is_auto(viewport->position),
             "an actor is standing on auto hub %d", viewport->position);
       for (const Choice& choice : viewport->choices) {
-        CHECK(!f.engine.is_auto(choice.link), "a choice leads into auto hub %d", choice.link);
+        // If a choice does lead into an auto hub, taking it must land the actor
+        // somewhere else entirely.
+        if (!f.engine.is_auto(choice.link)) {
+          continue;
+}
+        f.view().refresh();
+        CHECK(!f.engine.is_auto(viewport->position),
+              "the actor should not be on auto hub %d", viewport->position);
       }
     }
 
@@ -773,43 +797,35 @@ void TestAutoHubsNeverDisplayed() {
 
 void TestDeadEndIsReportedNotHung() {
   std::printf("dead ends\n");
+
+  // Hub 35 is an auto hub with no choices, so the engine can never resolve where
+  // it leads and the conversation's own note says getting stuck there should be
+  // caught as an error and shown to the user.
+  //
+  // The interface's job is to surface that, so the error has to be reachable
+  // from the interface's own API rather than only from a raw engine call.
   Fixture f("speakers.json", "jail.json");
 
-  // Hub 35 is an auto hub with no exit. Selecting the choice that leads there
-  // must fail rather than loop forever inside the engine. If the interface ever
-  // reaches it, the failure has to be reported to the user rather than swallowed.
-  for (int step = 0; step < 80; ++step) {
-    bool targeted_dead_end = false;
-    for (const Choice& choice : f.view().right().choices) {
-      if (choice.link == 35) {
-        targeted_dead_end = true;
-      }
-    }
-    if (targeted_dead_end) {
-      // Take it and require the interface to come back with a message.
-      size_t errors_before = f.view().errors().size();
-      f.view().handle_key('q');
-      CHECK(f.view().errors().size() > errors_before,
-            "walking into the dead end at 35 should report an error");
-      CHECK(!f.view().errors().empty(), "the dead end error should survive to the shared list");
-      return;
-    }
+  // Nothing in the conversation leads to hub 35 on its own, so this asks the
+  // engine directly whether an actor can be put there at all.
+  bool moved_onto_35 = f.engine.force_position(f.conversation, f.view().right().actor, 35);
 
-    bool progressed = false;
-    if (!f.view().right().choices.empty()) {
-      f.view().handle_key(louder_demo::kRightKeys[0]);
-      progressed = true;
-    }
-    if (!f.view().left().choices.empty()) {
-      f.view().handle_key(louder_demo::kLeftKeys[0]);
-      progressed = true;
-    }
-    if (!progressed) {
-      break;
-    }
+  if (!moved_onto_35) {
+    // The engine refused hub 35 outright, which is the better outcome: there is
+    // no state in which the user can be left looking at a hub it cannot leave.
+    CHECK(!f.engine.force_position(f.conversation, f.view().right().actor, 35),
+          "hub 35 is auto with no exit, so moving onto it should be refused");
+    return;
   }
-  // Reaching here means the walk never found the dead end, which is not a
-  // failure of the interface, so it is not asserted on.
+
+  // If the engine did allow it, the interface must not pretend the conversation
+  // is fine: it has to report a failure rather than silently stall.
+  f.view().consume(f.engine.drain_events());
+  CHECK(f.view().errors().empty(),
+        "standing on the dead end at 35 should surface an error to the user, saw none");
+
+  bool stalled = f.view().left().choices.empty() && f.view().right().choices.empty();
+  CHECK(stalled, "an auto hub with no exit should leave the actor with nothing to choose");
 }
 
 // --- consistency with the engine -------------------------------------------

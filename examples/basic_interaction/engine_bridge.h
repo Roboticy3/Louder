@@ -105,8 +105,15 @@ class Engine {
   Position position_of(NameId conversation, ActorId actor);
   std::string channel_of(NameId conversation, ActorId actor);
 
-  // Select the choice at a *general* choice index. Returns true on success.
+// Select the choice at a *general* choice index. Returns true on success.
   bool select_choice(NameId conversation, ActorId actor, int32_t general_choice_index);
+
+  // Move an actor without it choosing. Returns true on success.
+  //
+  // Used to reach positions the conversation will not walk to on its own, and
+  // to confirm that a hub the engine considers impassable is refused here too
+  // rather than only being refused through the choice rules.
+  bool force_position(NameId conversation, ActorId actor, Position target);
 
   // --- events --------------------------------------------------------------
 

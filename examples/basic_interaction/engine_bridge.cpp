@@ -148,6 +148,10 @@ bool Engine::select_choice(NameId conversation, ActorId actor, int32_t general_c
   return ::select_choice(ctx_, conversation, actor, general_choice_index) == 0;
 }
 
+bool Engine::force_position(NameId conversation, ActorId actor, Position target) {
+  return ::force_position(ctx_, conversation, actor, target, LOUDER_NAME_NONE, 0) == 0;
+}
+
 std::vector<LouderEvent> Engine::drain_events() {
   std::vector<LouderEvent> events;
   for (size_t index = 0;; ++index) {
