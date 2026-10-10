@@ -1,9 +1,7 @@
 // End-to-end tests for the Louder engine, driven through the generated C++
 // header and the built DLL.
 //
-// Build (from the engine directory):
-//   g++ -std=c++17 -I artifacts tests/engine_test.cpp -o artifacts/engine_test.exe
-//   artifacts/engine_test.exe artifacts/louder_rust.dll
+// Run (from engine/ directory): ./build_and_test.ps1
 
 #include <cstdio>
 #include <cstring>
@@ -383,6 +381,151 @@ void TestChoices() {
         CountEventsOfKind(events, EventData::Tag::Callback));
 }
 
+// Hubs 1 and 2 are Auto and linked to each other, so an actor entering either
+// one walks the pair forever unless the engine refuses to re-enter an auto hub
+// it has already resolved through. Hub 4 is the control: an Auto hub with an
+// exit, which should still resolve.
+const char* AutoCycleJson() {
+  return R"([
+    {"type":"hub","conversation_id":0,"text":"Start","flags":0},
+    {"type":"hub","conversation_id":1,"text":"Loop A","flags":1},
+    {"type":"hub","conversation_id":2,"text":"Loop B","flags":1},
+    {"type":"hub","conversation_id":3,"text":"Out","flags":0},
+    {"type":"hub","conversation_id":4,"text":"Step","flags":1},
+    {"type":"connection","from_id":0,"from_port":0,"to_id":1},
+    {"type":"connection","from_id":1,"from_port":0,"to_id":2},
+    {"type":"connection","from_id":2,"from_port":0,"to_id":1},
+    {"type":"connection","from_id":4,"from_port":0,"to_id":3}
+  ])";
+}
+
+// Two actors in one channel choosing against each other. Actor 0 moving makes
+// actor 1 a follower, and actor 1 moving would make actor 0 a follower again,
+// so an unguarded engine recurses until the stack gives out.
+void TestWarpRecursion() {
+  std::printf("warp recursion\n");
+
+  LouderName conversation = Declare("warp conversation");
+  std::string json = ConversationJson();
+  LoadError error = load_conversation_json(g_ctx, conversation,
+                                           reinterpret_cast<uint8_t*>(&json[0]), json.size(), 0);
+  CHECK(error == 0, "loading the conversation returned %d", error);
+
+  LouderName a = Lookup("A");
+  LouderName b = Lookup("B");
+  LouderName speak_a[1] = {a};
+  LouderName speak_b[1] = {b};
+
+  // Both start on the main channel at the same hub, which is the setup from the
+  // engine guide: they can each see where the other lands.
+  LouderActor first = add_actor(g_ctx, conversation, 0, ActorFlags(), speak_a, 1, nullptr, 0);
+  LouderActor second = add_actor(g_ctx, conversation, 0, ActorFlags(), speak_b, 1, nullptr, 0);
+  CHECK(first == 0 && second == 1, "the two actors should get ids 0 and 1, got %d and %d", first, second);
+  CHECK(ReadName(get_actor_channel(g_ctx, conversation, second)) == "main",
+        "both actors should start on the main channel");
+
+  flush_events(g_ctx);
+
+  // Hub 5 has no speaker, so it is public and appears to the second actor. The
+  // move must terminate rather than trading the pair back and forth.
+  CHECK(select_choice(g_ctx, conversation, first, 0) == 0, "the choice should be accepted");
+  CHECK(get_actor_position(g_ctx, conversation, first) == 5, "the chooser should have moved to hub 5");
+  CHECK(get_actor_position(g_ctx, conversation, second) == 5,
+        "the follower should have been warped to hub 5, saw %d",
+        get_actor_position(g_ctx, conversation, second));
+
+  // The warp is reported as a warp rather than as the follower choosing, which
+  // is how a host tells the two apart.
+  std::vector<LouderEvent> events = DrainEvents();
+  CHECK(CountEventsOfKind(events, EventData::Tag::Warp) == 1,
+        "the follower should be announced with one warp event, saw %d",
+        CountEventsOfKind(events, EventData::Tag::Warp));
+  CHECK(CountEventsOfKind(events, EventData::Tag::RegularMotion) == 1,
+        "the chooser should be announced with one regular motion, saw %d",
+        CountEventsOfKind(events, EventData::Tag::RegularMotion));
+
+  // Having settled together, neither should pull the other anywhere on the
+  // next choice, and the cascade should still terminate.
+  flush_events(g_ctx);
+  CHECK(select_choice(g_ctx, conversation, second, 0) == 0, "the second actor should be able to choose");
+  CHECK(get_actor_position(g_ctx, conversation, first) == 9, "the first actor should follow to hub 9");
+  CHECK(get_actor_position(g_ctx, conversation, second) == 9, "the second actor should be at hub 9");
+  events = DrainEvents();
+  CHECK(CountEventsOfKind(events, EventData::Tag::Warp) == 1,
+        "exactly one actor should have been warped, saw %d",
+        CountEventsOfKind(events, EventData::Tag::Warp));
+
+  // A third actor forced into the same channel starts a fresh cascade, and the
+  // guide says the others follow it, so both are expected to be pulled along
+  // exactly once each.
+  flush_events(g_ctx);
+  LouderActor third = add_actor(g_ctx, conversation, 0, ActorFlags(), speak_b, 1, nullptr, 0);
+  CHECK(force_position(g_ctx, conversation, third, 5, LOUDER_NAME_NONE, 0) == 0,
+        "a third actor should be able to move into the settled flow");
+  CHECK(get_actor_position(g_ctx, conversation, third) == 5, "the forced actor should be at hub 5");
+  CHECK(get_actor_position(g_ctx, conversation, first) == 5,
+        "the first actor should have followed to hub 5, saw %d",
+        get_actor_position(g_ctx, conversation, first));
+  CHECK(get_actor_position(g_ctx, conversation, second) == 5,
+        "the second actor should have followed to hub 5, saw %d",
+        get_actor_position(g_ctx, conversation, second));
+
+  events = DrainEvents();
+  CHECK(CountEventsOfKind(events, EventData::Tag::Warp) == 2,
+        "each of the two settled actors should be warped exactly once, saw %d",
+        CountEventsOfKind(events, EventData::Tag::Warp));
+  CHECK(CountEventsOfKind(events, EventData::Tag::ForceMotion) == 1,
+        "only the forced actor should report a forced motion, saw %d",
+        CountEventsOfKind(events, EventData::Tag::ForceMotion));
+}
+
+// An auto hub that leads back to itself, directly or through a partner, has no
+// exit. The engine has to give up on it rather than resolving it forever.
+void TestAutoCycle() {
+  std::printf("auto hub cycle\n");
+
+  LouderName conversation = Declare("auto cycle conversation");
+  std::string json = AutoCycleJson();
+  LoadError error = load_conversation_json(g_ctx, conversation,
+                                           reinterpret_cast<uint8_t*>(&json[0]), json.size(), 0);
+  CHECK(error == 0, "loading the conversation returned %d", error);
+
+  LouderName speak_a[1] = {Lookup("A")};
+  LouderActor actor = add_actor(g_ctx, conversation, 0, ActorFlags(), speak_a, 1, nullptr, 0);
+  CHECK(actor == 0, "the actor should get id 0");
+
+  flush_events(g_ctx);
+
+  // Hub 0 links to the auto cycle, so entering it walks 1 -> 2 -> 1 and has to
+  // stop rather than spin.
+  CHECK(force_position(g_ctx, conversation, actor, 1, LOUDER_NAME_NONE, 0) != 0,
+        "entering a closed cycle of auto hubs should be refused");
+  CHECK(get_actor_position(g_ctx, conversation, actor) == 0,
+        "a refused move should leave the actor where it was, saw %d",
+        get_actor_position(g_ctx, conversation, actor));
+
+  // The refusal is about the cycle, not about auto hubs generally: hub 4 is
+  // auto as well but leads out to hub 3, so it resolves normally.
+  flush_events(g_ctx);
+  CHECK(force_position(g_ctx, conversation, actor, 4, LOUDER_NAME_NONE, 0) == 0,
+        "an auto hub with an exit should resolve");
+  CHECK(get_actor_position(g_ctx, conversation, actor) == 3,
+        "resolving through hub 4 should land on hub 3, saw %d",
+        get_actor_position(g_ctx, conversation, actor));
+
+  // An auto hub is never something an actor can choose onto, so the one choice
+  // on hub 0 offers nothing, and choosing is refused rather than looping.
+  flush_events(g_ctx);
+  CHECK(get_hub_choice_count(g_ctx, conversation, 0, actor) == 0,
+        "a choice onto an auto hub should not be offered, saw %d",
+        get_hub_choice_count(g_ctx, conversation, 0, actor));
+  CHECK(select_choice(g_ctx, conversation, actor, 0) != 0,
+        "choosing onto an auto hub should be refused");
+  CHECK(get_actor_position(g_ctx, conversation, actor) == 3,
+        "a refused choice should leave the actor where it was, saw %d",
+        get_actor_position(g_ctx, conversation, actor));
+}
+
 void TestAsks() {
   std::printf("asks\n");
 
@@ -487,6 +630,8 @@ int main(int argc, char** argv) {
   TestStoryState();
   TestActors();
   TestChoices();
+  TestWarpRecursion();
+  TestAutoCycle();
   TestAsks();
   TestSerialization();
   TestBuiltEvents();

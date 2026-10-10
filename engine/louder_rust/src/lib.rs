@@ -1,3 +1,5 @@
+//The primary engine interface, defined in docs/engine/index.md
+
 mod test_linkage;
 
 pub mod louder;

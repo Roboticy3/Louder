@@ -361,9 +361,9 @@ impl Simulator {
 
   /// Move an actor to `target`, emitting every event the move implies.
   ///
-  /// Auto hubs are resolved here rather than by the caller: an auto hub takes
-  /// the first choice available to the actor that entered it, and does so
-  /// repeatedly until it lands somewhere that is not auto.
+  /// This is the entry point for a single move. A move sets off a cascade of
+  /// warps, and the cascade is what stops itself from looping: see
+  /// [`Self::travel_within`].
   pub fn travel(
     context: &mut LouderContext,
     conversation: LouderName,
@@ -373,34 +373,50 @@ impl Simulator {
     fake_channel: LouderName,
     fake_priority: i32,
   ) -> Result<LouderPosition, SimError> {
-    let mut destination = target;
+    let mut moved = Vec::new();
+    Self::travel_within(
+      context,
+      conversation,
+      actor,
+      target,
+      kind,
+      fake_channel,
+      fake_priority,
+      &mut moved,
+    )
+  }
 
-    // Walk the chain of auto hubs.
-    loop {
-      let is_auto = context
-        .get_conversation(conversation)
-        .and_then(|c| c.hub(destination))
-        .map(|hub| hub.is_auto())
-        .unwrap_or(false);
-
-      if !is_auto {
-        break;
-      }
-
-      let available = Self::available_choices(context, conversation, actor, destination);
-      let Some(next) = available.first() else {
-        return Err(SimError::DeadEnd);
-      };
-
-      let target_position = context
-        .get_conversation(conversation)
-        .and_then(|c| c.hub(destination))
-        .and_then(|hub| hub.choice(*next))
-        .map(|choice| choice.position())
-        .ok_or(SimError::NoSuchChoice)?;
-
-      destination = target_position;
+  /// Move an actor and warp whoever it drags along, recording both in `moved`.
+  ///
+  /// Two actors sharing a channel each look like a follower of the other, so
+  /// left unguarded a choice would have the pair trade places forever: the
+  /// leader moves, the other follows, and then the leader is a follower of the
+  /// one that just followed it. `moved` holds every actor already placed in
+  /// this cascade, and an actor already in it does not move again, which also
+  /// bounds the recursion to at most one move per actor.
+  fn travel_within(
+    context: &mut LouderContext,
+    conversation: LouderName,
+    actor: LouderActor,
+    target: LouderPosition,
+    kind: MotionKind,
+    fake_channel: LouderName,
+    fake_priority: i32,
+    moved: &mut Vec<LouderActor>,
+  ) -> Result<LouderPosition, SimError> {
+    // Already placed in this cascade, either as its leader or as someone it
+    // pulled along, so the actor stays exactly where it is. This is checked
+    // before resolving auto hubs, since a hub the actor is not going to enter
+    // is no reason to fail the move.
+    if moved.contains(&actor) {
+      return context
+        .get_actor(conversation, actor)
+        .map(|entry| entry.position())
+        .ok_or(SimError::Missing);
     }
+
+    let destination = Self::resolve_auto(context, conversation, actor, target)?;
+    moved.push(actor);
 
     let source = context
       .get_actor(conversation, actor)
@@ -426,7 +442,7 @@ impl Simulator {
 
     // Everyone who follows this actor does so after it has settled, so that
     // the events for this move read in a sensible order.
-    Self::warp_followers(context, conversation, actor, motion, kind)?;
+    Self::warp_followers(context, conversation, actor, motion, kind, moved)?;
     Ok(destination)
   }
 
@@ -646,6 +662,7 @@ impl Simulator {
     actor: LouderActor,
     motion: Motion,
     kind: MotionKind,
+    moved: &mut Vec<LouderActor>,
   ) -> Result<(), SimError> {
     let leader_channel = context
       .get_actor(conversation, actor)
@@ -677,6 +694,13 @@ impl Simulator {
       .collect();
 
     for (follower, from, priority, _) in followers {
+      // Anyone this cascade has already placed is where they belong, and
+      // following them again is what would otherwise ping-pong between two
+      // actors sharing a channel.
+      if moved.contains(&follower) {
+        continue;
+      }
+
       if priority > leader_priority {
         // Too important to be dragged along, but it still sees the hub in the
         // background, without choices.
@@ -730,7 +754,7 @@ impl Simulator {
       };
 
       // The replayed choice may itself lead through auto hubs.
-      if let Ok(landed) = Self::travel(
+      let _ = Self::travel_within(
         context,
         conversation,
         follower,
@@ -738,9 +762,8 @@ impl Simulator {
         MotionKind::Warp,
         LOUDER_NAME_NONE,
         0,
-      ) {
-        let _ = landed;
-      }
+        moved,
+      );
     }
 
     Ok(())
@@ -798,11 +821,28 @@ impl Simulator {
       LOUDER_NAME_NONE,
       0,
     )?;
-    Self::warp_followers(context, conversation, actor, resolved, MotionKind::Regular)?;
+
+    // The chooser is the leader of this cascade, so it counts as moved before
+    // anyone is pulled along.
+    let mut moved = vec![actor];
+    Self::warp_followers(
+      context,
+      conversation,
+      actor,
+      resolved,
+      MotionKind::Regular,
+      &mut moved,
+    )?;
     Ok(landing)
   }
 
   /// Follow auto hubs from `destination` without emitting anything.
+  ///
+  /// Auto hubs resolve by taking the first choice available to the actor, so a
+  /// document that links two auto hubs to each other would walk that pair
+  /// forever. Each hub is therefore walked at most once, and arriving back at
+  /// a hub already walked is reported as a dead end, which is what an auto hub
+  /// with no way out amounts to.
   fn resolve_auto(
     context: &LouderContext,
     conversation: LouderName,
@@ -810,6 +850,7 @@ impl Simulator {
     destination: LouderPosition,
   ) -> Result<LouderPosition, SimError> {
     let mut current = destination;
+    let mut walked: Vec<LouderPosition> = Vec::new();
 
     loop {
       let is_auto = context
@@ -821,6 +862,11 @@ impl Simulator {
       if !is_auto {
         return Ok(current);
       }
+
+      if walked.contains(&current) {
+        return Err(SimError::DeadEnd);
+      }
+      walked.push(current);
 
       let available = Self::available_choices(context, conversation, actor, current);
       let Some(next) = available.first() else {

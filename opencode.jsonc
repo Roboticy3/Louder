@@ -19,8 +19,8 @@
       "Copy-*": "allow",
       "Out-*": "allow",
 
-      ".*ps1": "allow",
-      ".*exe": "allow",
+      ".\\*ps1": "allow",
+      ".\\*exe": "allow",
 
       "*cpp *": "allow",
 
