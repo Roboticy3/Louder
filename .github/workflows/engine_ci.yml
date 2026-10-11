@@ -1,0 +1,132 @@
+name: Engine CI
+on:
+  push:
+    branch: "main"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  # A second push to main supersedes the first; stop the older run from
+  # publishing stale binaries over newer ones.
+  group: engine-ci-main
+  cancel-in-progress: true
+
+jobs:
+  compile_and_test:
+    name: Build ${{ matrix.platform }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            platform: windows-x86_64
+          - os: ubuntu-latest
+            platform: linux-x86_64
+          - os: macos-latest
+            platform: macos-x86_64
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
+            | sh -s -- -y --profile minimal
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+
+      # Through bash rather than ./build_engine.sh, so this does not depend on
+      # the executable bit having been recorded for the file in git.
+      - name: Build the engine and stage the binaries
+        run: bash ./build_engine.sh
+
+      - name: Upload ${{ matrix.platform }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: engine-${{ matrix.platform }}
+          path: site/
+          if-no-files-found: error
+
+  publish:
+    name: Publish to gh-pages
+    needs: compile_and_test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      # Not merge-multiple: each platform lands in its own directory, because
+      # they all ship a file called louder_rust.h and merging would flatten
+      # them into one and lose the ability to compare them.
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+
+      - name: Assemble the site
+        run: |
+          set -euo pipefail
+          mkdir -p site
+
+          # Every platform regenerated the header from the same crate, so they
+          # must agree. A mismatch means the build is not reproducible across
+          # platforms and the examples would compile against a stale ABI.
+          reference=""
+          for platform in windows-x86_64 linux-x86_64 macos-x86_64; do
+            mkdir -p "site/$platform"
+            cp "dist/engine-$platform/louder_rust.h" "site/$platform/louder_rust.h"
+            if [ -z "$reference" ]; then
+              reference="dist/engine-$platform/louder_rust.h"
+            elif ! cmp -s "$reference" "dist/engine-$platform/louder_rust.h"; then
+              echo "::error::louder_rust.h differs between platforms" >&2
+              exit 1
+            fi
+          done
+          cp "$reference" site/louder_rust.h
+
+          # The library keeps its platform-specific name; the header is the one
+          # shared file.
+          cp dist/engine-windows-x86_64/louder_rust.dll     site/windows-x86_64/
+          cp dist/engine-linux-x86_64/liblouder_rust.so     site/linux-x86_64/
+          cp dist/engine-macos-x86_64/liblouder_rust.dylib  site/macos-x86_64/
+
+          # What the examples fetch. Keeping the library under a per-platform
+          # name and the header at the root lets a consumer take the header
+          # once and only the library for its own platform.
+          cat > manifest.json <<EOF
+          {
+            "commit": "${GITHUB_SHA}",
+            "ref": "${GITHUB_REF_NAME}",
+            "built_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "header": "louder_rust.h",
+            "platforms": {
+              "windows-x86_64": "windows-x86_64/louder_rust.dll",
+              "linux-x86_64": "linux-x86_64/liblouder_rust.so",
+              "macos-x86_64": "macos-x86_64/liblouder_rust.dylib"
+            }
+          }
+          EOF
+
+          cat > index.html <<'EOF'
+          <!doctype html>
+          <meta charset="utf-8">
+          <title>Louder engine binaries</title>
+          <h1>Louder engine binaries</h1>
+          <p>Built from <code>main</code>. See <a href="manifest.json">manifest.json</a>.</p>
+          <ul>
+            <li><a href="louder_rust.h">louder_rust.h</a> (shared header)</li>
+            <li><a href="windows-x86_64/louder_rust.dll">windows-x86_64/louder_rust.dll</a></li>
+            <li><a href="linux-x86_64/liblouder_rust.so">linux-x86_64/liblouder_rust.so</a></li>
+            <li><a href="macos-x86_64/liblouder_rust.dylib">macos-x86_64/liblouder_rust.dylib</a></li>
+          </ul>
+          EOF
+
+          find site -type f | sort
+
+      - name: Publish
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
+          publish_branch: gh-pages

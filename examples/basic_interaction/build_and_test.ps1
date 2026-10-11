@@ -1,17 +1,50 @@
 # Build the demo and run the interface tests, then leave the demo binary ready to
 # play. Mirrors engine/build_and_test.ps1: the header is a build output, so
 # compiling against it always exercises the current ABI.
+#
+# The engine binaries come from the build published on gh-pages by Engine CI, so
+# this directory works when it is separated from the rest of the repo. If that
+# host is unreachable, fall back to a local engine build, which is what makes
+# this usable offline. Override the host with LOUDER_BASE_URL, and set
+# LOUDER_OFFLINE to skip the network entirely.
 $ErrorActionPreference = 'Stop'
 
-# Take the header and the DLL straight from the engine's build, rather than from
-# the copies checked in beside this script. A stale pair still compiles and still
-# links, and then fails at runtime for reasons that look like the demo's.
-$artifacts = Join-Path $PSScriptRoot '..\..\engine\artifacts'
-if (-not (Test-Path -LiteralPath (Join-Path $artifacts 'louder_rust.h'))) {
-  throw "no engine build found at $artifacts; run engine/build_and_test.ps1 first"
+$base = if ($env:LOUDER_BASE_URL) { $env:LOUDER_BASE_URL.TrimEnd('/') }
+        else { 'https://roboticy3.github.io/Louder' }
+
+# Platform directory published by Engine CI. This demo is built with MinGW on
+# windows, so it takes the Windows library.
+$platform = 'windows-x86_64'
+
+function Get-EngineBinary($Name) {
+  $destination = Join-Path $PSScriptRoot $Name
+
+  if (-not $env:LOUDER_OFFLINE) {
+    $url = "$base/$platform/$Name"
+    Write-Host "fetching $url"
+    try {
+      # -UseBasicParsing keeps this working on 5.1 without an IE first-run.
+      Invoke-WebRequest -Uri $url -OutFile $destination -UseBasicParsing -TimeoutSec 30
+      return $destination
+    } catch {
+      Write-Warning "could not fetch ${url}: $($_.Exception.Message)"
+    }
+  }
+
+  # The engine build beside the checkout. A stale pair still compiles and still
+  # links, and then fails at runtime for reasons that look like the demo's.
+  $artifacts = Join-Path $PSScriptRoot '..\..\engine\artifacts'
+  $local = Join-Path $artifacts $Name
+  if (-not (Test-Path -LiteralPath $local)) {
+    throw "no engine binary for $Name; tried $base/$platform/$Name and $local"
+  }
+  Write-Host "using the local build at $local"
+  Copy-Item -LiteralPath $local -Destination $destination
+  return $destination
 }
-Copy-Item -LiteralPath (Join-Path $artifacts 'louder_rust.h') -Destination .
-Copy-Item -LiteralPath (Join-Path $artifacts 'louder_rust.dll') -Destination .
+
+Get-EngineBinary 'louder_rust.h' | Out-Null
+Get-EngineBinary 'louder_rust.dll' | Out-Null
 
 Write-Host 'compiling the demo'
 & g++ -std=c++17 -O2 -Wall -Wextra -I . main.cpp dialogue.cpp terminal.cpp -o basic_interaction.exe louder_rust.dll
