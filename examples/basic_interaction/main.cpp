@@ -5,27 +5,21 @@
 // chooses with q..p. Both are driven from one engine context holding one
 // conversation and two actors, which is the arrangement the engine guide
 // describes for synchronous dialogue.
+//
+// The whole demo is the handful of engine calls below, used as the C ABI hands
+// them over. dialogue.h and dialogue.cpp add only what the engine does not do:
+// which key belongs to which column, and how the two views are laid out.
 #include <cstdio>
 #include <fstream>
 #include <sstream>
 #include <string>
 
-#include "dialogue_view.h"
-#include "engine_bridge.h"
-#include "screen.h"
+// louder_rust.h has no include guard of its own, so it is reached through
+// dialogue.h rather than included a second time here.
+#include "dialogue.h"
+#include "terminal.h"
 
 namespace {
-
-using louder_demo::ActorId;
-using louder_demo::DialogueView;
-using louder_demo::Engine;
-using louder_demo::Position;
-using louder_demo::Viewport;
-
-// Benjamin is never named to either party. The demo aliases him the way the
-// story does, so the interface has to carry the alias separately from the
-// speaker name the engine reports.
-constexpr char kBenjaminAlias[] = "REDACTED";
 
 std::string read_file(const std::string& path) {
   std::ifstream file(path, std::ios::binary);
@@ -54,12 +48,21 @@ const char* load_error_text(int error) {
   }
 }
 
+// Add an actor speaking as `speaker`, standing at `start`. Each speaks as one
+// character and, through the config's listening lists, hears that character's
+// internal voices.
+LouderActor add_speaker(LouderContext* ctx, LouderName conversation, LouderPosition start,
+                        const char* speaker) {
+  LouderName name = intern(ctx, speaker);
+  return add_actor(ctx, conversation, start, ActorFlags(), &name, 1, nullptr, 0);
+}
+
 }  // namespace
 
 int main(int argc, char** argv) {
   // Paths default to the copies beside the executable and can be overridden for
   // testing against other documents. Either way they are handed to the engine as
-  // absolute-ish filesystem paths rather than as anything Godot-specific.
+  // filesystem paths rather than as anything Godot-specific.
   std::string conversation_path = "jail.json";
   std::string config_path = "speakers.json";
 
@@ -78,8 +81,8 @@ int main(int argc, char** argv) {
     config_path = argv[first_positional + 1];
   }
 
-  Engine engine;
-  if (!engine.ready()) {
+  LouderContext* ctx = init_louder();
+  if (ctx == nullptr) {
     std::fprintf(stderr, "could not initialise the engine\n");
     return 1;
   }
@@ -89,90 +92,75 @@ int main(int argc, char** argv) {
     std::fprintf(stderr, "could not read the speaker config at %s\n", config_path.c_str());
     return 1;
   }
-  int config_error = engine.load_config(config);
+  int config_error = load_conversation_config(
+      ctx, reinterpret_cast<uint8_t*>(const_cast<char*>(config.data())), config.size(),
+      LOUDER_ENCODING_UTF8);
   if (config_error != LOUDER_LOAD_OK) {
     std::fprintf(stderr, "speaker config %s failed to load: %s\n", config_path.c_str(),
                  load_error_text(config_error));
     return 1;
   }
 
-  std::string conversation = read_file(conversation_path);
-  if (conversation.empty()) {
+  std::string document = read_file(conversation_path);
+  if (document.empty()) {
     std::fprintf(stderr, "could not read the conversation at %s\n", conversation_path.c_str());
     return 1;
   }
-  int conversation_error = engine.load_conversation("jail", conversation);
+
+  // The conversation is held under a name, so every later query passes it back.
+  LouderName conversation = intern(ctx, "jail");
+  int conversation_error = load_conversation_json(
+      ctx, conversation, reinterpret_cast<uint8_t*>(const_cast<char*>(document.data())),
+      document.size(), LOUDER_ENCODING_UTF8);
   if (conversation_error != LOUDER_LOAD_OK) {
     std::fprintf(stderr, "conversation %s failed to load: %s\n", conversation_path.c_str(),
                  load_error_text(conversation_error));
     return 1;
   }
 
-  Position start = engine.find_tag("start");
-  if (start == -1) {
+  // Start the conversation at the hub tagged "start", rather than assuming the
+  // document numbers its hubs from zero.
+  LouderName start_tag = intern(ctx, "start");
+  LouderPosition start = next_hub_from_tags(ctx, conversation, &start_tag, 1, 0, -1);
+  if (start < 0) {
     std::fprintf(stderr, "no hub in %s is tagged \"start\"\n", conversation_path.c_str());
     return 1;
   }
 
-  // Two actors in one conversation. Each speaks as one character and, through
-  // the config's listening lists, hears that character's internal voices.
-  ActorId freya = engine.add_actor(engine.name("jail"), start, "Freya");
-  ActorId benjamin = engine.add_actor(engine.name("jail"), start, "Benjamin");
-  if (freya == LOUDER_ACTOR_NONE || benjamin == LOUDER_ACTOR_NONE) {
+  View view;
+  view.setup(ctx, conversation, add_speaker(ctx, conversation, start, "Freya"),
+             add_speaker(ctx, conversation, start, "Benjamin"));
+  if (view.left.actor == LOUDER_ACTOR_NONE || view.right.actor == LOUDER_ACTOR_NONE) {
     std::fprintf(stderr, "could not add both actors to the conversation\n");
     return 1;
   }
 
-  Viewport left;
-  left.actor = freya;
-  left.display_name = "Freya";
-  left.key = louder_demo::kLeftKeys[0];
-
-  Viewport right;
-  right.actor = benjamin;
-  right.display_name = kBenjaminAlias;
-  right.key = louder_demo::kRightKeys[0];
-
-  DialogueView view(&engine, left, right);
-
   // Discard the actor-added events from setup; the initial state comes from
   // asking the engine where everyone is rather than from replaying events.
-  engine.drain_events();
-  view.consume({});
+  flush_events(ctx);
 
-  louder_demo::Screen screen;
-
-  // The console is asked for its size each frame rather than cached, so
-  // resizing the window takes effect immediately.
-  auto paint = [&]() {
-    int width = screen.width();
-    int height = screen.height();
-    draw(screen, render(view, view.left(), view.right(), width, height), width, height);
-  };
-
-  paint();
+  Terminal terminal;
+  view.draw(terminal);
 
   if (check_only) {
-    std::printf("\nleft  : %s at %d, %zu choices\n", view.left().display_name.c_str(),
-                view.left().position, view.left().choices.size());
-    std::printf("right : %s at %d, %zu choices\n", view.right().display_name.c_str(),
-                view.right().position, view.right().choices.size());
-    for (const std::string& error : view.errors()) {
-      std::printf("error : %s\n", error.c_str());
-    }
+    std::printf("\nleft  : %s at %d, %zu choices\n", view.left.display_name, view.left.position,
+                view.left.choices.size());
+    std::printf("right : %s at %d, %zu choices\n", view.right.display_name, view.right.position,
+                view.right.choices.size());
     return 0;
   }
 
   // One blocking keypress per frame. ESC quits; every other key is offered to
   // the view, which ignores anything that is not one of its choice keys.
   while (true) {
-    char key = screen.read_key();
+    char key = terminal.read_key();
     if (key == 27) {  // ESC
       break;
     }
-    view.handle_key(key);
-    paint();
+    view.press(key);
+    view.draw(terminal);
   }
 
+  deinit_louder(ctx);
   return 0;
 }

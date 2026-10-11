@@ -274,6 +274,67 @@ void TestStoryState() {
         "a local variable should not outlive its conversation");
 }
 
+// A hub is gated by its conditions, and a condition is allowed to combine
+// values. The guide's truthiness rules are 0, false and the empty string, so a
+// string that is neither empty nor "0" is true even where it stands next to a
+// number. Visibility is decided by the read-only pass and reported by the
+// travelling pass, so both have to agree: this checks that they do.
+void TestConditionsUseTheGuidesTruthinessRules() {
+  std::printf("condition truthiness\n");
+
+  clear_config(g_ctx);
+  const char* config = R"([{"type":"speaker","name":"A","flags":1}])";
+  CHECK(load_conversation_config(g_ctx, reinterpret_cast<uint8_t*>(const_cast<char*>(config)),
+                                 std::strlen(config), 0) == 0,
+        "the config should load");
+
+  const char* document = R"([
+    {"type":"hub","conversation_id":0,"speaker":"A","text":"start","flags":0},
+    {"type":"hub","conversation_id":1,"speaker":"A","text":"shown","expressions":"gate && 1","flags":0},
+    {"type":"hub","conversation_id":2,"speaker":"A","text":"hidden","expressions":"gate && 1","flags":0},
+    {"type":"connection","from_id":0,"from_port":0,"to_id":1},
+    {"type":"connection","from_id":0,"from_port":1,"to_id":2}
+  ])";
+
+  LouderName conversation = Declare("condition conversation");
+  CHECK(load_conversation_json(g_ctx, conversation,
+                               reinterpret_cast<uint8_t*>(const_cast<char*>(document)),
+                               std::strlen(document), 0) == 0,
+        "the conversation should load");
+
+  LouderName speaker[1] = {Lookup("A")};
+  LouderActor actor = add_actor(g_ctx, conversation, 0, ActorFlags(), speaker, 1, nullptr, 0);
+  CHECK(actor == 0, "the actor should get id 0, got %d", actor);
+
+  LouderName gate = Declare("gate");
+
+  // An unwritten variable reads as 0, so neither hub appears.
+  CHECK(get_hub_choice_count(g_ctx, conversation, 0, actor) == 0,
+        "an unwritten gate should close both choices, saw %d",
+        get_hub_choice_count(g_ctx, conversation, 0, actor));
+
+  // A non-empty string is true, so both conditions hold.
+  set_story_state(g_ctx, conversation, gate, make_variant_string(Declare("hello")));
+  CHECK(get_hub_choice_count(g_ctx, conversation, 0, actor) == 2,
+        "a non-empty string should be truthy next to a number, saw %d choices",
+        get_hub_choice_count(g_ctx, conversation, 0, actor));
+
+  // The empty string is false, which is what the guide says about it.
+  set_story_state(g_ctx, conversation, gate, make_variant_string(Declare("")));
+  CHECK(get_hub_choice_count(g_ctx, conversation, 0, actor) == 0,
+        "an empty string should be falsy, saw %d choices",
+        get_hub_choice_count(g_ctx, conversation, 0, actor));
+
+  // And so is the string "0", which is what lets a bare string act like a number.
+  set_story_state(g_ctx, conversation, gate, make_variant_string(Declare("0")));
+  CHECK(get_hub_choice_count(g_ctx, conversation, 0, actor) == 0,
+        "the string \"0\" should be falsy, saw %d choices",
+        get_hub_choice_count(g_ctx, conversation, 0, actor));
+
+  remove_conversation(g_ctx, conversation);
+  clear_config(g_ctx);
+}
+
 void TestActors() {
   std::printf("actors\n");
 
@@ -414,7 +475,8 @@ void TestChoices() {
 // Hubs 1 and 2 are Auto and linked to each other, so an actor entering either
 // one walks the pair forever unless the engine refuses to re-enter an auto hub
 // it has already resolved through. Hub 4 is the control: an Auto hub with an
-// exit, which should still resolve.
+// exit, which should still resolve. Hub 6 is the third shape: an Auto hub with
+// no choices at all, which has nowhere to resolve to.
 const char* AutoCycleJson() {
   return R"([
     {"type":"hub","conversation_id":0,"text":"Start","flags":0},
@@ -422,10 +484,42 @@ const char* AutoCycleJson() {
     {"type":"hub","conversation_id":2,"text":"Loop B","flags":1},
     {"type":"hub","conversation_id":3,"text":"Out","flags":0},
     {"type":"hub","conversation_id":4,"text":"Step","flags":1},
+    {"type":"hub","conversation_id":6,"text":"Nowhere","flags":1},
     {"type":"connection","from_id":0,"from_port":0,"to_id":1},
     {"type":"connection","from_id":1,"from_port":0,"to_id":2},
     {"type":"connection","from_id":2,"from_port":0,"to_id":1},
     {"type":"connection","from_id":4,"from_port":0,"to_id":3}
+  ])";
+}
+
+// Hub 0 has five choices, and no two actors are offered all of them. Hub 4 is
+// Whisper's private voice, so it reaches only an actor that listens to Whisper,
+// which leaves a hole in the middle of the available indices rather than a
+// suffix. That is the shape a host has to be careful about: the visible list is
+// numbered from zero, but the engine's indices are not.
+const char* GappedChoicesJson() {
+  return R"([
+    {"type":"hub","conversation_id":0,"speaker":"A","text":"start","flags":0},
+    {"type":"hub","conversation_id":1,"speaker":"A","text":"a","flags":0},
+    {"type":"hub","conversation_id":2,"speaker":"B","text":"b","flags":0},
+    {"type":"hub","conversation_id":3,"speaker":"C","text":"c","flags":0},
+    {"type":"hub","conversation_id":4,"speaker":"Whisper","text":"whisper","flags":0},
+    {"type":"hub","conversation_id":5,"speaker":"A","text":"e","flags":0},
+    {"type":"connection","from_id":0,"from_port":0,"to_id":1},
+    {"type":"connection","from_id":0,"from_port":1,"to_id":2},
+    {"type":"connection","from_id":0,"from_port":2,"to_id":3},
+    {"type":"connection","from_id":0,"from_port":3,"to_id":4},
+    {"type":"connection","from_id":0,"from_port":4,"to_id":5}
+  ])";
+}
+
+// Only B listens to Whisper. A and C hear the public voices and nothing else.
+const char* GappedChoicesConfigJson() {
+  return R"([
+    {"type":"speaker","name":"A","flags":1},
+    {"type":"speaker","name":"B","flags":1,"listening":"Whisper"},
+    {"type":"speaker","name":"C","flags":1},
+    {"type":"speaker","name":"Whisper","flags":0}
   ])";
 }
 
@@ -555,6 +649,127 @@ void TestAutoCycle() {
   CHECK(get_actor_position(g_ctx, conversation, actor) == 3,
         "a refused choice should leave the actor where it was, saw %d",
         get_actor_position(g_ctx, conversation, actor));
+
+  // Hub 6 is auto with no choices at all, so there is nothing for it to resolve
+  // to. That is a dead end rather than a cycle, and it has to be refused the
+  // same way: no state may be left in which an actor is standing somewhere it
+  // can never leave.
+  flush_events(g_ctx);
+  CHECK(get_hub_choice_count(g_ctx, conversation, 6, actor) == 0,
+        "the premise is an auto hub with nothing to resolve to, saw %d choices",
+        get_hub_choice_count(g_ctx, conversation, 6, actor));
+  CHECK(force_position(g_ctx, conversation, actor, 6, LOUDER_NAME_NONE, 0) != 0,
+        "entering an auto hub with no exit at all should be refused");
+  CHECK(get_actor_position(g_ctx, conversation, actor) == 3,
+        "and the refusal should leave the actor where it was, saw %d",
+        get_actor_position(g_ctx, conversation, actor));
+}
+
+// A host discovers which choices to show by probing indices, because the engine
+// has no call for a hub's raw choice count and refuses an out-of-range index and
+// an unavailable one identically. The contract that makes that possible is that
+// get_hub_choice_count agrees with how many indices probing actually finds, so it
+// is checked at every hub for every kind of actor rather than on one lucky path.
+void TestChoiceCountAgreesWithProbing() {
+  std::printf("choice count agrees with probing\n");
+
+  LouderName conversation = Declare("probing conversation");
+  std::string json = GappedChoicesJson();
+  CHECK(load_conversation_json(g_ctx, conversation, reinterpret_cast<uint8_t*>(&json[0]),
+                               json.size(), 0) == 0,
+        "loading the gapped conversation returned %d", 0);
+
+  LouderName a = Lookup("A");
+  LouderActor speaking = add_actor(g_ctx, conversation, 0, ActorFlags(), &a, 1, nullptr, 0);
+  LouderActor debug = add_actor(g_ctx, conversation, 0, ActorFlags_SPECTATOR | ActorFlags_DEBUG,
+                                nullptr, 0, nullptr, 0);
+
+  int hubs_offering_choices = 0;
+  for (LouderPosition position = 0; position < 16; ++position) {
+    for (LouderActor actor : {speaking, debug}) {
+      const int32_t expected = get_hub_choice_count(g_ctx, conversation, position, actor);
+      int32_t found = 0;
+      for (int32_t index = 0; index < 64; ++index) {
+        if (get_hub_choice_link(g_ctx, conversation, position, actor, index) != -1) {
+          ++found;
+        }
+      }
+      CHECK(found == expected,
+            "at hub %d for actor %d the engine counts %d choices but probing finds %d", position,
+            actor, expected, found);
+      if (expected > 0) {
+        ++hubs_offering_choices;
+      }
+    }
+  }
+  CHECK(hubs_offering_choices > 0, "the fixture should have hubs that offer choices at all");
+}
+
+// The engine's choice indices are positions in the hub's full choice list, and
+// the ones available to an actor need not be contiguous. So a host cannot use
+// the position on screen as the index it passes back: the second thing A is shown
+// below is engine index 4.
+void TestAvailableChoiceIndicesCanHaveGaps() {
+  std::printf("available choice indices can have gaps\n");
+
+  clear_config(g_ctx);
+  const char* config = GappedChoicesConfigJson();
+  CHECK(load_conversation_config(g_ctx, reinterpret_cast<uint8_t*>(const_cast<char*>(config)),
+                                 std::strlen(config), 0) == 0,
+        "the gapped config should load");
+
+  LouderName conversation = Declare("gapped conversation");
+  std::string json = GappedChoicesJson();
+  CHECK(load_conversation_json(g_ctx, conversation, reinterpret_cast<uint8_t*>(&json[0]),
+                               json.size(), 0) == 0,
+        "loading the gapped conversation returned %d", 0);
+
+  LouderName speak_a[1] = {Lookup("A")};
+  LouderName speak_b[1] = {Lookup("B")};
+  LouderName speak_c[1] = {Lookup("C")};
+
+  // All three actors are added before anything is asked, because who is in the
+  // conversation is part of the answer: once an actor is playing a voice, nobody
+  // else may lead it.
+  LouderActor actor_a = add_actor(g_ctx, conversation, 0, ActorFlags(), speak_a, 1, nullptr, 0);
+  LouderActor actor_b = add_actor(g_ctx, conversation, 0, ActorFlags(), speak_b, 1, nullptr, 0);
+  LouderActor actor_c = add_actor(g_ctx, conversation, 0, ActorFlags(), speak_c, 1, nullptr, 0);
+  CHECK(actor_a == 0 && actor_b == 1 && actor_c == 2, "the actors should be 0, 1 and 2, got %d, %d, %d",
+        actor_a, actor_b, actor_c);
+
+  // A speaks as A, so it leads both of A's branches, at indices 0 and 4. B and C
+  // hold their own voices and Whisper is not A's to hear, so the three indices
+  // in between are closed to it. What A is shown is two choices, the second of
+  // which is engine index 4.
+  CHECK(get_hub_choice_count(g_ctx, conversation, 0, actor_a) == 2,
+        "A should be offered two of the five, saw %d", get_hub_choice_count(g_ctx, conversation, 0,
+                                                                              actor_a));
+  CHECK(get_hub_choice_link(g_ctx, conversation, 0, actor_a, 0) == 1,
+        "A's first choice should lead to hub 1");
+  CHECK(get_hub_choice_link(g_ctx, conversation, 0, actor_a, 3) == -1,
+        "index 3 leads to Whisper's voice, which A does not hear");
+  CHECK(get_hub_choice_link(g_ctx, conversation, 0, actor_a, 4) == 5,
+        "and A's second choice is engine index 4, not 1, and leads to hub 5");
+
+  // B leads its own voice and Whisper's, at indices 1 and 3, and is refused A's
+  // and C's even though both speakers are public.
+  CHECK(get_hub_choice_count(g_ctx, conversation, 0, actor_b) == 2,
+        "B should be offered two of the five, saw %d", get_hub_choice_count(g_ctx, conversation, 0,
+                                                                              actor_b));
+  CHECK(get_hub_choice_link(g_ctx, conversation, 0, actor_b, 1) == 2,
+        "B's first choice should lead to hub 2");
+  CHECK(get_hub_choice_link(g_ctx, conversation, 0, actor_b, 3) == 4,
+        "B listens to Whisper, so its second choice is engine index 3 and leads to hub 4");
+
+  // C holds only its own voice, and is left with the single choice at index 2.
+  CHECK(get_hub_choice_count(g_ctx, conversation, 0, actor_c) == 1,
+        "C should be offered just its own, saw %d", get_hub_choice_count(g_ctx, conversation, 0,
+                                                                         actor_c));
+  CHECK(get_hub_choice_link(g_ctx, conversation, 0, actor_c, 2) == 3,
+        "C's only choice should be engine index 2, leading to hub 3");
+
+  remove_conversation(g_ctx, conversation);
+  clear_config(g_ctx);
 }
 
 void TestPrivateHubIsOwnedByItsRecipients() {
@@ -1065,11 +1280,14 @@ int main(int argc, char** argv) {
   TestLoadConversation();
   TestConfig();
   TestStoryState();
+  TestConditionsUseTheGuidesTruthinessRules();
   TestActors();
   TestChoices();
   TestPrivateHubIsOwnedByItsRecipients();
   TestWarpRecursion();
   TestAutoCycle();
+  TestChoiceCountAgreesWithProbing();
+  TestAvailableChoiceIndicesCanHaveGaps();
   TestExampleFlow();
   TestAutoSplitOnPrivateVoice();
   TestAsks();

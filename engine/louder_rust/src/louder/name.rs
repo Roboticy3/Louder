@@ -3,6 +3,9 @@ use super::context::LouderContext;
 /// A generic hash map backing the engine's internal data stores.
 pub type Map<K, V> = std::collections::HashMap<K, V>;
 
+/// A generic hash set backing the engine's internal data stores.
+pub type Set<T> = std::collections::HashSet<T>;
+
 /// An encoding supported by the engine. Same as the rust "encoding" crate.
 pub type LouderEncoding = usize;
 

@@ -243,8 +243,15 @@ Events are emitted when:
  - An actor's channel changes. Provides the actor, channel and associated motion.
  - An actor's priority changes. Provides the actor, channel and associated motion.
  - An actor's additonal data changes. Provides the actor, additional data and associated motion.
- - An actor is added. Provides the actor, speak as and listen to speakers.
- - An actor is removed. Provides the actor.
+  - An actor is added. Provides the actor, speak as and listen to speakers.
+  - An actor is removed. Provides the actor.
+
+One event is not about a conversation running: a record of a loaded document that
+the engine could not read is reported as a load error event, carrying the
+position of the record at fault, or -1 when the document as a whole was the
+problem. A load reports these through events rather than failing outright, so one
+malformed record does not cost the caller the rest of the conversation.
+
 
 Finally, the engine exposes an interface to see the following:
 

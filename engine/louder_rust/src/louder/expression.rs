@@ -6,9 +6,9 @@ use super::object::{ArithOp, CmpOp, LouderVariant, VariantKind};
 
 /// A snippet of code, identified by the interned copy of its own source text.
 ///
-/// The engine never parses at load time: an expression is parsed when it is
-/// first needed and cached on the context, so that a conversation full of
-/// expressions that are never reached costs nothing.
+/// Expressions are stored as their own text rather than as parsed trees,
+/// because a conversation usually contains far more of them than any one run
+/// ever reaches.
 pub type LouderExpression = LouderName;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -418,25 +418,26 @@ pub fn parse(source: &str) -> Result<Expr, ParseError> {
   Ok(expr)
 }
 
-/// Whether an expression modifies story state, as opposed to only reading it.
+/// Whether this expression only reads story state.
 ///
-/// The engine guide classifies expressions into statements and conditions by
-/// exactly this distinction, and the classification decides whether the
-/// expression is re-run every time a hub is checked or only once when the hub
-/// is first covered.
-pub fn is_statement(source: &str) -> bool {
-  matches!(
-    parse(source),
-    Ok(Expr::Assign(..)) | Ok(Expr::PreInc(..)) | Ok(Expr::PostInc(..))
-  )
+/// This is the distinction the engine guide draws between conditions and
+/// statements: a condition is re-run every time a hub is checked, while a
+/// statement runs once when the hub is first covered.
+pub fn reads_only(expr: &Expr) -> bool {
+  !matches!(expr, Expr::Assign(..) | Expr::PreInc(..) | Expr::PostInc(..))
 }
 
-/// Which operations an expression performs, used to tell conditions from
-/// statements without re-parsing.
+/// Which operations an expression performs.
+///
+/// See [`reads_only`], which is the same question asked of an expression that
+/// has already been parsed. An expression that does not parse is reported as a
+/// condition, so that whatever is asking falls back on its own rule for an
+/// expression it cannot read.
 pub fn classify(source: &str) -> ExpressionKind {
   match parse(source) {
-    Ok(Expr::Assign(..)) | Ok(Expr::PreInc(..)) | Ok(Expr::PostInc(..)) => ExpressionKind::Statement,
-    _ => ExpressionKind::Condition,
+    Ok(expr) if reads_only(&expr) => ExpressionKind::Condition,
+    Ok(_) => ExpressionKind::Statement,
+    Err(_) => ExpressionKind::Condition,
   }
 }
 
@@ -672,79 +673,85 @@ impl Evaluator {
 
   fn apply(&self, context: &mut LouderContext, op: BinOp, left: &LouderVariant, right: &LouderVariant) -> LouderVariant {
     // `+` concatenates when either side is a string, which is what lets text be
-    // built up inside expressions.
+    // built up inside expressions. This is the one operator the two evaluation
+    // passes cannot share, because building a string means interning it.
     if op == BinOp::Add && (left.kind() == VariantKind::String || right.kind() == VariantKind::String) {
-      let mut joined = String::new();
-      for operand in [left, right] {
-        match operand {
-          LouderVariant::String(name) => {
-            if let Some(text) = context.resolve_name(*name) {
-              joined.push_str(text);
-            }
-          }
-          other => joined.push_str(&other.as_int().to_string()),
-        }
-      }
-      return self.intern(context, &joined);
+      return self.intern(context, &join_strings(context, left, right));
     }
 
-    // Equality between two strings compares their text; every other comparison
-    // falls back to the numeric rules.
-    if matches!(op, BinOp::Eq | BinOp::Ne) {
-      if left.kind() == VariantKind::String && right.kind() == VariantKind::String {
-        let a = context.resolve_name(left_string(left)).unwrap_or("");
-        let b = context.resolve_name(left_string(right)).unwrap_or("");
-        let equal = a == b;
-        return LouderVariant::from_bool(if op == BinOp::Eq { equal } else { !equal });
-      }
-    }
-
-    match op {
-      BinOp::Add => left.arith(ArithOp::Add, right),
-      BinOp::Sub => left.arith(ArithOp::Sub, right),
-      BinOp::Mul => left.arith(ArithOp::Mul, right),
-      BinOp::Div => left.arith(ArithOp::Div, right),
-      BinOp::Mod => left.arith(ArithOp::Mod, right),
-      BinOp::Eq => LouderVariant::from_bool(left.cmp_numeric(CmpOp::Eq, right)),
-      BinOp::Ne => LouderVariant::from_bool(left.cmp_numeric(CmpOp::Ne, right)),
-      BinOp::Lt => LouderVariant::from_bool(left.cmp_numeric(CmpOp::Lt, right)),
-      BinOp::Le => LouderVariant::from_bool(left.cmp_numeric(CmpOp::Le, right)),
-      BinOp::Gt => LouderVariant::from_bool(left.cmp_numeric(CmpOp::Gt, right)),
-      BinOp::Ge => LouderVariant::from_bool(left.cmp_numeric(CmpOp::Ge, right)),
-      BinOp::And => {
-        let value = self.truthy(context, left) && self.truthy(context, right);
-        LouderVariant::from_bool(value)
-      }
-      BinOp::Or => {
-        let value = self.truthy(context, left) || self.truthy(context, right);
-        LouderVariant::from_bool(value)
-      }
-      BinOp::BitAnd => {
-        let value = left.as_int() & right.as_int();
-        LouderVariant::Int(value)
-      }
-      BinOp::BitOr => {
-        let value = left.as_int() | right.as_int();
-        LouderVariant::Int(value)
-      }
-      BinOp::BitXor => {
-        let value = left.as_int() ^ right.as_int();
-        LouderVariant::Int(value)
-      }
-      BinOp::Shl => {
-        let value = left.as_int().wrapping_shl(right.as_int() as u32);
-        LouderVariant::Int(value)
-      }
-      BinOp::Shr => {
-        let value = left.as_int().wrapping_shr(right.as_int() as u32);
-        LouderVariant::Int(value)
-      }
-    }
+    apply_binary(context, op, left, right)
   }
 
   fn intern(&self, context: &mut LouderContext, text: &str) -> LouderVariant {
     let name = context.intern_name(text);
     LouderVariant::String(name)
+  }
+}
+
+/// The text of `left + right` where either side is a string.
+fn join_strings(context: &LouderContext, left: &LouderVariant, right: &LouderVariant) -> String {
+  let mut joined = String::new();
+  for operand in [left, right] {
+    match operand {
+      LouderVariant::String(name) => {
+        if let Some(text) = context.resolve_name(*name) {
+          joined.push_str(text);
+        }
+      }
+      other => joined.push_str(&other.as_int().to_string()),
+    }
+  }
+  joined
+}
+
+/// Every binary operator except `+` on two strings.
+///
+/// Both evaluation passes come through here, so an operator cannot mean one
+/// thing while a hub is being checked for visibility and another while an actor
+/// is travelling onto it.
+fn apply_binary(
+  context: &LouderContext,
+  op: BinOp,
+  left: &LouderVariant,
+  right: &LouderVariant,
+) -> LouderVariant {
+  // Equality between two strings compares their text; every other comparison
+  // falls back to the numeric rules.
+  if matches!(op, BinOp::Eq | BinOp::Ne) && left.kind() == VariantKind::String && right.kind() == VariantKind::String {
+    let a = context.resolve_name(string_id(left)).unwrap_or("");
+    let b = context.resolve_name(string_id(right)).unwrap_or("");
+    let equal = a == b;
+    return LouderVariant::from_bool(if op == BinOp::Eq { equal } else { !equal });
+  }
+
+  // The guide's truthiness rules: 0, false and the empty string are all falsy.
+  let truthy = |value: &LouderVariant| {
+    let text = match value {
+      LouderVariant::String(name) => context.resolve_name(*name),
+      _ => None,
+    };
+    value.is_truthy(text)
+  };
+
+  match op {
+    BinOp::Add => left.arith(ArithOp::Add, right),
+    BinOp::Sub => left.arith(ArithOp::Sub, right),
+    BinOp::Mul => left.arith(ArithOp::Mul, right),
+    BinOp::Div => left.arith(ArithOp::Div, right),
+    BinOp::Mod => left.arith(ArithOp::Mod, right),
+    BinOp::Eq => LouderVariant::from_bool(left.cmp_numeric(CmpOp::Eq, right)),
+    BinOp::Ne => LouderVariant::from_bool(left.cmp_numeric(CmpOp::Ne, right)),
+    BinOp::Lt => LouderVariant::from_bool(left.cmp_numeric(CmpOp::Lt, right)),
+    BinOp::Le => LouderVariant::from_bool(left.cmp_numeric(CmpOp::Le, right)),
+    BinOp::Gt => LouderVariant::from_bool(left.cmp_numeric(CmpOp::Gt, right)),
+    BinOp::Ge => LouderVariant::from_bool(left.cmp_numeric(CmpOp::Ge, right)),
+    BinOp::And => LouderVariant::from_bool(truthy(left) && truthy(right)),
+    BinOp::Or => LouderVariant::from_bool(truthy(left) || truthy(right)),
+    BinOp::BitAnd => LouderVariant::Int(left.as_int() & right.as_int()),
+    BinOp::BitOr => LouderVariant::Int(left.as_int() | right.as_int()),
+    BinOp::BitXor => LouderVariant::Int(left.as_int() ^ right.as_int()),
+    BinOp::Shl => LouderVariant::Int(left.as_int().wrapping_shl(right.as_int() as u32)),
+    BinOp::Shr => LouderVariant::Int(left.as_int().wrapping_shr(right.as_int() as u32)),
   }
 }
 
@@ -838,57 +845,15 @@ fn apply_readonly(
   right: &LouderVariant,
 ) -> LouderVariant {
   if op == BinOp::Add && (left.kind() == VariantKind::String || right.kind() == VariantKind::String) {
-    let mut joined = String::new();
-    for operand in [left, right] {
-      match operand {
-        LouderVariant::String(name) => {
-          if let Some(text) = context.resolve_name(*name) {
-            joined.push_str(text);
-          }
-        }
-        other => joined.push_str(&other.as_int().to_string()),
-      }
-    }
     // A read-only pass cannot intern a freshly built string, so the concatenation
     // resolves to the name-less string, which compares equal only to itself.
     // Conditions that depend on built text are evaluated for real during
     // travel, where interning is available.
+    let _ = join_strings(context, left, right);
     return LouderVariant::String(LOUDER_NAME_NONE);
   }
 
-  if matches!(op, BinOp::Eq | BinOp::Ne) && left.kind() == VariantKind::String && right.kind() == VariantKind::String {
-    let a = context.resolve_name(string_id(left)).unwrap_or("");
-    let b = context.resolve_name(string_id(right)).unwrap_or("");
-    let equal = a == b;
-    return LouderVariant::from_bool(if op == BinOp::Eq { equal } else { !equal });
-  }
-
-  match op {
-    BinOp::Add => left.arith(ArithOp::Add, right),
-    BinOp::Sub => left.arith(ArithOp::Sub, right),
-    BinOp::Mul => left.arith(ArithOp::Mul, right),
-    BinOp::Div => left.arith(ArithOp::Div, right),
-    BinOp::Mod => left.arith(ArithOp::Mod, right),
-    BinOp::Eq => LouderVariant::from_bool(left.cmp_numeric(CmpOp::Eq, right)),
-    BinOp::Ne => LouderVariant::from_bool(left.cmp_numeric(CmpOp::Ne, right)),
-    BinOp::Lt => LouderVariant::from_bool(left.cmp_numeric(CmpOp::Lt, right)),
-    BinOp::Le => LouderVariant::from_bool(left.cmp_numeric(CmpOp::Le, right)),
-    BinOp::Gt => LouderVariant::from_bool(left.cmp_numeric(CmpOp::Gt, right)),
-    BinOp::Ge => LouderVariant::from_bool(left.cmp_numeric(CmpOp::Ge, right)),
-    BinOp::And => {
-      let value = left.as_int() != 0 && right.as_int() != 0;
-      LouderVariant::from_bool(value)
-    }
-    BinOp::Or => {
-      let value = left.as_int() != 0 || right.as_int() != 0;
-      LouderVariant::from_bool(value)
-    }
-    BinOp::BitAnd => LouderVariant::Int(left.as_int() & right.as_int()),
-    BinOp::BitOr => LouderVariant::Int(left.as_int() | right.as_int()),
-    BinOp::BitXor => LouderVariant::Int(left.as_int() ^ right.as_int()),
-    BinOp::Shl => LouderVariant::Int(left.as_int().wrapping_shl(right.as_int() as u32)),
-    BinOp::Shr => LouderVariant::Int(left.as_int().wrapping_shr(right.as_int() as u32)),
-  }
+  apply_binary(context, op, left, right)
 }
 
 fn string_id(value: &LouderVariant) -> LouderName {
@@ -896,10 +861,6 @@ fn string_id(value: &LouderVariant) -> LouderName {
     LouderVariant::String(name) => *name,
     _ => LOUDER_NAME_NONE,
   }
-}
-
-fn left_string(value: &LouderVariant) -> LouderName {
-  string_id(value)
 }
 
 /// Reconstruct the text of an ask's arguments for the host to read back.
@@ -927,8 +888,19 @@ fn expr_to_text(expr: &Expr) -> String {
       expr_to_text(rhs)
     ),
     Expr::Assign(name, value) => format!("{name} = {}", expr_to_text(value)),
-    Expr::PreInc(name, step) => format!("{}{}", "++".repeat(step.unsigned_abs() as usize), name),
-    Expr::PostInc(name, step) => format!("{}{}", name, "++".repeat(step.unsigned_abs() as usize)),
+    // Pre versus post, and up versus down, are separate facts, so both are
+    // rendered: the node carries one as its variant and the other as the sign of
+    // its step.
+    Expr::PreInc(name, step) => format!("{}{name}", step_text(*step)),
+    Expr::PostInc(name, step) => format!("{name}{}", step_text(*step)),
+  }
+}
+
+fn step_text(step: i32) -> &'static str {
+  if step < 0 {
+    "--"
+  } else {
+    "++"
   }
 }
 

@@ -39,6 +39,17 @@ pub struct ConditionOutcome {
   pub outcome: LouderVariant,
 }
 
+/// A record in a document the engine could not read.
+///
+/// Carries the position of the record that was at fault, or
+/// [`LOUDER_POSITION_NONE`] when the problem was with the document as a whole.
+#[derive(Debug, Clone)]
+#[repr(C)]
+pub struct LoadFailure {
+  pub position: LouderPosition,
+  pub error: i32,
+}
+
 #[derive(Debug, Clone)]
 #[repr(C)] //creates a union structure in the C FFI.
 pub enum EventData {
@@ -56,13 +67,18 @@ pub enum EventData {
   Statement(LouderExpression),
   Condition(ConditionOutcome),
   Callback(LouderCallback),
-  
+
   ActorAdded,
   ActorRemoved,
   SpeakerAdded(LouderName),
   SpeakerRemoved(LouderName),
   ConversationAdded(LouderName),
   ConversationRemoved(LouderName),
+
+  /// A record of a loaded document was unusable. This is not a motion and is
+  /// never attached to one, so a host can tell it apart without inspecting the
+  /// fields of an event it did not expect.
+  LoadError(LoadFailure),
 }
 
 impl Default for EventData {
@@ -88,20 +104,4 @@ pub struct LouderAsk {
   pub actor: LouderActor,
   pub motion: Motion,
   pub ask: LouderCallback,
-}
-
-pub trait EventCache<E> {
-  fn get_event(&self, index: usize) -> Option<&E>;
-
-  fn clear_events(&mut self);
-}
-
-pub trait EventMap<K, T : Clone> {
-  fn get_event_key(&self, index: usize, key: &K) -> T;
-}
-
-pub trait AskListener {
-  /// Record `verdict` for the ask at `index`, returning false when that ask
-  /// was out of range or already answered.
-  fn answer_ask(&mut self, index: usize, verdict: i32) -> bool;
 }

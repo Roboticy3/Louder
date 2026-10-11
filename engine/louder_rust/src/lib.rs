@@ -223,7 +223,7 @@ pub extern "C" fn make_event_data_conversation_removed(conversation: LouderName)
 ///
 /// Positions are chosen by the editor, and the engine requires them to be
 /// non-negative so that this value is unambiguous.
-const BLANK_POSITION: LouderPosition = -1;
+pub(crate) const BLANK_POSITION: LouderPosition = -1;
 
 /// Copy `text` into `buffer`, truncating if needed, and null terminate.
 ///
@@ -244,15 +244,6 @@ fn write_text(buffer: *mut u8, max_size: usize, text: &str) -> usize {
   }
 
   length
-}
-
-/// Copy a possibly truncated JSON document into `buffer`.
-///
-/// Returns the number of bytes written excluding the terminator, or 0 if the
-/// buffer was null. A document longer than `max_size` is truncated and the
-/// result will not parse; the caller is responsible for sizing the buffer.
-fn write_json(buffer: *mut u8, max_size: usize, document: &str) -> usize {
-  write_text(buffer, max_size, document)
 }
 
 /// Escape `text` as a JSON string, quotes included.
@@ -328,24 +319,19 @@ fn next_name_after(items: &[LouderName], start: LouderName) -> LouderName {
   }
 }
 
-/// The next actor id after `start`, or [`LOUDER_ACTOR_NONE`].
-fn next_actor_after(items: &[LouderActor], start: LouderActor) -> LouderActor {
-  for item in items {
-    if *item != start && (start == LOUDER_ACTOR_NONE || *item > start) {
-      return *item;
-    }
-  }
-  LOUDER_ACTOR_NONE
-}
-
-/// The next position after `start`, or [`BLANK_POSITION`].
-fn next_position_after(items: &[LouderPosition], start: LouderPosition) -> LouderPosition {
-  for item in items {
-    if *item != start && (start == BLANK_POSITION || *item > start) {
-      return *item;
-    }
-  }
-  BLANK_POSITION
+/// The smallest entry of `items` that is greater than `start`, or `blank`.
+///
+/// Actors and hub positions are registered as non-negative integers in
+/// ascending order, so the iterators can walk a sorted list by comparison rather
+/// than by remembering where they got to. The blank is the -1 that stands for
+/// "not found" on both of them, and being below every real entry it doubles as
+/// "start from the beginning".
+fn next_after<T: Copy + Ord>(items: &[T], start: T, blank: T) -> T {
+  items
+    .iter()
+    .copied()
+    .find(|item| *item > start)
+    .unwrap_or(blank)
 }
 
 /// The ids of the actors matching `predicate`, in ascending order.
@@ -456,13 +442,9 @@ pub extern "C" fn get_event(ctx: *const LouderContext, index: usize) -> LouderOp
     return LouderOption::None
   }
 
-  let e : Option<&LouderEvent> = unsafe {
-    <LouderContext as EventCache<LouderEvent>>::get_event(&*ctx, index)
-  };
-
-  match e {
-    Some(e) => LouderOption::Some(e.clone()),
-    None => LouderOption::None
+  match unsafe { (*ctx).event(index) } {
+    Some(event) => LouderOption::Some(event.clone()),
+    None => LouderOption::None,
   }
 }
 
@@ -476,9 +458,7 @@ pub extern "C" fn flush_events(ctx: *mut LouderContext) {
     return;
   }
 
-  unsafe {
-    <LouderContext as EventCache<LouderEvent>>::clear_events(&mut *ctx);
-  }
+  unsafe { (*ctx).clear_events() };
 }
 
 /// Push an event onto the event queue, used for testing.
@@ -770,7 +750,7 @@ pub extern "C" fn next_actor_in_channel(ctx: *const LouderContext, conversation:
 
   unsafe {
     let actors = matching_actors(&*ctx, conversation, |entry| entry.channel() == channel);
-    next_actor_after(&actors, start)
+    next_after(&actors, start, LOUDER_ACTOR_NONE)
   }
 }
 
@@ -787,7 +767,7 @@ pub extern "C" fn next_actor_in_channel_and_position(ctx: *const LouderContext, 
     let actors = matching_actors(&*ctx, conversation, |entry| {
       entry.channel() == channel && entry.position() == position
     });
-    next_actor_after(&actors, start)
+    next_after(&actors, start, LOUDER_ACTOR_NONE)
   }
 }
 
@@ -802,7 +782,7 @@ pub extern "C" fn next_actor_speaking_as(ctx: *const LouderContext, conversation
 
   unsafe {
     let actors = matching_actors(&*ctx, conversation, |entry| entry.speak_as().contains(&speaker));
-    next_actor_after(&actors, start)
+    next_after(&actors, start, LOUDER_ACTOR_NONE)
   }
 }
 
@@ -822,7 +802,7 @@ pub extern "C" fn next_actor_listening_to(ctx: *const LouderContext, conversatio
     let actors = matching_actors(context, conversation, |entry| {
       Simulator::speakers_heard_by(context, conversation, entry.id()).contains(&speaker)
     });
-    next_actor_after(&actors, start)
+    next_after(&actors, start, LOUDER_ACTOR_NONE)
   }
 }
 
@@ -841,7 +821,7 @@ pub extern "C" fn next_actor_from_flags(ctx: *const LouderContext, conversation:
     let actors = matching_actors(&*ctx, conversation, |entry| {
       flags_match(entry.flags().bits(), wanted, exact)
     });
-    next_actor_after(&actors, start)
+    next_after(&actors, start, LOUDER_ACTOR_NONE)
   }
 }
 
@@ -1098,6 +1078,32 @@ pub extern "C" fn get_hub_additional(ctx: *const LouderContext, conversation: Lo
   }
 }
 
+/// The positions of every hub of `conversation` satisfying `predicate`, in
+/// ascending order.
+///
+/// All six hub iterators are this with a different question, so the question is
+/// the only thing each of them has to say for itself. The sort is here rather
+/// than in each caller because the hub map has no order of its own, and these
+/// functions are documented to walk positions upwards.
+fn matching_hubs(
+  context: &LouderContext,
+  conversation: LouderName,
+  predicate: impl Fn(&Hub) -> bool,
+) -> Vec<LouderPosition> {
+  let Some(conversation_ref) = context.get_conversation(conversation) else {
+    return Vec::new();
+  };
+
+  let mut positions: Vec<LouderPosition> = conversation_ref
+    .hubs()
+    .values()
+    .filter(|hub| predicate(hub))
+    .map(|hub| hub.position())
+    .collect();
+  positions.sort_unstable();
+  positions
+}
+
 /// Iterate the hubs in a channel.
 ///
 /// Hubs that name no channel belong to the default channel, so searching for it
@@ -1110,30 +1116,15 @@ pub extern "C" fn next_hub_by_channel(ctx: *const LouderContext, conversation: L
 
   unsafe {
     let context = &*ctx;
-    let Some(conversation_ref) = context.get_conversation(conversation) else {
-      return BLANK_POSITION;
-    };
-
     let main = context.main_channel();
-    let positions: Vec<LouderPosition> = conversation_ref
-      .sorted_positions()
-      .into_iter()
-      .filter(|position| {
-        conversation_ref
-          .hub(*position)
-          .map(|hub| {
-            let hub_channel = hub.channel();
-            if hub_channel == LOUDER_NAME_NONE {
-              main == channel
-            } else {
-              hub_channel == channel
-            }
-          })
-          .unwrap_or(false)
-      })
-      .collect();
-
-    next_position_after(&positions, start)
+    next_after(
+      &matching_hubs(context, conversation, |hub| match hub.channel() {
+        LOUDER_NAME_NONE => main == channel,
+        hub_channel => hub_channel == channel,
+      }),
+      start,
+      BLANK_POSITION,
+    )
   }
 }
 
@@ -1147,22 +1138,12 @@ pub extern "C" fn next_hub_spoken_by(ctx: *const LouderContext, conversation: Lo
   }
 
   unsafe {
-    let Some(conversation_ref) = (*ctx).get_conversation(conversation) else {
-      return BLANK_POSITION;
-    };
-
-    let positions: Vec<LouderPosition> = conversation_ref
-      .sorted_positions()
-      .into_iter()
-      .filter(|position| {
-        conversation_ref
-          .hub(*position)
-          .map(|hub| hub.speaker() == speaker)
-          .unwrap_or(false)
-      })
-      .collect();
-
-    next_position_after(&positions, start)
+    let context = &*ctx;
+    next_after(
+      &matching_hubs(context, conversation, |hub| hub.speaker() == speaker),
+      start,
+      BLANK_POSITION,
+    )
   }
 }
 
@@ -1179,27 +1160,16 @@ pub extern "C" fn next_hub_heard_by(ctx: *const LouderContext, conversation: Lou
 
   unsafe {
     let context = &*ctx;
-    let Some(conversation_ref) = context.get_conversation(conversation) else {
-      return BLANK_POSITION;
-    };
-
     let mut heard = vec![speaker];
     if let Some(entry) = context.get_speaker(speaker) {
       heard.extend(entry.listening().iter().copied());
     }
 
-    let positions: Vec<LouderPosition> = conversation_ref
-      .sorted_positions()
-      .into_iter()
-      .filter(|position| {
-        conversation_ref
-          .hub(*position)
-          .map(|hub| heard.contains(&hub.speaker()))
-          .unwrap_or(false)
-      })
-      .collect();
-
-    next_position_after(&positions, start)
+    next_after(
+      &matching_hubs(context, conversation, |hub| heard.contains(&hub.speaker())),
+      start,
+      BLANK_POSITION,
+    )
   }
 }
 
@@ -1213,25 +1183,14 @@ pub extern "C" fn next_hub_by_priority(ctx: *const LouderContext, conversation: 
   }
 
   unsafe {
-    let Some(conversation_ref) = (*ctx).get_conversation(conversation) else {
-      return BLANK_POSITION;
-    };
-
-    let positions: Vec<LouderPosition> = conversation_ref
-      .sorted_positions()
-      .into_iter()
-      .filter(|position| {
-        conversation_ref
-          .hub(*position)
-          .map(|hub| {
-            let priority = hub.priority();
-            priority >= priority_min && priority <= priority_max
-          })
-          .unwrap_or(false)
-      })
-      .collect();
-
-    next_position_after(&positions, start)
+    let context = &*ctx;
+    next_after(
+      &matching_hubs(context, conversation, |hub| {
+        hub.priority() >= priority_min && hub.priority() <= priority_max
+      }),
+      start,
+      BLANK_POSITION,
+    )
   }
 }
 
@@ -1252,29 +1211,16 @@ pub extern "C" fn next_hub_from_tags(ctx: *const LouderContext, conversation: Lo
   };
 
   unsafe {
-    let Some(conversation_ref) = (*ctx).get_conversation(conversation) else {
-      return BLANK_POSITION;
-    };
-
-    let positions: Vec<LouderPosition> = conversation_ref
-      .sorted_positions()
-      .into_iter()
-      .filter(|position| {
-        conversation_ref
-          .hub(*position)
-          .map(|hub| {
-            let tags = hub.tags();
-            let has_all = wanted.iter().all(|tag| tags.contains(tag));
-            if exact == 0 {
-              return has_all;
-            }
-            has_all && tags.len() == wanted.len()
-          })
-          .unwrap_or(false)
-      })
-      .collect();
-
-    next_position_after(&positions, start)
+    let context = &*ctx;
+    next_after(
+      &matching_hubs(context, conversation, |hub| {
+        let tags = hub.tags();
+        wanted.iter().all(|tag| tags.contains(tag))
+          && (exact == 0 || tags.len() == wanted.len())
+      }),
+      start,
+      BLANK_POSITION,
+    )
   }
 }
 
@@ -1289,23 +1235,13 @@ pub extern "C" fn next_hub_from_flags(ctx: *const LouderContext, conversation: L
   }
 
   unsafe {
-    let Some(conversation_ref) = (*ctx).get_conversation(conversation) else {
-      return BLANK_POSITION;
-    };
-
+    let context = &*ctx;
     let wanted = include.bits();
-    let positions: Vec<LouderPosition> = conversation_ref
-      .sorted_positions()
-      .into_iter()
-      .filter(|position| {
-        conversation_ref
-          .hub(*position)
-          .map(|hub| flags_match(hub.flags().bits(), wanted, exact))
-          .unwrap_or(false)
-      })
-      .collect();
-
-    next_position_after(&positions, start)
+    next_after(
+      &matching_hubs(context, conversation, |hub| flags_match(hub.flags().bits(), wanted, exact)),
+      start,
+      BLANK_POSITION,
+    )
   }
 }
 
@@ -1353,18 +1289,10 @@ pub extern "C" fn read_state_json(ctx: *const LouderContext, conversation: Loude
   }
 
   unsafe {
-    if (*ctx).get_conversation(conversation).is_none() {
-      return -1;
-    }
-
     let context = &*ctx;
-    let mut keys = (*ctx).conversation_state_keys(conversation);
-    keys.extend((*ctx).shared_state_keys());
-    keys.sort_unstable();
-    keys.dedup();
-
+    let keys = (*ctx).all_state_keys(conversation);
     let document = json_object(context, &keys, |key| context.get_state(conversation, key));
-    write_json(buffer, max_size, &document) as i32
+    write_text(buffer, max_size, &document) as i32
   }
 }
 
@@ -1387,11 +1315,7 @@ pub extern "C" fn read_snapshot_json(ctx: *const LouderContext, conversation: Lo
     }
 
     let context = &*ctx;
-
-    let mut keys = (*ctx).conversation_state_keys(conversation);
-    keys.extend((*ctx).shared_state_keys());
-    keys.sort_unstable();
-    keys.dedup();
+    let keys = (*ctx).all_state_keys(conversation);
     let state = json_object(context, &keys, |key| context.get_state(conversation, key));
 
     let mut actors = String::from("[");
@@ -1426,7 +1350,7 @@ pub extern "C" fn read_snapshot_json(ctx: *const LouderContext, conversation: Lo
     actors.push(']');
 
     let document = format!("{{\"state\":{},\"actors\":{}}}", state, actors);
-    write_json(buffer, max_size, &document) as i32
+    write_text(buffer, max_size, &document) as i32
   }
 }
 
@@ -1515,18 +1439,7 @@ pub extern "C" fn remove_conversation(ctx: *mut LouderContext, conversation: Lou
   }
 
   unsafe {
-    let removed = (*ctx).remove_conversation(conversation);
-    if removed {
-      let event = LouderEvent {
-        conversation,
-        channel: LOUDER_NAME_NONE,
-        actor: LOUDER_ACTOR_NONE,
-        data: EventData::ConversationRemoved(conversation),
-      };
-      (*ctx).push_event(event);
-    }
-
-    if removed { 0 } else { 1 }
+    if (*ctx).remove_conversation(conversation) { 0 } else { 1 }
   }
 }
 
@@ -1612,26 +1525,8 @@ pub extern "C" fn add_actor(ctx: *mut LouderContext, conversation: LouderName, s
       std::slice::from_raw_parts(listen_to, listen_to_count as usize).to_vec()
     };
 
-    let actor = Actor::new(
-      LOUDER_ACTOR_NONE,
-      start_position,
-      flags,
-      speak_as_list,
-      listen_to_list,
-      main,
-    );
-
-    let id = (*ctx).add_actor(conversation, actor);
-
-    let event = LouderEvent {
-      conversation,
-      channel: main,
-      actor: id,
-      data: EventData::ActorAdded,
-    };
-    (*ctx).push_event(event);
-
-    id
+    let actor = Actor::new(start_position, flags, speak_as_list, listen_to_list, main);
+    (*ctx).add_actor(conversation, actor)
   }
 }
 
@@ -1645,21 +1540,11 @@ pub extern "C" fn remove_actor(ctx: *mut LouderContext, conversation: LouderName
     return 1;
   }
 
-  unsafe {
-    if !(*ctx).remove_actor(conversation, actor) {
-      return 1;
-    }
-
-    let event = LouderEvent {
-      conversation,
-      channel: LOUDER_NAME_NONE,
-      actor,
-      data: EventData::ActorRemoved,
-    };
-    (*ctx).push_event(event);
+  if unsafe { (*ctx).remove_actor(conversation, actor) } {
+    0
+  } else {
+    1
   }
-
-  0
 }
 
 /// Select a choice on an actor's current hub.

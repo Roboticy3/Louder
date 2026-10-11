@@ -3,7 +3,7 @@ use std::hash::{DefaultHasher, Hash, Hasher};
 
 use super::name::*;
 use super::speaker::*;
-use super::actor::{Actor, LouderActor};
+use super::actor::{Actor, LouderActor, LOUDER_ACTOR_NONE};
 use super::conversation::{Conversation, VariableMap, VariableScope, classify_variable};
 use super::event::*;
 use super::object::LouderVariant;
@@ -15,6 +15,46 @@ use super::object::LouderVariant;
 struct PendingAsk {
   ask: LouderAsk,
   verdict: Option<i32>,
+}
+
+/// Where `content` sits in the name table: the id it already has, or the id it
+/// would take if it were added now.
+///
+/// Ids are the hash of the text, probed forward on collision. Both halves of
+/// looking a name up come from here, so that the id an intern lands on and the
+/// id a later lookup finds cannot disagree.
+fn probe_name(names: &LouderNameMap, content: &LouderNameContent) -> LouderContextResult {
+  let mut hasher = DefaultHasher::new();
+  content.bytes.hash(&mut hasher);
+
+  let mut name = hasher.finish() as LouderName;
+  let mut step = 1;
+  while let Some(existing) = names.get(&name) {
+    if existing == content {
+      return LouderContextResult::Found(name);
+    }
+    name = name.wrapping_add(step);
+    step += 1;
+  }
+
+  LouderContextResult::NotFound(name)
+}
+
+/// Assign an id to `text` and record it in `names`.
+///
+/// Free-standing so that a context can be built with its ids already in place.
+/// Interning only ever needs the name table, and giving it its own entry point
+/// keeps that visible, instead of forcing the rest of a context to exist first
+/// just so one field can be filled in after the fact.
+fn intern_into(names: &mut LouderNameMap, text: &str) -> LouderName {
+  let content = LouderNameContent::new(text);
+  match probe_name(names, &content) {
+    LouderContextResult::Found(name) => name,
+    LouderContextResult::NotFound(name) => {
+      names.insert(name, content);
+      name
+    }
+  }
 }
 
 /// The opaque handle to the engine.
@@ -36,16 +76,16 @@ pub struct LouderContext {
   shared_unsaved: VariableMap,
   events: Vec<LouderEvent>,
   asks: VecDeque<PendingAsk>,
-  pending_asks: usize,
 }
 
 impl LouderContext {
   pub fn new() -> LouderContext {
-    let mut context = LouderContext {
-      names: LouderNameMap::new(),
+    let mut names = LouderNameMap::new();
+    LouderContext {
       // Interned eagerly so that "main" always has an id, even in a
       // conversation that never mentions it.
-      main_channel: LOUDER_NAME_NONE,
+      main_channel: intern_into(&mut names, LOUDER_MAIN_CHANNEL),
+      names,
       speakers: Map::new(),
       conversations: Map::new(),
       actors: Map::new(),
@@ -54,11 +94,7 @@ impl LouderContext {
       shared_unsaved: Map::new(),
       events: Vec::new(),
       asks: VecDeque::new(),
-      pending_asks: 0,
-    };
-
-    context.main_channel = context.intern_name(LOUDER_MAIN_CHANNEL);
-    context
+    }
   }
 
   /// The id of the default channel, which every conversation starts on.
@@ -71,15 +107,23 @@ impl LouderContext {
     self.events.len() - 1
   }
 
+  /// The queued event at `index`, if there is one.
+  pub fn event(&self, index: usize) -> Option<&LouderEvent> {
+    self.events.get(index)
+  }
+
+  pub fn clear_events(&mut self) {
+    self.events.clear();
+  }
+
   pub fn push_ask(&mut self, ask: LouderAsk) -> usize {
     self.asks.push_back(PendingAsk { ask, verdict: None });
-    self.pending_asks += 1;
     self.asks.len() - 1
   }
 
-  /// The number of asks still waiting for a verdict.
-  pub fn pending_asks(&self) -> usize {
-    self.pending_asks
+  /// The ask at `index`, or `None` if the index is out of range.
+  pub fn ask(&self, index: usize) -> Option<&LouderAsk> {
+    self.asks.get(index).map(|entry| &entry.ask)
   }
 
   /// Record `verdict` for the ask at `index` and move it to the back of the
@@ -89,38 +133,19 @@ impl LouderContext {
   /// answered. Answered asks remain readable so the host can keep polling the
   /// whole cache, but they stop accepting further answers.
   pub fn answer_ask(&mut self, index: usize, verdict: i32) -> bool {
-    if index >= self.asks.len() {
+    let Some(entry) = self.asks.get_mut(index) else {
+      return false;
+    };
+    if entry.verdict.is_some() {
       return false;
     }
-
-    let pending = &self.asks[index];
-    if pending.verdict.is_some() {
-      return false;
-    }
-
-    let mut entry = self.asks.remove(index).unwrap();
     entry.verdict = Some(verdict);
-    self.asks.push_back(entry);
-    self.pending_asks -= 1;
+
+    // Answering moves the ask to the back of the queue, so that a host polling
+    // the whole cache sees unanswered asks first.
+    let answered = self.asks.remove(index).expect("the index was just found");
+    self.asks.push_back(answered);
     true
-  }
-
-  /// The ask at `index`, or `None` if the index is out of range.
-  pub fn ask(&self, index: usize) -> Option<&LouderAsk> {
-    self.asks.get(index).map(|entry| &entry.ask)
-  }
-
-  /// Whether the ask at `index` has been answered.
-  pub fn is_ask_answered(&self, index: usize) -> bool {
-    match self.asks.get(index) {
-      Some(entry) => entry.verdict.is_some(),
-      None => true,
-    }
-  }
-
-  /// The verdicts recorded so far, oldest first.
-  pub fn ask_verdicts(&self) -> Vec<i32> {
-    self.asks.iter().filter_map(|entry| entry.verdict).collect()
   }
 
   // -- conversations ------------------------------------------------------
@@ -139,20 +164,25 @@ impl LouderContext {
     self.conversations.insert(name, conversation).is_some()
   }
 
-  /// Remove a conversation along with its actors.
+  /// Remove a conversation along with its actors, and announce its removal.
   ///
   /// Shared story state is left alone, since it outlives any one conversation.
   pub fn remove_conversation(&mut self, name: LouderName) -> bool {
     self.actors.remove(&name);
     self.next_actor_id.remove(&name);
-    self.conversations.remove(&name).is_some()
-  }
 
-  /// Every conversation name in ascending order.
-  pub fn conversation_names(&self) -> Vec<LouderName> {
-    let mut names: Vec<LouderName> = self.conversations.keys().copied().collect();
-    names.sort_unstable();
-    names
+    if self.conversations.remove(&name).is_none() {
+      return false;
+    }
+
+    self.push_event(LouderEvent {
+      conversation: name,
+      channel: LOUDER_NAME_NONE,
+      actor: LOUDER_ACTOR_NONE,
+      data: EventData::ConversationRemoved(name),
+    });
+
+    true
   }
 
   // -- actors -------------------------------------------------------------
@@ -175,30 +205,53 @@ impl LouderContext {
     actors.iter_mut().find(|a| a.id() == actor)
   }
 
-  /// Append an actor, giving it the next unused id for its conversation.
+  /// Append an actor, giving it the next unused id for its conversation, and
+  /// announce it.
   ///
   /// Ids are never reused, so ascending id order is a stable ordering even
-  /// after actors are removed.
+  /// after actors are removed. The event is emitted here rather than by the
+  /// caller so that an actor cannot enter a conversation unannounced.
   pub fn add_actor(&mut self, conversation: LouderName, mut actor: Actor) -> LouderActor {
     let next = self.next_actor_id.entry(conversation).or_insert(0);
     let id = *next;
     *next += 1;
     actor.set_id(id);
 
+    let channel = actor.channel();
     let actors = self.actors.entry(conversation).or_default();
     actors.push(actor);
+
+    self.push_event(LouderEvent {
+      conversation,
+      channel,
+      actor: id,
+      data: EventData::ActorAdded,
+    });
+
     id
   }
 
+  /// Remove an actor, reporting whether it was there, and announce its removal.
   pub fn remove_actor(&mut self, conversation: LouderName, actor: LouderActor) -> bool {
-    match self.actors.get_mut(&conversation) {
+    let removed = match self.actors.get_mut(&conversation) {
       Some(actors) => {
         let before = actors.len();
         actors.retain(|a| a.id() != actor);
         actors.len() != before
       }
       None => false,
+    };
+
+    if removed {
+      self.push_event(LouderEvent {
+        conversation,
+        channel: LOUDER_NAME_NONE,
+        actor,
+        data: EventData::ActorRemoved,
+      });
     }
+
+    removed
   }
 
   // -- speakers -----------------------------------------------------------
@@ -229,17 +282,13 @@ impl LouderContext {
 
   // -- story state --------------------------------------------------------
 
-  fn variables_mut(&mut self, conversation: LouderName, scope: VariableScope) -> &mut VariableMap {
+  fn variables_mut(&mut self, conversation: LouderName, scope: VariableScope) -> Option<&mut VariableMap> {
     match scope {
       VariableScope::LocalSaved | VariableScope::LocalUnsaved => {
-        let conversation = self
-          .conversations
-          .get_mut(&conversation)
-          .expect("story state was requested for a conversation that is not loaded");
-        conversation.variables_mut(scope)
+        Some(self.conversations.get_mut(&conversation)?.variables_mut(scope))
       }
-      VariableScope::SharedSaved => &mut self.shared_saved,
-      VariableScope::SharedUnsaved => &mut self.shared_unsaved,
+      VariableScope::SharedSaved => Some(&mut self.shared_saved),
+      VariableScope::SharedUnsaved => Some(&mut self.shared_unsaved),
     }
   }
 
@@ -263,56 +312,48 @@ impl LouderContext {
 
   /// Read a story state variable. Uninitialized variables read as 0.
   pub fn get_state(&self, conversation: LouderName, key: LouderName) -> LouderVariant {
-    let scope = self.scope_of(key);
-    match self.variables(conversation, scope) {
-      Some(variables) => variables.get(&key).cloned().unwrap_or_default(),
-      None => LouderVariant::Int(0),
-    }
+    self
+      .variables(conversation, self.scope_of(key))
+      .and_then(|variables| variables.get(&key).cloned())
+      .unwrap_or_default()
   }
 
   /// Write a story state variable, storing it in the bucket its name implies.
-  pub fn set_state(&mut self, conversation: LouderName, key: LouderName, value: LouderVariant) {
-    let scope = self.scope_of(key);
-    self.variables_mut(conversation, scope).insert(key, value);
-  }
-
-  /// Whether a story state variable has been written.
-  pub fn has_state(&self, conversation: LouderName, key: LouderName) -> bool {
-    let scope = self.scope_of(key);
-    match self.variables(conversation, scope) {
-      Some(variables) => variables.contains_key(&key),
+  ///
+  /// Returns false when the variable is local and its conversation is not
+  /// loaded, since there would be nowhere to put it. A shared variable always
+  /// has somewhere to go.
+  pub fn set_state(&mut self, conversation: LouderName, key: LouderName, value: LouderVariant) -> bool {
+    match self.variables_mut(conversation, self.scope_of(key)) {
+      Some(variables) => {
+        variables.insert(key, value);
+        true
+      }
       None => false,
     }
   }
 
-  /// Every key of the bucket `key` falls into, in ascending id order.
-  pub fn state_keys(&self, conversation: LouderName, key: LouderName) -> Vec<LouderName> {
-    let scope = self.scope_of(key);
-    match self.variables(conversation, scope) {
-      Some(variables) => {
-        let mut keys: Vec<LouderName> = variables.keys().copied().collect();
-        keys.sort_unstable();
-        keys
-      }
-      None => Vec::new(),
-    }
+  /// Whether a story state variable has been written.
+  pub fn has_state(&self, conversation: LouderName, key: LouderName) -> bool {
+    self
+      .variables(conversation, self.scope_of(key))
+      .is_some_and(|variables| variables.contains_key(&key))
   }
 
   /// Every key written in the conversation, in ascending id order.
   ///
-  /// Covers both local buckets; shared buckets are reported separately by
-  /// [`Self::shared_state_keys`].
+  /// Covers both local buckets.
   pub fn conversation_state_keys(&self, conversation: LouderName) -> Vec<LouderName> {
-    let mut keys = match self.conversations.get(&conversation) {
-      Some(conversation) => conversation.variables(VariableScope::LocalSaved).keys().copied().collect::<Vec<LouderName>>(),
-      None => Vec::new(),
+    let Some(conversation) = self.conversations.get(&conversation) else {
+      return Vec::new();
     };
-    keys.extend(
-      self.conversations
-        .get(&conversation)
-        .map(|c| c.variables(VariableScope::LocalUnsaved).keys().copied().collect::<Vec<LouderName>>())
-        .unwrap_or_default(),
-    );
+
+    let mut keys: Vec<LouderName> = conversation
+      .variables(VariableScope::LocalSaved)
+      .keys()
+      .chain(conversation.variables(VariableScope::LocalUnsaved).keys())
+      .copied()
+      .collect();
     keys.sort_unstable();
     keys.dedup();
     keys
@@ -320,8 +361,19 @@ impl LouderContext {
 
   /// Every key written in either shared bucket, in ascending id order.
   pub fn shared_state_keys(&self) -> Vec<LouderName> {
-    let mut keys: Vec<LouderName> = self.shared_saved.keys().copied().collect();
-    keys.extend(self.shared_unsaved.keys().copied());
+    let mut keys: Vec<LouderName> = self.shared_saved.keys().chain(self.shared_unsaved.keys()).copied().collect();
+    keys.sort_unstable();
+    keys.dedup();
+    keys
+  }
+
+  /// Every key written anywhere, local or shared, in ascending id order.
+  ///
+  /// This is what a save of the story is assembled from, so it lives here rather
+  /// than being spelled out again at each place that saves.
+  pub fn all_state_keys(&self, conversation: LouderName) -> Vec<LouderName> {
+    let mut keys = self.conversation_state_keys(conversation);
+    keys.extend(self.shared_state_keys());
     keys.sort_unstable();
     keys.dedup();
     keys
@@ -336,21 +388,7 @@ impl Default for LouderContext {
 
 impl LouderNameContext for LouderContext {
   fn find_name(&self, name_context: &LouderNameContent) -> LouderContextResult {
-    let mut hasher = DefaultHasher::new();
-    name_context.bytes.hash(&mut hasher);
-
-    let mut name = hasher.finish() as LouderName;
-    let mut iterations = 0;
-    while self.names.contains_key(&name) {
-      if &self.names[&name] == name_context {
-        return LouderContextResult::Found(name);
-      }
-
-      name = name.wrapping_add(iterations * iterations + 1);
-      iterations += 1;
-    }
-
-    LouderContextResult::NotFound(name)
+    probe_name(&self.names, name_context)
   }
 
   fn has_name(&self, name: &LouderName) -> bool {
@@ -369,33 +407,6 @@ impl LouderNameContext for LouderContext {
         LouderContextResult::NotFound(name)
       }
     }
-  }
-}
-
-impl EventCache<LouderEvent> for LouderContext {
-  fn get_event(&self, index: usize) -> Option<&LouderEvent> {
-    self.events.get(index)
-  }
-
-  fn clear_events(&mut self) {
-    self.events.clear()
-  }
-}
-
-impl EventCache<LouderAsk> for LouderContext {
-  fn get_event(&self, index: usize) -> Option<&LouderAsk> {
-    self.ask(index)
-  }
-
-  fn clear_events(&mut self) {
-    self.asks.clear();
-    self.pending_asks = 0;
-  }
-}
-
-impl AskListener for LouderContext {
-  fn answer_ask(&mut self, index: usize, verdict: i32) -> bool {
-    self.answer_ask(index, verdict)
   }
 }
 

@@ -10,13 +10,13 @@ who does.
 ## Running
 
 ```
-build_and_run.ps1
+build_and_test.ps1
 ```
 
 Or by hand:
 
 ```
-g++ -std=c++17 -O2 -I . main.cpp engine_bridge.cpp dialogue_view.cpp screen.cpp -o basic_interaction.exe louder_rust.dll
+g++ -std=c++17 -O2 -I . main.cpp dialogue.cpp terminal.cpp -o basic_interaction.exe louder_rust.dll
 .\basic_interaction.exe
 ```
 
@@ -25,9 +25,15 @@ beside the executable, and both paths can be given as arguments.
 
 ## What it demonstrates
 
+The point of the example is the engine, so `louder_rust.h` is called directly.
+There is deliberately no wrapper object around the C ABI: the engine's own names
+and ids are used as they are, and what this example adds is only what the engine
+does not do.
+
 Engine side, from the spec in `docs/docs/examples/basic_interaction.md`:
   - Loading a conversation and a speaker config from absolute paths.
-  - Starting a conversation from the hub tagged `start`.
+  - Starting a conversation from the hub tagged `start`, rather than assuming the
+    document numbers its hubs from zero.
   - Two actors on one conversation, each speaking as one character.
   - Relaying choices to the engine and reading back what the engine decided.
   - Per-character visibility, which is what makes the two columns differ.
@@ -47,26 +53,29 @@ A choice index in the UI is **not** the index the engine wants. The engine
 indexes choices by their position in the hub's full choice list and hides the
 ones this actor may not take, so the visible list is usually shorter and its
 indices do not start at zero. The interface numbers its visible list from 1 and
-maps each key through to the engine index in
-`DialogueView::handle_key`, in `dialogue_view.cpp`.
+maps each key through to the engine index in `View::press`, in `dialogue.cpp`.
+
+Hub 26 is where this bites in the demo conversation: it carries five raw choices
+and offers Benjamin four of them, and it is private to Benjamin, so Freya's
+column is offered none of it at all.
 
 ## Layout
 
 | File | Purpose |
 | --- | --- |
-| `engine_bridge.h/.cpp` | Thin wrapper over the C ABI. Strings become ids here and only turn back into text at the edges. |
-| `dialogue_view.h/.cpp` | The interface logic: events in, a description of both columns out. No terminal, no engine calls it does not need. |
-| `screen.h/.cpp` | Console only: sizing, wrapping, colour, key reading. |
-| `main.cpp` | Wiring: load, add actors, loop. |
-| `interface_test.cpp` | Interface tests. Drive the real engine and the real view, never a terminal. |
-| `dialogue_test.cpp` | Dialogue logic tests: the engine's flow rules, exhaustively. |
+| `main.cpp` | The demo: load, add the two actors, loop. Every engine call it makes is in this file. |
+| `dialogue.h/.cpp` | The two columns: which key belongs to which, what the engine says about each actor, and how it is laid out. |
+| `terminal.h/.cpp` | The console, and nothing else. |
+| `interface_test.cpp` | The interface's own rules. Engine rules are tested in `engine/tests/engine_test.cpp`. |
 
 ## Data files, and why they are not the editor's
 
 `jail.json` and `speakers.json` here are copies of `editor/demos/conversations/jail.json`
 and `editor/demos/speakers/test.json`, corrected to the schema in
 `docs/docs/editor/schema.md`, which the engine implements. The editor's own
-output does not currently conform, so it cannot be loaded. The corrections:
+output does not currently conform, so it cannot be loaded. Run
+`python make_demo_data.py` to regenerate them from the editor's files; the
+corrections it makes are listed there and were:
 
 | Editor writes | Schema and engine expect | Fix applied |
 | --- | --- | --- |

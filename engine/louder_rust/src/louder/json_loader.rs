@@ -2,7 +2,7 @@ use serde_json::{Map as JsonMap, Value};
 
 use super::context::LouderContext;
 use super::conversation::Conversation;
-use super::event::{EventData, LouderEvent, Motion};
+use super::event::{EventData, LoadFailure, LouderEvent};
 use super::hub::{Choice, Hub, HubFlags, LouderPosition};
 use super::name::*;
 use super::object::{HomogeneousObject, LouderVariant};
@@ -81,29 +81,20 @@ pub fn load_conversation(
     return LOUDER_LOAD_ALREADY_LOADED;
   }
 
-  let parsed: Value = match serde_json::from_str(document) {
-    Ok(value) => value,
-    Err(_) => return LOUDER_LOAD_MALFORMED_JSON,
-  };
-
-  let records = match parsed.as_array() {
-    Some(records) => records,
-    None => return LOUDER_LOAD_NOT_A_LIST,
+  let records = match parse_records(document) {
+    Ok(records) => records,
+    Err(error) => return error,
   };
 
   let mut loaded = Conversation::new(conversation);
   // Connections are collected before being resolved because a choice takes its
   // text from the hub it links to, which may not have been read yet.
   let mut connections: Map<LouderPosition, Vec<(usize, LouderPosition)>> = Map::new();
-  let mut malformed = false;
 
   for record in records {
-    let object = match record.as_object() {
-      Some(object) => object,
-      None => {
-        malformed = true;
-        continue;
-      }
+    let Some(object) = record.as_object() else {
+      report(context, conversation, LOUDER_LOAD_NOT_AN_OBJECT, crate::BLANK_POSITION);
+      continue;
     };
 
     match record_type(object) {
@@ -117,14 +108,11 @@ pub fn load_conversation(
       }
       Some("connection") => match read_connection(object) {
         Some((from, port, to)) => connections.entry(from).or_default().push((port, to)),
-        None => {
-          malformed = true;
-          report(context, conversation, LOUDER_LOAD_NOT_AN_OBJECT, -1);
-        }
+        None => report(context, conversation, LOUDER_LOAD_NOT_AN_OBJECT, position_of(object)),
       },
       // The camera record only remembers where the editor was scrolled to.
       Some("camera") => {}
-      _ => malformed = true,
+      _ => report(context, conversation, LOUDER_LOAD_NOT_AN_OBJECT, position_of(object)),
     }
   }
 
@@ -154,10 +142,6 @@ pub fn load_conversation(
     }
   }
 
-  if malformed {
-    report(context, conversation, LOUDER_LOAD_NOT_AN_OBJECT, -1);
-  }
-
   context.add_conversation(loaded);
   LOUDER_LOAD_OK
 }
@@ -168,20 +152,14 @@ pub fn load_conversation(
 /// speaker declared here is visible from all of them. Records replace any
 /// speaker of the same name rather than failing, so a config can be reloaded.
 pub fn load_config(context: &mut LouderContext, document: &str) -> LoadError {
-  let parsed: Value = match serde_json::from_str(document) {
-    Ok(value) => value,
-    Err(_) => return LOUDER_LOAD_MALFORMED_JSON,
-  };
-
-  let records = match parsed.as_array() {
-    Some(records) => records,
-    None => return LOUDER_LOAD_NOT_A_LIST,
+  let records = match parse_records(document) {
+    Ok(records) => records,
+    Err(error) => return error,
   };
 
   for record in records {
-    let object = match record.as_object() {
-      Some(object) => object,
-      None => return LOUDER_LOAD_NOT_AN_OBJECT,
+    let Some(object) = record.as_object() else {
+      return LOUDER_LOAD_NOT_AN_OBJECT;
     };
 
     if record_type(object) != Some("speaker") {
@@ -195,19 +173,8 @@ pub fn load_config(context: &mut LouderContext, document: &str) -> LoadError {
 
     let name = context.intern_name(&name_text);
     let flags = SpeakerFlags::from_bits_truncate(int_field(object, "flags"));
-    let listening_text = string_field(object, "listening");
-    let listening_parts = split_lines(&listening_text);
-    let listening = context.intern_list(&listening_parts);
-
-    let mut additional = HomogeneousObject::new();
-    for (key, value) in object {
-      if SPEAKER_KEYS.contains(&key.as_str()) {
-        continue;
-      }
-      let key_name = context.intern_name(key);
-      let variant = read_variant(context, value);
-      additional.set(key_name, variant);
-    }
+    let listening = context.intern_list(&split_lines(&string_field(object, "listening")));
+    let additional = read_additional(context, object, SPEAKER_KEYS);
 
     context.set_speaker(Speaker::new(name, flags, listening, additional));
   }
@@ -291,16 +258,7 @@ fn read_hub(context: &mut LouderContext, object: &JsonMap<String, Value>) -> Hub
 
   let flags = HubFlags::from_bits_truncate(int_field(object, "flags"));
   let priority = int_field(object, "priority");
-
-  let mut additional = HomogeneousObject::new();
-  for (key, value) in object {
-    if HUB_KEYS.contains(&key.as_str()) {
-      continue;
-    }
-    let key_name = context.intern_name(key);
-    let variant = read_variant(context, value);
-    additional.set(key_name, variant);
-  }
+  let additional = read_additional(context, object, HUB_KEYS);
 
   Hub::new(
     position,
@@ -341,19 +299,43 @@ fn read_variant(context: &mut LouderContext, value: &Value) -> LouderVariant {
 /// Report a load problem as an event, so that one bad record does not abort the
 /// whole load.
 ///
-/// The offending hub's position travels in the motion's source position and the
-/// error code in its target position, which is how the position stays
-/// recoverable from the event without a dedicated event kind.
+/// `position` is the record at fault, or [`crate::BLANK_POSITION`] when the problem was
+/// with the document as a whole.
 fn report(context: &mut LouderContext, conversation: LouderName, error: LoadError, position: LouderPosition) {
   context.push_event(LouderEvent {
     conversation,
     channel: LOUDER_NAME_NONE,
     actor: super::actor::LOUDER_ACTOR_NONE,
-    data: EventData::RegularMotion(Motion {
-      source_position: position,
-      target_position: error,
-      choice_index: -1,
-      background: false,
-    }),
+    data: EventData::LoadError(LoadFailure { position, error }),
   });
+}
+
+/// Parse `document` as the list of records both loaders expect.
+fn parse_records(document: &str) -> Result<Vec<Value>, LoadError> {
+  let parsed: Value = serde_json::from_str(document).map_err(|_| LOUDER_LOAD_MALFORMED_JSON)?;
+  match parsed {
+    Value::Array(records) => Ok(records),
+    _ => Err(LOUDER_LOAD_NOT_A_LIST),
+  }
+}
+
+/// Everything on a record the schema does not name, read as a homogeneous
+/// object.
+///
+/// `schema` is the set of fields the loader has already taken, so this picks up
+/// the user-defined properties without any of them being listed twice.
+fn read_additional(
+  context: &mut LouderContext,
+  object: &JsonMap<String, Value>,
+  schema: &[&str],
+) -> HomogeneousObject {
+  let mut additional = HomogeneousObject::new();
+  for (key, value) in object {
+    if schema.contains(&key.as_str()) {
+      continue;
+    }
+    let key_name = context.intern_name(key);
+    additional.set(key_name, read_variant(context, value));
+  }
+  additional
 }

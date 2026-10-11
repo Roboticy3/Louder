@@ -3,9 +3,20 @@ use super::event::*;
 use super::name::*;
 use super::object::LouderVariant;
 use super::expression::{Evaluation, Evaluator, EvaluationScope, LouderExpression};
-use super::actor::{Actor, ActorFlags, LouderActor, LOUDER_ACTOR_NONE};
+use super::actor::LouderActor;
 use super::hub::{Hub, LouderPosition};
 use super::speaker::SpeakerMap;
+
+/// Add `name` to `heard` unless it is absent or already there.
+///
+/// What an actor hears is a set, and the three ways of hearing something overlap:
+/// a speaker can be spoken as, listened to directly, and reached through another
+/// speaker's listening list, all at once.
+fn push_unique(heard: &mut Vec<LouderName>, name: LouderName) {
+  if name != LOUDER_NAME_NONE && !heard.contains(&name) {
+    heard.push(name);
+  }
+}
 
 /// Why an actor is moving. Recorded on the motion carried by every event the
 /// move produces.
@@ -48,6 +59,13 @@ pub enum SimError {
 pub struct Simulator;
 
 impl Simulator {
+  /// The `choice_index` of a motion that did not begin with a choice.
+  ///
+  /// A move begins by an actor selecting a choice or by it being placed, and the
+  /// two are told apart on the motion by this. No choice has a negative index,
+  /// so the marker cannot be read as one.
+  const NO_CHOICE: i32 = -1;
+
   /// The speakers an actor hears: the ones it speaks as, the ones it listens
   /// to, and the speakers those are listening to.
   pub fn speakers_heard_by(
@@ -60,14 +78,8 @@ impl Simulator {
     };
 
     let mut heard: Vec<LouderName> = Vec::new();
-    let push = |name: LouderName, heard: &mut Vec<LouderName>| {
-      if name != LOUDER_NAME_NONE && !heard.contains(&name) {
-        heard.push(name);
-      }
-    };
-
     for name in entry.speak_as() {
-      push(*name, &mut heard);
+      push_unique(&mut heard, *name);
     }
 
     // The speakers an actor speaks as drag their own listening list in with
@@ -75,13 +87,13 @@ impl Simulator {
     for name in entry.speak_as() {
       if let Some(speaker) = context.get_speaker(*name) {
         for listening in speaker.listening() {
-          push(*listening, &mut heard);
+          push_unique(&mut heard, *listening);
         }
       }
     }
 
     for name in entry.listen_to() {
-      push(*name, &mut heard);
+      push_unique(&mut heard, *name);
     }
 
     heard
@@ -205,26 +217,23 @@ impl Simulator {
     actor: LouderActor,
     position: LouderPosition,
   ) -> bool {
-    let (hub, is_debug) = {
-      let Some(conversation_ref) = context.get_conversation(conversation) else {
-        return false;
-      };
-      let Some(hub) = conversation_ref.hub(position) else {
-        return false;
-      };
-      let Some(entry) = context.get_actor(conversation, actor) else {
-        return false;
-      };
-      (hub.clone(), entry.is_debug())
+    let Some(conversation_ref) = context.get_conversation(conversation) else {
+      return false;
+    };
+    let Some(hub) = conversation_ref.hub(position) else {
+      return false;
+    };
+    let Some(entry) = context.get_actor(conversation, actor) else {
+      return false;
     };
 
     // Auto hubs resolve on their own and are never shown.
     if hub.is_auto() {
-      return is_debug;
+      return entry.is_debug();
     }
 
     let heard = Self::speakers_heard_by(context, conversation, actor);
-    if !Owned::of(&hub).reaches(context, &heard) {
+    if !Owned::of(hub).reaches(context, &heard) {
       return false;
     }
 
@@ -249,13 +258,13 @@ impl Simulator {
       };
 
       // Only the condition half of the expression set gates visibility;
-      // statements are for the first visit.
-      if super::expression::classify(source) != super::expression::ExpressionKind::Condition {
-        return true;
-      }
-
+      // statements are for the first visit. Parsed once here, because this runs
+      // for every hub on every choice query.
       match super::expression::parse(source) {
-        Ok(expr) => super::expression::condition_holds(context, conversation, &expr),
+        Ok(expr) if super::expression::reads_only(&expr) => {
+          super::expression::condition_holds(context, conversation, &expr)
+        }
+        Ok(_) => true,
         // A condition that cannot be parsed cannot be relied on.
         Err(_) => false,
       }
@@ -336,39 +345,30 @@ impl Simulator {
     hub_position: LouderPosition,
     choice_index: usize,
   ) -> bool {
-    let (hub, target, is_debug, is_spectator, speak_as) = {
-      let Some(conversation_ref) = context.get_conversation(conversation) else {
-        return false;
-      };
-      let Some(hub) = conversation_ref.hub(hub_position) else {
-        return false;
-      };
-      let Some(choice) = hub.choice(choice_index) else {
-        return false;
-      };
-      let Some(entry) = context.get_actor(conversation, actor) else {
-        return false;
-      };
-      let Some(target) = conversation_ref.hub(choice.position()).cloned() else {
-        return false;
-      };
-      (
-        hub.clone(),
-        target,
-        entry.is_debug(),
-        entry.is_spectator(),
-        entry.speak_as().to_vec(),
-      )
+    let Some(conversation_ref) = context.get_conversation(conversation) else {
+      return false;
+    };
+    let Some(hub) = conversation_ref.hub(hub_position) else {
+      return false;
+    };
+    let Some(choice) = hub.choice(choice_index) else {
+      return false;
+    };
+    let Some(target) = conversation_ref.hub(choice.position()) else {
+      return false;
+    };
+    let Some(entry) = context.get_actor(conversation, actor) else {
+      return false;
     };
 
     // Debug actors see every choice regardless of the rules.
-    if is_debug {
+    if entry.is_debug() {
       return true;
     }
 
     // A spectator sees every hub but is not allowed to decide, so it is only
     // given choices when it is also a debug actor.
-    if is_spectator {
+    if entry.is_spectator() {
       return false;
     }
 
@@ -391,10 +391,10 @@ impl Simulator {
     // The target's owners decide whether this actor may lead it. For a private
     // hub those are the recipients, not the speaker, so owning a hub and speaking
     // it come apart: a recipient may lead another character's speech.
-    let owners = Owned::of(&target);
+    let owners = Owned::of(target);
 
     // Speaking as an owner is an outright claim.
-    if owners.spoken_by(&speak_as) {
+    if owners.spoken_by(entry.speak_as()) {
       return true;
     }
 
@@ -425,21 +425,16 @@ impl Simulator {
     actor: LouderActor,
     hub_position: LouderPosition,
   ) -> Vec<usize> {
-    let count = match context.get_conversation(conversation) {
-      Some(conversation_ref) => match conversation_ref.hub(hub_position) {
-        Some(hub) => hub.choice_count(),
-        None => return Vec::new(),
-      },
-      None => return Vec::new(),
+    let Some(hub) = context
+      .get_conversation(conversation)
+      .and_then(|conversation_ref| conversation_ref.hub(hub_position))
+    else {
+      return Vec::new();
     };
 
-    let mut available = Vec::new();
-    for index in 0..count {
-      if Self::choice_available(context, conversation, actor, hub_position, index) {
-        available.push(index);
-      }
-    }
-    available
+    (0..hub.choice_count())
+      .filter(|index| Self::choice_available(context, conversation, actor, hub_position, *index))
+      .collect()
   }
 
   /// Announce an auto hub to the debug actors in the conversation.
@@ -492,11 +487,6 @@ impl Simulator {
     fake_channel: LouderName,
     fake_priority: i32,
   ) -> Result<LouderPosition, SimError> {
-    if let Some(auto_hub) = Self::auto_hub_at(context, conversation, target) {
-      Self::announce_auto_to_debug(context, conversation, auto_hub);
-    }
-
-    let mut moved = Vec::new();
     Self::travel_within(
       context,
       conversation,
@@ -506,7 +496,8 @@ impl Simulator {
       fake_channel,
       fake_priority,
       false,
-      &mut moved,
+      Self::NO_CHOICE,
+      &mut Vec::new(),
     )
   }
 
@@ -519,9 +510,17 @@ impl Simulator {
   /// this cascade, and an actor already in it does not move again, which also
   /// bounds the recursion to at most one move per actor.
   ///
+  /// This is the single way an actor changes position. Choosing and being forced
+  /// are both just this with a different [`MotionKind`] and a different
+  /// `chosen`, so the rules of a move live here once rather than once per way of
+  /// starting one.
+  ///
   /// `emulating` says this move is a follower being carried through a hub, and
   /// is what [`Self::resolve_auto`] consults when an auto hub offers that
-  /// follower nothing it may actually take.
+  /// follower nothing it may actually take. `chosen` is the index the actor
+  /// picked, or [`Self::NO_CHOICE`] when it did not pick anything, and is what a
+  /// follower replays when it is dragged along.
+  #[allow(clippy::too_many_arguments)]
   fn travel_within(
     context: &mut LouderContext,
     conversation: LouderName,
@@ -531,6 +530,7 @@ impl Simulator {
     fake_channel: LouderName,
     fake_priority: i32,
     emulating: bool,
+    chosen: i32,
     moved: &mut Vec<LouderActor>,
   ) -> Result<LouderPosition, SimError> {
     // Already placed in this cascade, either as its leader or as someone it
@@ -554,6 +554,12 @@ impl Simulator {
     let destination = Self::resolve_auto(context, conversation, actor, target, emulating)?;
     moved.push(actor);
 
+    // Auto hubs are entered but never announced, so the hub is remembered here
+    // and only shown to the debug actors that are watching for it.
+    if let Some(entered) = auto_hub {
+      Self::announce_auto_to_debug(context, conversation, entered);
+    }
+
     let source = context
       .get_actor(conversation, actor)
       .map(|entry| entry.position())
@@ -562,7 +568,7 @@ impl Simulator {
     let motion = Motion {
       source_position: source,
       target_position: destination,
-      choice_index: -1,
+      choice_index: chosen,
       background: false,
     };
 
@@ -578,7 +584,7 @@ impl Simulator {
 
     // Everyone who follows this actor does so after it has settled, so that
     // the events for this move read in a sensible order.
-    Self::warp_followers(context, conversation, actor, motion, kind, auto_hub, from_channel, moved)?;
+    Self::warp_followers(context, conversation, actor, motion, kind, auto_hub, from_channel, moved);
     Ok(destination)
   }
 
@@ -592,6 +598,9 @@ impl Simulator {
     fake_channel: LouderName,
     fake_priority: i32,
   ) -> Result<(), SimError> {
+    // The hub is read out of the context once and kept here, so that the rest of
+    // the commit does not have to re-find it while the context is being written
+    // to, and so that pushing events cannot invalidate it.
     let hub = context
       .get_conversation(conversation)
       .and_then(|c| c.hub(motion.target_position))
@@ -615,36 +624,30 @@ impl Simulator {
       hub.priority()
     };
 
-    let channel_before = context
-      .get_actor(conversation, actor)
-      .map(|entry| entry.channel())
-      .unwrap_or(LOUDER_NAME_NONE);
+    let (channel_before, in_flow) = match context.get_actor(conversation, actor) {
+      Some(entry) => (entry.channel(), entry.flags().in_flow()),
+      None => (LOUDER_NAME_NONE, false),
+    };
 
-    let flags = context
-      .get_actor(conversation, actor)
-      .map(|entry| entry.flags())
-      .unwrap_or(ActorFlags::empty());
-
-    // Debug and spectator actors are not part of the flow, so they take no
-    // channel or priority from the hub they land on.
-    let in_flow = !flags.intersects(ActorFlags::SPECTATOR | ActorFlags::DEBUG);
-
-    if let Some(entry) = context.get_actor_mut(conversation, actor) {
-      entry.state_mut().set_position(motion.target_position);
-      if in_flow {
-        if channel != channel_before {
-          entry.state_mut().set_channel(channel);
+    // One borrow for the whole state update, rather than a fresh lookup per
+    // field: the actor has to be written once, not four times.
+    let channel_now = match context.get_actor_mut(conversation, actor) {
+      Some(entry) => {
+        let state = entry.state_mut();
+        state.set_position(motion.target_position);
+        if in_flow {
+          if channel != channel_before {
+            state.set_channel(channel);
+          }
+          state.set_priority(priority);
+          channel
+        } else {
+          state.clear_flow();
+          LOUDER_NAME_NONE
         }
-        entry.state_mut().set_priority(priority);
-      } else {
-        entry.state_mut().clear_channel();
       }
-    }
-
-    let channel_now = context
-      .get_actor(conversation, actor)
-      .map(|entry| entry.channel())
-      .unwrap_or(LOUDER_NAME_NONE);
+      None => return Err(SimError::Missing),
+    };
 
     if in_flow && channel_now != channel_before {
       let event = LouderEvent {
@@ -659,12 +662,14 @@ impl Simulator {
     // Additional data belongs to the hub, so it replaces the actor's wholesale
     // rather than merging, which stops stale keys accumulating.
     if !hub.additional_data().is_empty() {
+      let replacement = hub.additional_data().clone();
+      let keys = hub.additional_data().sorted_keys();
+
       if let Some(entry) = context.get_actor_mut(conversation, actor) {
-        let replacement = hub.additional_data().clone();
         entry.state_mut().replace_additional_data(replacement);
       }
 
-      for key in hub.additional_data().sorted_keys() {
+      for key in keys {
         let event = LouderEvent {
           conversation,
           channel: channel_now,
@@ -675,7 +680,6 @@ impl Simulator {
       }
     }
 
-    let expressions = hub.expressions().to_vec();
     Self::announce(context, conversation, actor, &motion, kind);
 
     // Conditions are reported on arrival. The visibility decision itself was
@@ -687,7 +691,7 @@ impl Simulator {
       actor,
       channel_now,
       &motion,
-      &expressions,
+      hub.expressions(),
     );
 
     // Statements and callbacks are one-shot: they run the first time a hub is
@@ -821,6 +825,7 @@ impl Simulator {
   ///  - Otherwise, when the leader moved by choosing, the follower replays the
   ///    same choice from wherever it was standing.
   ///  - Otherwise the follower simply goes where the leader went.
+  #[allow(clippy::too_many_arguments)]
   fn warp_followers(
     context: &mut LouderContext,
     conversation: LouderName,
@@ -830,32 +835,30 @@ impl Simulator {
     auto_hub: Option<LouderPosition>,
     from_channel: LouderName,
     moved: &mut Vec<LouderActor>,
-  ) -> Result<(), SimError> {
-    let leader_priority = context
-      .get_actor(conversation, actor)
-      .map(|entry| entry.priority())
-      .unwrap_or(0);
-
-    let leader_flags = context
-      .get_actor(conversation, actor)
-      .map(|entry| entry.flags())
-      .unwrap_or(ActorFlags::empty());
+  ) {
+    let (leader_priority, leader_flags) = match context.get_actor(conversation, actor) {
+      Some(entry) => (entry.priority(), entry.flags()),
+      None => return,
+    };
 
     // Actors outside the flow neither follow nor pull others along.
-    if leader_flags.intersects(ActorFlags::SPECTATOR | ActorFlags::DEBUG) {
-      return Ok(());
+    if !leader_flags.in_flow() {
+      return;
     }
 
-    let followers: Vec<(LouderActor, LouderPosition, i32, LouderName)> = context
+    // Who shared this actor's channel, as of before the move. Collected up
+    // front because the loop below moves them and would otherwise be reading
+    // the conversation while writing to it.
+    let followers: Vec<(LouderActor, LouderPosition, i32)> = context
       .actors(conversation)
       .iter()
       .filter(|entry| entry.id() != actor)
-      .filter(|entry| !entry.flags().intersects(ActorFlags::SPECTATOR | ActorFlags::DEBUG))
+      .filter(|entry| entry.flags().in_flow())
       .filter(|entry| entry.channel() == from_channel)
-      .map(|entry| (entry.id(), entry.position(), entry.priority(), entry.channel()))
+      .map(|entry| (entry.id(), entry.position(), entry.priority()))
       .collect();
 
-    for (follower, from, priority, _) in followers {
+    for (follower, from, priority) in followers {
       // Anyone this cascade has already placed is where they belong, and
       // following them again is what would otherwise ping-pong between two
       // actors sharing a channel.
@@ -870,7 +873,7 @@ impl Simulator {
           let background = Motion {
             source_position: from,
             target_position: motion.target_position,
-            choice_index: -1,
+            choice_index: Self::NO_CHOICE,
             background: true,
           };
           let event = LouderEvent {
@@ -896,38 +899,19 @@ impl Simulator {
       // matters, so gating on the leader's landing would skip exactly the
       // followers emulation exists for.
       if let Some(hub) = auto_hub {
-        // A follower that cannot be placed is left where it is rather than
-        // reported: the leader's move has already been applied, so failing it
-        // now would hand the host a refusal for something that happened.
-        if Self::resolve_auto(context, conversation, follower, hub, true).is_ok() {
-          let _ = Self::travel_within(
-            context,
-            conversation,
-            follower,
-            hub,
-            MotionKind::Warp,
-            LOUDER_NAME_NONE,
-            0,
-            true,
-            moved,
-          );
+        // Emulation can still come up empty, when no branch of the auto hub leads
+        // anywhere this follower can hear. There is nothing for it to emulate in
+        // that case, so it goes where the leader went rather than being left
+        // behind.
+        let destination = if Self::resolve_auto(context, conversation, follower, hub, true).is_ok() {
+          hub
         } else if Self::hub_appears(context, conversation, follower, motion.target_position) {
-          // Resolving an auto hub as the follower can still fail, when no branch
-          // of it leads anywhere the follower can hear. There is nothing for
-          // them to emulate in that case, so they go where the leader went
-          // rather than being left behind.
-          let _ = Self::travel_within(
-            context,
-            conversation,
-            follower,
-            motion.target_position,
-            MotionKind::Warp,
-            LOUDER_NAME_NONE,
-            0,
-            true,
-            moved,
-          );
-        }
+          motion.target_position
+        } else {
+          continue;
+        };
+
+        Self::drag_along(context, conversation, follower, destination, moved);
         continue;
       }
 
@@ -936,46 +920,71 @@ impl Simulator {
       }
 
       let destination = if kind == MotionKind::Regular && motion.choice_index >= 0 {
-        let replay = Self::available_choices(context, conversation, follower, from);
-        let leader_choice = motion.choice_index as usize;
-
-        match context
-          .get_conversation(conversation)
-          .and_then(|c| c.hub(from))
-          .and_then(|hub| {
-            // Prefer the same choice the leader made; fall back to whatever
-            // this actor can actually see from where it stands.
-            let index = if replay.contains(&leader_choice) {
-              leader_choice
-            } else {
-              *replay.first()?
-            };
-            hub.choice(index)
-          }) {
-          Some(choice) => choice.position(),
-          None => motion.target_position,
-        }
+        Self::replayed_destination(context, conversation, follower, from, &motion)
       } else {
         motion.target_position
       };
 
-      // A follower that cannot be placed is left where it is rather than
-      // reported: the leader's move has already been applied, so failing it now
-      // would hand the host a refusal for something that happened.
-      let _ = Self::travel_within(
-        context,
-        conversation,
-        follower,
-        destination,
-        MotionKind::Warp,
-        LOUDER_NAME_NONE,
-        0,
-        true,
-        moved,
-      );
+      Self::drag_along(context, conversation, follower, destination, moved);
     }
+  }
 
-    Ok(())
+  /// Where a follower ends up when it replays the leader's choice.
+  ///
+  /// The follower prefers the choice the leader took, and falls back to whatever
+  /// it can actually see from where it stands, which is what lets the two end up
+  /// on different branches of the same hub.
+  fn replayed_destination(
+    context: &LouderContext,
+    conversation: LouderName,
+    follower: LouderActor,
+    from: LouderPosition,
+    motion: &Motion,
+  ) -> LouderPosition {
+    let Some(hub) = context.get_conversation(conversation).and_then(|c| c.hub(from)) else {
+      return motion.target_position;
+    };
+
+    let replay = Self::available_choices(context, conversation, follower, from);
+    let leader_choice = motion.choice_index as usize;
+    let index = match replay.iter().find(|index| **index == leader_choice) {
+      Some(index) => *index,
+      None => match replay.first() {
+        Some(index) => *index,
+        None => return motion.target_position,
+      },
+    };
+
+    hub.choice(index)
+      .map(|choice| choice.position())
+      .unwrap_or(motion.target_position)
+  }
+
+  /// Warp a follower to `destination`, leaving it where it is if it cannot be
+  /// placed there.
+  ///
+  /// The failure is swallowed on purpose: the leader's move has already been
+  /// applied, so reporting a refusal now would hand the host a refusal for
+  /// something that has already happened.
+  fn drag_along(
+    context: &mut LouderContext,
+    conversation: LouderName,
+    follower: LouderActor,
+    destination: LouderPosition,
+    moved: &mut Vec<LouderActor>,
+  ) {
+    let _ = Self::travel_within(
+      context,
+      conversation,
+      follower,
+      destination,
+      MotionKind::Warp,
+      LOUDER_NAME_NONE,
+      0,
+      true,
+      Self::NO_CHOICE,
+      moved,
+    );
   }
 
   /// Select `choice_index` for `actor`, moving it to the linked hub.
@@ -1006,58 +1015,20 @@ impl Simulator {
       .map(|choice| choice.position())
       .ok_or(SimError::NoSuchChoice)?;
 
-    let motion = Motion {
-      source_position: position,
-      target_position: destination,
-      choice_index: choice_index as i32,
-      background: false,
-    };
-
-    // Auto hubs are entered but never announced, so resolve them first and
-    // report the move as landing on the hub the actor really ends at. The hub
-    // itself is remembered, because that is what followers emulate.
-    let auto_hub = Self::auto_hub_at(context, conversation, destination);
-    let landing = Self::resolve_auto(context, conversation, actor, destination, false)?;
-    let resolved = Motion {
-      target_position: landing,
-      ..motion
-    };
-
-    // Whoever shared this actor's channel on the way out is who it leads, so that
-    // channel is read before the move changes it rather than after.
-    let from_channel = context
-      .get_actor(conversation, actor)
-      .map(|entry| entry.channel())
-      .unwrap_or(LOUDER_NAME_NONE);
-
-    if let Some(auto_hub) = auto_hub {
-      Self::announce_auto_to_debug(context, conversation, auto_hub);
-    }
-
-    Self::apply_travel(
+    // Choosing is an ordinary move whose followers get to replay the choice, so
+    // the index travels with the move rather than being applied here.
+    Self::travel_within(
       context,
       conversation,
       actor,
-      resolved.clone(),
+      destination,
       MotionKind::Regular,
       LOUDER_NAME_NONE,
       0,
-    )?;
-
-    // The chooser is the leader of this cascade, so it counts as moved before
-    // anyone is pulled along.
-    let mut moved = vec![actor];
-    Self::warp_followers(
-      context,
-      conversation,
-      actor,
-      resolved,
-      MotionKind::Regular,
-      auto_hub,
-      from_channel,
-      &mut moved,
-    )?;
-    Ok(landing)
+      false,
+      choice_index as i32,
+      &mut Vec::new(),
+    )
   }
 
   /// Follow auto hubs from `destination` without emitting anything.
@@ -1135,16 +1106,12 @@ impl Simulator {
     actor: LouderActor,
     hub_position: LouderPosition,
   ) -> Option<usize> {
-    let count = context
+    let hub = context
       .get_conversation(conversation)
-      .and_then(|c| c.hub(hub_position))
-      .map(|hub| hub.choice_count())?;
+      .and_then(|conversation_ref| conversation_ref.hub(hub_position))?;
 
-    (0..count).find(|index| {
-      context
-        .get_conversation(conversation)
-        .and_then(|c| c.hub(hub_position))
-        .and_then(|hub| hub.choice(*index))
+    (0..hub.choice_count()).find(|index| {
+      hub.choice(*index)
         .is_some_and(|choice| Self::hub_appears(context, conversation, actor, choice.position()))
     })
   }
@@ -1191,9 +1158,3 @@ impl Simulator {
     )
   }
 }
-
-/// A blank actor id, for events that belong to no actor.
-pub const NO_ACTOR: LouderActor = LOUDER_ACTOR_NONE;
-
-/// Re-exported so callers can build an [`Actor`] without importing the module.
-pub type SimulatorActor = Actor;

@@ -23,27 +23,9 @@ impl HomogeneousObject {
     self.data.get(&key)
   }
 
-  /// The variant stored under `key`, defaulting to `LouderVariant::Int(0)`.
-  ///
-  /// Uninitialized variables are documented to read as 0 rather than to be
-  /// absent, so callers that cannot distinguish "absent" from "zero" should
-  /// prefer this.
-  pub fn get_or_default(&self, key: LouderName) -> LouderVariant {
-    self.data.get(&key).cloned().unwrap_or_default()
-  }
-
   /// Store `value` under `key`, returning the variant that was replaced.
   pub fn set(&mut self, key: LouderName, value: LouderVariant) -> Option<LouderVariant> {
     self.data.insert(key, value)
-  }
-
-  /// Remove `key`, returning the variant that was stored, if any.
-  pub fn remove(&mut self, key: LouderName) -> Option<LouderVariant> {
-    self.data.remove(&key)
-  }
-
-  pub fn contains(&self, key: LouderName) -> bool {
-    self.data.contains_key(&key)
   }
 
   pub fn len(&self) -> usize {
@@ -52,10 +34,6 @@ impl HomogeneousObject {
 
   pub fn is_empty(&self) -> bool {
     self.data.is_empty()
-  }
-
-  pub fn clear(&mut self) {
-    self.data.clear()
   }
 
   /// Every key in ascending id order.

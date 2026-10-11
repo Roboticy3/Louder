@@ -1,43 +1,36 @@
-// Interface-level tests for the Bare Minimum demo.
+// Interface tests for the Bare Minimum demo.
 //
 // These drive the real engine and the real view, but never touch a terminal:
-// Screen is not constructed and draw() is not called. That split is the point,
-// because the interesting behaviour is the mapping from keys to engine choice
-// indices and the per-column visibility, not the escape sequences.
+// Terminal is not constructed and View::draw is not called. That split is the
+// point, because everything interesting about the interface is the mapping from
+// keys to engine choice indices and the per-character visibility, not the escape
+// sequences.
+//
+// What is left here is only what belongs to the interface. Anything about how
+// the engine decides visibility, auto hubs, warping or private hubs is an engine
+// rule and lives in engine/tests/engine_test.cpp.
+
 #include <cstdio>
-#include <cstring>
 #include <fstream>
-#include <memory>
 #include <sstream>
 #include <string>
-#include <vector>
 
-#include "dialogue_view.h"
-#include "engine_bridge.h"
+#include "dialogue.h"
 
 namespace {
-
-using louder_demo::ActorId;
-using louder_demo::Choice;
-using louder_demo::DialogueView;
-using louder_demo::Engine;
-using louder_demo::Line;
-using louder_demo::NameId;
-using louder_demo::Position;
-using louder_demo::Viewport;
 
 int g_checks = 0;
 int g_failures = 0;
 
-#define CHECK(condition, ...)                             \
-  do {                                                    \
-    ++g_checks;                                           \
-    if (!(condition)) {                                   \
-      ++g_failures;                                       \
-      std::printf("  FAIL %s:%d: ", __FILE__, __LINE__);  \
-      std::printf(__VA_ARGS__);                           \
-      std::printf("\n");                                  \
-    }                                                     \
+#define CHECK(condition, ...)                            \
+  do {                                                   \
+    ++g_checks;                                          \
+    if (!(condition)) {                                  \
+      ++g_failures;                                      \
+      std::printf("  FAIL %s:%d: ", __FILE__, __LINE__); \
+      std::printf(__VA_ARGS__);                          \
+      std::printf("\n");                                 \
+    }                                                    \
   } while (0)
 
 std::string read_file(const std::string& path) {
@@ -50,918 +43,278 @@ std::string read_file(const std::string& path) {
   return contents.str();
 }
 
-// A loaded engine with the two demo actors standing on the start hub, plus the
-// view over them. Each test gets a fresh one, because actors and covered hubs
-// accumulate and would otherwise leak between cases.
+// A loaded conversation with two actors standing on a hub.
+//
+// `at` exists because two of the rules below are only visible from somewhere
+// the demo does not naturally walk: hub 26 is private to Benjamin, and hub 28's
+// single choice is the one that makes both sides continuing.
 struct Fixture {
-  Engine engine;
-  NameId conversation = LOUDER_NAME_NONE;
-  Position start = -1;
-  ActorId freya = LOUDER_ACTOR_NONE;
-  ActorId benjamin = LOUDER_ACTOR_NONE;
-
-  // The view owns copies of the viewports it is given, so they are held
-  // separately for the setup phase only.
-  std::unique_ptr<DialogueView> owned_view;
-
-  explicit Fixture(const std::string& config_path, const std::string& conversation_path) {
-    CHECK(engine.ready(), "the engine should initialise");
-    CHECK(engine.load_config(read_file(config_path)) == LOUDER_LOAD_OK, "the config should load");
-    CHECK(engine.load_conversation("jail", read_file(conversation_path)) == LOUDER_LOAD_OK,
-          "the conversation should load");
-    conversation = engine.name("jail");
-    start = engine.find_tag("start");
-    CHECK(start != -1, "the conversation should have a start hub");
-
-    freya = engine.add_actor(conversation, start, "Freya");
-    benjamin = engine.add_actor(conversation, start, "Benjamin");
-    CHECK(freya != LOUDER_ACTOR_NONE, "Freya should be added");
-    CHECK(benjamin != LOUDER_ACTOR_NONE, "Benjamin should be added");
-
-    auto left_viewport = std::make_unique<Viewport>();
-    left_viewport->actor = freya;
-    left_viewport->display_name = "Freya";
-    left_viewport->key = louder_demo::kLeftKeys[0];
-
-    auto right_viewport = std::make_unique<Viewport>();
-    right_viewport->actor = benjamin;
-    right_viewport->display_name = "REDACTED";
-    right_viewport->key = louder_demo::kRightKeys[0];
-
-    owned_view = std::make_unique<DialogueView>(&engine, *left_viewport, *right_viewport);
-
-    // Actor-added events from setup are not part of what the view displays.
-    engine.drain_events();
-    owned_view->consume({});
-  }
-
-  // Short alias, so the tests below read as one thing rather than three.
-  DialogueView& view() { return *owned_view; }
-  const DialogueView& view() const { return *owned_view; }
-};
-
-std::vector<int32_t> general_indices(const Viewport& viewport) {
-  std::vector<int32_t> indices;
-  for (const Choice& choice : viewport.choices) {
-    indices.push_back(choice.general_index);
-  }
-  return indices;
-}
-
-// --- key mapping -----------------------------------------------------------
-
-void TestKeyMapping() {
-  std::printf("key mapping\n");
-
-  // Freya takes 1..9 and Benjamin takes qwerty, exactly as the spec describes.
-  CHECK(DialogueView::side_for_key('1') == 0, "'1' should belong to Freya");
-  CHECK(DialogueView::side_for_key('9') == 0, "'9' should belong to Freya");
-  CHECK(DialogueView::side_for_key('q') == 1, "'q' should belong to Benjamin");
-  CHECK(DialogueView::side_for_key('p') == 1, "'p' should belong to Benjamin");
-  CHECK(DialogueView::side_for_key('z') == -1, "'z' should belong to nobody");
-  CHECK(DialogueView::side_for_key('0') == -1, "'0' should not be a Freya choice key");
-
-  // Each side numbers its own visible list from zero, in key order.
-  CHECK(DialogueView::key_index_for('1') == 0, "Freya's first choice is on '1'");
-  CHECK(DialogueView::key_index_for('3') == 2, "Freya's third choice is on '3'");
-  CHECK(DialogueView::key_index_for('q') == 0, "Benjamin's first choice is on 'q'");
-  CHECK(DialogueView::key_index_for('e') == 2, "Benjamin's third choice is on 'e'");
-
-  // The two key sets must not overlap, or a keypress would be ambiguous.
-  for (char left : louder_demo::kLeftKeys) {
-    CHECK(DialogueView::side_for_key(left) == 0, "Freya key '%c' should stay on her side", left);
-  }
-  for (char right : louder_demo::kRightKeys) {
-    CHECK(DialogueView::side_for_key(right) == 1, "Benjamin key '%c' should stay on his side", right);
-  }
-}
-
-// --- initial state ---------------------------------------------------------
-
-void TestInitialState() {
-  std::printf("initial state\n");
-  Fixture f("speakers.json", "jail.json");
-
-  CHECK(f.view().left().has_position, "Freya should have a position");
-  CHECK(f.view().left().position == f.start, "Freya should start on the start hub");
-  CHECK(f.view().left().speaker == "Freya", "the start hub is spoken by Freya, got '%s'",
-        f.view().left().speaker.c_str());
-  CHECK(f.view().left().text.find("willing to identify yourself") != std::string::npos,
-        "Freya's column should show the start hub's text, got '%s'", f.view().left().text.c_str());
-
-  CHECK(f.view().right().position == f.start, "Benjamin should also start on the start hub");
-  CHECK(f.view().right().speaker == "Freya", "the start hub is spoken by Freya whoever reads it, got '%s'",
-        f.view().right().speaker.c_str());
-
-  CHECK(f.view().errors().empty(), "starting up should produce no errors, saw %zu",
-        f.view().errors().size());
-
-  // The engine decides who may decide, and the view must report its answer
-  // rather than assume anything.
-  CHECK(f.view().left().choices.empty(), "Freya should have no choices here");
-  CHECK(f.view().right().choices.size() == 4, "Benjamin should have four choices here, saw %zu",
-        f.view().right().choices.size());
-}
-
-// --- the interface's core responsibility -----------------------------------
-
-void TestVisibleIndexIsNotEngineIndex() {
-  std::printf("visible index vs engine index\n");
-  Fixture f("speakers.json", "jail.json");
-
-  // At the start hub every one of Benjamin's choices is visible, so his visible
-  // indices and the engine's indices coincide. This is the case where a naive
-  // implementation happens to work, so it is checked first to establish the
-  // baseline.
-  std::vector<int32_t> indices = general_indices(f.view().right());
-  CHECK(indices.size() == 4, "four choices expected");
-  for (size_t i = 0; i < indices.size(); ++i) {
-    CHECK(indices[i] == static_cast<int32_t>(i),
-          "with nothing hidden, visible %zu should be engine index %d, got %d", i,
-          static_cast<int32_t>(i), indices[i]);
-  }
-
-// Hub 0's raw choices are [0]->3, [1]->4, [2]->5, [3]->6, and Benjamin sees all
-  // four, so his first key takes him to 3. Confirms the display number reaches
-  // the right general index before any hiding has happened.
-  CHECK(f.view().handle_key('q'), "'q' should be acted on");
-  Position after_first = f.view().right().position;
-  CHECK(after_first == 3,
-        "Benjamin's first choice at the start hub leads to 3, got %d", after_first);
-
-int32_t engine_count = f.engine.choice_count(f.conversation, f.view().right().position, f.view().right().actor);
-  CHECK(static_cast<int32_t>(f.view().right().choices.size()) == engine_count,
-        "the view's choice count should match the engine's, view %zu engine %d",
-        f.view().right().choices.size(), engine_count);
-
-  // Hub 3 has no choices of its own, so Benjamin's move is followed by the
-  // engine pulling Freya along. Whatever it decides, the view reproduces.
-  CHECK(f.view().left().position == f.engine.position_of(f.conversation, f.view().left().actor),
-        "Freya's position should be the engine's");
-}
-
-void TestHiddenChoicesOffsetTheVisibleList() {
-  std::printf("hidden choices offset the visible list\n");
-
-  // Hub 26 is where the offsetting actually bites. Its raw choices are
-  // [0]->27, [1]->30, [2]->33, [3]->35, [4]->34. Freya is offered only index 4,
-  // and Benjamin only indices 1 and 2. So for both actors the first thing they
-  // can pick is *not* engine index 0, which is precisely the mistake this
-  // example exists to rule out.
-  //
-  // Neither actor can be walked to hub 26 from the start without the demo's
-  // branching, so this reads the choices directly off the position instead.
-  {
-    Fixture f("speakers.json", "jail.json");
-
-    // Freya's view of hub 26, asked as Freya standing there.
-    // Hub 26 is private to Benjamin, so he owns it even though Freya speaks it.
-    // Freya owns nothing there and is offered nothing at all.
-    ActorId freya_at_26 = f.engine.add_actor(f.conversation, 26, "Freya");
-    CHECK(freya_at_26 != LOUDER_ACTOR_NONE, "Freya should be addable at 26");
-    std::vector<Choice> freya_choices =
-        f.engine.available_choices(f.conversation, 26, freya_at_26);
-    CHECK(freya_choices.empty(),
-          "the speaker of a private hub is not its owner, so Freya should get nothing at 26, saw %zu",
-          freya_choices.size());
-
-    // Benjamin owns it and is offered four of its five choices: 27 and 35 are
-    // auto hubs, which are enterable but never rest on, and index 4 leads to
-    // hub 34, which is Freya's while she is already playing her. So his visible
-    // list is indices 0..3 against a hub carrying 0..4, which is the offsetting
-    // this example is about: a display number is not an engine index.
-    ActorId ben_at_26 = f.engine.add_actor(f.conversation, 26, "Benjamin");
-    CHECK(ben_at_26 != LOUDER_ACTOR_NONE, "Benjamin should be addable at 26");
-    std::vector<Choice> ben_choices = f.engine.available_choices(f.conversation, 26, ben_at_26);
-    CHECK(ben_choices.size() == 4, "Benjamin should be offered four choices at 26, saw %zu",
-          ben_choices.size());
-    if (ben_choices.size() == 4) {
-      for (size_t i = 0; i < ben_choices.size(); ++i) {
-        CHECK(ben_choices[i].general_index == static_cast<int32_t>(i),
-              "visible %zu should be engine index %d, got %d", i,
-              static_cast<int32_t>(i), ben_choices[i].general_index);
-      }
-      CHECK(ben_choices[0].link == 27 && ben_choices[1].link == 30 &&
-                ben_choices[2].link == 33 && ben_choices[3].link == 35,
-            "they should lead to 27, 30, 33 then 35, got %d %d %d %d", ben_choices[0].link,
-            ben_choices[1].link, ben_choices[2].link, ben_choices[3].link);
-    }
-
-    // And the hidden one really is unreachable through him.
-    CHECK(f.engine.choice_link(f.conversation, 26, ben_at_26, 4) == -1,
-          "index 4 leads to hub 34, which Benjamin may not take");
-  }
-
-  // The same thing through the interface: a fresh view whose right-hand side is
-  // Benjamin standing on 26, then press each key in turn and require it to reach
-  // the hub behind that visible choice.
-  {
-    Engine engine;
-    CHECK(engine.load_config(read_file("speakers.json")) == LOUDER_LOAD_OK, "config should load");
-    CHECK(engine.load_conversation("jail", read_file("jail.json")) == LOUDER_LOAD_OK,
-          "conversation should load");
-    NameId conversation = engine.name("jail");
-
-    ActorId ben = engine.add_actor(conversation, 26, "Benjamin");
-    ActorId freya = engine.add_actor(conversation, 26, "Freya");
-    CHECK(ben != LOUDER_ACTOR_NONE && freya != LOUDER_ACTOR_NONE, "both actors should be added");
-
-    Viewport left;
-    left.actor = freya;
-    left.display_name = "Freya";
-    left.key = louder_demo::kLeftKeys[0];
-    Viewport right;
-    right.actor = ben;
-    right.display_name = "REDACTED";
-    right.key = louder_demo::kRightKeys[0];
-
-    engine.drain_events();
-    DialogueView view(&engine, left, right);
-    view.consume({});
-
-    CHECK(view.right().position == 26, "Benjamin should be standing on 26");
-    CHECK(view.right().choices.size() == 4, "Benjamin should see four choices, saw %zu",
-          view.right().choices.size());
-
-    // 'q' is his first visible choice, engine index 0, which leads into the
-    // auto hub 27. Auto hubs are never rested on, so he comes out the far side.
-    //
-    // Which far side is the whole point of that hub. Its first branch leads to
-    // hub 29, which is Memory's, and Benjamin's config lists Memory among the
-    // speakers he listens to, so that branch is available to him and auto logic
-    // takes it. He lands on 29, not on 28, which is the line he said out loud.
-    CHECK(view.handle_key('q'), "'q' should be acted on");
-    CHECK(view.right().position == 29,
-          "'q' should enter auto hub 27 and come out at 29, got %d", view.right().position);
-    CHECK(view.errors().empty(), "the move should not error, saw: %s",
-          view.errors().empty() ? "" : view.errors().back().c_str());
-
-    // Freya follows him through the same auto hub, but she does not listen to
-    // Memory, so branch 29 is not hers. Hub 28 is Benjamin's public line, so it
-    // appears to her and it is where she lands. The two actors deliberately end
-    // up apart: he hears the thought, she hears only the spoken line, which is
-    // how the conversation keeps his lie from her.
-    CHECK(view.left().position == 28,
-          "Freya should be carried through auto hub 27 to the public line at 28, got %d",
-          view.left().position);
-    CHECK(view.left().choices.size() == 1,
-          "Freya should have hub 28's single choice out, saw %zu",
-          view.left().choices.size());
-    CHECK(view.left().choices.empty() || view.left().choices[0].link == 31,
-          "and that choice should lead to 31, got %d",
-          view.left().choices.empty() ? -1 : view.left().choices[0].link);
-    CHECK(view.right().choices.empty(),
-          "Benjamin should have nothing to choose at hub 29, which has no exits, saw %zu",
-          view.right().choices.size());
-
-    // 'w', the second visible choice, is engine index 1 and leads straight to 30.
-    Engine engine2;
-    CHECK(engine2.load_config(read_file("speakers.json")) == LOUDER_LOAD_OK, "config should load");
-    CHECK(engine2.load_conversation("jail", read_file("jail.json")) == LOUDER_LOAD_OK,
-          "conversation should load");
-    NameId conversation2 = engine2.name("jail");
-    ActorId ben2 = engine2.add_actor(conversation2, 26, "Benjamin");
-    ActorId freya2 = engine2.add_actor(conversation2, 26, "Freya");
-    Viewport left2;
-    left2.actor = freya2;
-    left2.display_name = "Freya";
-    left2.key = louder_demo::kLeftKeys[0];
-    Viewport right2;
-    right2.actor = ben2;
-    right2.display_name = "REDACTED";
-    right2.key = louder_demo::kRightKeys[0];
-    engine2.drain_events();
-    DialogueView view2(&engine2, left2, right2);
-    view2.consume({});
-    CHECK(view2.handle_key('w'), "'w' should be acted on");
-    CHECK(view2.right().position == 30,
-          "'w' at hub 26 should reach 30 via engine index 1, got %d", view2.right().position);
-  }
-
-  // Freya is offered nothing at hub 26, so no key of hers may move her. Hub 34's
-  // own text says it should not be visible to her, and index 4 is the only way
-  // in, so this is where that claim is checked from the interface's side.
-  {
-    Engine engine;
-    CHECK(engine.load_config(read_file("speakers.json")) == LOUDER_LOAD_OK, "config should load");
-    CHECK(engine.load_conversation("jail", read_file("jail.json")) == LOUDER_LOAD_OK,
-          "conversation should load");
-    NameId conversation = engine.name("jail");
-    ActorId freya = engine.add_actor(conversation, 26, "Freya");
-    ActorId ben = engine.add_actor(conversation, 26, "Benjamin");
-    Viewport left;
-    left.actor = freya;
-    left.display_name = "Freya";
-    left.key = louder_demo::kLeftKeys[0];
-    Viewport right;
-    right.actor = ben;
-    right.display_name = "REDACTED";
-    right.key = louder_demo::kRightKeys[0];
-    engine.drain_events();
-    DialogueView view(&engine, left, right);
-    view.consume({});
-
-    CHECK(view.left().choices.empty(),
-          "Freya should see no choices at 26, saw %zu", view.left().choices.size());
-    Position before = view.left().position;
-    view.handle_key('1');
-    CHECK(view.left().position == before,
-          "'1' should not move Freya off the private hub, got %d", view.left().position);
-    CHECK(!view.left().error.empty(), "the refusal should be reported");
-    // The document marks hub 34 as not Freya's to see, and index 4 was the only
-    // route to it. Nothing should have opened that route back up.
-    CHECK(engine.choice_count(conversation, 26, freya) == 0,
-          "and the engine should still agree that she has nothing there");
-  }
-}
-
-void TestAvailableChoicesNeverUnderCount() {
-  std::printf("visible list matches the engine's count everywhere\n");
-
-  // The interface discovers available choices by probing indices, because the
-  // engine has no call for a hub's raw choice count and refuses both
-  // out-of-range and unavailable indices identically. That probe has to find
-  // every choice the engine counted, including when the available indices are
-  // non-contiguous. Checked at every hub for both actors.
-  Engine engine;
-  CHECK(engine.load_config(read_file("speakers.json")) == LOUDER_LOAD_OK, "config should load");
-  CHECK(engine.load_conversation("jail", read_file("jail.json")) == LOUDER_LOAD_OK,
-        "conversation should load");
-  NameId conversation = engine.name("jail");
-
-  // Positions are sparse and unordered in the document, so every plausible
-  // position is asked rather than trusting the range 0..max to be filled. A
-  // position with no hub answers 0 and probes empty, which is consistent.
-  LouderActor freya = engine.add_actor(conversation, 0, "Freya");
-  LouderActor benjamin = engine.add_actor(conversation, 0, "Benjamin");
-  CHECK(freya != LOUDER_ACTOR_NONE && benjamin != LOUDER_ACTOR_NONE, "both actors should be added");
-
-  int hubs_checked = 0;
-  for (LouderPosition p = 0; p < 64; ++p) {
-    for (ActorId actor : {freya, benjamin}) {
-      // Skip positions that are not hubs; the count is 0 there and the probe is
-      // empty, which is consistent but not interesting.
-      std::vector<Choice> found = engine.available_choices(conversation, p, actor);
-      int32_t expected = engine.choice_count(conversation, p, actor);
-      CHECK(static_cast<int32_t>(found.size()) == expected,
-            "at hub %d for actor %d the probe found %zu choices but the engine counts %d", p,
-            actor, found.size(), expected);
-      if (expected > 0) {
-        ++hubs_checked;
-      }
-    }
-  }
-  CHECK(hubs_checked > 0, "at least some hubs should offer choices to check");
-}
-
-void TestKeypressSelectsTheNthVisibleChoice() {
-  std::printf("keypress selects the nth visible choice\n");
-  Fixture f("speakers.json", "jail.json");
-
-  // Pressing the second key must move to the hub behind the *second visible*
-  // choice, whatever engine index that is.
-  f.view().handle_key('w');
-  CHECK(f.view().right().position == 4,
-        "'w' should take the second visible choice, which leads to 4, got %d",
-        f.view().right().position);
-
-  // And the engine index it used must have been 1, which it was, because nothing
-  // was hidden here. Confirm by asking the engine directly.
-  CHECK(f.engine.choice_count(f.conversation, f.view().right().position, f.view().right().actor) >= 0,
-        "the engine should still answer queries for this actor");
-}
-
-void TestKeysOutOfRangeAreRejected() {
-  std::printf("out of range keys\n");
-  Fixture f("speakers.json", "jail.json");
-
-  // Freya has no choices at the start hub, so any of her keys is out of range.
-  Position before = f.view().left().position;
-  bool handled = f.view().handle_key('1');
-  CHECK(handled, "the key should still be consumed by her column");
-  CHECK(f.view().left().position == before, "Freya should not have moved");
-  CHECK(!f.view().left().error.empty(), "the refusal should be reported to the user");
-  CHECK(!f.view().errors().empty(), "the refusal should also reach the shared error list");
-
-// Benjamin has four choices at the start hub, keyed q, w, e, r. So 'r' is the
-  // last in range and 't' is the first one past the end.
-  CHECK(f.view().handle_key('r'), "'r' is Benjamin's fourth key, within his list of four");
-  CHECK(f.view().right().position == 6, "'r' should lead to hub 6, got %d", f.view().right().position);
-
-  // From 6 the only choice leads to 7, so Benjamin still has exactly one and
-  // 't' is out of range from here too.
-  size_t errors_before = f.view().errors().size();
-  f.view().handle_key('t');
-  CHECK(f.view().right().position == 6, "Benjamin should not have moved, got %d",
-        f.view().right().position);
-  CHECK(f.view().errors().size() > errors_before, "an out of range key should be reported");
-}
-
-// --- unclaimed keys --------------------------------------------------------
-
-void TestConversationCanAdvancePastEveryChoice() {
-  std::printf("the conversation can advance from every reachable choice\n");
-
-  // The failure this catches: Benjamin takes "I said, I really don't know who I
-  // am", which drags Freya to hub 3. Hub 3's only choice leads to hub 21, and
-  // hub 21 is Volition's, which only Freya hears. So after that move the lead
-  // must belong to Freya, and she must be able to take it. If neither actor has
-  // choices there the conversation is dead and no further keypress can help.
-  //
-  // Freya hears Volition because the Freya speaker's config lists Volition as
-  // listening, and an actor playing Freya inherits that. Hub 21 is therefore
-  // visible to her, and the claim on it has to be measured against the same
-  // heard set, or the conversation dead-ends on a hub she can plainly see.
-  for (size_t first = 0; first < 4; ++first) {
-    Fixture f("speakers.json", "jail.json");
-    std::vector<int32_t> visible = general_indices(f.view().right());
-    if (first >= visible.size()) {
-      break;
-    }
-
-    char key = louder_demo::kRightKeys[first];
-    f.view().handle_key(key);
-
-    // Whoever holds the lead must be able to move, so at least one side has to
-    // have a choice after the first move.
-    bool someone_can_act = !f.view().left().choices.empty() || !f.view().right().choices.empty();
-    CHECK(someone_can_act,
-          "after first move %zu (key '%c', actors at %d and %d) neither actor has any choices, "
-          "so the conversation is dead",
-          first, key, f.view().left().position, f.view().right().position);
-  }
-
-  // The specific path, checked step by step so a stall names the hub it
-  // happened on.
-  {
-    Fixture f("speakers.json", "jail.json");
-    f.view().handle_key('q');  // Benjamin: 0 -> 3, Freya dragged along
-
-    CHECK(f.view().right().position == 3, "Benjamin should be at 3, got %d", f.view().right().position);
-    CHECK(f.view().left().position == 3, "Freya should have been dragged to 3, got %d",
-          f.view().left().position);
-
-    // Hub 3 leads only to hub 21, which is Volition's. Only Freya hears Volition,
-    // so she must be the one with a choice here, and it must be the only one.
-    CHECK(f.view().left().choices.size() == 1,
-          "Freya should have exactly one choice at hub 3 to continue into Volition's hub 21, but "
-          "has %zu (engine count %d)",
-          f.view().left().choices.size(),
-          f.engine.choice_count(f.conversation, 3, f.view().left().actor));
-    CHECK(f.view().right().choices.empty(),
-          "Benjamin should have no choice at hub 3, since hub 21 is not his to lead, but has %zu",
-          f.view().right().choices.size());
-
-    if (!f.view().left().choices.empty()) {
-      CHECK(f.view().left().choices[0].link == 21, "that choice should lead to 21, got %d",
-            f.view().left().choices[0].link);
-      CHECK(f.view().handle_key('1'), "Freya should be able to take it");
-      CHECK(f.view().left().position == 21, "Freya should be at 21, got %d",
-            f.view().left().position);
-      CHECK(f.view().errors().empty(), "the move should not error, saw: %s",
-            f.view().errors().empty() ? "" : f.view().errors().back().c_str());
-    }
-
-    // And she keeps going: hub 21 is Volition's with two choices of her own.
-    CHECK(f.view().left().choices.size() == 2, "Freya should have two choices at hub 21, saw %zu",
-          f.view().left().choices.size());
-  }
-}
-
-void TestContinueKeysBothSelectTheLoneChoice() {
-  std::printf("both CONTINUE keys select the lone choice\n");
-
-  // The spec binds a single available choice to two keys per side. Both must
-  // work, and each must land on the same hub.
-  //
-  //   Freya:    1 and `
-  //   Benjamin: q and Tab
-  // Freya at hub 3, reached by Benjamin's first move. Both of her keys are
-  // checked against each other rather than against a hardcoded hub, so the test
-  // states the property instead of the document.
-  Position via_number = -1;
-  {
-    Fixture f("speakers.json", "jail.json");
-    f.view().handle_key('q');  // Benjamin: 0 -> 3, Freya dragged along
-
-    CHECK(f.view().left().is_continue(),
-          "the premise is a single choice for Freya at hub 3, saw %zu",
-          f.view().left().choices.size());
-    Position expected = f.view().left().choices.empty() ? -1 : f.view().left().choices[0].link;
-
-    CHECK(f.view().handle_key('1'), "the number key '1' should be acted on");
-    CHECK(f.view().left().position == expected, "'1' should land on %d, got %d", expected,
-          f.view().left().position);
-    CHECK(f.view().errors().empty(), "'1' should not error, saw: %s",
-          f.view().errors().empty() ? "" : f.view().errors().back().c_str());
-    via_number = f.view().left().position;
-  }
-
-  // The backtick does the same thing from a clean engine.
-  {
-    Fixture f("speakers.json", "jail.json");
-    f.view().handle_key('q');
-    CHECK(f.view().left().is_continue(), "Freya should be in the continue state at hub 3");
-    const Position expected = f.view().left().choices.empty() ? -1 : f.view().left().choices[0].link;
-    CHECK(f.view().handle_key(louder_demo::kLeftContinueKey),
-          "the backtick should be acted on while Freya is continuing");
-    CHECK(f.view().left().position == expected, "the backtick should land on %d, got %d", expected,
-          f.view().left().position);
-    CHECK(f.view().left().position == via_number,
-          "the backtick and 1 should land on the same hub, %d vs %d", f.view().left().position,
-          via_number);
-    CHECK(f.view().errors().empty(), "the backtick should not error, saw: %s",
-          f.view().errors().empty() ? "" : f.view().errors().back().c_str());
-  }
-
-  // Benjamin needs a lone choice of his own. Hub 28's only choice leads to hub
-  // 31, which has no speaker at all, so it is public and unowned: both actors
-  // are offered it, and both end up in the single-choice state.
-  {
-    auto standing_at_28 = [](DialogueView** out_view, Engine** out_engine) {
-      auto engine = std::make_unique<Engine>();
-      engine->load_config(read_file("speakers.json"));
-      engine->load_conversation("jail", read_file("jail.json"));
-      NameId conversation = engine->name("jail");
-      ActorId freya = engine->add_actor(conversation, 28, "Freya");
-      ActorId ben = engine->add_actor(conversation, 28, "Benjamin");
-
-      Viewport left;
-      left.actor = freya;
-      left.display_name = "Freya";
-      Viewport right;
-      right.actor = ben;
-      right.display_name = "REDACTED";
-      engine->drain_events();
-
-      auto view = std::make_unique<DialogueView>(engine.get(), left, right);
-      view->consume({});
-      *out_view = view.release();
-      *out_engine = engine.release();
+  LouderContext* ctx = init_louder();
+  LouderName conversation = LOUDER_NAME_NONE;
+  View view;
+  LouderPosition start = -1;
+
+  explicit Fixture(LouderPosition at = -1) {
+    std::string config = read_file("speakers.json");
+    std::string document = read_file("jail.json");
+    // The loaders take a mutable buffer; the documents here are not modified.
+    auto mutable_bytes = [](std::string& text) {
+      return reinterpret_cast<uint8_t*>(const_cast<char*>(text.data()));
     };
 
-    DialogueView* by_q = nullptr;
-    Engine* engine_q = nullptr;
-    standing_at_28(&by_q, &engine_q);
-    CHECK(by_q->right().is_continue(),
-          "the premise is one choice for Benjamin at hub 28, saw %zu", by_q->right().choices.size());
-    Position expected = by_q->right().choices.empty() ? -1 : by_q->right().choices[0].link;
-    CHECK(by_q->handle_key('q'), "q should be acted on");
-    CHECK(by_q->right().position == expected, "q should land on %d, got %d", expected,
-          by_q->right().position);
-    CHECK(by_q->errors().empty(), "q should not error, saw: %s",
-          by_q->errors().empty() ? "" : by_q->errors().back().c_str());
-    Position via_q = by_q->right().position;
-    delete by_q;
-    delete engine_q;
+    CHECK(config.empty() == false, "the speaker config should be readable");
+    CHECK(load_conversation_config(ctx, mutable_bytes(config), config.size(),
+                                   LOUDER_ENCODING_UTF8) == LOUDER_LOAD_OK,
+          "the speaker config should load");
 
-    // And Tab reaches the same place.
-    DialogueView* by_tab = nullptr;
-    Engine* engine_tab = nullptr;
-    standing_at_28(&by_tab, &engine_tab);
-    CHECK(by_tab->right().is_continue(), "Benjamin should be continuing again");
-    CHECK(by_tab->handle_key(louder_demo::kRightContinueKey), "Tab should be acted on");
-    CHECK(by_tab->right().position == via_q, "Tab should land where q did, %d vs %d",
-          by_tab->right().position, via_q);
-    CHECK(by_tab->errors().empty(), "Tab should not error, saw: %s",
-          by_tab->errors().empty() ? "" : by_tab->errors().back().c_str());
-    delete by_tab;
-    delete engine_tab;
+    conversation = intern(ctx, "jail");
+    CHECK(load_conversation_json(ctx, conversation, mutable_bytes(document), document.size(),
+                                 LOUDER_ENCODING_UTF8) == LOUDER_LOAD_OK,
+          "the conversation should load");
+
+    LouderName tag = intern(ctx, "start");
+    start = next_hub_from_tags(ctx, conversation, &tag, 1, 0, -1);
+    const LouderPosition here = at < 0 ? start : at;
+
+    LouderName freya = intern(ctx, "Freya");
+    LouderName benjamin = intern(ctx, "Benjamin");
+    view.setup(ctx, conversation,
+               add_actor(ctx, conversation, here, ActorFlags(), &freya, 1, nullptr, 0),
+               add_actor(ctx, conversation, here, ActorFlags(), &benjamin, 1, nullptr, 0));
+    flush_events(ctx);
   }
 
-  // Freya's Tab must never act, since it belongs to Benjamin. Checked while she
-  // is mid-conversation with choices of her own, where a misrouted key would
-  // be most visible.
-  {
-    Fixture f("speakers.json", "jail.json");
-    f.view().handle_key('q');
-    Position before = f.view().left().position;
-    f.view().handle_key(louder_demo::kRightContinueKey);
-    CHECK(f.view().left().position == before, "Tab must not move Freya, got %d",
-          f.view().left().position);
-    CHECK(f.view().right().position == before, "Tab must not move Benjamin either, got %d",
-          f.view().right().position);
+  ~Fixture() { deinit_louder(ctx); }
+
+  const Column& left() const { return view.left; }
+  const Column& right() const { return view.right; }
+};
+
+// --- the choice index the interface must not confuse with the engine's ------
+
+// A choice index in the UI is not the index the engine wants. Hub 26 carries
+// five raw choices and offers Benjamin only four of them, so his visible list
+// and the engine's indices agree only by accident; hub 26 is also private to
+// Benjamin, whose column owns it while Freya's does not.
+//
+// This is the one rule the example exists to demonstrate, so it is checked at
+// the hub where it bites rather than at a hub where nothing is hidden.
+void TestVisibleChoiceIndicesAreNotEngineIndices() {
+  std::printf("visible index vs engine index\n");
+  Fixture f(26);
+
+  CHECK(f.left().choices.empty(),
+        "the speaker of a private hub does not own it, so Freya should get nothing, saw %zu",
+        f.left().choices.size());
+  CHECK(f.right().choices.size() == 4, "Benjamin should see four choices at 26, saw %zu",
+        f.right().choices.size());
+
+  // Each displayed choice must carry the engine's own link for the engine index
+  // it names, and that index is not simply the position on screen. Four of the
+  // hub's five raw choices are offered; the fifth is not.
+  for (size_t i = 0; i < f.right().choices.size(); ++i) {
+    const Choice& choice = f.right().choices[i];
+    const LouderPosition link =
+        get_hub_choice_link(f.ctx, f.conversation, 26, f.right().actor, choice.general_index);
+    CHECK(choice.link == link, "visible choice %zu should lead to %d, got %d", i, link,
+          choice.link);
   }
+  CHECK(get_hub_choice_link(f.ctx, f.conversation, 26, f.right().actor, 4) < 0,
+        "the fifth raw choice leads to a hub that is not Benjamin's, so it is refused");
+
+  // His first visible choice is engine index 0, which leads into auto hub 27.
+  // Auto hubs resolve themselves, so he lands beyond it: at hub 29, which only
+  // he hears.
+  CHECK(f.view.press('q'), "'q' should be acted on");
+  CHECK(f.right().position == 29, "'q' should enter auto hub 27 and come out at 29, got %d",
+        f.right().position);
+  CHECK(f.right().error.empty(), "the move should not error, got '%s'", f.right().error.c_str());
+
+  // Freya is carried through the same auto hub, but she does not hear hub 29,
+  // so auto logic sends her to the other branch: hub 28. The two actors end up
+  // apart, which is how his private thought stays private.
+  CHECK(f.left().position == 28, "Freya should diverge onto hub 28, got %d", f.left().position);
 }
 
-void TestUnclaimedKeysAreIgnored() {
-  std::printf("unclaimed keys\n");
-  Fixture f("speakers.json", "jail.json");
+// --- keys ------------------------------------------------------------------
 
-  Position left_before = f.view().left().position;
-  Position right_before = f.view().right().position;
+// Freya takes 1..9 and Benjamin the qwerty block, and no key may answer to both,
+// or one press would be ambiguous.
+void TestKeysBelongToOneColumn() {
+  std::printf("keys belong to one column\n");
+  Fixture f;
 
-  for (char key : {'z', 'a', '0', '!', ' ', '\t'}) {
-    CHECK(!f.view().handle_key(key), "'%c' should not be claimed by either column", key);
+  for (int i = 0; kFreyaKeys[i] != '\0'; ++i) {
+    CHECK(f.left().key_for(static_cast<size_t>(i)) == kFreyaKeys[i],
+          "Freya's choice %d should be on '%c'", i, kFreyaKeys[i]);
+  }
+  for (int i = 0; kBenjaminKeys[i] != '\0'; ++i) {
+    CHECK(f.right().key_for(static_cast<size_t>(i)) == kBenjaminKeys[i],
+          "Benjamin's choice %d should be on '%c'", i, kBenjaminKeys[i]);
   }
 
-  CHECK(f.view().left().position == left_before, "Freya should not have moved");
-  CHECK(f.view().right().position == right_before, "Benjamin should not have moved");
-  CHECK(f.view().errors().empty(), "unclaimed keys should not raise errors, saw %zu",
-        f.view().errors().size());
+  // Pressing a key past the end of what is on offer is reported, not ignored:
+  // the player typed something and deserves to know it did nothing.
+  CHECK(!f.view.press('z'), "'z' belongs to neither column");
+  CHECK(f.view.press('1'), "'1' is Freya's key even with nothing behind it");
+  CHECK(!f.left().error.empty(), "so the refusal should be shown to her");
+  CHECK(f.left().position == f.start, "and she should not have moved, got %d", f.left().position);
 }
 
-// --- driving the conversation ----------------------------------------------
+// The spec binds a lone choice to two keys per side, and both must land in the
+// same place. Hub 28's only choice is public and unowned, which is what leaves
+// both sides continuing there.
+void TestLoneChoiceAnswersToBothOfItsKeys() {
+  std::printf("a lone choice answers to both keys\n");
 
-void TestBothSidesAdvance() {
-  std::printf("both sides advance\n");
-  Fixture f("speakers.json", "jail.json");
-
-  // Benjamin leads from the start hub, so only he has choices. After he moves,
-  // the engine decides who leads next, and the view must follow.
-  f.view().handle_key('q');  // Benjamin: 0 -> 3
-
-  CHECK(f.view().right().position == 3, "Benjamin should be at 3, got %d", f.view().right().position);
-
-  // Hub 3 is Benjamin's line with no choices of its own, so the engine pulls
-  // Freya along. Whether that happens is the engine's business; what the
-  // interface must guarantee is that whatever it does, both columns agree with
-  // the engine afterwards.
-  CHECK(f.view().left().has_position, "Freya should still have a position");
-  CHECK(f.view().errors().empty(), "the conversation should proceed without errors, saw %zu",
-        f.view().errors().size());
-  CHECK(f.view().left().position == f.engine.position_of(f.conversation, f.view().left().actor),
-        "Freya's displayed position should be the engine's");
-  CHECK(f.view().right().position == f.engine.position_of(f.conversation, f.view().right().actor),
-        "Benjamin's displayed position should be the engine's");
-}
-
-void TestStaleErrorsClearOnSuccess() {
-  std::printf("errors clear on success\n");
-  Fixture f("speakers.json", "jail.json");
-
-  f.view().handle_key('1');  // refused: Freya has nothing here
-  CHECK(!f.view().left().error.empty(), "Freya should be showing an error");
-
-  // Get Freya into a position where she does have choices, then take one. The
-  // error from the refused key should not follow her around.
-  while (f.view().left().choices.empty() && f.view().errors().size() < 8) {
-    // Drive whichever side currently has the lead, one step at a time.
-    if (!f.view().right().choices.empty()) {
-      f.view().handle_key(louder_demo::kRightKeys[0]);
-    } else if (!f.view().left().choices.empty()) {
-      f.view().handle_key(louder_demo::kLeftKeys[0]);
-    } else {
-      break;
-    }
+  // Freya continues on '1' and on backtick.
+  for (const char* key : {"1", "`"}) {
+    Fixture f(28);
+    CHECK(f.left().is_continue(), "the premise is one choice for Freya, saw %zu",
+          f.left().choices.size());
+    CHECK(f.view.press(key[0]), "Freya's '%s' should be acted on", key);
+    CHECK(f.left().error.empty(), "'%s' should not error, got '%s'", key, f.left().error.c_str());
+    CHECK(f.left().position == 31, "'%s' should land on 31, got %d", key, f.left().position);
   }
 
-  if (!f.view().left().choices.empty()) {
-    f.view().handle_key(louder_demo::kLeftKeys[0]);
-    CHECK(f.view().left().error.empty(), "a successful choice should clear the stale error");
+  // Benjamin continues on 'q' and on Tab.
+  for (const char* key : {"q", "\t"}) {
+    Fixture f(28);
+    CHECK(f.right().is_continue(), "the premise is one choice for Benjamin, saw %zu",
+          f.right().choices.size());
+    CHECK(f.view.press(key[0]), "Benjamin's '%s' should be acted on", key);
+    CHECK(f.right().error.empty(), "'%s' should not error, got '%s'", key, f.right().error.c_str());
+    CHECK(f.right().position == 31, "'%s' should land on 31, got %d", key, f.right().position);
   }
+
+  // The second key only means something while the side is continuing. Pressing
+  // it when there is a real choice to make is context-sensitive, so it is
+  // ignored rather than reported as a mistyped choice.
+  Fixture f;
+  CHECK(f.right().choices.size() > 1, "the premise is a real choice for Benjamin to make");
+  CHECK(!f.view.press('\t'), "Tab should do nothing while Benjamin has several choices");
 }
 
-// --- the alias -------------------------------------------------------------
+// --- aliasing --------------------------------------------------------------
 
-void TestAliasIsIndependentOfSpeakerName() {
+// Benjamin is REDACTED to both parties even though the engine reports his real
+// name. The substitution is the interface's job, so the two must stay separate.
+void TestTheAliasIsTheInterfacesOwn() {
   std::printf("aliasing\n");
-  Fixture f("speakers.json", "jail.json");
+  Fixture f;
 
-  // The column header carries the alias...
-  CHECK(f.view().right().display_name == "REDACTED", "Benjamin's column should be titled REDACTED");
-  CHECK(f.view().left().display_name == "Freya", "Freya's column should be titled Freya");
+  CHECK(std::string(f.right().display_name) == "REDACTED",
+        "Benjamin's column should be titled REDACTED");
+  CHECK(std::string(f.left().display_name) == "Freya", "Freya's column should be titled Freya");
 
-  // ...while the text the engine reports still says Benjamin. The interface is
-  // responsible for the substitution, not the engine, which is the whole point
-  // of the aliasing requirement.
-  f.view().handle_key('q');
-  CHECK(f.view().right().speaker == "Benjamin",
-        "the engine should still report the real speaker name, got '%s'",
-        f.view().right().speaker.c_str());
-  CHECK(f.view().right().display_name == "REDACTED",
-        "the display name should be unaffected by the engine's speaker name");
+  // The start hub is Freya's speech, so both columns show the same speaker.
+  CHECK(f.right().speaker == "Freya", "the start hub is spoken by Freya whoever reads it, got '%s'",
+        f.right().speaker.c_str());
 
-  // Nothing anywhere in the view state should leak the real name into the alias
-  // field.
-  CHECK(f.view().right().display_name.find("Benjamin") == std::string::npos,
-        "the alias should not contain the real name");
+  // After a move of his own, the engine reports Benjamin, and only the engine
+  // does: the column header is untouched by it.
+  CHECK(f.view.press('q'), "Benjamin should be able to lead from the start hub");
+  CHECK(f.right().speaker == "Benjamin", "the engine should report the real speaker, got '%s'",
+        f.right().speaker.c_str());
+  CHECK(std::string(f.right().display_name) == "REDACTED",
+        "and the column header should still be the alias");
 }
 
-// --- visibility ------------------------------------------------------------
+// --- the columns report the engine, never their own opinion ---------------
 
-void TestPrivateHubsAreInvisibleToFreya() {
-  std::printf("private hub visibility\n");
-  Fixture f("speakers.json", "jail.json");
+// The interface decides nothing about who may see or choose what. It asks, and
+// shows the answer. Whatever the engine does to the two actors, the columns
+// must agree with it afterwards, so this is checked after every single move.
+void TestTheColumnsAlwaysAgreeWithTheEngine() {
+  std::printf("the columns always agree with the engine\n");
+  Fixture f;
 
-  // Hub 26 carries recipients "Benjamin", so it may only appear to an actor
-  // speaking as or listening to Benjamin. Freya speaks as Freya and listens to
-  // Freya's own internal voices, so she must never see it. The engine is the
-  // authority; this checks the interface never shows her a choice leading there.
-  const Position private_hub = 26;
+  for (int step = 0; step < 12; ++step) {
+    for (const Column* column : {&f.left(), &f.right()}) {
+      CHECK(column->position == get_actor_position(f.ctx, f.conversation, column->actor),
+            "step %d: %s is shown at %d but the engine says %d", step, column->display_name,
+            column->position, get_actor_position(f.ctx, f.conversation, column->actor));
 
-  // Walk both sides as far as the engine allows, never more than 60 steps, and
-  // assert Freya is never offered the private hub or shown standing on it.
-  for (int step = 0; step < 60; ++step) {
-    if (f.view().left().position == private_hub) {
-      CHECK(false, "Freya reached the private hub %d", private_hub);
-      break;
-    }
-    for (const Choice& choice : f.view().left().choices) {
-      CHECK(choice.link != private_hub, "Freya was offered the private hub %d", private_hub);
-    }
-
-    bool progressed = false;
-    if (!f.view().right().choices.empty()) {
-      f.view().handle_key(louder_demo::kRightKeys[0]);
-      progressed = true;
-    }
-    if (!f.view().left().choices.empty()) {
-      f.view().handle_key(louder_demo::kLeftKeys[0]);
-      progressed = true;
-    }
-    if (!progressed) {
-      break;
-    }
-  }
-}
-
-void TestAutoHubsNeverDisplayed() {
-  std::printf("auto hubs are never displayed\n");
-  Fixture f("speakers.json", "jail.json");
-
-// Hubs 27 and 35 are flagged auto in the document. An auto hub resolves itself
-  // and is never rest on, so no actor's displayed position may be one and the
-  // text of a displayed hub is never an auto hub's own.
-  //
-  // A choice *into* an auto hub is a different matter and is offered on purpose:
-  // selecting it is how an actor enters auto logic at all. So the invariant is
-  // about where actors end up, not about what they may click.
-  for (int step = 0; step < 60; ++step) {
-    for (const Viewport* viewport : {&f.view().left(), &f.view().right()}) {
-      CHECK(!f.engine.is_auto(viewport->position),
-            "an actor is standing on auto hub %d", viewport->position);
-      for (const Choice& choice : viewport->choices) {
-        // If a choice does lead into an auto hub, taking it must land the actor
-        // somewhere else entirely.
-        if (!f.engine.is_auto(choice.link)) {
-          continue;
-}
-        f.view().refresh();
-        CHECK(!f.engine.is_auto(viewport->position),
-              "the actor should not be on auto hub %d", viewport->position);
-      }
-    }
-
-    bool progressed = false;
-    if (!f.view().right().choices.empty()) {
-      f.view().handle_key(louder_demo::kRightKeys[0]);
-      progressed = true;
-    }
-    if (!f.view().left().choices.empty()) {
-      f.view().handle_key(louder_demo::kLeftKeys[0]);
-      progressed = true;
-    }
-    if (!progressed) {
-      break;
-    }
-  }
-}
-
-void TestDeadEndIsReportedNotHung() {
-  std::printf("dead ends\n");
-
-  // Hub 35 is an auto hub with no choices, so the engine can never resolve where
-  // it leads and the conversation's own note says getting stuck there should be
-  // caught as an error and shown to the user.
-  //
-  // The interface's job is to surface that, so the error has to be reachable
-  // from the interface's own API rather than only from a raw engine call.
-  Fixture f("speakers.json", "jail.json");
-
-  // Nothing in the conversation leads to hub 35 on its own, so this asks the
-  // engine directly whether an actor can be put there at all.
-  bool moved_onto_35 = f.engine.force_position(f.conversation, f.view().right().actor, 35);
-
-  if (!moved_onto_35) {
-    // The engine refused hub 35 outright, which is the better outcome: there is
-    // no state in which the user can be left looking at a hub it cannot leave.
-    CHECK(!f.engine.force_position(f.conversation, f.view().right().actor, 35),
-          "hub 35 is auto with no exit, so moving onto it should be refused");
-    return;
-  }
-
-  // If the engine did allow it, the interface must not pretend the conversation
-  // is fine: it has to report a failure rather than silently stall.
-  f.view().consume(f.engine.drain_events());
-  CHECK(f.view().errors().empty(),
-        "standing on the dead end at 35 should surface an error to the user, saw none");
-
-  bool stalled = f.view().left().choices.empty() && f.view().right().choices.empty();
-  CHECK(stalled, "an auto hub with no exit should leave the actor with nothing to choose");
-}
-
-// --- consistency with the engine -------------------------------------------
-
-void TestViewAlwaysAgreesWithEngine() {
-  std::printf("view agrees with the engine\n");
-  Fixture f("speakers.json", "jail.json");
-
-  // Whatever the walk does, the two columns must never drift from what the
-  // engine reports. This is the invariant the whole interface rests on, so it is
-  // checked after every single step rather than only at interesting moments.
-  for (int step = 0; step < 40; ++step) {
-    for (const Viewport* viewport : {&f.view().left(), &f.view().right()}) {
-      Position engine_position = f.engine.position_of(f.conversation, viewport->actor);
-      CHECK(viewport->position == engine_position,
-            "step %d: displayed position %d but the engine says %d", step,
-            viewport->position, engine_position);
-
-      int32_t engine_choices = f.engine.choice_count(f.conversation, engine_position, viewport->actor);
-      CHECK(static_cast<int32_t>(viewport->choices.size()) == engine_choices,
-            "step %d: displayed %zu choices but the engine reports %d", step,
-            viewport->choices.size(), engine_choices);
+      const int32_t expected = get_hub_choice_count(f.ctx, f.conversation, column->position,
+                                                    column->actor);
+      CHECK(expected == static_cast<int32_t>(column->choices.size()),
+            "step %d: %s is shown with %zu choices but the engine counts %d", step,
+            column->display_name, column->choices.size(), expected);
 
       // Every displayed choice must lead where it says, by the engine's own
-      // answer for that index from that actor's position.
-      for (size_t i = 0; i < viewport->choices.size(); ++i) {
-        const Choice& choice = viewport->choices[i];
-        int32_t engine_link = f.engine.choice_link(f.conversation, engine_position, viewport->actor,
-                                                   choice.general_index);
-        CHECK(choice.link == engine_link,
-              "step %d: displayed choice %zu reports link %d but the engine says %d", step,
-              i, choice.link, engine_link);
+      // answer for that index.
+      for (size_t i = 0; i < column->choices.size(); ++i) {
+        const Choice& choice = column->choices[i];
+        CHECK(choice.link == get_hub_choice_link(f.ctx, f.conversation, column->position,
+                                                 column->actor, choice.general_index),
+              "step %d: %s's choice %zu shows %d, the engine says %d", step, column->display_name,
+              i, choice.link, get_hub_choice_link(f.ctx, f.conversation, column->position,
+                                                  column->actor, choice.general_index));
       }
     }
 
-    // Alternate sides so both get driven.
-    bool progressed = false;
-    if (step % 2 == 0 && !f.view().right().choices.empty()) {
-      f.view().handle_key(louder_demo::kRightKeys[step % 3]);
-      progressed = true;
-    } else if (!f.view().left().choices.empty()) {
-      f.view().handle_key(louder_demo::kLeftKeys[step % 3]);
-      progressed = true;
-    } else if (!f.view().right().choices.empty()) {
-      f.view().handle_key(louder_demo::kRightKeys[step % 3]);
-      progressed = true;
+    // Alternate sides, so both get driven, and stop when neither can move.
+    const Column* column = (step % 2 == 0) ? &f.right() : &f.left();
+    if (column->choices.empty()) {
+      column = column == &f.left() ? &f.right() : &f.left();
     }
-    if (!progressed) {
+    if (column->choices.empty()) {
       break;
     }
+    f.view.press(column->keys[0]);
   }
 }
 
-void TestExhaustiveFirstMoveOutcomes() {
-  std::printf("every first move\n");
+// --- the conversation can actually be played -------------------------------
 
-  // For every visible choice on the start hub, from a fresh engine, pressing the
-  // matching key must land on the hub the choice reports. This is the smallest
-  // exhaustive check of the key-to-choice mapping: it cannot pass by accident on
-  // one lucky path.
-  Fixture probe("speakers.json", "jail.json");
-  size_t moves = probe.view().right().choices.size();
-  CHECK(moves == 4, "expected four first moves, saw %zu", moves);
+// A demo nobody can finish is not a demo. Whatever either player picks first,
+// the conversation must not stall, and a side with nothing to decide must be
+// able to say so.
+void TestEitherSideCanCarryTheConversation() {
+  std::printf("the conversation does not stall\n");
 
-  for (size_t i = 0; i < moves; ++i) {
-    Fixture f("speakers.json", "jail.json");
-    std::vector<int32_t> visible = general_indices(f.view().right());
-    CHECK(i < visible.size(), "move %zu should exist", i);
+  for (size_t first = 0; first < 4; ++first) {
+    Fixture f;
+    if (first >= f.right().choices.size()) {
+      break;
+    }
 
-    const std::string expected = f.view().right().choices[i].text;
-    const int32_t expected_general = f.view().right().choices[i].general_index;
+    f.view.press(f.right().keys[first]);
+    CHECK(f.right().position != f.start, "the first move %zu should have gone somewhere", first);
+    CHECK(!f.left().choices.empty() || !f.right().choices.empty(),
+          "after first move %zu neither actor has any choices, so the conversation is dead", first);
+    CHECK(f.left().error.empty() && f.right().error.empty(),
+          "and nothing should have been refused, got '%s' / '%s'", f.left().error.c_str(),
+          f.right().error.c_str());
+  }
 
-    char key = louder_demo::kRightKeys[i];
-    f.view().handle_key(key);
-
-    CHECK(f.view().right().choices.size() > 0 || true, "move %zu completed", i);
-    CHECK(f.view().errors().empty(), "move %zu should not error, saw: %s", i,
-          f.view().errors().empty() ? "" : f.view().errors().back().c_str());
-    CHECK(visible[i] == expected_general,
-          "move %zu: visible index %d should be engine index %d", i, visible[i],
-          expected_general);
-    CHECK(!expected.empty(), "move %zu should carry choice text", i);
-
-    // The actor must have left the start hub.
-    CHECK(f.view().right().position != f.start, "move %zu should have moved off the start hub", i);
+  // The concrete case that would otherwise dead-end: Benjamin's first choice
+  // drags Freya to hub 3, whose only exit is Volition's hub 21. Volition is
+  // Freya's, so the lead passes to her and she must be able to take it.
+  Fixture f;
+  f.view.press('q');
+  CHECK(f.left().position == 3, "Freya should have been carried to 3, got %d", f.left().position);
+  CHECK(f.right().choices.empty(), "hub 21 is not Benjamin's to lead, so he should have none, saw %zu",
+        f.right().choices.size());
+  CHECK(f.left().choices.size() == 1, "Freya should have exactly one way on, saw %zu",
+        f.left().choices.size());
+  if (f.left().choices.size() == 1) {
+    CHECK(f.view.press('1'), "Freya should be able to take it");
+    CHECK(f.left().position == 21, "and it should lead to 21, got %d", f.left().position);
   }
 }
 
 }  // namespace
 
 int main() {
-  // Unbuffered, so progress survives a crash and the stack depth is visible.
-  std::setvbuf(stdout, nullptr, _IONBF, 0);
   std::printf("running interface tests\n");
 
-TestKeyMapping();
-  TestInitialState();
-  TestVisibleIndexIsNotEngineIndex();
-  TestHiddenChoicesOffsetTheVisibleList();
-  TestAvailableChoicesNeverUnderCount();
-TestKeypressSelectsTheNthVisibleChoice();
-  TestConversationCanAdvancePastEveryChoice();
-  TestContinueKeysBothSelectTheLoneChoice();
-  TestKeysOutOfRangeAreRejected();
-  TestUnclaimedKeysAreIgnored();
-  TestBothSidesAdvance();
-  TestStaleErrorsClearOnSuccess();
-  TestAliasIsIndependentOfSpeakerName();
-  TestPrivateHubsAreInvisibleToFreya();
-  TestAutoHubsNeverDisplayed();
-  TestDeadEndIsReportedNotHung();
-  TestViewAlwaysAgreesWithEngine();
-  TestExhaustiveFirstMoveOutcomes();
+  TestVisibleChoiceIndicesAreNotEngineIndices();
+  TestKeysBelongToOneColumn();
+  TestLoneChoiceAnswersToBothOfItsKeys();
+  TestTheAliasIsTheInterfacesOwn();
+  TestTheColumnsAlwaysAgreeWithTheEngine();
+  TestEitherSideCanCarryTheConversation();
 
   std::printf("\n%d checks, %d failures\n", g_checks, g_failures);
   return g_failures == 0 ? 0 : 1;

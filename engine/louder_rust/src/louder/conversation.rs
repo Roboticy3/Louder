@@ -1,5 +1,5 @@
-use super::name::{Map, LouderName};
-use super::object::{HomogeneousObject, LouderVariant};
+use super::name::{Map, Set, LouderName};
+use super::object::LouderVariant;
 use super::hub::{Hub, LouderPosition};
 
 /// Where a story state variable is stored, decided by its name.
@@ -17,16 +17,6 @@ pub enum VariableScope {
   LocalUnsaved,
   /// Discarded on save, and visible to every conversation.
   SharedUnsaved,
-}
-
-impl VariableScope {
-  pub fn is_shared(&self) -> bool {
-    matches!(self, VariableScope::SharedSaved | VariableScope::SharedUnsaved)
-  }
-
-  pub fn is_saved(&self) -> bool {
-    matches!(self, VariableScope::LocalSaved | VariableScope::SharedSaved)
-  }
 }
 
 /// Classify a variable by the naming rules of the engine guide.
@@ -53,20 +43,19 @@ pub fn classify_variable(name: &str) -> VariableScope {
 /// A variable bucket: one of the four scopes, holding name/variant pairs.
 pub type VariableMap = Map<LouderName, LouderVariant>;
 
-/// The contents of one loaded conversation: its hubs, its additional data, and
-/// the story state that is private to it.
+/// The contents of one loaded conversation: its hubs, and the story state that
+/// is private to it.
 ///
 /// Story state that is shared across conversations is held by the context
 /// instead, so that loading and unloading conversations does not disturb it.
 pub struct Conversation {
   name: LouderName,
   hubs: Map<LouderPosition, Hub>,
-  additional_data: HomogeneousObject,
 
   local_saved: VariableMap,
   local_unsaved: VariableMap,
 
-  covered: Map<LouderPosition, bool>,
+  covered: Set<LouderPosition>,
 }
 
 impl Conversation {
@@ -74,10 +63,9 @@ impl Conversation {
     Conversation {
       name,
       hubs: Map::new(),
-      additional_data: HomogeneousObject::new(),
       local_saved: Map::new(),
       local_unsaved: Map::new(),
-      covered: Map::new(),
+      covered: Set::new(),
     }
   }
 
@@ -107,45 +95,24 @@ impl Conversation {
     self.hubs.insert(position, hub).is_some()
   }
 
-  /// Every hub position in ascending order.
+  /// The story state bucket matching `scope`.
   ///
-  /// Positions are sparse, so this is the canonical iteration order that the
-  /// `next_hub_*` functions walk.
-  pub fn sorted_positions(&self) -> Vec<LouderPosition> {
-    let mut positions: Vec<LouderPosition> = self.hubs.keys().copied().collect();
-    positions.sort_unstable();
-    positions
-  }
-
-  pub fn additional_data(&self) -> &HomogeneousObject {
-    &self.additional_data
-  }
-
-  pub fn additional_data_mut(&mut self) -> &mut HomogeneousObject {
-    &mut self.additional_data
-  }
-
-  /// The story state bucket matching `scope`, for scopes private to this
-  /// conversation.
+  /// Shared buckets belong to the context, not to a conversation, so reaching one
+  /// through here is a caller mistake rather than a state that can occur.
   pub fn variables_mut(&mut self, scope: VariableScope) -> &mut VariableMap {
     match scope {
       VariableScope::LocalSaved => &mut self.local_saved,
       VariableScope::LocalUnsaved => &mut self.local_unsaved,
-      VariableScope::SharedSaved | VariableScope::SharedUnsaved => {
-        unreachable!("shared story state is owned by the context")
-      }
+      _ => unreachable!("shared story state is owned by the context"),
     }
   }
 
-  /// The story state bucket matching `scope`, for scopes private to this
-  /// conversation.
+  /// The story state bucket matching `scope`.
   pub fn variables(&self, scope: VariableScope) -> &VariableMap {
     match scope {
       VariableScope::LocalSaved => &self.local_saved,
       VariableScope::LocalUnsaved => &self.local_unsaved,
-      VariableScope::SharedSaved | VariableScope::SharedUnsaved => {
-        unreachable!("shared story state is owned by the context")
-      }
+      _ => unreachable!("shared story state is owned by the context"),
     }
   }
 
@@ -154,17 +121,10 @@ impl Conversation {
   /// Statements only run the first time a hub is covered, so this is what makes
   /// them effectively one-shot.
   pub fn is_covered(&self, position: LouderPosition) -> bool {
-    self.covered.contains_key(&position)
+    self.covered.contains(&position)
   }
 
   pub fn mark_covered(&mut self, position: LouderPosition) {
-    self.covered.insert(position, true);
-  }
-
-  /// Every covered hub position in ascending order.
-  pub fn covered_positions(&self) -> Vec<LouderPosition> {
-    let mut positions: Vec<LouderPosition> = self.covered.keys().copied().collect();
-    positions.sort_unstable();
-    positions
+    self.covered.insert(position);
   }
 }

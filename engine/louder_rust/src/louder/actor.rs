@@ -23,6 +23,9 @@ bitflags::bitflags! {
 }
 
 /// An entity that speaks as and listens to speakers within a conversation.
+///
+/// Its id is assigned by the context when it is added, since ids are per
+/// conversation and the context is what hands them out.
 pub struct Actor {
   id: LouderActor,
   speak_as: Vec<LouderName>,
@@ -34,7 +37,6 @@ pub struct Actor {
 
 impl Actor {
   pub fn new(
-    id: LouderActor,
     position: LouderPosition,
     flags: ActorFlags,
     speak_as: Vec<LouderName>,
@@ -44,13 +46,12 @@ impl Actor {
     let mut state = ActorState::new(position, channel);
     // Spectators and debug actors are treated as having neither a channel nor a
     // priority, so they must not be given one at creation either.
-    let in_flow = !flags.intersects(ActorFlags::SPECTATOR | ActorFlags::DEBUG);
-    if !in_flow {
-      state.clear_channel();
+    if !flags.in_flow() {
+      state.clear_flow();
     }
 
     Actor {
-      id,
+      id: LOUDER_ACTOR_NONE,
       speak_as,
       listen_to,
       flags,
@@ -65,7 +66,8 @@ impl Actor {
   /// Assign this actor's id.
   ///
   /// Ids are handed out by [`crate::add_actor`], which creates the actor before
-  /// it knows what the next id will be.
+  /// it knows what the next id will be. Until then the actor has no id, and does
+  /// not belong to a conversation anybody can look up.
   pub fn set_id(&mut self, id: LouderActor) {
     self.id = id;
   }
@@ -93,14 +95,6 @@ impl Actor {
     self.flags.contains(ActorFlags::DEBUG)
   }
 
-  /// Whether this actor takes part in channels and priority at all.
-  ///
-  /// Spectators see every hub but are not in the flow, so the guide treats them
-  /// as having no channel and no priority.
-  pub fn has_channel(&self) -> bool {
-    !self.is_spectator() && !self.is_debug()
-  }
-
   pub fn state(&self) -> &ActorState {
     &self.state
   }
@@ -125,19 +119,26 @@ impl Actor {
     self.state.additional_data()
   }
 
-  pub fn additional_mut(&mut self) -> &mut HomogeneousObject {
-    self.state.additional_data_mut()
-  }
-
   pub fn additional_get(&self, key: LouderName) -> Option<&LouderVariant> {
     self.state.additional_data().get(key)
   }
 }
 
+impl ActorFlags {
+  /// Whether an actor with these flags takes part in channels and priority.
+  ///
+  /// Spectators see every hub but are not in the flow, so the guide treats them
+  /// as having no channel and no priority. This is the one place that rule is
+  /// written down.
+  pub fn in_flow(self) -> bool {
+    !self.intersects(ActorFlags::SPECTATOR | ActorFlags::DEBUG)
+  }
+}
+
 /// Everything about an actor that depends on the hub it is standing on.
 ///
-/// Grouped apart from [`Actor`] because all of it changes when the actor
-/// travels, and can be copied wholesale to perform a warp.
+/// Grouped apart from [`Actor`] because all of it changes together when the
+/// actor travels.
 pub struct ActorState {
   channel: LouderName,
   position: LouderPosition,
@@ -171,13 +172,6 @@ impl ActorState {
     self.channel = channel;
   }
 
-  /// Drop the channel and priority, which is what happens to actors that are
-  /// not part of the conversation flow.
-  pub fn clear_channel(&mut self) {
-    self.channel = super::name::LOUDER_NAME_NONE;
-    self.priority = 0;
-  }
-
   pub fn priority(&self) -> i32 {
     self.priority
   }
@@ -186,12 +180,18 @@ impl ActorState {
     self.priority = priority;
   }
 
-  pub fn additional_data(&self) -> &HomogeneousObject {
-    &self.additional_data
+  /// Take the actor out of the flow: no channel and the default priority.
+  ///
+  /// Channel and priority only mean something together, since priority ranks an
+  /// actor within its channel, so this clears both rather than leaving a
+  /// priority behind with nothing to rank it in.
+  pub fn clear_flow(&mut self) {
+    self.channel = super::name::LOUDER_NAME_NONE;
+    self.priority = 0;
   }
 
-  pub fn additional_data_mut(&mut self) -> &mut HomogeneousObject {
-    &mut self.additional_data
+  pub fn additional_data(&self) -> &HomogeneousObject {
+    &self.additional_data
   }
 
   /// Replace the additional data wholesale.

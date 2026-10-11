@@ -3,31 +3,34 @@
 # compiling against it always exercises the current ABI.
 $ErrorActionPreference = 'Stop'
 
-$gpp = 'g++'
-$sources = @('main.cpp', 'engine_bridge.cpp', 'dialogue_view.cpp', 'screen.cpp')
+# Take the header and the DLL straight from the engine's build, rather than from
+# the copies checked in beside this script. A stale pair still compiles and still
+# links, and then fails at runtime for reasons that look like the demo's.
+$artifacts = Join-Path $PSScriptRoot '..\..\engine\artifacts'
+if (-not (Test-Path -LiteralPath (Join-Path $artifacts 'louder_rust.h'))) {
+  throw "no engine build found at $artifacts; run engine/build_and_test.ps1 first"
+}
+Copy-Item -LiteralPath (Join-Path $artifacts 'louder_rust.h') -Destination .
+Copy-Item -LiteralPath (Join-Path $artifacts 'louder_rust.dll') -Destination .
 
 Write-Host 'compiling the demo'
-& $gpp -std=c++17 -O2 -Wall -I . @sources -o basic_interaction.exe louder_rust.dll
+& g++ -std=c++17 -O2 -Wall -Wextra -I . main.cpp dialogue.cpp terminal.cpp -o basic_interaction.exe louder_rust.dll
 if ($LASTEXITCODE -ne 0) { throw 'failed to compile the demo' }
 
 Write-Host 'compiling the interface tests'
-& $gpp -std=c++17 -O2 -Wall -I . interface_test.cpp engine_bridge.cpp dialogue_view.cpp -o interface_test.exe louder_rust.dll
+& g++ -std=c++17 -O2 -Wall -Wextra -I . interface_test.cpp dialogue.cpp terminal.cpp -o interface_test.exe louder_rust.dll
 if ($LASTEXITCODE -ne 0) { throw 'failed to compile the interface tests' }
 
-Write-Host 'compiling the dialogue tests'
-& $gpp -std=c++17 -O2 -Wall -I . dialogue_test.cpp engine_bridge.cpp dialogue_view.cpp -o dialogue_test.exe louder_rust.dll
-if ($LASTEXITCODE -ne 0) { throw 'failed to compile the dialogue tests' }
-
-# The DLL sits beside each test binary, which is where Windows looks first.
+# The DLL sits beside each binary, which is where Windows looks first.
 Write-Host ''
 Write-Host 'interface tests'
 & .\interface_test.exe
 if ($LASTEXITCODE -ne 0) { throw "interface tests failed with exit code $LASTEXITCODE" }
 
 Write-Host ''
-Write-Host 'dialogue tests'
-& .\dialogue_test.exe
-if ($LASTEXITCODE -ne 0) { throw "dialogue tests failed with exit code $LASTEXITCODE" }
+Write-Host 'startup check'
+& .\basic_interaction.exe --check
+if ($LASTEXITCODE -ne 0) { throw "the demo failed to start with exit code $LASTEXITCODE" }
 
 Write-Host ''
 Write-Host 'demo ready: .\basic_interaction.exe'
