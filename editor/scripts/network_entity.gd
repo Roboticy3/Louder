@@ -52,6 +52,7 @@ func _export_node(node: Node) -> Variant:
 	if node is ChoicesSectionLogic:
 		return node.choices.size()
 	elif node is HubEntityFlags:
+		print("exporting flags ", node.flags)
 		return node.flags
 	elif node is CodeEdit:
 		return node.text
@@ -72,6 +73,7 @@ func _import_node(node: Node, value: Variant) -> void:
 	if node is ChoicesSectionLogic:
 		node.set_choice_count(float(value))
 	elif node is HubEntityFlags:
+		print("importing flags ", value)
 		node.flags = int(value)
 	elif node is CodeEdit:
 		node.text = value

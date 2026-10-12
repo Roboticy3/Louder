@@ -80,7 +80,7 @@ speaker of the linked hub matches one of the four cases:
 1. The speaker is in the actor's "speak as" list
 2. The speaker is in the actor's "listen to" list and no other actor has that speaker in it's "speak as" list.
 3. The speaker is public and no other actor has that speaker in it's "speak as" list.
-4. (toggleable via config) The speaker is in the actor's "speak as" list, "listen to" list, or is public, and that choice is the only choice on this hub. This is called the "spoke rule" and it prevents linear dialogue from switching "leading" actors too frequently. 
+4. The speaker is in the actor's "speak as" list, "listen to" list, or is public, and that choice is the only choice on this hub. This is called the "spoke rule" and it prevents linear dialogue from switching "leading" actors too frequently. 
 
 If the hub has "recipients", these checks are done on the recipient speakers instead of the hub's speaker.
 
@@ -123,7 +123,14 @@ naming rules. See Story State for variable naming rules.
 Checkboxes that hubs can have checked:
  - Auto. Auto hubs automatically select the first choice available from the
  perspective of the actor that entered them. Auto nodes never appear. If no
- choices are available, this is considered an error.
+ choices are available, this is considered an error. 
+
+Hubs can also be implicitly auto under very specific conditions. This is called
+the "singleplayer rule". If hub A was reached from a hub B that had multiple
+choices, and A is only visible to the actor that made the choice, it should
+behave as an auto node temporariliy with all the implications that follow from
+that. In this case, hub A behaves like a "player choice" node in a more traditional
+singleplayer system, which the user may want to have progress automatically.
 
 ## Recipients
 List of names, like tags. If not empty, the hub may only appear to actors
@@ -298,6 +305,10 @@ Modifiers
 All functions that take a conversation, actor, or position should return errors
 for when any of those objects are invalid. Story state variables, however, 
 cannot be invalid, and default to 0 if they haven't been initialized.
+
+# Configuration
+The spoke rule and singleplayer rule can be configured by making calls to the
+engine.
 
 # Example Flows
 !!!WARNING Extremely boring technical program flow ahead! Not really practical? More to help me implement and test the code. Lol.

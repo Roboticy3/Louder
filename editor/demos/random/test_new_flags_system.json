@@ -1,0 +1,15 @@
+[
+	{
+		"conversation_id": "0",
+		"flags": "5",
+		"position_offset:x": "-1.0",
+		"position_offset:y": "139.0",
+		"type": "hub"
+	},
+	{
+		"position:x": "-279.094116210938",
+		"position:y": "-56.9849700927734",
+		"type": "camera",
+		"zoom": "0.8264462351799"
+	}
+]

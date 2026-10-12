@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://dg0iod8djj6io" path="res://scripts/hub.gd" id="1_so4sa"]
 [ext_resource type="Script" uid="uid://ya7il61i4u2e" path="res://scripts/mutual_exclusive_checkbox.gd" id="2_6jgyt"]
 [ext_resource type="PackedScene" uid="uid://d2ffa88ufdvl6" path="res://entities/text_content.tscn" id="3_f5yrs"]
+[ext_resource type="Script" uid="uid://cqho4phi7p1nd" path="res://scripts/hub_entity_flags.gd" id="3_so4sa"]
 [ext_resource type="Script" uid="uid://87y4efdm8bdm" path="res://scripts/hub_properties_folder.gd" id="4_jhl5y"]
 [ext_resource type="Script" uid="uid://njuhx76nyuqd" path="res://scripts/hub_text_edit.gd" id="5_hw554"]
 [ext_resource type="Script" uid="uid://ctb32vrbjkrsg" path="res://scripts/arrow_keys_spin_box.gd" id="6_vwbjy"]
@@ -27,7 +28,7 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[node name="Hub" type="GraphNode" unique_id=1992437552 node_paths=PackedStringArray("grabber", "start_check", "auto_check", "choices_section_logic")]
+[node name="Hub" type="GraphNode" unique_id=1992437552 node_paths=PackedStringArray("grabber", "choices_section_logic")]
 custom_minimum_size = Vector2(330, 0)
 offset_left = 95.0
 offset_top = 148.0
@@ -76,8 +77,6 @@ slot/3/right_icon = null
 slot/3/draw_stylebox = true
 script = ExtResource("1_so4sa")
 grabber = NodePath("TextSectionWrapper/TextSection/speaker")
-start_check = NodePath("")
-auto_check = NodePath("")
 component_group = null
 default_source = null
 choices_section_logic = NodePath("ChoicesSection/choices")
@@ -123,23 +122,23 @@ size_flags_horizontal = 8
 [node name="tags" parent="TextSectionWrapper/TextSection" unique_id=327118808 groups=["autocomplete_expression", "hub_component"] instance=ExtResource("3_f5yrs")]
 layout_mode = 2
 placeholder_text = "tag1, tag2, ..."
-delimiter_strings = Array[String](["\" \"", "' '"])
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="TextSectionWrapper/TextSection" unique_id=1219292361]
+[node name="flags" type="HBoxContainer" parent="TextSectionWrapper/TextSection" unique_id=1219292361 groups=["hub_component"]]
 layout_mode = 2
+script = ExtResource("3_so4sa")
 
-[node name="auto" type="CheckBox" parent="TextSectionWrapper/TextSection/HBoxContainer2" unique_id=1220902079 groups=["hub_component"]]
+[node name="auto" type="CheckBox" parent="TextSectionWrapper/TextSection/flags" unique_id=1220902079]
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
 text = "Auto"
 
-[node name="once" type="CheckBox" parent="TextSectionWrapper/TextSection/HBoxContainer2" unique_id=1795645920 groups=["hub_component"]]
+[node name="once" type="CheckBox" parent="TextSectionWrapper/TextSection/flags" unique_id=1795645920]
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
 text = "Once"
 
-[node name="_private" type="CheckBox" parent="TextSectionWrapper/TextSection/HBoxContainer2" unique_id=1575580911 node_paths=PackedStringArray("mutual_exclusive") groups=["hub_component"]]
+[node name="_private" type="CheckBox" parent="TextSectionWrapper/TextSection/flags" unique_id=1575580911 node_paths=PackedStringArray("mutual_exclusive")]
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
@@ -228,7 +227,6 @@ layout_mode = 2
 placeholder_text = "Callback 1
 Callback 2
 ..."
-delimiter_strings = Array[String](["\" \"", "' '"])
 
 [node name="ChoicesSection" type="HBoxContainer" parent="." unique_id=356226356]
 layout_mode = 2
@@ -247,13 +245,11 @@ size_flags_horizontal = 0
 size_flags_vertical = 0
 script = ExtResource("6_vwbjy")
 
-[node name="choices" type="Node" parent="ChoicesSection" unique_id=889900628 node_paths=PackedStringArray("hub", "spin_box", "start_check") groups=["hub_component"]]
+[node name="choices" type="Node" parent="ChoicesSection" unique_id=889900628 node_paths=PackedStringArray("hub", "spin_box") groups=["hub_component"]]
 script = ExtResource("8_7pvce")
 hub = NodePath("../..")
 spin_box = NodePath("../ChoicesSpinBox")
-start_check = NodePath("")
 spoke_child_index = 1
-text_content_packed = ExtResource("3_f5yrs")
 
 [connection signal="folding_changed" from="OtherSection" to="." method="reset_size" flags=3 unbinds=1]
 [connection signal="choices_changed" from="ChoicesSection/choices" to="." method="reset_size" flags=3]

@@ -5,6 +5,7 @@ use super::object::LouderVariant;
 use super::expression::{Evaluation, Evaluator, EvaluationScope, LouderExpression};
 use super::actor::LouderActor;
 use super::hub::{Hub, LouderPosition};
+use super::rules::DialogueRules;
 use super::speaker::SpeakerMap;
 
 /// Add `name` to `heard` unless it is absent or already there.
@@ -326,14 +327,23 @@ impl Simulator {
   ///  3. they have to own the target: speaking as one of its owners settles the
   ///     matter outright, and otherwise listening to an owner, or the owner
   ///     being public, settles it as long as nobody else plays the voice;
-  ///  4. otherwise, the spoke rule lets a lone choice through when nobody else
-  ///     holds an owning voice, which is what stops linear dialogue handing the
+  ///  4. otherwise, the spoke rule lets a lone choice through whenever the voice
+  ///     is one they can reach, which is what stops linear dialogue handing the
   ///     lead back and forth between every actor.
   ///
   /// Step 3 is what lets a voice heard but not played be led from: a character
   /// listening to a speaker owns that speaker's hubs, and would otherwise be
   /// shown a hub with no way off it wherever the owning hub carries more than
   /// one choice.
+  ///
+  /// The spoke rule is deliberately the one case the guide does not qualify with
+  /// "no other actor has that speaker in its speak as list". Cases 2 and 3 are
+  /// about a voice nobody is playing, and are refused while somebody else is
+  /// playing it; case 4 is about a hub with nowhere else to go. An actor shown
+  /// one choice on a hub it cannot otherwise leave would be stuck there with no
+  /// way out, so the rule answers that rather than the question of who owns the
+  /// line. It still needs the voice to be reachable, so it never offers a choice
+  /// into somewhere the actor cannot see.
   ///
   /// Ownership is [`Owned`], the same definition [`Self::hub_appears`] uses, so
   /// the two can never disagree. A hub an actor is shown but cannot decide from
@@ -398,24 +408,25 @@ impl Simulator {
       return true;
     }
 
-    // Someone else is already playing one of the owning voices.
-    if owners.held_by_other(context, conversation, actor) {
+    // Whether the voice reaches this actor at all: it is theirs to speak, or
+    // listen to, or is public. Every case below is about a voice that does.
+    let heard = Self::speakers_heard_by(context, conversation, actor);
+    if !owners.reaches(context, &heard) {
       return false;
     }
 
-    // Nobody is playing the voice, so it may be led from: by the actor that
-    // speaks it, which settled the matter above, or by one that hears it. This
-    // is the second and third cases of the guide's choice rules, and it is what
-    // carries a choice out of a multi-choice hub rather than only out of a
-    // linear one.
-    let heard = Self::speakers_heard_by(context, conversation, actor);
-    if owners.reaches(context, &heard) {
+    // The second and third cases: the voice is heard but nobody is playing it,
+    // so this actor may lead it without stepping on somebody else's line. This
+    // is what carries a choice out of a multi-choice hub rather than only out of
+    // a linear one.
+    if !owners.held_by_other(context, conversation, actor) {
       return true;
     }
 
-    // The spoke rule: a lone choice may go ahead, since there is nobody else to
-    // hand it to and no branch for it to be lost on.
-    hub.choice_count() == 1
+    // The spoke rule. Somebody else is playing the voice, but this hub has one
+    // choice and the actor can see where it goes, so refusing it would leave them
+    // standing on a hub with no way off it.
+    context.rules().contains(DialogueRules::SPOKE) && hub.choice_count() == 1
   }
 
   /// The indices of the choices available to `actor` from `hub_position`.
@@ -495,6 +506,7 @@ impl Simulator {
       kind,
       fake_channel,
       fake_priority,
+      None,
       false,
       Self::NO_CHOICE,
       &mut Vec::new(),
@@ -520,6 +532,11 @@ impl Simulator {
   /// follower nothing it may actually take. `chosen` is the index the actor
   /// picked, or [`Self::NO_CHOICE`] when it did not pick anything, and is what a
   /// follower replays when it is dragged along.
+  ///
+  /// `forced_auto` names a hub this move passes through whether or not its own
+  /// flag says so. It carries the leader's auto hub down to a follower
+  /// emulating it, which is what lets two actors resolve the same hub
+  /// separately.
   #[allow(clippy::too_many_arguments)]
   fn travel_within(
     context: &mut LouderContext,
@@ -529,6 +546,7 @@ impl Simulator {
     kind: MotionKind,
     fake_channel: LouderName,
     fake_priority: i32,
+    forced_auto: Option<LouderPosition>,
     emulating: bool,
     chosen: i32,
     moved: &mut Vec<LouderActor>,
@@ -544,14 +562,35 @@ impl Simulator {
         .ok_or(SimError::Missing);
     }
 
-    let auto_hub = Self::auto_hub_at(context, conversation, target);
+    // Where the actor is coming from decides whether the hub it lands on counts
+    // as auto, so this is read before the move changes the position.
+    let source = context
+      .get_actor(conversation, actor)
+      .map(|entry| entry.position())
+      .ok_or(SimError::Missing)?;
+
     // Whoever was with this actor where it came from is who it drags along, so
     // the channel has to be read before the move changes it.
     let from_channel = context
       .get_actor(conversation, actor)
       .map(|entry| entry.channel())
       .unwrap_or(LOUDER_NAME_NONE);
-    let destination = Self::resolve_auto(context, conversation, actor, target, emulating)?;
+
+    // The singleplayer rule can make a hub auto for this arrival without the
+    // flag saying so, and the forced hub wins over either answer, since it is
+    // the one the move has been told to pass through.
+    let implicit_auto = forced_auto
+      .or_else(|| Self::implicit_auto_hub_at(context, conversation, actor, source, target));
+    let auto_hub = Self::auto_hub_at(context, conversation, target).or(implicit_auto);
+
+    let destination = Self::resolve_auto(
+      context,
+      conversation,
+      actor,
+      target,
+      implicit_auto,
+      emulating,
+    )?;
     moved.push(actor);
 
     // Auto hubs are entered but never announced, so the hub is remembered here
@@ -559,11 +598,6 @@ impl Simulator {
     if let Some(entered) = auto_hub {
       Self::announce_auto_to_debug(context, conversation, entered);
     }
-
-    let source = context
-      .get_actor(conversation, actor)
-      .map(|entry| entry.position())
-      .ok_or(SimError::Missing)?;
 
     let motion = Motion {
       source_position: source,
@@ -802,6 +836,68 @@ impl Simulator {
       .map(|_| position)
   }
 
+  /// Whether `position` behaves as an auto hub for `actor` arriving there from
+  /// `from`, by the singleplayer rule.
+  ///
+  /// Both of the rule's conditions have to hold, and both are about the arrival
+  /// rather than about the hub alone: `from` branched, and `position` shows to
+  /// one actor and to nobody else. That is the shape of a consequence of a
+  /// choice rather than a choice of its own, so it resolves instead of being
+  /// shown, because there was no other reading available to anyone.
+  ///
+  /// How many choices the hub has is deliberately not part of the question. A
+  /// hub only its own actor can see is not a decision between those choices so
+  /// much as the outcome of the one that was just made, and a document that
+  /// routes a private branch through a public one depends on it resolving.
+  ///
+  /// Where the actor came from is what keeps the rule from eating the whole
+  /// conversation, since a hub behind another with a single choice is the same
+  /// decision as the one before it rather than a new one.
+  fn implicit_auto_hub_at(
+    context: &LouderContext,
+    conversation: LouderName,
+    actor: LouderActor,
+    from: LouderPosition,
+    position: LouderPosition,
+  ) -> Option<LouderPosition> {
+    if !context.rules().contains(DialogueRules::SINGLEPLAYER) {
+      return None;
+    }
+
+    let conversation_ref = context.get_conversation(conversation)?;
+
+    // A hub flagged Auto already resolves on its own, whatever else it is.
+    if conversation_ref.hub(position)?.is_auto() {
+      return None;
+    }
+
+    // Reached from somewhere that branched. Without this the rule would resolve
+    // every hub an actor walks into on its own, and a conversation would run
+    // itself out with no one able to say anything along the way.
+    if conversation_ref.hub(from)?.choice_count() < 2 {
+      return None;
+    }
+
+    // Private to this actor. A hub somebody else could see is one they may be
+    // waiting on, and deciding it on their behalf is not a default to make.
+    if !Self::hub_appears(context, conversation, actor, position) {
+      return None;
+    }
+
+    let seen_by_others = context.actors(conversation).iter().any(|entry| {
+      // Only actors in the flow are deciding anything, so a hub showing to a
+      // spectator or a debug actor does not make it a shared one.
+      entry.id() != actor
+        && entry.flags().in_flow()
+        && Self::hub_appears(context, conversation, entry.id(), position)
+    });
+    if seen_by_others {
+      return None;
+    }
+
+    Some(position)
+  }
+
   /// Pull other actors along after `leader` has made a choice.
   ///
   /// An actor follows when it shares a channel with the leader, the hub the
@@ -903,7 +999,9 @@ impl Simulator {
         // anywhere this follower can hear. There is nothing for it to emulate in
         // that case, so it goes where the leader went rather than being left
         // behind.
-        let destination = if Self::resolve_auto(context, conversation, follower, hub, true).is_ok() {
+        let destination = if Self::resolve_auto(context, conversation, follower, hub, Some(hub), true)
+          .is_ok()
+        {
           hub
         } else if Self::hub_appears(context, conversation, follower, motion.target_position) {
           motion.target_position
@@ -911,7 +1009,7 @@ impl Simulator {
           continue;
         };
 
-        Self::drag_along(context, conversation, follower, destination, moved);
+        Self::drag_along(context, conversation, follower, destination, Some(hub), moved);
         continue;
       }
 
@@ -925,7 +1023,7 @@ impl Simulator {
         motion.target_position
       };
 
-      Self::drag_along(context, conversation, follower, destination, moved);
+      Self::drag_along(context, conversation, follower, destination, None, moved);
     }
   }
 
@@ -966,11 +1064,17 @@ impl Simulator {
   /// The failure is swallowed on purpose: the leader's move has already been
   /// applied, so reporting a refusal now would hand the host a refusal for
   /// something that has already happened.
+  ///
+  /// `forced_auto` is the hub the follower is being carried through, if any. It
+  /// is passed on rather than recomputed because the follower is arriving at
+  /// that hub by emulation rather than by a choice, and the rule it would
+  /// otherwise be judged by is about the choice.
   fn drag_along(
     context: &mut LouderContext,
     conversation: LouderName,
     follower: LouderActor,
     destination: LouderPosition,
+    forced_auto: Option<LouderPosition>,
     moved: &mut Vec<LouderActor>,
   ) {
     let _ = Self::travel_within(
@@ -981,6 +1085,7 @@ impl Simulator {
       MotionKind::Warp,
       LOUDER_NAME_NONE,
       0,
+      forced_auto,
       true,
       Self::NO_CHOICE,
       moved,
@@ -1025,6 +1130,7 @@ impl Simulator {
       MotionKind::Regular,
       LOUDER_NAME_NONE,
       0,
+      None,
       false,
       choice_index as i32,
       &mut Vec::new(),
@@ -1039,6 +1145,16 @@ impl Simulator {
   /// a hub already walked is reported as a dead end, which is what an auto hub
   /// with no way out amounts to.
   ///
+  /// `implicit_auto` names a hub at `destination` that is auto for this actor
+  /// without being flagged, which is what the singleplayer rule produces and
+  /// what a follower emulating a leader's auto hub is told to walk through.
+  ///
+  /// It applies to that one hub and no further. The hubs behind it were reached
+  /// by auto logic rather than by a choice, so no choice was made there and
+  /// there is nothing for the rule to be about; treating them as consequences of
+  /// a choice too would walk an actor off the end of any private branch that
+  /// ends somewhere they cannot hear.
+  ///
   /// `emulating` marks the actor as a follower walking through a hub the leader
   /// left through, which is what the guide calls emulation. A follower is not
   /// deciding anything, so it may have no claim on any branch and still be
@@ -1051,6 +1167,7 @@ impl Simulator {
     conversation: LouderName,
     actor: LouderActor,
     destination: LouderPosition,
+    implicit_auto: Option<LouderPosition>,
     emulating: bool,
   ) -> Result<LouderPosition, SimError> {
     let mut current = destination;
@@ -1060,7 +1177,7 @@ impl Simulator {
       let is_auto = context
         .get_conversation(conversation)
         .and_then(|c| c.hub(current))
-        .map(|hub| hub.is_auto())
+        .map(|hub| hub.is_auto() || implicit_auto == Some(current))
         .unwrap_or(false);
 
       if !is_auto {

@@ -4,6 +4,8 @@
     "bash": {
       "*": "deny",
 
+      "git diff*": "allow",
+
       "cargo *": "allow",
       "g++ *": "allow",
       "python *": "allow",

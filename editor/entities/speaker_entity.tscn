@@ -3,7 +3,6 @@
 [ext_resource type="Script" uid="uid://cpdekulpatyo0" path="res://scripts/speaker_entity.gd" id="1_sk0l8"]
 [ext_resource type="PackedScene" uid="uid://d2ffa88ufdvl6" path="res://entities/text_content.tscn" id="2_kglcw"]
 [ext_resource type="Script" uid="uid://cqho4phi7p1nd" path="res://scripts/hub_entity_flags.gd" id="3_kglcw"]
-[ext_resource type="Script" uid="uid://derdgutm4a213" path="res://scripts/start_check.gd" id="3_s5nnj"]
 [ext_resource type="Script" uid="uid://ctb32vrbjkrsg" path="res://scripts/arrow_keys_spin_box.gd" id="4_2jgg0"]
 [ext_resource type="Script" uid="uid://dabkdaqchjesv" path="res://scripts/choices_section_logic.gd" id="5_g05im"]
 [ext_resource type="Script" uid="uid://u0dkbptw8kh6" path="res://scripts/color_logic_section.gd" id="6_jwvd8"]
@@ -113,14 +112,12 @@ layout_mode = 2
 size_flags_vertical = 4
 theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
 text = "Public"
-script = ExtResource("3_s5nnj")
 
 [node name="ownable" type="CheckBox" parent="TextSectionWrapper/flags" unique_id=1530881190]
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
 text = "Ownable"
-script = ExtResource("3_s5nnj")
 
 [node name="Control" type="Control" parent="TextSectionWrapper/flags" unique_id=16546190]
 layout_mode = 2

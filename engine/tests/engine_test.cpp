@@ -104,6 +104,35 @@ int CountEventsOfKind(const std::vector<LouderEvent>& events, EventData::Tag tag
   return count;
 }
 
+// Every load error in the queue, as (position, error) pairs.
+//
+// The order matters only in that it is the order the loader reported them in,
+// which is the order the records appear in the document.
+std::vector<LoadFailure> DrainLoadErrors() {
+  std::vector<LoadFailure> failures;
+  for (const auto& event : DrainEvents()) {
+    if (event.data.tag == EventData::Tag::LoadError) {
+      failures.push_back(event.data.load_error._0);
+    }
+  }
+  return failures;
+}
+
+// The rules the engine is running, as it reports them back.
+DialogueRules CurrentRules() { return get_dialogue_rules(g_ctx); }
+
+// Run `body` with only `rules` switched on, putting the old ones back after.
+//
+// The rules live on the context rather than on a conversation, so a test that
+// changed them without restoring would be answering for every test after it.
+template <typename Body>
+void WithRules(DialogueRules rules, Body body) {
+  DialogueRules previous = get_dialogue_rules(g_ctx);
+  CHECK(set_dialogue_rules(g_ctx, rules) == 0, "the rules should be settable");
+  body();
+  set_dialogue_rules(g_ctx, previous);
+}
+
 const char* ConversationJson() {
   return R"([
     {"type":"hub","conversation_id":0,"speaker":"A","text":"Hello","tags":"start main","flags":0},
@@ -1178,6 +1207,720 @@ void TestAutoSplitOnPrivateVoice() {
   clear_config(g_ctx);
 }
 
+// The guide's Configuration section says the spoke rule and the singleplayer
+// rule can be turned on and off through the engine. Both are on in a fresh
+// context, and turning either off has to change what an actor is offered rather
+// than only what it can be told about.
+//
+// The spoke rule is what lets a lone choice out of a hub go ahead when the voice
+// behind it belongs to somebody the actor neither speaks nor hears. Whisper is
+// that voice here: hub 5 is spoken by it, nothing is public, and the actor
+// speaks only A. So the whole choice comes down to whether the rule is on.
+// The spoke rule is the one choice rule the guide does not qualify with "no
+// other actor has that speaker in its speak as list". Cases 2 and 3 are about a
+// voice nobody is playing; case 4 is about a hub with nowhere else to go. So a
+// fixture for it needs a voice that is held elsewhere and reachable anyway:
+//
+//   0: A (public)  ->  5: B (public)  ->  9: A
+//
+// B is public, so hub 5 appears to the A actor, but another actor speaks B, so
+// the second and third cases refuse it. Hub 0 has one choice, so the rule lets
+// it through anyway. Turn the rule off and the A actor is left standing on hub 0
+// with nothing, which is the dead end the rule exists to prevent.
+const char* SpokeRuleJson() {
+  return R"([
+    {"type":"hub","conversation_id":0,"speaker":"A","text":"ask","flags":0},
+    {"type":"hub","conversation_id":5,"speaker":"B","text":"B's line","flags":0},
+    {"type":"hub","conversation_id":9,"speaker":"A","text":"after","flags":0},
+    {"type":"connection","from_id":0,"from_port":0,"to_id":5},
+    {"type":"connection","from_id":5,"from_port":0,"to_id":9}
+  ])";
+}
+
+// Both voices are public, so "reachable" is not what is being tested here. What
+// separates case 4 from cases 2 and 3 is the other actor holding B. Whisper is
+// declared and not public, since an undefined speaker is public by default and
+// would make the last block below meaningless.
+const char* SpokeRuleConfigJson() {
+  return R"([
+    {"type":"speaker","name":"A","flags":1},
+    {"type":"speaker","name":"B","flags":1},
+    {"type":"speaker","name":"Whisper","flags":0}
+  ])";
+}
+
+void TestSpokeRuleIsConfigurable() {
+  std::printf("spoke rule configuration\n");
+
+  clear_config(g_ctx);
+  CHECK(load_conversation_config(
+            g_ctx,
+            reinterpret_cast<uint8_t*>(const_cast<char*>(SpokeRuleConfigJson())),
+            std::strlen(SpokeRuleConfigJson()), 0) == 0,
+        "the spoke rule config should load");
+
+  LouderName conversation = Declare("spoke rule conversation");
+  std::string json = SpokeRuleJson();
+  CHECK(load_conversation_json(g_ctx, conversation, reinterpret_cast<uint8_t*>(&json[0]),
+                               json.size(), 0) == 0,
+        "loading the spoke rule conversation returned %d", 0);
+
+  LouderName speak_a[1] = {Lookup("A")};
+  LouderName speak_b[1] = {Lookup("B")};
+
+  // Both actors are present throughout. Who is in the conversation is part of
+  // the answer: without a B actor there is no held voice, and the second and
+  // third cases would settle this without the rule at all.
+  LouderActor actor = add_actor(g_ctx, conversation, 0, ActorFlags(), speak_a, 1, nullptr, 0);
+  add_actor(g_ctx, conversation, 0, ActorFlags(), speak_b, 1, nullptr, 0);
+  CHECK(actor == 0, "the first actor should get id 0, got %d", actor);
+
+  flush_events(g_ctx);
+
+  // The premise, stated rather than assumed: hub 5 does appear to this actor,
+  // and it is the other actor who is playing B.
+  CHECK(get_hub_text(g_ctx, conversation, 5) != LOUDER_NAME_NONE,
+        "hub 5 should have loaded, or the premise is wrong");
+  CHECK(get_speaker_flags(g_ctx, Lookup("B")).bits == SpeakerFlags_PUBLIC.bits,
+        "B should be public here, or this would not be testing case 4");
+  CHECK(get_speaker_flags(g_ctx, Lookup("A")).bits == SpeakerFlags_PUBLIC.bits,
+        "A should be public here, or the A actor could not see hub 5 at all");
+
+  // With the rule on, the lone choice out of hub 0 goes ahead even though B's
+  // voice is somebody else's.
+  WithRules(DialogueRules_SPOKE | DialogueRules_SINGLEPLAYER, [&] {
+    CHECK(get_hub_choice_count(g_ctx, conversation, 0, actor) == 1,
+          "the spoke rule should let the lone choice through, saw %d",
+          get_hub_choice_count(g_ctx, conversation, 0, actor));
+    CHECK(select_choice(g_ctx, conversation, actor, 0) == 0,
+          "and the actor should be able to take it");
+    CHECK(get_actor_position(g_ctx, conversation, actor) == 5,
+          "landing on the other actor's line, saw %d",
+          get_actor_position(g_ctx, conversation, actor));
+  });
+
+  // Back to hub 0 for the half that says the rule is what opened it.
+  force_position(g_ctx, conversation, actor, 0, LOUDER_NAME_NONE, 0);
+  flush_events(g_ctx);
+  WithRules(DialogueRules_SINGLEPLAYER, [&] {
+    CHECK(get_hub_choice_count(g_ctx, conversation, 0, actor) == 0,
+          "without the spoke rule a held voice closes the choice, saw %d",
+          get_hub_choice_count(g_ctx, conversation, 0, actor));
+    CHECK(select_choice(g_ctx, conversation, actor, 0) != 0,
+          "and selecting it should be refused");
+    CHECK(get_actor_position(g_ctx, conversation, actor) == 0,
+          "a refused choice should leave the actor where it was, saw %d",
+          get_actor_position(g_ctx, conversation, actor));
+  });
+
+  // Turning it back on restores the offer, which is what says the switch is
+  // read per choice rather than latched at load time.
+  WithRules(DialogueRules_SPOKE | DialogueRules_SINGLEPLAYER, [&] {
+    CHECK(get_hub_choice_count(g_ctx, conversation, 0, actor) == 1,
+          "turning the rule back on should restore the choice, saw %d",
+          get_hub_choice_count(g_ctx, conversation, 0, actor));
+  });
+
+  // And off again is the same answer as it was the first time, which is what
+  // says the switch is a switch and not a one-shot.
+  WithRules(DialogueRules_SINGLEPLAYER, [&] {
+    CHECK(get_hub_choice_count(g_ctx, conversation, 0, actor) == 0,
+          "and turning it off again should close it again, saw %d",
+          get_hub_choice_count(g_ctx, conversation, 0, actor));
+  });
+
+  // The rule needs the voice to be reachable. Whisper is neither public nor
+  // heard by this actor, so hub 5 below is somewhere the actor cannot see, and
+  // no rule may offer a choice into it.
+  {
+    LouderName private_hub = Declare("private hub conversation");
+    const char* document = R"([
+      {"type":"hub","conversation_id":0,"speaker":"A","text":"ask","flags":0},
+      {"type":"hub","conversation_id":5,"speaker":"Whisper","text":"whisper","flags":0},
+      {"type":"connection","from_id":0,"from_port":0,"to_id":5}
+    ])";
+    CHECK(load_conversation_json(g_ctx, private_hub,
+                                 reinterpret_cast<uint8_t*>(const_cast<char*>(document)),
+                                 std::strlen(document), 0) == 0,
+          "the unreachable conversation should load");
+
+    LouderActor alone = add_actor(g_ctx, private_hub, 0, ActorFlags(), speak_a, 1, nullptr, 0);
+    WithRules(DialogueRules_SPOKE | DialogueRules_SINGLEPLAYER, [&] {
+      CHECK(get_hub_choice_count(g_ctx, private_hub, 0, alone) == 0,
+            "the spoke rule must not offer a choice into a hub the actor cannot see, saw %d",
+            get_hub_choice_count(g_ctx, private_hub, 0, alone));
+    });
+    remove_conversation(g_ctx, private_hub);
+  }
+
+  // A null context is running no dialogue, so it has no rules to report and
+  // refuses to be given any.
+  CHECK(get_dialogue_rules(nullptr).bits == 0, "a null context should report no rules");
+  CHECK(set_dialogue_rules(nullptr, DialogueRules_SPOKE) != 0,
+        "a null context should refuse rules");
+
+  // Bits the engine does not know about are dropped rather than refused, so a
+  // host carrying a configuration from a newer build still gets what it can use.
+  WithRules(DialogueRules{/* .bits = */ (int32_t)0x7FFFFFFF}, [&] {
+    CHECK(CurrentRules().bits == (DialogueRules_SPOKE | DialogueRules_SINGLEPLAYER).bits,
+          "unknown bits should be dropped, got %d", CurrentRules().bits);
+  });
+
+  remove_conversation(g_ctx, conversation);
+  clear_config(g_ctx);
+}
+
+// The singleplayer rule. Hub 5 is reached from hub 0, which branched, has one
+// way out of it, and is spoken by P, who is the only actor that can hear it. So
+// it resolves on its own, and the actor lands past it at hub 9 instead of
+// standing on it.
+//
+// Hub 6 is the control that keeps the rule honest: one way out, reached from the
+// same branching hub, but public, so the other actor can see it and the rule
+// does not apply. Without that check the rule would be indistinguishable from
+// "any hub with one choice resolves".
+const char* SingleplayerJson() {
+  return R"([
+    {"type":"hub","conversation_id":0,"speaker":"A","text":"ask","flags":0},
+    {"type":"hub","conversation_id":5,"speaker":"P","text":"aside","flags":0},
+    {"type":"hub","conversation_id":6,"speaker":"A","text":"shared line","flags":0},
+    {"type":"hub","conversation_id":9,"speaker":"P","text":"past the aside","flags":0},
+    {"type":"hub","conversation_id":10,"speaker":"A","text":"past the shared line","flags":0},
+    {"type":"connection","from_id":0,"from_port":0,"to_id":5},
+    {"type":"connection","from_id":0,"from_port":1,"to_id":6},
+    {"type":"connection","from_id":5,"from_port":0,"to_id":9},
+    {"type":"connection","from_id":6,"from_port":0,"to_id":10}
+  ])";
+}
+
+// P is private and only P hears it. A is public, so hub 6 reaches both actors.
+const char* SingleplayerConfigJson() {
+  return R"([
+    {"type":"speaker","name":"A","flags":1},
+    {"type":"speaker","name":"P","flags":0}
+  ])";
+}
+
+void TestSingleplayerRule() {
+  std::printf("singleplayer rule\n");
+
+  clear_config(g_ctx);
+  CHECK(load_conversation_config(
+            g_ctx,
+            reinterpret_cast<uint8_t*>(const_cast<char*>(SingleplayerConfigJson())),
+            std::strlen(SingleplayerConfigJson()), 0) == 0,
+        "the singleplayer config should load");
+
+  LouderName conversation = Declare("singleplayer conversation");
+  std::string json = SingleplayerJson();
+  CHECK(load_conversation_json(g_ctx, conversation, reinterpret_cast<uint8_t*>(&json[0]),
+                               json.size(), 0) == 0,
+        "loading the singleplayer conversation returned %d", 0);
+
+  LouderName speak_a[1] = {Lookup("A")};
+  LouderName speak_p[1] = {Lookup("P")};
+
+  // Both actors start at hub 0 so they share the main channel, which is what
+  // lets one of them drag the other along.
+  LouderActor actor_p = add_actor(g_ctx, conversation, 0, ActorFlags(), speak_p, 1, nullptr, 0);
+  LouderActor actor_a = add_actor(g_ctx, conversation, 0, ActorFlags(), speak_a, 1, nullptr, 0);
+  CHECK(actor_p == 0 && actor_a == 1, "the actors should be 0 and 1, got %d and %d", actor_p,
+        actor_a);
+
+  flush_events(g_ctx);
+
+  // P is offered the branch into its own private hub, and not the public one,
+  // because A speaks A and the public hub belongs to A's voice.
+  CHECK(get_hub_choice_count(g_ctx, conversation, 0, actor_p) == 1,
+        "P should be offered the single choice into its own aside, saw %d",
+        get_hub_choice_count(g_ctx, conversation, 0, actor_p));
+  CHECK(get_hub_choice_link(g_ctx, conversation, 0, actor_p, 0) == 5,
+        "and that choice should lead to hub 5");
+
+  // With the rule on, choosing into hub 5 does not stop there. Hub 5 is one way
+  // out, came from a hub that had two, and only P can see it, so it resolves.
+  WithRules(DialogueRules_SPOKE | DialogueRules_SINGLEPLAYER, [&] {
+    CHECK(select_choice(g_ctx, conversation, actor_p, 0) == 0,
+          "the choice into the aside should be accepted");
+    CHECK(get_actor_position(g_ctx, conversation, actor_p) == 9,
+          "the aside should have resolved on its own and carried P to hub 9, saw %d",
+          get_actor_position(g_ctx, conversation, actor_p));
+  });
+
+  // A is not dragged onto hub 5 by P leaving it: the aside is private to P, so
+  // there is nothing about it A could be carried through to.
+  CHECK(get_actor_position(g_ctx, conversation, actor_a) == 0,
+        "the other actor should not have followed into a private hub, saw %d",
+        get_actor_position(g_ctx, conversation, actor_a));
+
+  // The control: the same shape, but public, so the rule cannot claim it. A
+  // speaks A, and P's voice is held by P, so A is offered the public branch at
+  // engine index 1 rather than the one at index 0.
+  WithRules(DialogueRules_SPOKE | DialogueRules_SINGLEPLAYER, [&] {
+    CHECK(get_hub_choice_count(g_ctx, conversation, 0, actor_a) == 1,
+          "A should be offered just the public branch, saw %d",
+          get_hub_choice_count(g_ctx, conversation, 0, actor_a));
+    CHECK(get_hub_choice_link(g_ctx, conversation, 0, actor_a, 1) == 6,
+          "and it should be the one at engine index 1");
+
+    CHECK(select_choice(g_ctx, conversation, actor_a, 1) == 0,
+          "A should be able to take the public branch");
+    CHECK(get_actor_position(g_ctx, conversation, actor_a) == 6,
+          "a public hub with one choice is an ordinary hub and should be stood on, saw %d",
+          get_actor_position(g_ctx, conversation, actor_a));
+  });
+
+  remove_conversation(g_ctx, conversation);
+
+  // The same conversation again with the rule off, which is the half that says
+  // the rule is what did it. A fresh conversation keeps the first one out of the
+  // way without having to reason about where anybody ended up.
+  LouderName without = Declare("singleplayer conversation, rule off");
+  CHECK(load_conversation_json(g_ctx, without, reinterpret_cast<uint8_t*>(&json[0]), json.size(),
+                               0) == 0,
+        "the second singleplayer conversation should load");
+
+  LouderActor plain_p = add_actor(g_ctx, without, 0, ActorFlags(), speak_p, 1, nullptr, 0);
+  CHECK(plain_p == 0, "the second conversation's actor should get id 0");
+
+  flush_events(g_ctx);
+
+  WithRules(DialogueRules_SPOKE, [&] {
+    CHECK(select_choice(g_ctx, without, plain_p, 0) == 0,
+          "without the singleplayer rule the choice into the aside is still ordinary, and accepted");
+    CHECK(get_actor_position(g_ctx, without, plain_p) == 5,
+          "the actor should have stopped on the aside, saw %d",
+          get_actor_position(g_ctx, without, plain_p));
+    CHECK(get_hub_choice_count(g_ctx, without, 5, plain_p) == 1,
+          "and been offered its one way out, saw %d",
+          get_hub_choice_count(g_ctx, without, 5, plain_p));
+  });
+
+  remove_conversation(g_ctx, without);
+  clear_config(g_ctx);
+}
+
+// A load error is reported through the event queue rather than by failing, so
+// that one bad record does not cost the caller the rest of the document. The
+// whole fixture below is full of them, and the conversation still loads.
+//
+// Three kinds are here, because the position they report is what tells them
+// apart: a record that is not an object and so names no position at all, a
+// record of a type the loader does not know, and a connection naming a hub the
+// document never defines. The camera record is the control: it is ignored
+// outright and must not be reported at all.
+const char* BadRecordsJson() {
+  return R"([
+    {"type":"hub","conversation_id":0,"speaker":"A","text":"start","flags":0},
+    {"type":"hub","conversation_id":7,"speaker":"A","text":"good","flags":0},
+    "this record is not an object at all",
+    {"type":"mystery","conversation_id":1},
+    {"type":"connection","from_id":0,"from_port":0,"to_id":99},
+    {"type":"camera","position:x":"0.0","position:y":"0.0","zoom":"1.0"}
+  ])";
+}
+
+void TestLoadErrorsAreReportedAsEvents() {
+  std::printf("load errors as events\n");
+
+  LouderName conversation = Declare("bad records conversation");
+  std::string json = BadRecordsJson();
+  CHECK(load_conversation_json(g_ctx, conversation, reinterpret_cast<uint8_t*>(&json[0]),
+                               json.size(), 0) == 0,
+        "a document with unreadable records should still load, got %d", 0);
+
+  // Both hubs made it, which is the point of reporting rather than failing. Hub
+  // 0's connection pointed at a hub that does not exist, so it lost its choice
+  // but kept everything else.
+  CHECK(get_hub_text(g_ctx, conversation, 0) != LOUDER_NAME_NONE, "hub 0 should have loaded");
+  CHECK(get_hub_choice_count(g_ctx, conversation, 0, 0) == 0,
+        "hub 0's choice pointed at a hub that is not there, so it should have been dropped");
+  CHECK(get_hub_text(g_ctx, conversation, 7) != LOUDER_NAME_NONE, "hub 7 should have loaded");
+
+  std::vector<LoadFailure> failures = DrainLoadErrors();
+  CHECK(failures.size() == 3,
+        "three records were unreadable, saw %zu", failures.size());
+
+  // A record that is not an object has no position to point at, which is what
+  // the -1 means: the document as a whole is at fault rather than a hub in it.
+  if (failures.size() == 3) {
+    CHECK(failures[0].position == -1,
+          "a record that is not an object should report no position, got %d",
+          failures[0].position);
+    CHECK(failures[0].error == LOUDER_LOAD_NOT_AN_OBJECT,
+          "and should report that it was not an object, got %d", failures[0].error);
+
+    // A record of an unknown type names the position it claimed, so a host can
+    // go and look at it in the editor.
+    CHECK(failures[1].position == 1, "an unknown record should report its own position, got %d",
+          failures[1].position);
+    CHECK(failures[1].error == LOUDER_LOAD_NOT_AN_OBJECT, "and should report the same error, got %d",
+          failures[1].error);
+
+    // A connection to a hub that is not there is blamed on the hub it leaves,
+    // since that is the one a host can go and fix.
+    CHECK(failures[2].position == 0,
+          "a connection to a missing hub should be blamed on its source, got %d",
+          failures[2].position);
+    CHECK(failures[2].error == LOUDER_LOAD_NOT_AN_OBJECT, "and should report the same error, got %d",
+          failures[2].error);
+  }
+
+  // A document that is not JSON at all is a problem with the document rather
+  // than with a record in it, and is reported the same way before the load is
+  // refused.
+  flush_events(g_ctx);
+  const char* garbage = "not json at all";
+  CHECK(load_conversation_json(g_ctx, Declare("garbage conversation"),
+                               reinterpret_cast<uint8_t*>(const_cast<char*>(garbage)),
+                               std::strlen(garbage), 0) != 0,
+        "malformed JSON should fail to load");
+  failures = DrainLoadErrors();
+  CHECK(failures.size() == 1, "a malformed document should be reported once, saw %zu",
+        failures.size());
+  if (failures.size() == 1) {
+    CHECK(failures[0].position == -1,
+          "a problem with the document as a whole should report no position, got %d",
+          failures[0].position);
+    CHECK(failures[0].error == LOUDER_LOAD_MALFORMED_JSON,
+          "and should say the document was malformed, got %d", failures[0].error);
+  }
+
+  // A document that parses but is not a list has no record to point at either.
+  flush_events(g_ctx);
+  const char* not_a_list = R"({"type":"hub","conversation_id":0})";
+  CHECK(load_conversation_json(g_ctx, Declare("object conversation"),
+                               reinterpret_cast<uint8_t*>(const_cast<char*>(not_a_list)),
+                               std::strlen(not_a_list), 0) == LOUDER_LOAD_NOT_A_LIST,
+        "a document that is not a list should be refused");
+  failures = DrainLoadErrors();
+  CHECK(failures.size() == 1, "a document that is not a list should be reported once, saw %zu",
+        failures.size());
+  if (failures.size() == 1) {
+    CHECK(failures[0].position == -1, "and should report no position, got %d",
+          failures[0].position);
+    CHECK(failures[0].error == LOUDER_LOAD_NOT_A_LIST, "and should say so, got %d",
+          failures[0].error);
+  }
+
+  remove_conversation(g_ctx, conversation);
+}
+
+// The config loader reports the same way. It used to give up on the first
+// record it could not read, which cost the caller every speaker after it.
+void TestConfigLoadErrorsAreReportedAsEvents() {
+  std::printf("config load errors as events\n");
+
+  clear_config(g_ctx);
+  flush_events(g_ctx);
+
+  const char* config = R"([
+    {"type":"speaker","name":"Before","flags":1},
+    "this record is not an object at all",
+    {"type":"speaker","name":"After","flags":0}
+  ])";
+
+  CHECK(load_conversation_config(g_ctx,
+                                 reinterpret_cast<uint8_t*>(const_cast<char*>(config)),
+                                 std::strlen(config), 0) == 0,
+        "a config with one bad record should still load");
+
+  // The point of the change: the speakers on either side of the bad record both
+  // made it, which is what "does not cost the caller the rest" means.
+  CHECK(get_speaker_flags(g_ctx, Declare("Before")).bits == SpeakerFlags_PUBLIC.bits,
+        "the speaker before the bad record should have loaded");
+  CHECK(get_speaker_flags(g_ctx, Declare("After")).bits == 0,
+        "the speaker after the bad record should have loaded too");
+
+  std::vector<LoadFailure> failures = DrainLoadErrors();
+  CHECK(failures.size() == 1, "the bad record should be reported once, saw %zu", failures.size());
+  if (failures.size() == 1) {
+    CHECK(failures[0].position == -1,
+          "a config record has no position, so it should report the document, got %d",
+          failures[0].position);
+    CHECK(failures[0].error == LOUDER_LOAD_NOT_AN_OBJECT, "and should say what was wrong, got %d",
+          failures[0].error);
+  }
+
+  // A config that is not JSON is still refused, and still reported.
+  flush_events(g_ctx);
+  const char* garbage = "not json at all";
+  CHECK(load_conversation_config(g_ctx,
+                                 reinterpret_cast<uint8_t*>(const_cast<char*>(garbage)),
+                                 std::strlen(garbage), 0) != 0,
+        "a malformed config should fail to load");
+  failures = DrainLoadErrors();
+  CHECK(failures.size() == 1, "a malformed config should be reported once, saw %zu",
+        failures.size());
+  if (failures.size() == 1) {
+    CHECK(failures[0].error == LOUDER_LOAD_MALFORMED_JSON,
+          "and should say the document was malformed, got %d", failures[0].error);
+  }
+
+  clear_config(g_ctx);
+}
+
+// The shape the demo conversation runs into, reproduced without the demo.
+//
+// Benjamin stands at a hub that branches, makes a real choice out of it, and
+// lands on a hub only he can see because it carries him as a recipient. That is
+// the singleplayer rule's premise exactly: a choice was just made, and what it
+// led to is his alone, so it is the consequence of that choice rather than
+// another one, and it resolves on its own.
+//
+//   0: Freya, branches -> 10 (his aside)  and  20 (his thought)
+//   10: -> 30 (Memory, his private voice)  and  40 (Benjamin, public)
+//   20: -> 50
+//
+// Hub 10 has two choices and hub 20 has one, and the rule treats them the same,
+// because how many choices a hub carries is not what makes it a consequence.
+// What the rule does need is somewhere else to see it, which hub 60 below is
+// for: the same shape, but public, so it belongs to both actors and neither of
+// them may be marched through it on the other's say-so.
+//
+// The second actor is not a bystander here. It is what makes "only he can see
+// it" mean something, since an unopposed private hub is private to nobody in
+// particular.
+const char* PrivateBranchJson() {
+  return R"([
+    {"type":"hub","conversation_id":0,"speaker":"Freya","text":"ask","tags":"start","flags":0},
+    {"type":"hub","conversation_id":10,"speaker":"Benjamin","text":"his aside","recipients":"Benjamin","flags":0},
+    {"type":"hub","conversation_id":20,"speaker":"Benjamin","text":"his thought","recipients":"Benjamin","flags":0},
+    {"type":"hub","conversation_id":30,"speaker":"Memory","text":"what he remembers","flags":0},
+    {"type":"hub","conversation_id":40,"speaker":"Benjamin","text":"what he says","flags":0},
+    {"type":"hub","conversation_id":50,"speaker":"Benjamin","text":"past the thought","flags":0},
+    {"type":"hub","conversation_id":60,"speaker":"Benjamin","text":"a line they share","flags":0},
+    {"type":"hub","conversation_id":70,"speaker":"Freya","text":"the reply","flags":0},
+    {"type":"connection","from_id":0,"from_port":0,"to_id":20},
+    {"type":"connection","from_id":0,"from_port":1,"to_id":10},
+    {"type":"connection","from_id":0,"from_port":2,"to_id":60},
+    {"type":"connection","from_id":10,"from_port":0,"to_id":30},
+    {"type":"connection","from_id":10,"from_port":1,"to_id":40},
+    {"type":"connection","from_id":20,"from_port":0,"to_id":50},
+    {"type":"connection","from_id":60,"from_port":0,"to_id":70}
+  ])";
+}
+
+// Benjamin hears Memory, so hub 30 reaches him and nothing else. Freya hears
+// neither, which is what keeps the private hubs off her screen while hub 60,
+// which is public, stays on it.
+const char* PrivateBranchConfigJson() {
+  return R"([
+    {"type":"speaker","name":"Freya","flags":1},
+    {"type":"speaker","name":"Benjamin","flags":1,"listening":"Memory"},
+    {"type":"speaker","name":"Memory","flags":0}
+  ])";
+}
+
+void TestAPrivateHubReachedByAMeaningfulChoice() {
+  std::printf("a private hub reached by a meaningful choice\n");
+
+  clear_config(g_ctx);
+  CHECK(load_conversation_config(
+            g_ctx,
+            reinterpret_cast<uint8_t*>(const_cast<char*>(PrivateBranchConfigJson())),
+            std::strlen(PrivateBranchConfigJson()), 0) == 0,
+        "the private branch config should load");
+
+  LouderName conversation = Declare("private branch conversation");
+  std::string json = PrivateBranchJson();
+  CHECK(load_conversation_json(g_ctx, conversation, reinterpret_cast<uint8_t*>(&json[0]),
+                               json.size(), 0) == 0,
+        "loading the private branch conversation returned %d", 0);
+
+  LouderName speak_freya[1] = {Lookup("Freya")};
+  LouderName speak_benjamin[1] = {Lookup("Benjamin")};
+
+  LouderActor actor_benjamin =
+      add_actor(g_ctx, conversation, 0, ActorFlags(), speak_benjamin, 1, nullptr, 0);
+  LouderActor actor_freya = add_actor(g_ctx, conversation, 0, ActorFlags(), speak_freya, 1, nullptr, 0);
+  CHECK(actor_benjamin == 0 && actor_freya == 1, "the actors should be 0 and 1, got %d and %d",
+        actor_benjamin, actor_freya);
+
+  flush_events(g_ctx);
+
+  // Hub 10 is the case. It carries two choices and none of them is hidden from
+  // him, so he could perfectly well decide between them, and he is offered
+  // both. What settles it is not the count but that the hub is addressed to him
+  // alone and stands where a choice he just made put it.
+  WithRules(DialogueRules_SPOKE | DialogueRules_SINGLEPLAYER, [&] {
+    CHECK(get_hub_choice_count(g_ctx, conversation, 0, actor_benjamin) == 3,
+          "he should be offered all three of the branches, saw %d",
+          get_hub_choice_count(g_ctx, conversation, 0, actor_benjamin));
+    CHECK(get_hub_choice_link(g_ctx, conversation, 0, actor_benjamin, 1) == 10,
+          "the aside should be at engine index 1");
+    CHECK(get_hub_choice_count(g_ctx, conversation, 10, actor_benjamin) == 2,
+          "and both of the aside's own choices should be his to look at, saw %d",
+          get_hub_choice_count(g_ctx, conversation, 10, actor_benjamin));
+
+    // Choosing into it does not stop there. He is resolved through on the first
+    // branch available to him, which is the voice only he hears.
+    CHECK(select_choice(g_ctx, conversation, actor_benjamin, 1) == 0,
+          "the choice into his aside should be accepted");
+    CHECK(get_actor_position(g_ctx, conversation, actor_benjamin) == 30,
+          "the aside should have resolved on its own, carrying him to the branch he alone hears at "
+          "hub 30, saw %d", get_actor_position(g_ctx, conversation, actor_benjamin));
+  });
+
+  // Freya had no claim on either branch of hub 10, since it is addressed to him.
+  // But she is not deciding anything either, so she is emulated through it and
+  // takes the first branch that appears to her, which is hub 40 and not the hub
+  // 30 she cannot hear. Being carried is not the same as being able to choose,
+  // and this is where the two actors come apart.
+  CHECK(get_actor_position(g_ctx, conversation, actor_freya) == 40,
+        "Freya should have been carried through the aside onto the branch she can hear, saw %d",
+        get_actor_position(g_ctx, conversation, actor_freya));
+
+  // Hub 20 has one choice rather than two, and resolves the same way. The count
+  // is not what does it, which is why both are here.
+  force_position(g_ctx, conversation, actor_benjamin, 0, LOUDER_NAME_NONE, 0);
+  force_position(g_ctx, conversation, actor_freya, 0, LOUDER_NAME_NONE, 0);
+  flush_events(g_ctx);
+  WithRules(DialogueRules_SPOKE | DialogueRules_SINGLEPLAYER, [&] {
+    CHECK(select_choice(g_ctx, conversation, actor_benjamin, 0) == 0,
+          "the choice into his thought should be accepted");
+    CHECK(get_actor_position(g_ctx, conversation, actor_benjamin) == 50,
+          "one choice out of a hub that branched resolves on its own too, carrying him to hub 50, "
+          "saw %d", get_actor_position(g_ctx, conversation, actor_benjamin));
+  });
+
+  // Hub 60 is the control. Same shape, same single choice, reached from the same
+  // branching hub, but public: both actors can see it, so it belongs to both of
+  // them and the rule cannot claim it on one of their say-so. Without this the
+  // rule would just be "any hub an actor walks into resolves".
+  force_position(g_ctx, conversation, actor_benjamin, 0, LOUDER_NAME_NONE, 0);
+  force_position(g_ctx, conversation, actor_freya, 0, LOUDER_NAME_NONE, 0);
+  flush_events(g_ctx);
+  WithRules(DialogueRules_SPOKE | DialogueRules_SINGLEPLAYER, [&] {
+    CHECK(select_choice(g_ctx, conversation, actor_benjamin, 2) == 0,
+          "the shared line should be an ordinary choice");
+    CHECK(get_actor_position(g_ctx, conversation, actor_benjamin) == 60,
+          "and he should stand on it, since the other actor can see it too, saw %d",
+          get_actor_position(g_ctx, conversation, actor_benjamin));
+  });
+
+  // The one thing that would make the rule worth having: with it off, the same
+  // move stops where the player was sent.
+  force_position(g_ctx, conversation, actor_benjamin, 0, LOUDER_NAME_NONE, 0);
+  force_position(g_ctx, conversation, actor_freya, 0, LOUDER_NAME_NONE, 0);
+  flush_events(g_ctx);
+  WithRules(DialogueRules_SPOKE, [&] {
+    CHECK(select_choice(g_ctx, conversation, actor_benjamin, 1) == 0,
+          "without the singleplayer rule the choice into his aside is ordinary, and accepted");
+    CHECK(get_actor_position(g_ctx, conversation, actor_benjamin) == 10,
+          "he should have stopped on it, since it is a decision he could have made, saw %d",
+          get_actor_position(g_ctx, conversation, actor_benjamin));
+    CHECK(get_hub_choice_count(g_ctx, conversation, 10, actor_benjamin) == 2,
+          "and been offered both of its branches, saw %d",
+          get_hub_choice_count(g_ctx, conversation, 10, actor_benjamin));
+  });
+
+  remove_conversation(g_ctx, conversation);
+  clear_config(g_ctx);
+}
+
+// The other demo case. An interface shows a side with exactly one choice as
+// CONTINUE, so both sides have to be able to be in that state at the same hub.
+// What makes that possible is a hub nobody owns: it has no speaker and no
+// recipients, so it reaches every actor, and it is held by nobody, so ownership
+// never comes into it.
+//
+//   0: -> 60 -> 70
+//
+// Hub 60 is the one both actors stand on to be "continuing".
+const char* ContinueJson() {
+  return R"([
+    {"type":"hub","conversation_id":0,"speaker":"A","text":"start","tags":"start","flags":0},
+    {"type":"hub","conversation_id":60,"text":"","flags":0},
+    {"type":"hub","conversation_id":70,"text":"the end","flags":0},
+    {"type":"connection","from_id":0,"from_port":0,"to_id":60},
+    {"type":"connection","from_id":60,"from_port":0,"to_id":70}
+  ])";
+}
+
+void TestAnUnownedHubWithOneChoiceIsEveryonesToTake() {
+  std::printf("an unowned hub with one choice is everyone's to take\n");
+
+  LouderName conversation = Declare("continue conversation");
+  std::string json = ContinueJson();
+  CHECK(load_conversation_json(g_ctx, conversation, reinterpret_cast<uint8_t*>(&json[0]),
+                               json.size(), 0) == 0,
+        "loading the continue conversation returned %d", 0);
+
+  LouderName speak_a[1] = {Lookup("A")};
+  LouderName speak_b[1] = {Lookup("B")};
+  LouderActor actor_a = add_actor(g_ctx, conversation, 60, ActorFlags(), speak_a, 1, nullptr, 0);
+  LouderActor actor_b = add_actor(g_ctx, conversation, 60, ActorFlags(), speak_b, 1, nullptr, 0);
+  CHECK(actor_a == 0 && actor_b == 1, "the actors should be 0 and 1, got %d and %d", actor_a,
+        actor_b);
+
+  flush_events(g_ctx);
+
+  // Hub 60 has no speaker and no recipients, so it reaches both actors and belongs
+  // to neither. That is the whole premise of a CONTINUE: two sides that are both
+  // showing one choice and neither of them is the other one's to take away.
+  CHECK(get_hub_speaker(g_ctx, conversation, 60) == LOUDER_NAME_NONE,
+        "hub 60 should carry no speaker, which is what leaves it unowned");
+  CHECK(get_hub_choice_count(g_ctx, conversation, 60, actor_a) == 1,
+        "the first actor should see exactly one choice, saw %d",
+        get_hub_choice_count(g_ctx, conversation, 60, actor_a));
+  CHECK(get_hub_choice_count(g_ctx, conversation, 60, actor_b) == 1,
+        "and so should the second, which is what puts both sides in that state, saw %d",
+        get_hub_choice_count(g_ctx, conversation, 60, actor_b));
+  CHECK(get_hub_choice_link(g_ctx, conversation, 60, actor_a, 0) == 70,
+        "the choice should lead to hub 70");
+  CHECK(get_hub_choice_link(g_ctx, conversation, 60, actor_b, 0) == 70,
+        "and to the same place for both, since neither of them chose for the other");
+
+  // Each may take it for itself. What that does not mean is that one side
+  // decides for the other: the other is carried, not commanded, and only
+  // because the two share a channel and hub 70 is visible to both. A side on its
+  // own channel would simply stay put, which is the case that keeps a CONTINUE
+  // from being mistaken for one player moving the other.
+  WithRules(DialogueRules_SPOKE | DialogueRules_SINGLEPLAYER, [&] {
+    CHECK(select_choice(g_ctx, conversation, actor_a, 0) == 0,
+          "the first actor should be able to continue");
+    CHECK(get_actor_position(g_ctx, conversation, actor_a) == 70,
+        "and should land on hub 70, saw %d", get_actor_position(g_ctx, conversation, actor_a));
+    CHECK(get_actor_position(g_ctx, conversation, actor_b) == 70,
+          "and the second should follow it there, since they share a channel and can both see hub "
+          "70, saw %d", get_actor_position(g_ctx, conversation, actor_b));
+  });
+
+  // Put on separate channels and neither moves the other, which is what makes
+  // the choice each side's rather than the conversation's.
+  force_position(g_ctx, conversation, actor_a, 60, Declare("left"), 0);
+  force_position(g_ctx, conversation, actor_b, 60, Declare("right"), 0);
+  flush_events(g_ctx);
+  WithRules(DialogueRules_SPOKE | DialogueRules_SINGLEPLAYER, [&] {
+    CHECK(select_choice(g_ctx, conversation, actor_a, 0) == 0,
+          "the first actor should still be able to continue");
+    CHECK(get_actor_position(g_ctx, conversation, actor_a) == 70,
+          "landing on hub 70, saw %d", get_actor_position(g_ctx, conversation, actor_a));
+    CHECK(get_actor_position(g_ctx, conversation, actor_b) == 60,
+          "while the other side, in another channel, is left to continue on its own, saw %d",
+          get_actor_position(g_ctx, conversation, actor_b));
+    CHECK(get_hub_choice_count(g_ctx, conversation, 60, actor_b) == 1,
+          "and is still offered its one way on, saw %d",
+          get_hub_choice_count(g_ctx, conversation, 60, actor_b));
+  });
+
+  // And it is a genuine choice rather than something the engine pushes through:
+  // with the singleplayer rule off it is still offered, which is the difference
+  // between "both sides may continue" and "both sides are continuing".
+  force_position(g_ctx, conversation, actor_a, 60, LOUDER_NAME_NONE, 0);
+  force_position(g_ctx, conversation, actor_b, 60, LOUDER_NAME_NONE, 0);
+  WithRules(DialogueRules_SPOKE, [&] {
+    CHECK(get_hub_choice_count(g_ctx, conversation, 60, actor_a) == 1,
+          "an unowned hub is not the singleplayer rule's business, and stays a choice, saw %d",
+          get_hub_choice_count(g_ctx, conversation, 60, actor_a));
+    CHECK(get_hub_choice_count(g_ctx, conversation, 60, actor_b) == 1,
+          "on both sides, saw %d", get_hub_choice_count(g_ctx, conversation, 60, actor_b));
+  });
+
+  remove_conversation(g_ctx, conversation);
+}
+
 void TestAsks() {
   std::printf("asks\n");
 
@@ -1236,18 +1979,27 @@ void TestBuiltEvents() {
   LouderEvent motion = BareEvent(make_event_data_regular_motion(Motion{0, 5, 1, false}));
   CHECK(test_push_event(g_ctx, &motion) == LouderError::Ok, "pushing a built motion should succeed");
 
+  LouderEvent failure = BareEvent(make_event_data_load_error(LoadFailure{9, LOUDER_LOAD_NOT_AN_OBJECT}));
+  CHECK(test_push_event(g_ctx, &failure) == LouderError::Ok, "pushing a built failure should succeed");
+
   std::vector<LouderEvent> events = DrainEvents();
-  CHECK(events.size() == 2, "both pushed events should come back, saw %zu", events.size());
-  CHECK(events.size() == 2 && events[0].data.tag == EventData::Tag::Callback,
+  CHECK(events.size() == 3, "all three pushed events should come back, saw %zu", events.size());
+  CHECK(events.size() == 3 && events[0].data.tag == EventData::Tag::Callback,
         "the first event should still read as a callback");
-  CHECK(events.size() == 2 && ReadName(events[0].data.callback._0) == "on_arrival",
+  CHECK(events.size() == 3 && ReadName(events[0].data.callback._0) == "on_arrival",
         "the callback should still carry its name");
-  CHECK(events.size() == 2 && events[1].data.tag == EventData::Tag::RegularMotion,
+  CHECK(events.size() == 3 && events[1].data.tag == EventData::Tag::RegularMotion,
         "the second event should still read as a motion");
-  CHECK(events.size() == 2 && events[1].data.regular_motion._0.target_position == 5,
+  CHECK(events.size() == 3 && events[1].data.regular_motion._0.target_position == 5,
         "the motion should still carry its target position");
-  CHECK(events.size() == 2 && events[1].data.regular_motion._0.choice_index == 1,
+  CHECK(events.size() == 3 && events[1].data.regular_motion._0.choice_index == 1,
         "the motion should still carry its choice index");
+  CHECK(events.size() == 3 && events[2].data.tag == EventData::Tag::LoadError,
+        "the third event should still read as a load error");
+  CHECK(events.size() == 3 && events[2].data.load_error._0.position == 9,
+        "the load error should still carry its position");
+  CHECK(events.size() == 3 && events[2].data.load_error._0.error == LOUDER_LOAD_NOT_AN_OBJECT,
+        "the load error should still carry its error code");
 }
 
 void TestNullSafety() {
@@ -1290,6 +2042,12 @@ int main(int argc, char** argv) {
   TestAvailableChoiceIndicesCanHaveGaps();
   TestExampleFlow();
   TestAutoSplitOnPrivateVoice();
+  TestSpokeRuleIsConfigurable();
+  TestSingleplayerRule();
+  TestAPrivateHubReachedByAMeaningfulChoice();
+  TestAnUnownedHubWithOneChoiceIsEveryonesToTake();
+  TestLoadErrorsAreReportedAsEvents();
+  TestConfigLoadErrorsAreReportedAsEvents();
   TestAsks();
   TestSerialization();
   TestBuiltEvents();

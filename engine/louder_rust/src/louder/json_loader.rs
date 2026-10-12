@@ -81,7 +81,7 @@ pub fn load_conversation(
     return LOUDER_LOAD_ALREADY_LOADED;
   }
 
-  let records = match parse_records(document) {
+  let records = match parse_records(context, conversation, document) {
     Ok(records) => records,
     Err(error) => return error,
   };
@@ -151,15 +151,20 @@ pub fn load_conversation(
 /// The config is a singleton: it is not tied to any one conversation, so a
 /// speaker declared here is visible from all of them. Records replace any
 /// speaker of the same name rather than failing, so a config can be reloaded.
+///
+/// A record the engine cannot read is reported and skipped rather than costing
+/// the caller the rest of the config. The config belongs to no conversation, so
+/// its events carry no conversation name.
 pub fn load_config(context: &mut LouderContext, document: &str) -> LoadError {
-  let records = match parse_records(document) {
+  let records = match parse_records(context, LOUDER_NAME_NONE, document) {
     Ok(records) => records,
     Err(error) => return error,
   };
 
   for record in records {
     let Some(object) = record.as_object() else {
-      return LOUDER_LOAD_NOT_AN_OBJECT;
+      report(context, LOUDER_NAME_NONE, LOUDER_LOAD_NOT_AN_OBJECT, crate::BLANK_POSITION);
+      continue;
     };
 
     if record_type(object) != Some("speaker") {
@@ -168,6 +173,8 @@ pub fn load_config(context: &mut LouderContext, document: &str) -> LoadError {
 
     let name_text = string_field(object, "name");
     if name_text.is_empty() {
+      // A speaker with no name is not a speaker the host could ever ask for.
+      report(context, LOUDER_NAME_NONE, LOUDER_LOAD_NOT_AN_OBJECT, crate::BLANK_POSITION);
       continue;
     }
 
@@ -311,11 +318,29 @@ fn report(context: &mut LouderContext, conversation: LouderName, error: LoadErro
 }
 
 /// Parse `document` as the list of records both loaders expect.
-fn parse_records(document: &str) -> Result<Vec<Value>, LoadError> {
-  let parsed: Value = serde_json::from_str(document).map_err(|_| LOUDER_LOAD_MALFORMED_JSON)?;
+///
+/// A problem with the document as a whole is reported as a load error event
+/// before the error is returned, so that a host reading events rather than
+/// return codes still learns that the load failed and why.
+fn parse_records(
+  context: &mut LouderContext,
+  conversation: LouderName,
+  document: &str,
+) -> Result<Vec<Value>, LoadError> {
+  let parsed: Value = match serde_json::from_str(document) {
+    Ok(parsed) => parsed,
+    Err(_) => {
+      report(context, conversation, LOUDER_LOAD_MALFORMED_JSON, crate::BLANK_POSITION);
+      return Err(LOUDER_LOAD_MALFORMED_JSON);
+    }
+  };
+
   match parsed {
     Value::Array(records) => Ok(records),
-    _ => Err(LOUDER_LOAD_NOT_A_LIST),
+    _ => {
+      report(context, conversation, LOUDER_LOAD_NOT_A_LIST, crate::BLANK_POSITION);
+      Err(LOUDER_LOAD_NOT_A_LIST)
+    }
   }
 }
 

@@ -7,6 +7,7 @@ use super::actor::{Actor, LouderActor, LOUDER_ACTOR_NONE};
 use super::conversation::{Conversation, VariableMap, VariableScope, classify_variable};
 use super::event::*;
 use super::object::LouderVariant;
+use super::rules::DialogueRules;
 
 /// One queued ask, together with the verdict the host gave it.
 ///
@@ -68,6 +69,7 @@ fn intern_into(names: &mut LouderNameMap, text: &str) -> LouderName {
 pub struct LouderContext {
   names: LouderNameMap,
   main_channel: LouderName,
+  rules: DialogueRules,
   speakers: Map<LouderName, Speaker>,
   conversations: Map<LouderName, Conversation>,
   actors: Map<LouderName, Vec<Actor>>,
@@ -86,6 +88,9 @@ impl LouderContext {
       // conversation that never mentions it.
       main_channel: intern_into(&mut names, LOUDER_MAIN_CHANNEL),
       names,
+      // Every rule on, since each one is a default the guide describes rather
+      // than an opt-in a conversation has to ask for.
+      rules: DialogueRules::all(),
       speakers: Map::new(),
       conversations: Map::new(),
       actors: Map::new(),
@@ -100,6 +105,16 @@ impl LouderContext {
   /// The id of the default channel, which every conversation starts on.
   pub fn main_channel(&self) -> LouderName {
     self.main_channel
+  }
+
+  /// The dialogue rules currently in effect.
+  pub fn rules(&self) -> DialogueRules {
+    self.rules
+  }
+
+  /// Replace the dialogue rules.
+  pub fn set_rules(&mut self, rules: DialogueRules) {
+    self.rules = rules;
   }
 
   pub fn push_event(&mut self, event: LouderEvent) -> usize {

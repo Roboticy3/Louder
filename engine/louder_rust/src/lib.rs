@@ -12,6 +12,7 @@ use louder::expression::*;
 use louder::hub::*;
 use louder::json_loader::*;
 use louder::object::*;
+use louder::rules::DialogueRules;
 use louder::name::*;
 use louder::simulator::*;
 use louder::speaker::*;
@@ -217,6 +218,16 @@ pub extern "C" fn make_event_data_conversation_added(conversation: LouderName) -
 #[unsafe(no_mangle)]
 pub extern "C" fn make_event_data_conversation_removed(conversation: LouderName) -> EventData {
   EventData::ConversationRemoved(conversation)
+}
+
+/// Build an [`EventData::LoadError`].
+///
+/// The engine emits these itself when it cannot read a record of a loaded
+/// document, so this exists to round out the set rather than because a host
+/// has a reason to raise one.
+#[unsafe(no_mangle)]
+pub extern "C" fn make_event_data_load_error(failure: LoadFailure) -> EventData {
+  EventData::LoadError(failure)
 }
 
 /// The blank starting value for an iterator over positions.
@@ -1478,6 +1489,41 @@ pub extern "C" fn clear_config(ctx: *mut LouderContext) -> i32 {
 
   unsafe {
     (*ctx).clear_config();
+  }
+
+  0
+}
+
+/// Read the dialogue rules currently in effect.
+///
+/// A fresh context has every rule on. Returns an empty set if `ctx` was null,
+/// since a null context is not running any dialogue.
+#[unsafe(no_mangle)]
+pub extern "C" fn get_dialogue_rules(ctx: *const LouderContext) -> DialogueRules {
+  if ctx.is_null() {
+    return DialogueRules::empty();
+  }
+
+  unsafe { (*ctx).rules() }
+}
+
+/// Replace the dialogue rules.
+///
+/// A rule takes effect on the next move rather than being applied to the
+/// conversation as it stands, so a host can turn one off while an actor is
+/// standing on a hub it would otherwise resolve through.
+///
+/// Bits outside [`DialogueRules`] are ignored rather than refused, so a host
+/// carrying a configuration written for a newer engine still gets the rules
+/// this build knows about.
+#[unsafe(no_mangle)]
+pub extern "C" fn set_dialogue_rules(ctx: *mut LouderContext, rules: DialogueRules) -> i32 {
+  if ctx.is_null() {
+    return 1;
+  }
+
+  unsafe {
+    (*ctx).set_rules(DialogueRules::from_bits_truncate(rules.bits()));
   }
 
   0

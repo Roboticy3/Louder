@@ -15,16 +15,18 @@ func _ready() -> void:
 	var i := 0
 	for c in get_children():
 		if c is CheckBox:
+			print("deserializing checkbox ", c, " with flag ", i)
 			checkboxes.append(c)
-			c.set_pressed_no_signal(flags & 1 << i)
+			c.button_pressed = bool(flags & 1 << i)
 			c.toggled.connect(_on_checkbox_toggled.bind(c))
 			i += 1
 
-func _on_checkbox_toggled(checkbox: CheckBox, pressed: bool) -> void:
+func _on_checkbox_toggled(pressed: bool, checkbox: CheckBox) -> void:
 	if pressed:
 		for i in checkboxes.size():
 			var c = checkboxes[i]
 			if c == checkbox:
+				print("serializing checkbox ", c, " with flag ", i)
 				if pressed:
 					flags |= 1 << i
 				else:
