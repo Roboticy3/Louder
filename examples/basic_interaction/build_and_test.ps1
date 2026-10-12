@@ -9,42 +9,48 @@
 # LOUDER_OFFLINE to skip the network entirely.
 $ErrorActionPreference = 'Stop'
 
-$base = if ($env:LOUDER_BASE_URL) { $env:LOUDER_BASE_URL.TrimEnd('/') }
-        else { 'https://roboticy3.github.io/Louder' }
+cd ../../engine
+.\build_and_test.ps1
+cd ../examples/basic_interaction
+cp ../../engine/artifacts/louder_rust.dll louder_rust.dll
+cp ../../engine/artifacts/louder_rust.h louder_rust.h
 
-# Platform directory published by Engine CI. This demo is built with MinGW on
-# windows, so it takes the Windows library.
-$platform = 'windows-x86_64'
-
-function Get-EngineBinary($Name) {
-  $destination = Join-Path $PSScriptRoot $Name
-
-  if (-not $env:LOUDER_OFFLINE) {
-    $url = "$base/$platform/$Name"
-    Write-Host "fetching $url"
-    try {
-      # -UseBasicParsing keeps this working on 5.1 without an IE first-run.
-      Invoke-WebRequest -Uri $url -OutFile $destination -UseBasicParsing -TimeoutSec 30
-      return $destination
-    } catch {
-      Write-Warning "could not fetch ${url}: $($_.Exception.Message)"
-    }
-  }
-
-  # The engine build beside the checkout. A stale pair still compiles and still
-  # links, and then fails at runtime for reasons that look like the demo's.
-  $artifacts = Join-Path $PSScriptRoot '..\..\engine\artifacts'
-  $local = Join-Path $artifacts $Name
-  if (-not (Test-Path -LiteralPath $local)) {
-    throw "no engine binary for $Name; tried $base/$platform/$Name and $local"
-  }
-  Write-Host "using the local build at $local"
-  Copy-Item -LiteralPath $local -Destination $destination
-  return $destination
-}
-
-Get-EngineBinary 'louder_rust.h' | Out-Null
-Get-EngineBinary 'louder_rust.dll' | Out-Null
+#$base = if ($env:LOUDER_BASE_URL) { $env:LOUDER_BASE_URL.TrimEnd('/') }
+#        else { 'https://roboticy3.github.io/Louder' }
+#
+## Platform directory published by Engine CI. This demo is built with MinGW on
+## windows, so it takes the Windows library.
+#$platform = 'windows-x86_64'
+#
+#function Get-EngineBinary($Name) {
+#  $destination = Join-Path $PSScriptRoot $Name
+#
+#  if (-not $env:LOUDER_OFFLINE) {
+#    $url = "$base/$platform/$Name"
+#    Write-Host "fetching $url"
+#    try {
+#      # -UseBasicParsing keeps this working on 5.1 without an IE first-run.
+#      Invoke-WebRequest -Uri $url -OutFile $destination -UseBasicParsing -TimeoutSec 30
+#      return $destination
+#    } catch {
+#      Write-Warning "could not fetch ${url}: $($_.Exception.Message)"
+#    }
+#  }
+#
+#  # The engine build beside the checkout. A stale pair still compiles and still
+#  # links, and then fails at runtime for reasons that look like the demo's.
+#  $artifacts = Join-Path $PSScriptRoot '..\..\engine\artifacts'
+#  $local = Join-Path $artifacts $Name
+#  if (-not (Test-Path -LiteralPath $local)) {
+#    throw "no engine binary for $Name; tried $base/$platform/$Name and $local"
+#  }
+#  Write-Host "using the local build at $local"
+#  Copy-Item -LiteralPath $local -Destination $destination
+#  return $destination
+#}
+#
+#Get-EngineBinary 'louder_rust.h' | Out-Null
+#Get-EngineBinary 'louder_rust.dll' | Out-Null
 
 Write-Host 'compiling the demo'
 & g++ -std=c++17 -O2 -Wall -Wextra -I . main.cpp dialogue.cpp terminal.cpp -o basic_interaction.exe louder_rust.dll
