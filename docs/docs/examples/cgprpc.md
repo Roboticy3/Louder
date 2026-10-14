@@ -24,3 +24,12 @@ that signal is converted into the appropriate statement equivalents to display
 text and images on Player 2's screen in ADV style. Player 2 should always have
 choices in this demo until the very end, when either Player 1 dies or makes it
 to the end of the walk.
+
+# Pre-Cursed
+I'm running into more trouble implementing the adapters than I expected.
+
+Going to do this in C first just as a proof of concept. Then I can generate
+translations to other languages once adaptation is working. 
+
+The long term dream is that Louder would be able to "hook in" to existing renpy
+games, but that isn't realistic at my current ability.
