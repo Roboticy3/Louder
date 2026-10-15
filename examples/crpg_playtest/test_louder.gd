@@ -13,7 +13,7 @@ func _ready() -> void:
 	print("conversation: ", conversation)
 	print("start: ", start)
 	
-	var hub := ctx.next_hub_from_tags(conversation, [start], false, -1)
+	var hub := ctx.next_hub_from_tags(jail, [start], false, -1)
 	while hub != -1:
 		print("start hub: ", hub)
-		hub = ctx.next_hub_from_tags(conversation, [start], false, hub)
+		hub = ctx.next_hub_from_tags(jail, [start], false, hub)
