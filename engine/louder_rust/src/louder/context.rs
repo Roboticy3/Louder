@@ -1,4 +1,7 @@
 #[cfg(feature = "godot-bindings")]
+use godot::classes::class_macros::private::virtuals::ZipReader::StringName;
+
+#[cfg(feature = "godot-bindings")]
 use super::godot_api::{Array, Gd, GString, Variant};
 #[cfg(feature = "godot-bindings")]
 use super::json;
@@ -73,34 +76,33 @@ fn intern_into(names: &mut LouderNameMap, text: &str) -> LouderName {
   }
 }
 
-godot_class! {
-  no_init:
-  /// The opaque handle to the engine.
-  ///
-  /// Obtained from [`crate::init_louder`] and released with
-  /// [`crate::deinit_louder`]. The contents are internal to the engine and not
-  /// part of the public API.
-  ///
-  /// Story state is held here rather than on [`Conversation`] so that the shared
-  /// buckets survive loading and unloading individual conversations.
-  ///
-  /// Under the Godot bindings this is a class in its own right, and the engine's
-  /// whole vocabulary is reached through it: names, conversations, actors, hubs,
-  /// speakers, story state, the event queue, and the ask cache. GDScript builds
-  /// one with `LouderContext.new()`.
-  pub struct LouderContext {
-    names: LouderNameMap,
-    main_channel: LouderName,
-    rules: DialogueRules,
-    speakers: Map<LouderName, Speaker>,
-    conversations: Map<LouderName, Conversation>,
-    actors: Map<LouderName, Vec<Actor>>,
-    next_actor_id: Map<LouderName, LouderActor>,
-    shared_saved: VariableMap,
-    shared_unsaved: VariableMap,
-    events: Vec<LouderEvent>,
-    asks: VecDeque<PendingAsk>,
-  }
+/// The opaque handle to the engine.
+///
+/// Obtained from [`crate::init_louder`] and released with
+/// [`crate::deinit_louder`]. The contents are internal to the engine and not
+/// part of the public API.
+///
+/// Story state is held here rather than on [`Conversation`] so that the shared
+/// buckets survive loading and unloading individual conversations.
+///
+/// Under the Godot bindings this is a class in its own right, and the engine's
+/// whole vocabulary is reached through it: names, conversations, actors, hubs,
+/// speakers, story state, the event queue, and the ask cache. GDScript builds
+/// one with `LouderContext.new()`.
+#[cfg_attr(feature = "godot-bindings", derive(::godot::prelude::GodotClass))]
+#[cfg_attr(feature = "godot-bindings", class(tool))]
+pub struct LouderContext {
+  names: LouderNameMap,
+  main_channel: LouderName,
+  rules: DialogueRules,
+  speakers: Map<LouderName, Speaker>,
+  conversations: Map<LouderName, Conversation>,
+  actors: Map<LouderName, Vec<Actor>>,
+  next_actor_id: Map<LouderName, LouderActor>,
+  shared_saved: VariableMap,
+  shared_unsaved: VariableMap,
+  events: Vec<LouderEvent>,
+  asks: VecDeque<PendingAsk>,
 }
 
 godot_api! {
@@ -1222,6 +1224,32 @@ godot_api! {
       fake_priority: i32,
     ) -> bool {
       Simulator::force_move(self, conversation, actor, target_position, MotionKind::Force, fake_channel, fake_priority).is_ok()
+    }
+
+
+    #[func]
+    fn make_name(&mut self, string_name: StringName) -> LouderName {
+      let buffer = string_name.to_utf8_buffer().to_vec();
+      let name_content =  LouderNameContent{ bytes: buffer };
+      match probe_name(&self.names, &name_content) {
+        LouderContextResult::Found(name) => name,
+        LouderContextResult::NotFound(noname) => {
+          self.names.insert(noname, name_content);
+          return noname;
+        }
+      }
+    }
+    
+    #[func]
+    fn make_string_name(&mut self, louder_name: LouderName) -> StringName {
+      if let Some(name) = self.names.get(&louder_name) {
+        let buffer_array = godot::prelude::PackedArray::<u8>::from(name.bytes.clone());
+        let gstring = buffer_array.get_string_from_utf8();
+        let string_name = StringName::from(&gstring);
+        return string_name;
+      }
+
+      StringName::default()
     }
   }
 }

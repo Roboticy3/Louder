@@ -34,15 +34,15 @@ pub enum LouderOption<T> {
   Some(T)
 }
 
-godot_class! {
-  /// The status codes an engine operation reports.
-  ///
-  /// A Godot caller mostly gets a `bool` back, since an operation either worked
-  /// or the thing it was asked for was not there. This class is for the cases
-  /// where the code itself matters, such as a load failure, which has a family
-  /// of them; see [`LouderLoader`](super::json_loader::LouderLoader).
-  pub struct LouderStatus {}
-}
+/// The status codes an engine operation reports.
+///
+/// A Godot caller mostly gets a `bool` back, since an operation either worked
+/// or the thing it was asked for was not there. This class is for the cases
+/// where the code itself matters, such as a load failure, which has a family
+/// of them; see [`LouderLoader`](super::json_loader::LouderLoader).
+#[cfg_attr(feature = "godot-bindings", derive(::godot::prelude::GodotClass))]
+#[cfg_attr(feature = "godot-bindings", class(init, tool))]
+pub struct LouderStatus {}
 
 godot_api! {
   impl LouderStatus {

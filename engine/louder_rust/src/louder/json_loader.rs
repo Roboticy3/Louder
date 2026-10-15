@@ -367,14 +367,14 @@ fn read_additional(
   additional
 }
 
-godot_class! {
-  /// Loading conversations and speaker configs out of JSON documents.
-  ///
-  /// Both loaders take the document as a string rather than as a buffer and an
-  /// encoding, since the Godot side has already decoded it by the time a
-  /// `String` exists.
-  pub struct LouderLoader {}
-}
+/// Loading conversations and speaker configs out of JSON documents.
+///
+/// Both loaders take the document as a string rather than as a buffer and an
+/// encoding, since the Godot side has already decoded it by the time a
+/// `String` exists.
+#[cfg_attr(feature = "godot-bindings", derive(::godot::prelude::GodotClass))]
+#[cfg_attr(feature = "godot-bindings", class(init, tool))]
+pub struct LouderLoader {}
 
 godot_api! {
   impl LouderLoader {

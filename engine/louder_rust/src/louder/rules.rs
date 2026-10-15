@@ -36,17 +36,17 @@ bitflags::bitflags! {
   }
 }
 
-godot_class! {
-  /// The dialogue rules, read and written by name.
-  ///
-  /// A host reads and writes the whole configuration at once through
-  /// [`LouderContext::get_dialogue_rules`](super::context::LouderContext) and
-  /// [`LouderContext::set_dialogue_rules`](super::context::LouderContext), which
-  /// take the bits. This class is how a GDScript writer gets at those bits
-  /// without hard-coding them: pass the names they care about, and read back the
-  /// names currently set.
-  pub struct LouderDialogueRules {}
-}
+/// The dialogue rules, read and written by name.
+///
+/// A host reads and writes the whole configuration at once through
+/// [`LouderContext::get_dialogue_rules`](super::context::LouderContext) and
+/// [`LouderContext::set_dialogue_rules`](super::context::LouderContext), which
+/// take the bits. This class is how a GDScript writer gets at those bits
+/// without hard-coding them: pass the names they care about, and read back the
+/// names currently set.
+#[cfg_attr(feature = "godot-bindings", derive(::godot::prelude::GodotClass))]
+#[cfg_attr(feature = "godot-bindings", class(init, tool))]
+pub struct LouderDialogueRules {}
 
 godot_api! {
   impl LouderDialogueRules {

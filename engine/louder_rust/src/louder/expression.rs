@@ -74,13 +74,13 @@ pub enum Token {
   Eof,
 }
 
-godot_class! {
-  /// An expression the engine could not read.
-  #[derive(Debug, Clone, PartialEq, Default)]
-  pub struct ParseError {
-    pub message: String,
-    pub offset: usize,
-  }
+/// An expression the engine could not read.
+#[derive(Debug, Clone, PartialEq, Default)]
+#[cfg_attr(feature = "godot-bindings", derive(::godot::prelude::GodotClass))]
+#[cfg_attr(feature = "godot-bindings", class(init, tool))]
+pub struct ParseError {
+  pub message: String,
+  pub offset: usize,
 }
 
 impl ParseError {
@@ -463,17 +463,17 @@ pub enum Evaluation {
   Suspended,
 }
 
-godot_class! {
-  /// Identifies who an expression is being evaluated for, so that story state,
-  /// events, and asks can all be attributed correctly.
-  #[derive(Debug, Clone, Default)]
-  pub struct EvaluationScope {
-    pub conversation: LouderName,
-    pub actor: LouderActor,
-    pub channel: LouderName,
-    /// The motion that triggered this evaluation, if any.
-    pub motion: Option<Motion>,
-  }
+/// Identifies who an expression is being evaluated for, so that story state,
+/// events, and asks can all be attributed correctly.
+#[derive(Debug, Clone, Default)]
+#[cfg_attr(feature = "godot-bindings", derive(::godot::prelude::GodotClass))]
+#[cfg_attr(feature = "godot-bindings", class(init, tool))]
+pub struct EvaluationScope {
+  pub conversation: LouderName,
+  pub actor: LouderActor,
+  pub channel: LouderName,
+  /// The motion that triggered this evaluation, if any.
+  pub motion: Option<Motion>,
 }
 
 impl EvaluationScope {
@@ -512,18 +512,18 @@ impl ExpressionHost for LouderContext {
   }
 }
 
-godot_class! {
-  /// Evaluates expressions against a loaded conversation.
-  ///
-  /// Evaluation is deliberately restartable. Asks suspend the whole expression,
-  /// so an expression that raises an ask is evaluated again from the beginning
-  /// once the verdict arrives. To make that safe, every write to story state is
-  /// deferred until the expression has evaluated completely, so a retry cannot
-  /// apply the same assignment twice.
-  #[derive(Default, Clone)]
-  pub struct Evaluator {
-    scope: EvaluationScope,
-  }
+/// Evaluates expressions against a loaded conversation.
+///
+/// Evaluation is deliberately restartable. Asks suspend the whole expression,
+/// so an expression that raises an ask is evaluated again from the beginning
+/// once the verdict arrives. To make that safe, every write to story state is
+/// deferred until the expression has evaluated completely, so a retry cannot
+/// apply the same assignment twice.
+#[derive(Default, Clone)]
+#[cfg_attr(feature = "godot-bindings", derive(::godot::prelude::GodotClass))]
+#[cfg_attr(feature = "godot-bindings", class(init, tool))]
+pub struct Evaluator {
+  scope: EvaluationScope,
 }
 
 impl Evaluator {

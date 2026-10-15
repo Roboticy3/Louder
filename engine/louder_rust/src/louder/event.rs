@@ -9,62 +9,62 @@ use super::actor::LouderActor;
 use super::name::LouderName;
 use super::hub::LouderPosition;
 
-godot_class! {
-  /// One move of an actor from one hub to another.
-  ///
-  /// Every event a move produces carries the same motion, which is how a host
-  /// reads where an actor came from and where it went.
-  #[derive(Debug, Clone, Default)]
-  #[repr(C)]
-  pub struct Motion {
-    pub source_position: LouderPosition,
-    pub target_position: LouderPosition,
-    pub choice_index: i32,
+/// One move of an actor from one hub to another.
+///
+/// Every event a move produces carries the same motion, which is how a host
+/// reads where an actor came from and where it went.
+#[derive(Debug, Clone, Default)]
+#[repr(C)]
+#[cfg_attr(feature = "godot-bindings", derive(::godot::prelude::GodotClass))]
+#[cfg_attr(feature = "godot-bindings", class(init, tool))]
+pub struct Motion {
+  pub source_position: LouderPosition,
+  pub target_position: LouderPosition,
+  pub choice_index: i32,
 
-    pub background: bool,
-  }
+  pub background: bool,
 }
 
-godot_class! {
-  /// A choice becoming available on a hub.
-  #[derive(Debug, Clone, Default)]
-  #[repr(C)]
-  pub struct ChoiceAppearance {
-    pub position: LouderPosition,
-    pub choice_index: i32
-  }
+/// A choice becoming available on a hub.
+#[derive(Debug, Clone, Default)]
+#[repr(C)]
+#[cfg_attr(feature = "godot-bindings", derive(::godot::prelude::GodotClass))]
+#[cfg_attr(feature = "godot-bindings", class(init, tool))]
+pub struct ChoiceAppearance {
+  pub position: LouderPosition,
+  pub choice_index: i32
 }
 
-godot_class! {
-  /// A key of an actor's additional data being replaced.
-  #[derive(Debug, Clone, Default)]
-  #[repr(C)]
-  pub struct AdditionalDataChange {
-    pub key: LouderName,
-  }
+/// A key of an actor's additional data being replaced.
+#[derive(Debug, Clone, Default)]
+#[repr(C)]
+#[cfg_attr(feature = "godot-bindings", derive(::godot::prelude::GodotClass))]
+#[cfg_attr(feature = "godot-bindings", class(init, tool))]
+pub struct AdditionalDataChange {
+  pub key: LouderName,
 }
 
-godot_class! {
-  /// What a condition on a hub came to, when an actor landed on it.
-  #[derive(Debug, Clone, Default)]
-  #[repr(C)]
-  pub struct ConditionOutcome {
-    pub condition: LouderName,
-    pub outcome: LouderVariant,
-  }
+/// What a condition on a hub came to, when an actor landed on it.
+#[derive(Debug, Clone, Default)]
+#[repr(C)]
+#[cfg_attr(feature = "godot-bindings", derive(::godot::prelude::GodotClass))]
+#[cfg_attr(feature = "godot-bindings", class(init, tool))]
+pub struct ConditionOutcome {
+  pub condition: LouderName,
+  pub outcome: LouderVariant,
 }
 
-godot_class! {
-  /// A record in a document the engine could not read.
-  ///
-  /// Carries the position of the record that was at fault, or
-  /// [`LOUDER_POSITION_NONE`] when the problem was with the document as a whole.
-  #[derive(Debug, Clone, Default)]
-  #[repr(C)]
-  pub struct LoadFailure {
-    pub position: LouderPosition,
-    pub error: i32,
-  }
+/// A record in a document the engine could not read.
+///
+/// Carries the position of the record that was at fault, or
+/// [`LOUDER_POSITION_NONE`] when the problem was with the document as a whole.
+#[derive(Debug, Clone, Default)]
+#[repr(C)]
+#[cfg_attr(feature = "godot-bindings", derive(::godot::prelude::GodotClass))]
+#[cfg_attr(feature = "godot-bindings", class(init, tool))]
+pub struct LoadFailure {
+  pub position: LouderPosition,
+  pub error: i32,
 }
 
 /// What an [`LouderEvent`] is about.
@@ -170,35 +170,35 @@ impl Default for EventData {
   }
 }
 
-godot_class! {
-  /// One entry in the event queue.
-  ///
-  /// The queue is polled from index 0 upwards and emptied with
-  /// [`LouderContext::flush_events`](super::context::LouderContext).
-  #[derive(Debug, Clone, Default)]
-  #[repr(C)]
-  pub struct LouderEvent {
-    pub conversation: LouderName,
-    pub channel: LouderName,
-    pub actor: LouderActor,
-    pub data: EventData,
-  }
+/// One entry in the event queue.
+///
+/// The queue is polled from index 0 upwards and emptied with
+/// [`LouderContext::flush_events`](super::context::LouderContext).
+#[derive(Debug, Clone, Default)]
+#[repr(C)]
+#[cfg_attr(feature = "godot-bindings", derive(::godot::prelude::GodotClass))]
+#[cfg_attr(feature = "godot-bindings", class(init, tool))]
+pub struct LouderEvent {
+  pub conversation: LouderName,
+  pub channel: LouderName,
+  pub actor: LouderActor,
+  pub data: EventData,
 }
 
-godot_class! {
-  /// A question the engine has asked the host and is waiting on.
-  ///
-  /// Answering an ask moves it to the back of the cache, so indexes shift; read
-  /// the cache again after each answer.
-  #[derive(Debug, Clone, Default)]
-  #[repr(C)]
-  pub struct LouderAsk {
-    pub conversation: LouderName,
-    pub channel: LouderName,
-    pub actor: LouderActor,
-    pub motion: Motion,
-    pub ask: LouderCallback,
-  }
+/// A question the engine has asked the host and is waiting on.
+///
+/// Answering an ask moves it to the back of the cache, so indexes shift; read
+/// the cache again after each answer.
+#[derive(Debug, Clone, Default)]
+#[repr(C)]
+#[cfg_attr(feature = "godot-bindings", derive(::godot::prelude::GodotClass))]
+#[cfg_attr(feature = "godot-bindings", class(init, tool))]
+pub struct LouderAsk {
+  pub conversation: LouderName,
+  pub channel: LouderName,
+  pub actor: LouderActor,
+  pub motion: Motion,
+  pub ask: LouderCallback,
 }
 
 /// Which position of an event's data to read.

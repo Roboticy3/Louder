@@ -1,0 +1,789 @@
+[
+	{
+		"conversation_id": "33",
+		"position_offset:x": "-20.0",
+		"position_offset:y": "1120.0",
+		"speaker": "Benjamin",
+		"text": "\"No, no. I definitely had a name. I just don't remember. I swear.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "29",
+		"position_offset:x": "0.0",
+		"position_offset:y": "-320.0",
+		"speaker": "Memory",
+		"text": "Your honorable people look down on you for this infraction. Good. At least you remember something.",
+		"type": "hub"
+	},
+	{
+		"choices": "5",
+		"conversation_id": "26",
+		"flags": "4",
+		"position_offset:x": "-1580.0",
+		"position_offset:y": "780.0",
+		"recipients": "Benjamin",
+		"speaker": "Freya",
+		"text": "She looks up from her paperwork. She doesn't realize that her attention has changed. You are a curiosity, and may be able to use that to your advantage.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "20",
+		"position_offset:x": "-1220.0",
+		"position_offset:y": "-720.0",
+		"speaker": "Freya",
+		"text": "\"That doesn't answer my questions. Who are you and what were you doing last night.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "18",
+		"position_offset:x": "-1820.0",
+		"position_offset:y": "-1020.0",
+		"speaker": "Benjamin",
+		"text": "\"I was walking through the depths of the Earth.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "19",
+		"position_offset:x": "-1820.0",
+		"position_offset:y": "-540.0",
+		"speaker": "Benjamin",
+		"text": "\"I was about to perform the greatest act of Divination in the history of the entire universe, then I went blank.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "17",
+		"position_offset:x": "-1820.0",
+		"position_offset:y": "-60.0",
+		"speaker": "Benjamin",
+		"text": "\"I was drinking.\"",
+		"type": "hub"
+	},
+	{
+		"choices": "3",
+		"conversation_id": "16",
+		"position_offset:x": "-2420.0",
+		"position_offset:y": "-880.0",
+		"speaker": "Stars",
+		"text": "A meak constellation of concepts binds your soul to your body. The memories aren't necessarily missing, but they've gone dim. I don't know what happened last night, but I can infer. I see characteristic networks of...",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "15",
+		"position_offset:x": "-3100.0",
+		"position_offset:y": "-800.0",
+		"speaker": "Freya",
+		"text": "\"We have many acceptable forms of identification here. Capital ID coin, student or work keys, badges for various organizations. People don't just happen out of nowhere. Do you have any of these forms on you? Where were you last night?\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "8",
+		"position_offset:x": "-3680.0",
+		"position_offset:y": "-700.0",
+		"speaker": "Freya",
+		"text": "\"You said earlier that you didn't know who you were. If you were lying, I'm not letting you go now.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "10",
+		"position_offset:x": "-4740.0",
+		"position_offset:y": "-640.0",
+		"speaker": "Sight",
+		"text": "The religion of the Fish-men predicts a day of the second Sun. A 10-armed God of war, Shiva, will awaken among their people and bring wrath upon the world and its subjects. The defeated man in handcuffs across from your desk is at best unawakened, and at worst psychotic.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "4",
+		"position_offset:x": "-5300.0",
+		"position_offset:y": "-400.0",
+		"speaker": "Benjamin",
+		"text": "\"I am the second coming of Shiva\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "13",
+		"position_offset:x": "-4020.0",
+		"position_offset:y": "720.0",
+		"speaker": "Freya",
+		"text": "\"Well, I suppose it's possible to not have your name on you. But we should find one later.\"",
+		"type": "hub"
+	},
+	{
+		"choices": "3",
+		"conversation_id": "11",
+		"position_offset:x": "-4780.0",
+		"position_offset:y": "780.0",
+		"speaker": "Structure",
+		"text": "This is, possibly, factual. Freya was unfamiliar with the culture of Fish-men. She knew they were highly collectivist, perhaps it was possible for one to not have a name at all?",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "3",
+		"position_offset:x": "-5320.0",
+		"position_offset:y": "200.0",
+		"speaker": "Benjamin",
+		"text": "\"I said, I really don't know who I am.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "9",
+		"position_offset:x": "-3160.0",
+		"position_offset:y": "-1300.0",
+		"speaker": "Freya",
+		"text": "\"What were you doing in the restricted area. Those caves are both a protected anthropological site and a dangerous place to be.\"",
+		"type": "hub"
+	},
+	{
+		"choices": "2",
+		"conversation_id": "7",
+		"position_offset:x": "-4160.0",
+		"position_offset:y": "-1320.0",
+		"speaker": "Freya",
+		"text": "\"Don't play games.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "6",
+		"position_offset:x": "-4740.0",
+		"position_offset:y": "-1280.0",
+		"speaker": "Benjamin",
+		"text": "\"I will identify myself if you release me.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "25",
+		"position_offset:x": "-3020.0",
+		"position_offset:y": "-2480.0",
+		"speaker": "Note",
+		"text": "Benjamin gives himself a new name.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "24",
+		"position_offset:x": "-3020.0",
+		"position_offset:y": "-2040.0",
+		"speaker": "Note",
+		"text": "Failure",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "23",
+		"position_offset:x": "-3040.0",
+		"position_offset:y": "-2940.0",
+		"speaker": "Note",
+		"text": "Success. this branch has the most fun with node visibility and control flow.",
+		"type": "hub"
+	},
+	{
+		"choices": "3",
+		"conversation_id": "22",
+		"position_offset:x": "-3920.0",
+		"position_offset:y": "-2600.0",
+		"speaker": "Note",
+		"text": "Benjamin tries to convince Freya that he's actually forgotten who he is.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "12",
+		"position_offset:x": "-2160.0",
+		"position_offset:y": "1240.0",
+		"speaker": "Freya",
+		"text": "\"Are you sure you had one in the first place?\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "28",
+		"position_offset:x": "0.0",
+		"position_offset:y": "100.0",
+		"speaker": "Benjamin",
+		"text": "\"Yes, the fish men are a nameless species!\"",
+		"type": "hub"
+	},
+	{
+		"choices": "1",
+		"conversation_id": "35",
+		"flags": "5",
+		"position_offset:x": "-20.0",
+		"position_offset:y": "660.0",
+		"speaker": "Benjamin",
+		"text": "(Make up a name.)",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "14",
+		"position_offset:x": "-4160.0",
+		"position_offset:y": "-600.0",
+		"speaker": "Freya",
+		"text": "\"I am not fooled. How convenient could it be for you if I could not charge you with anything just because you don't have a name.\"",
+		"type": "hub"
+	},
+	{
+		"choices": "2",
+		"conversation_id": "21",
+		"position_offset:x": "-4740.0",
+		"position_offset:y": "0.0",
+		"speaker": "Volition",
+		"text": "A memory of Freya's battles came to light. A brother of the Oak. Fenwick, looking up at her in a pool of Death. Not just blood, but not-life. In shock from the violence and cruelty, so much that he could not move from this muddied corner, and died there. Freya placed a shadow of that anguish in the suspect's eyes, and tuned her ears to the broken shrills behind the voice of a man whose soul had been stolen.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "32",
+		"position_offset:x": "-1040.0",
+		"position_offset:y": "600.0",
+		"speaker": "Note",
+		"text": "On moving from 26 to 27, Benjamin is routed to 29 and Freya to 28, hiding that Benjamin is lying and giving Benjamin some flavor text. Freya moving from 28 to 31, since the story priority at 31 is greater than or equal to 29, and 31 is visible to Benjamin, moves Benjamin to 31 also.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "30",
+		"position_offset:x": "0.0",
+		"position_offset:y": "-960.0",
+		"speaker": "Benjamin",
+		"text": "\"Maybe you're right. I'm not sure but, it's possible I never had a name.\"",
+		"type": "hub"
+	},
+	{
+		"choices": "2",
+		"conversation_id": "38",
+		"flags": "1",
+		"position_offset:x": "440.0",
+		"position_offset:y": "-940.0",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "40",
+		"position_offset:x": "900.0",
+		"position_offset:y": "-560.0",
+		"speaker": "Benjamin",
+		"text": "You probably do. Keep trying later.",
+		"type": "hub"
+	},
+	{
+		"choices": "3",
+		"conversation_id": "41",
+		"position_offset:x": "460.0",
+		"position_offset:y": "640.0",
+		"speaker": "Rhythm",
+		"text": "People are songs, their names are their titles. What is the title of your life?",
+		"type": "hub"
+	},
+	{
+		"choices": "1",
+		"conversation_id": "0",
+		"position_offset:x": "-6560.0",
+		"position_offset:y": "120.0",
+		"speaker": "Freya",
+		"tags": "start",
+		"text": "\"Are you willing to identify yourself?\" The dim blue guard uniform looks sadly at the fish-man in cuffs. The seat in the processing center is as hard as the walls. Both parties were aware of this and would prefer to handle things quickly.",
+		"type": "hub"
+	},
+	{
+		"choices": "5",
+		"conversation_id": "44",
+		"position_offset:x": "-6060.0",
+		"position_offset:y": "180.0",
+		"speaker": "Heart",
+		"text": "You're still here. Still moving. Head hurts. Everything's fuzzy. Let's try to get things moving.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "5",
+		"position_offset:x": "-5340.0",
+		"position_offset:y": "940.0",
+		"speaker": "Benjamin",
+		"text": "\"I don't know my name.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "46",
+		"flags": "4",
+		"position_offset:x": "-5360.0",
+		"position_offset:y": "1340.0",
+		"recipients": "Benjamin",
+		"speaker": "Benjamin",
+		"text": "Why?",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "47",
+		"flags": "1",
+		"position_offset:x": "-4780.0",
+		"position_offset:y": "1420.0",
+		"speaker": "Heart",
+		"text": "You still have things you need to do here.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "34",
+		"position_offset:x": "0.0",
+		"position_offset:y": "1780.0",
+		"speaker": "Freya",
+		"text": "Test node. This node should not be visible because the node it comes out of is not visible to \"Freya.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "49",
+		"position_offset:x": "820.0",
+		"position_offset:y": "-1840.0",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "31",
+		"position_offset:x": "900.0",
+		"position_offset:y": "-180.0",
+		"speaker": "Freya",
+		"text": "\"The less traditional the case, the more work I have to show in writing.\" The heavy hands of a worker struggle with the delicate pen and paper on the cherry desk. The whole office is concrete, iron, and cherry wood.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "39",
+		"flags": "4",
+		"position_offset:x": "900.0",
+		"position_offset:y": "-1100.0",
+		"speaker": "Structure",
+		"text": "All men have names. Freya knew deep down. But life had to move on. Every moment spent with this stranger was a moment another could be out on the breach committing wrongdoing. She much preferred the patrol, also.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "42",
+		"position_offset:x": "900.0",
+		"position_offset:y": "440.0",
+		"speaker": "Benjamin",
+		"text": "\"Shiva\"",
+		"type": "hub"
+	},
+	{
+		"callbacks": "benjamin_alias ",
+		"conversation_id": "43",
+		"position_offset:x": "900.0",
+		"position_offset:y": "980.0",
+		"speaker": "Benjamin",
+		"text": "\"I am the honored one.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "50",
+		"position_offset:x": "2080.0",
+		"position_offset:y": "-240.0",
+		"speaker": "Freya",
+		"text": "\"And you seem to have some grasp of what happened yesterday. We can step back and talk about that for now, but I cannot in good conscience let you run free until you have been identified.\"",
+		"type": "hub"
+	},
+	{
+		"callbacks": "benjamin_alias Shiva",
+		"conversation_id": "51",
+		"position_offset:x": "1520.0",
+		"position_offset:y": "400.0",
+		"speaker": "Freya",
+		"text": "\"May the world bow in terror.\" She speaks both with and without sarcasm here.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "48",
+		"position_offset:x": "900.0",
+		"position_offset:y": "1540.0",
+		"speaker": "Benjamin",
+		"text": "\"John Disco\"",
+		"type": "hub"
+	},
+	{
+		"callbacks": "benjamin_alias John",
+		"conversation_id": "53",
+		"position_offset:x": "1520.0",
+		"position_offset:y": "1600.0",
+		"speaker": "Freya",
+		"text": "\"A fish-man named John should be unique. I'll put that down.\"",
+		"type": "hub"
+	},
+	{
+		"callbacks": "benjamin_title \"The Honored One\"",
+		"conversation_id": "52",
+		"position_offset:x": "1500.0",
+		"position_offset:y": "1020.0",
+		"speaker": "Freya",
+		"text": "\"That's a title, not a name. It has it's own section in the paperwork.\"",
+		"type": "hub"
+	},
+	{
+		"choices": "2",
+		"conversation_id": "27",
+		"flags": "4",
+		"position_offset:x": "-1040.0",
+		"position_offset:y": "120.0",
+		"recipients": "Benjamin",
+		"speaker": "Benjamin",
+		"text": "\"Yes, the fish men are a nameless species!\" (Lie)",
+		"type": "hub"
+	},
+	{
+		"from_id": "0",
+		"from_port": 0,
+		"to_id": "44",
+		"type": "connection"
+	},
+	{
+		"from_id": "10",
+		"from_port": 0,
+		"to_id": "14",
+		"type": "connection"
+	},
+	{
+		"from_id": "11",
+		"from_port": 0,
+		"to_id": "12",
+		"type": "connection"
+	},
+	{
+		"from_id": "11",
+		"from_port": 1,
+		"to_id": "13",
+		"type": "connection"
+	},
+	{
+		"from_id": "11",
+		"from_port": 2,
+		"to_id": "14",
+		"type": "connection"
+	},
+	{
+		"from_id": "12",
+		"from_port": 0,
+		"to_id": "26",
+		"type": "connection"
+	},
+	{
+		"from_id": "13",
+		"from_port": 0,
+		"to_id": "26",
+		"type": "connection"
+	},
+	{
+		"from_id": "14",
+		"from_port": 0,
+		"to_id": "15",
+		"type": "connection"
+	},
+	{
+		"from_id": "15",
+		"from_port": 0,
+		"to_id": "16",
+		"type": "connection"
+	},
+	{
+		"from_id": "16",
+		"from_port": 0,
+		"to_id": "17",
+		"type": "connection"
+	},
+	{
+		"from_id": "16",
+		"from_port": 1,
+		"to_id": "18",
+		"type": "connection"
+	},
+	{
+		"from_id": "16",
+		"from_port": 2,
+		"to_id": "19",
+		"type": "connection"
+	},
+	{
+		"from_id": "17",
+		"from_port": 0,
+		"to_id": "20",
+		"type": "connection"
+	},
+	{
+		"from_id": "18",
+		"from_port": 0,
+		"to_id": "20",
+		"type": "connection"
+	},
+	{
+		"from_id": "19",
+		"from_port": 0,
+		"to_id": "20",
+		"type": "connection"
+	},
+	{
+		"from_id": "20",
+		"from_port": 0,
+		"to_id": "0",
+		"type": "connection"
+	},
+	{
+		"from_id": "21",
+		"from_port": 0,
+		"to_id": "13",
+		"type": "connection"
+	},
+	{
+		"from_id": "21",
+		"from_port": 1,
+		"to_id": "14",
+		"type": "connection"
+	},
+	{
+		"from_id": "22",
+		"from_port": 0,
+		"to_id": "23",
+		"type": "connection"
+	},
+	{
+		"from_id": "22",
+		"from_port": 1,
+		"to_id": "24",
+		"type": "connection"
+	},
+	{
+		"from_id": "22",
+		"from_port": 2,
+		"to_id": "25",
+		"type": "connection"
+	},
+	{
+		"from_id": "26",
+		"from_port": 0,
+		"to_id": "27",
+		"type": "connection"
+	},
+	{
+		"from_id": "26",
+		"from_port": 1,
+		"to_id": "30",
+		"type": "connection"
+	},
+	{
+		"from_id": "26",
+		"from_port": 2,
+		"to_id": "33",
+		"type": "connection"
+	},
+	{
+		"from_id": "26",
+		"from_port": 3,
+		"to_id": "35",
+		"type": "connection"
+	},
+	{
+		"from_id": "26",
+		"from_port": 4,
+		"to_id": "34",
+		"type": "connection"
+	},
+	{
+		"from_id": "27",
+		"from_port": 0,
+		"to_id": "29",
+		"type": "connection"
+	},
+	{
+		"from_id": "27",
+		"from_port": 1,
+		"to_id": "28",
+		"type": "connection"
+	},
+	{
+		"from_id": "28",
+		"from_port": 0,
+		"to_id": "31",
+		"type": "connection"
+	},
+	{
+		"from_id": "3",
+		"from_port": 0,
+		"to_id": "21",
+		"type": "connection"
+	},
+	{
+		"from_id": "30",
+		"from_port": 0,
+		"to_id": "38",
+		"type": "connection"
+	},
+	{
+		"from_id": "31",
+		"from_port": 0,
+		"to_id": "50",
+		"type": "connection"
+	},
+	{
+		"from_id": "33",
+		"from_port": 0,
+		"to_id": "31",
+		"type": "connection"
+	},
+	{
+		"from_id": "35",
+		"from_port": 0,
+		"to_id": "41",
+		"type": "connection"
+	},
+	{
+		"from_id": "38",
+		"from_port": 0,
+		"to_id": "39",
+		"type": "connection"
+	},
+	{
+		"from_id": "38",
+		"from_port": 1,
+		"to_id": "40",
+		"type": "connection"
+	},
+	{
+		"from_id": "39",
+		"from_port": 0,
+		"to_id": "50",
+		"type": "connection"
+	},
+	{
+		"from_id": "4",
+		"from_port": 0,
+		"to_id": "10",
+		"type": "connection"
+	},
+	{
+		"from_id": "40",
+		"from_port": 0,
+		"to_id": "50",
+		"type": "connection"
+	},
+	{
+		"from_id": "41",
+		"from_port": 0,
+		"to_id": "42",
+		"type": "connection"
+	},
+	{
+		"from_id": "41",
+		"from_port": 1,
+		"to_id": "43",
+		"type": "connection"
+	},
+	{
+		"from_id": "41",
+		"from_port": 2,
+		"to_id": "48",
+		"type": "connection"
+	},
+	{
+		"from_id": "42",
+		"from_port": 0,
+		"to_id": "51",
+		"type": "connection"
+	},
+	{
+		"from_id": "43",
+		"from_port": 0,
+		"to_id": "52",
+		"type": "connection"
+	},
+	{
+		"from_id": "44",
+		"from_port": 0,
+		"to_id": "6",
+		"type": "connection"
+	},
+	{
+		"from_id": "44",
+		"from_port": 1,
+		"to_id": "4",
+		"type": "connection"
+	},
+	{
+		"from_id": "44",
+		"from_port": 2,
+		"to_id": "3",
+		"type": "connection"
+	},
+	{
+		"from_id": "44",
+		"from_port": 3,
+		"to_id": "5",
+		"type": "connection"
+	},
+	{
+		"from_id": "44",
+		"from_port": 4,
+		"to_id": "46",
+		"type": "connection"
+	},
+	{
+		"from_id": "46",
+		"from_port": 0,
+		"to_id": "47",
+		"type": "connection"
+	},
+	{
+		"from_id": "47",
+		"from_port": 0,
+		"to_id": "44",
+		"type": "connection"
+	},
+	{
+		"from_id": "48",
+		"from_port": 0,
+		"to_id": "53",
+		"type": "connection"
+	},
+	{
+		"from_id": "5",
+		"from_port": 0,
+		"to_id": "11",
+		"type": "connection"
+	},
+	{
+		"from_id": "51",
+		"from_port": 0,
+		"to_id": "50",
+		"type": "connection"
+	},
+	{
+		"from_id": "52",
+		"from_port": 0,
+		"to_id": "50",
+		"type": "connection"
+	},
+	{
+		"from_id": "53",
+		"from_port": 0,
+		"to_id": "50",
+		"type": "connection"
+	},
+	{
+		"from_id": "6",
+		"from_port": 0,
+		"to_id": "7",
+		"type": "connection"
+	},
+	{
+		"from_id": "7",
+		"from_port": 0,
+		"to_id": "8",
+		"type": "connection"
+	},
+	{
+		"from_id": "7",
+		"from_port": 1,
+		"to_id": "9",
+		"type": "connection"
+	},
+	{
+		"from_id": "8",
+		"from_port": 0,
+		"to_id": "15",
+		"type": "connection"
+	},
+	{
+		"from_id": "9",
+		"from_port": 0,
+		"to_id": "16",
+		"type": "connection"
+	},
+	{
+		"position:x": "-980.791137695313",
+		"position:y": "-110.665794372559",
+		"type": "camera",
+		"zoom": "0.62091338634491"
+	}
+]

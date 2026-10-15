@@ -58,14 +58,14 @@ pub enum SimError {
   Suspended,
 }
 
-godot_class! {
-  /// The rules that decide who sees what, and how actors move through hubs.
-  ///
-  /// Every method is a static one: the simulator holds no state of its own, and
-  /// works entirely on a [`LouderContext`]. It answers what an actor can see
-  /// without changing anything, and moves actors by writing to the context.
-  pub struct Simulator {}
-}
+/// The rules that decide who sees what, and how actors move through hubs.
+///
+/// Every method is a static one: the simulator holds no state of its own, and
+/// works entirely on a [`LouderContext`]. It answers what an actor can see
+/// without changing anything, and moves actors by writing to the context.
+#[cfg_attr(feature = "godot-bindings", derive(::godot::prelude::GodotClass))]
+#[cfg_attr(feature = "godot-bindings", class(init, tool))]
+pub struct Simulator {}
 
 impl Simulator {
   /// The `choice_index` of a motion that did not begin with a choice.

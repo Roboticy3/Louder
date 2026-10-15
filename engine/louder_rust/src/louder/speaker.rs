@@ -15,21 +15,21 @@ bitflags::bitflags! {
   }
 }
 
-godot_class! {
-  /// A voice an actor can speak as or listen to.
-  ///
-  /// Defined by the conversation config. Every field is optional: a speaker that
-  /// was never declared still resolves, and is treated as public.
-  ///
-  /// The speaker a config holds is handed to GDScript as a copy; reloading the
-  /// config replaces it rather than editing the copy in place.
-  #[derive(Clone, Default)]
-  pub struct Speaker {
-    name: LouderName,
-    flags: SpeakerFlags,
-    listening: Vec<LouderName>,
-    additional_data: HomogeneousObject,
-  }
+/// A voice an actor can speak as or listen to.
+///
+/// Defined by the conversation config. Every field is optional: a speaker that
+/// was never declared still resolves, and is treated as public.
+///
+/// The speaker a config holds is handed to GDScript as a copy; reloading the
+/// config replaces it rather than editing the copy in place.
+#[derive(Clone, Default)]
+#[cfg_attr(feature = "godot-bindings", derive(::godot::prelude::GodotClass))]
+#[cfg_attr(feature = "godot-bindings", class(init, tool))]
+pub struct Speaker {
+  name: LouderName,
+  flags: SpeakerFlags,
+  listening: Vec<LouderName>,
+  additional_data: HomogeneousObject,
 }
 
 impl Speaker {

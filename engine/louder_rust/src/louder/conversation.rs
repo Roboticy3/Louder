@@ -45,26 +45,26 @@ pub fn classify_variable(name: &str) -> VariableScope {
 /// A variable bucket: one of the four scopes, holding name/variant pairs.
 pub type VariableMap = Map<LouderName, LouderVariant>;
 
-godot_class! {
-  /// The contents of one loaded conversation: its hubs, and the story state that
-  /// is private to it.
-  ///
-  /// Story state that is shared across conversations is held by the
-  /// [`LouderContext`](super::context::LouderContext) instead, so that loading
-  /// and unloading conversations does not disturb it.
-  ///
-  /// A loaded conversation is handed to GDScript as a copy; what the engine holds
-  /// changes through the context.
-  #[derive(Clone, Default)]
-  pub struct Conversation {
-    name: LouderName,
-    hubs: Map<LouderPosition, Hub>,
+/// The contents of one loaded conversation: its hubs, and the story state that
+/// is private to it.
+///
+/// Story state that is shared across conversations is held by the
+/// [`LouderContext`](super::context::LouderContext) instead, so that loading
+/// and unloading conversations does not disturb it.
+///
+/// A loaded conversation is handed to GDScript as a copy; what the engine holds
+/// changes through the context.
+#[derive(Clone, Default)]
+#[cfg_attr(feature = "godot-bindings", derive(::godot::prelude::GodotClass))]
+#[cfg_attr(feature = "godot-bindings", class(init, tool))]
+pub struct Conversation {
+  name: LouderName,
+  hubs: Map<LouderPosition, Hub>,
 
-    local_saved: VariableMap,
-    local_unsaved: VariableMap,
+  local_saved: VariableMap,
+  local_unsaved: VariableMap,
 
-    covered: Set<LouderPosition>,
-  }
+  covered: Set<LouderPosition>,
 }
 
 impl Conversation {

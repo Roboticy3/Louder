@@ -42,6 +42,9 @@ use louder::speaker::*;
 // the engine hands back. These are calls rather than constants, so a union
 // cannot be built in a constexpr or a static initialiser.
 
+struct Louder {}
+
+impl Louder {
 /// Build a [`LouderVariant::Int`].
 #[unsafe(no_mangle)]
 pub extern "C" fn make_variant_int(value: i32) -> LouderVariant {
@@ -1273,6 +1276,8 @@ pub extern "C" fn force_position(ctx: *mut LouderContext, conversation: LouderNa
       Err(_) => 1,
     }
   }
+}
+
 }
 
 /// The Godot side of the same interface.

@@ -1,5 +1,8 @@
 [gd_scene format=3 uid="uid://dp8ynccgwt6de"]
 
+[ext_resource type="Script" uid="uid://dee1dnucfeadf" path="res://test_louder.gd" id="1_ig7tw"]
+
 [node name="Node3D" type="Node3D" unique_id=1328221968]
 
 [node name="Node" type="Node" parent="." unique_id=295542260]
+script = ExtResource("1_ig7tw")

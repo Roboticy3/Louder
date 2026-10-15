@@ -25,25 +25,25 @@ bitflags::bitflags! {
   }
 }
 
-godot_class! {
-  /// An entity that speaks as and listens to speakers within a conversation.
-  ///
-  /// Its id is assigned by the context when it is added, since ids are per
-  /// conversation and the context is what hands them out.
-  ///
-  /// The actor a context holds is handed to GDScript as a copy, so a host that
-  /// wants one to move says so through
-  /// [`LouderContext`](super::context::LouderContext) rather than by writing to
-  /// the copy it was given.
-  #[derive(Clone)]
-  pub struct Actor {
-    id: LouderActor,
-    speak_as: Vec<LouderName>,
-    listen_to: Vec<LouderName>,
-    flags: ActorFlags,
+/// An entity that speaks as and listens to speakers within a conversation.
+///
+/// Its id is assigned by the context when it is added, since ids are per
+/// conversation and the context is what hands them out.
+///
+/// The actor a context holds is handed to GDScript as a copy, so a host that
+/// wants one to move says so through
+/// [`LouderContext`](super::context::LouderContext) rather than by writing to
+/// the copy it was given.
+#[derive(Clone)]
+#[cfg_attr(feature = "godot-bindings", derive(::godot::prelude::GodotClass))]
+#[cfg_attr(feature = "godot-bindings", class(init, tool))]
+pub struct Actor {
+  id: LouderActor,
+  speak_as: Vec<LouderName>,
+  listen_to: Vec<LouderName>,
+  flags: ActorFlags,
 
-    state: ActorState,
-  }
+  state: ActorState,
 }
 
 impl Actor {
@@ -159,18 +159,18 @@ impl Default for Actor {
   }
 }
 
-godot_class! {
-  /// Everything about an actor that depends on the hub it is standing on.
-  ///
-  /// Grouped apart from [`Actor`] because all of it changes together when the
-  /// actor travels.
-  #[derive(Default, Clone)]
-  pub struct ActorState {
-    channel: LouderName,
-    position: LouderPosition,
-    priority: i32,
-    additional_data: HomogeneousObject,
-  }
+/// Everything about an actor that depends on the hub it is standing on.
+///
+/// Grouped apart from [`Actor`] because all of it changes together when the
+/// actor travels.
+#[derive(Default, Clone)]
+#[cfg_attr(feature = "godot-bindings", derive(::godot::prelude::GodotClass))]
+#[cfg_attr(feature = "godot-bindings", class(init, tool))]
+pub struct ActorState {
+  channel: LouderName,
+  position: LouderPosition,
+  priority: i32,
+  additional_data: HomogeneousObject,
 }
 
 impl ActorState {

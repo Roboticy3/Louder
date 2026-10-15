@@ -6,22 +6,22 @@ use super::godot_api::Array;
 use super::name::LouderInternContext;
 use super::name::{Map, LouderName};
 
-godot_class! {
-  /// Extra data attached to an actor, hub, or speaker, keyed by name.
-  ///
-  /// This is the "homogeneous object" of the engine guide: a flat mapping between
-  /// string names and [`LouderVariant`]s. Key order is not meaningful, so
-  /// [`HomogeneousObject::sorted_keys`] is provided for output that must be
-  /// deterministic.
-  ///
-  /// A [`LouderVariant`] has no built-in Godot counterpart, so each value is
-  /// read and written through the kind-specific `get_value_*` and `set_value_*`
-  /// methods below rather than through one method that would have to return a
-  /// tagged union across the boundary.
-  #[derive(Clone)]
-  pub struct HomogeneousObject {
-    data: Map<LouderName, LouderVariant>,
-  }
+/// Extra data attached to an actor, hub, or speaker, keyed by name.
+///
+/// This is the "homogeneous object" of the engine guide: a flat mapping between
+/// string names and [`LouderVariant`]s. Key order is not meaningful, so
+/// [`HomogeneousObject::sorted_keys`] is provided for output that must be
+/// deterministic.
+///
+/// A [`LouderVariant`] has no built-in Godot counterpart, so each value is
+/// read and written through the kind-specific `get_value_*` and `set_value_*`
+/// methods below rather than through one method that would have to return a
+/// tagged union across the boundary.
+#[derive(Clone)]
+#[cfg_attr(feature = "godot-bindings", derive(::godot::prelude::GodotClass))]
+#[cfg_attr(feature = "godot-bindings", class(init, tool))]
+pub struct HomogeneousObject {
+  data: Map<LouderName, LouderVariant>,
 }
 
 impl HomogeneousObject {

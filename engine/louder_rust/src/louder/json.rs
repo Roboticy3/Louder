@@ -143,15 +143,15 @@ pub fn snapshot(context: &LouderContext, conversation: LouderName) -> Option<Str
   Some(format!("{{\"state\":{},\"actors\":{}}}", state, actors))
 }
 
-godot_class! {
-  /// What the engine holds, written back out as JSON.
-  ///
-  /// Every document is assembled from the context as it stands, and both are
-  /// written in a fixed order, so that asking twice gives the same bytes. The
-  /// C boundary returns these through a caller's buffer; here they are just
-  /// strings.
-  pub struct LouderJson {}
-}
+/// What the engine holds, written back out as JSON.
+///
+/// Every document is assembled from the context as it stands, and both are
+/// written in a fixed order, so that asking twice gives the same bytes. The
+/// C boundary returns these through a caller's buffer; here they are just
+/// strings.
+#[cfg_attr(feature = "godot-bindings", derive(::godot::prelude::GodotClass))]
+#[cfg_attr(feature = "godot-bindings", class(init, tool))]
+pub struct LouderJson {}
 
 godot_api! {
   impl LouderJson {

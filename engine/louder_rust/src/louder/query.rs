@@ -285,16 +285,16 @@ pub fn available_choice(
     .and_then(|hub| hub.choice(choice_index))
 }
 
-godot_class! {
-  /// The questions a host asks about what a conversation holds.
-  ///
-  /// There is no cursor: every question is asked again with the previous answer
-  /// as `start`, and the answer walks further along until the blank comes back.
-  /// The walks themselves are the free functions beside this class; what a
-  /// GDScript caller sees is the same walk with the blank spelled
-  /// [`LOUDER_NAME_NONE`] or [`LOUDER_ACTOR_NONE`].
-  pub struct LouderQuery {}
-}
+/// The questions a host asks about what a conversation holds.
+///
+/// There is no cursor: every question is asked again with the previous answer
+/// as `start`, and the answer walks further along until the blank comes back.
+/// The walks themselves are the free functions beside this class; what a
+/// GDScript caller sees is the same walk with the blank spelled
+/// [`LOUDER_NAME_NONE`] or [`LOUDER_ACTOR_NONE`].
+#[cfg_attr(feature = "godot-bindings", derive(::godot::prelude::GodotClass))]
+#[cfg_attr(feature = "godot-bindings", class(init, tool))]
+pub struct LouderQuery {}
 
 godot_api! {
   impl LouderQuery {

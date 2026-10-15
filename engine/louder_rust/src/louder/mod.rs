@@ -1,13 +1,16 @@
 //! The dialogue engine, and the Godot classes it is registered as.
 //!
 //! Each module here holds one part of the engine and, beside it, the
-//! `godot_class!` and `godot_api!` declarations that make that part reachable
-//! from GDScript. The declarations are pure additions: everything the engine
-//! does is still available to Rust through the ordinary methods next to them,
-//! and with the `godot-bindings` feature off they expand to nothing.
+//! declarations that make that part reachable from GDScript. Those declarations
+//! are pure additions: everything the engine does is still available to Rust
+//! through the ordinary methods next to them, and with the `godot-bindings`
+//! feature off the registered methods are not compiled at all and no class is
+//! registered.
+//!
+//! See [`godot_api`] for how the two halves of that work, and in particular for
+//! why the classes carry `cfg_attr` rather than sitting inside a macro.
 
-// First, so that `godot_class!` and `godot_api!` are in scope for every module
-// below.
+// First, so that `godot_api!` is in scope for every module below.
 #[macro_use]
 mod godot_api;
 

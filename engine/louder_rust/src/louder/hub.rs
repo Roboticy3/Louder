@@ -34,18 +34,18 @@ pub(crate) const BLANK_POSITION: LouderPosition = -1;
 /// The text content of a hub.
 pub type LouderText = String;
 
-godot_class! {
-  /// One link out of a hub, to another hub.
-  ///
-  /// The schema gives choices no text of their own; [`Choice::text`] is the
-  /// text of the hub it links to, so that a choice can be described to the
-  /// player using what they are about to walk into.
-  #[derive(Clone)]
-  pub struct Choice {
-    text: LouderText,
-    text_name: LouderName,
-    position: LouderPosition,
-  }
+/// One link out of a hub, to another hub.
+///
+/// The schema gives choices no text of their own; [`Choice::text`] is the
+/// text of the hub it links to, so that a choice can be described to the
+/// player using what they are about to walk into.
+#[derive(Clone)]
+#[cfg_attr(feature = "godot-bindings", derive(::godot::prelude::GodotClass))]
+#[cfg_attr(feature = "godot-bindings", class(init, tool))]
+pub struct Choice {
+  text: LouderText,
+  text_name: LouderName,
+  position: LouderPosition,
 }
 
 impl Choice {
@@ -107,37 +107,37 @@ godot_api! {
   }
 }
 
-godot_class! {
-  /// A single point in a conversation, with everything an actor needs to decide
-  /// whether it applies to them.
-  ///
-  /// The hub a conversation holds is handed to GDScript as a copy; to change
-  /// what the engine holds, load a document through
-  /// [`LouderContext`](super::context::LouderContext) rather than writing to the
-  /// copy.
-  #[derive(Clone)]
-  pub struct Hub {
-    position: LouderPosition,
+/// A single point in a conversation, with everything an actor needs to decide
+/// whether it applies to them.
+///
+/// The hub a conversation holds is handed to GDScript as a copy; to change
+/// what the engine holds, load a document through
+/// [`LouderContext`](super::context::LouderContext) rather than writing to the
+/// copy.
+#[derive(Clone)]
+#[cfg_attr(feature = "godot-bindings", derive(::godot::prelude::GodotClass))]
+#[cfg_attr(feature = "godot-bindings", class(init, tool))]
+pub struct Hub {
+  position: LouderPosition,
 
-    speaker: LouderName,
-    tags: Vec<LouderName>,
-    recipients: Vec<LouderName>,
+  speaker: LouderName,
+  tags: Vec<LouderName>,
+  recipients: Vec<LouderName>,
 
-    channel: LouderName,
-    priority: i32,
+  channel: LouderName,
+  priority: i32,
 
-    text: LouderText,
-    text_name: LouderName,
-    choices: Vec<Choice>,
+  text: LouderText,
+  text_name: LouderName,
+  choices: Vec<Choice>,
 
-    expressions: Vec<LouderExpression>,
-    expressions_joined: LouderExpression,
-    callbacks: Vec<LouderCallback>,
-    callbacks_joined: LouderCallback,
-    flags: HubFlags,
+  expressions: Vec<LouderExpression>,
+  expressions_joined: LouderExpression,
+  callbacks: Vec<LouderCallback>,
+  callbacks_joined: LouderCallback,
+  flags: HubFlags,
 
-    additional_data: HomogeneousObject,
-  }
+  additional_data: HomogeneousObject,
 }
 
 impl Hub {

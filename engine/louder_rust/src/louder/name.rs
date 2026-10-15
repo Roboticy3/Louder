@@ -22,17 +22,17 @@ pub const LOUDER_NAME_NONE: LouderName = -1;
 /// The channel every conversation starts on, before any hub changes it.
 pub const LOUDER_MAIN_CHANNEL: &str = "main";
 
-godot_class! {
-  /// The value of a name stored in the engine.
-  ///
-  /// Names map strings to integers. Obtain ids with the static methods below and
-  /// read strings back the same way, rather than through
-  /// [`crate::get_named_id`] and [`crate::read_name`], which are the same
-  /// operations written for the C boundary.
-  #[derive(Default, PartialEq, Eq, Clone)]
-  pub struct LouderNameContent {
-    pub bytes: Vec<u8>,
-  }
+/// The value of a name stored in the engine.
+///
+/// Names map strings to integers. Obtain ids with the static methods below and
+/// read strings back the same way, rather than through
+/// [`crate::get_named_id`] and [`crate::read_name`], which are the same
+/// operations written for the C boundary.
+#[derive(Default, PartialEq, Eq, Clone)]
+#[cfg_attr(feature = "godot-bindings", derive(::godot::prelude::GodotClass))]
+#[cfg_attr(feature = "godot-bindings", class(init, tool))]
+pub struct LouderNameContent {
+  pub bytes: Vec<u8>,
 }
 
 impl LouderNameContent {
