@@ -1,10 +1,13 @@
 cd louder_rust
-cargo build -p louder_rust
+cargo build
 cbindgen --config cbindgen.toml --crate louder_rust --output target/debug/louder_rust.h
 cd ..
 
 cp louder_rust/target/debug/louder_rust.dll artifacts/louder_rust.dll
 cp louder_rust/target/debug/louder_rust.h artifacts/louder_rust.h
+
+cp louder_rust/target/debug/louder_rust.dll tests/louder_rust.dll
+cp louder_rust/target/debug/louder_rust.h tests/louder_rust.h
 
 # Compile the C++ tests against the freshly generated header and DLL, then run
 # them. The header is an output, so the tests always exercise the current ABI.

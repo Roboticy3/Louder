@@ -8,9 +8,18 @@ name = "louder_rust"
 path = "src/lib.rs"
 crate-type = ["cdylib"]
 
+[features]
+# Turns the Godot classes and their methods on. With `--no-default-features`
+# the engine compiles as an ordinary Rust library and every `godot_class!` and
+# `godot_api!` invocation expands to nothing, leaving the C interface in the
+# crate root as the only thing outside it.
+default = []
+godot-bindings = []
+
 [dependencies]
 bitflags = "2.13.2"
 encoding = "0.2.33"
+godot = "0.5.5"
 serde_json = "1.0.151"
 strum = "0.28.0"
 strum_macros = "0.28.0"

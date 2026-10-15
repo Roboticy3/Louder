@@ -1,3 +1,5 @@
+#[cfg(feature = "godot-bindings")]
+use super::godot_api::{Array, Gd};
 use super::context::LouderContext;
 use super::event::*;
 use super::name::*;
@@ -56,8 +58,14 @@ pub enum SimError {
   Suspended,
 }
 
-/// The rules that decide who sees what, and how actors move through hubs.
-pub struct Simulator;
+godot_class! {
+  /// The rules that decide who sees what, and how actors move through hubs.
+  ///
+  /// Every method is a static one: the simulator holds no state of its own, and
+  /// works entirely on a [`LouderContext`]. It answers what an actor can see
+  /// without changing anything, and moves actors by writing to the context.
+  pub struct Simulator {}
+}
 
 impl Simulator {
   /// The `choice_index` of a motion that did not begin with a choice.
@@ -1273,5 +1281,138 @@ impl Simulator {
       fake_channel,
       fake_priority,
     )
+  }
+}
+
+godot_api! {
+  impl Simulator {
+    /// Whether `hub_position` may appear to `actor` at all.
+    ///
+    /// Auto hubs never appear, debug actors see everything, and everyone else is
+    /// filtered by the hub's owners and its conditions.
+    #[func(rename = "hub_appears")]
+    pub fn gd_hub_appears(context: Gd<LouderContext>, conversation: LouderName, actor: LouderActor, hub_position: LouderPosition) -> bool {
+      let context = context.bind();
+      Simulator::hub_appears(&context, conversation, actor, hub_position)
+    }
+
+    /// Whether a single choice is available to `actor` from `hub_position`.
+    ///
+    /// This is "may this actor choose that", not merely "is there a choice
+    /// there": the engine's own rules decide.
+    #[func(rename = "choice_available")]
+    pub fn gd_choice_available(context: Gd<LouderContext>, conversation: LouderName, actor: LouderActor, hub_position: LouderPosition, choice_index: i32) -> bool {
+      if choice_index < 0 {
+        return false;
+      }
+      let context = context.bind();
+      Simulator::choice_available(&context, conversation, actor, hub_position, choice_index as usize)
+    }
+
+    /// The indices of the choices available to `actor` from `hub_position`.
+    #[func(rename = "available_choices")]
+    pub fn gd_available_choices(context: Gd<LouderContext>, conversation: LouderName, actor: LouderActor, hub_position: LouderPosition) -> Array<i64> {
+      let context = context.bind();
+      Simulator::available_choices(&context, conversation, actor, hub_position)
+        .into_iter()
+        .map(|index| index as i64)
+        .collect()
+    }
+
+    /// The speakers an actor hears: the ones it speaks as, the ones it listens
+    /// to, and the speakers those are listening to.
+    #[func(rename = "speakers_heard_by")]
+    pub fn gd_speakers_heard_by(context: Gd<LouderContext>, conversation: LouderName, actor: LouderActor) -> Array<i64> {
+      let context = context.bind();
+      Simulator::speakers_heard_by(&context, conversation, actor)
+        .into_iter()
+        .map(|name| name as i64)
+        .collect()
+    }
+
+    /// The speakers an actor listens to directly, without the speakers reachable
+    /// through who it speaks as.
+    #[func(rename = "speakers_listened_to_by")]
+    pub fn gd_speakers_listened_to_by(context: Gd<LouderContext>, conversation: LouderName, actor: LouderActor) -> Array<i64> {
+      let context = context.bind();
+      Simulator::speakers_listened_to_by(&context, conversation, actor)
+        .into_iter()
+        .map(|name| name as i64)
+        .collect()
+    }
+
+    /// Whether any actor other than `actor` speaks as `speaker`.
+    ///
+    /// This is what keeps a speaker from being handed to a second actor.
+    #[func(rename = "speaker_is_taken_by")]
+    pub fn gd_speaker_is_taken_by(context: Gd<LouderContext>, conversation: LouderName, speaker: LouderName, actor: LouderActor) -> bool {
+      let context = context.bind();
+      Simulator::speaker_is_taken_by(&context, conversation, speaker, actor)
+    }
+
+    /// Select `choice_index` for `actor`, moving it to the linked hub.
+    ///
+    /// Returns true on success. Auto hubs along the way are resolved by taking
+    /// the first choice available at each one.
+    #[func(rename = "select_choice")]
+    pub fn gd_select_choice(context: Gd<LouderContext>, conversation: LouderName, actor: LouderActor, choice_index: i32) -> bool {
+      let mut context = context;
+      let mut context = context.bind_mut();
+      Simulator::select_choice(&mut context, conversation, actor, choice_index).is_ok()
+    }
+
+    /// Move an actor to `target` as if it had moved through the network.
+    ///
+    /// Other actors sharing the actor's channel may be pulled along, exactly as
+    /// if the actor had chosen. `fake_channel` and `fake_priority` override the
+    /// destination's own when they are not the blanks. Returns true on success.
+    #[func]
+    pub fn force_warp(
+      context: Gd<LouderContext>,
+      conversation: LouderName,
+      actor: LouderActor,
+      target_position: LouderPosition,
+      fake_channel: LouderName,
+      fake_priority: i32,
+    ) -> bool {
+      let mut context = context;
+      let mut context = context.bind_mut();
+      Simulator::force_move(
+        &mut context,
+        conversation,
+        actor,
+        target_position,
+        MotionKind::Warp,
+        fake_channel,
+        fake_priority,
+      )
+      .is_ok()
+    }
+
+    /// Move an actor to `target` directly, letting followers follow it.
+    ///
+    /// Returns true on success.
+    #[func]
+    pub fn force_position(
+      context: Gd<LouderContext>,
+      conversation: LouderName,
+      actor: LouderActor,
+      target_position: LouderPosition,
+      fake_channel: LouderName,
+      fake_priority: i32,
+    ) -> bool {
+      let mut context = context;
+      let mut context = context.bind_mut();
+      Simulator::force_move(
+        &mut context,
+        conversation,
+        actor,
+        target_position,
+        MotionKind::Force,
+        fake_channel,
+        fake_priority,
+      )
+      .is_ok()
+    }
   }
 }

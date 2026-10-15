@@ -1,9 +1,11 @@
+#[cfg(feature = "godot-bindings")]
+use super::godot_api::{Gd, GString};
 use serde_json::{Map as JsonMap, Value};
 
 use super::context::LouderContext;
 use super::conversation::Conversation;
 use super::event::{EventData, LoadFailure, LouderEvent};
-use super::hub::{Choice, Hub, HubFlags, LouderPosition};
+use super::hub::{Choice, Hub, HubFlags, LouderPosition, BLANK_POSITION};
 use super::name::*;
 use super::object::{HomogeneousObject, LouderVariant};
 use super::speaker::{Speaker, SpeakerFlags};
@@ -93,7 +95,7 @@ pub fn load_conversation(
 
   for record in records {
     let Some(object) = record.as_object() else {
-      report(context, conversation, LOUDER_LOAD_NOT_AN_OBJECT, crate::BLANK_POSITION);
+      report(context, conversation, LOUDER_LOAD_NOT_AN_OBJECT, BLANK_POSITION);
       continue;
     };
 
@@ -163,7 +165,7 @@ pub fn load_config(context: &mut LouderContext, document: &str) -> LoadError {
 
   for record in records {
     let Some(object) = record.as_object() else {
-      report(context, LOUDER_NAME_NONE, LOUDER_LOAD_NOT_AN_OBJECT, crate::BLANK_POSITION);
+      report(context, LOUDER_NAME_NONE, LOUDER_LOAD_NOT_AN_OBJECT, BLANK_POSITION);
       continue;
     };
 
@@ -174,7 +176,7 @@ pub fn load_config(context: &mut LouderContext, document: &str) -> LoadError {
     let name_text = string_field(object, "name");
     if name_text.is_empty() {
       // A speaker with no name is not a speaker the host could ever ask for.
-      report(context, LOUDER_NAME_NONE, LOUDER_LOAD_NOT_AN_OBJECT, crate::BLANK_POSITION);
+      report(context, LOUDER_NAME_NONE, LOUDER_LOAD_NOT_AN_OBJECT, BLANK_POSITION);
       continue;
     }
 
@@ -306,7 +308,7 @@ fn read_variant(context: &mut LouderContext, value: &Value) -> LouderVariant {
 /// Report a load problem as an event, so that one bad record does not abort the
 /// whole load.
 ///
-/// `position` is the record at fault, or [`crate::BLANK_POSITION`] when the problem was
+/// `position` is the record at fault, or [`BLANK_POSITION`] when the problem was
 /// with the document as a whole.
 fn report(context: &mut LouderContext, conversation: LouderName, error: LoadError, position: LouderPosition) {
   context.push_event(LouderEvent {
@@ -330,7 +332,7 @@ fn parse_records(
   let parsed: Value = match serde_json::from_str(document) {
     Ok(parsed) => parsed,
     Err(_) => {
-      report(context, conversation, LOUDER_LOAD_MALFORMED_JSON, crate::BLANK_POSITION);
+      report(context, conversation, LOUDER_LOAD_MALFORMED_JSON, BLANK_POSITION);
       return Err(LOUDER_LOAD_MALFORMED_JSON);
     }
   };
@@ -338,7 +340,7 @@ fn parse_records(
   match parsed {
     Value::Array(records) => Ok(records),
     _ => {
-      report(context, conversation, LOUDER_LOAD_NOT_A_LIST, crate::BLANK_POSITION);
+      report(context, conversation, LOUDER_LOAD_NOT_A_LIST, BLANK_POSITION);
       Err(LOUDER_LOAD_NOT_A_LIST)
     }
   }
@@ -363,4 +365,60 @@ fn read_additional(
     additional.set(key_name, read_variant(context, value));
   }
   additional
+}
+
+godot_class! {
+  /// Loading conversations and speaker configs out of JSON documents.
+  ///
+  /// Both loaders take the document as a string rather than as a buffer and an
+  /// encoding, since the Godot side has already decoded it by the time a
+  /// `String` exists.
+  pub struct LouderLoader {}
+}
+
+godot_api! {
+  impl LouderLoader {
+    /// Load a conversation from a JSON document.
+    ///
+    /// The document must be a list of objects: `hub` records become hubs,
+    /// `connection` records become choices, and `camera` records are ignored.
+    /// Problems with individual records are reported through
+    /// [`EventData::LoadError`](super::event::EventData) events rather than
+    /// failing the whole load, so one malformed hub does not cost the caller the
+    /// rest of the conversation.
+    #[func]
+    pub fn load_conversation(context: Gd<LouderContext>, conversation: LouderName, document: GString) -> i32 {
+      let mut context = context;
+      let mut context = context.bind_mut();
+      load_conversation(&mut context, conversation, &document.to_string())
+    }
+
+    /// Load the speaker config from a JSON document.
+    ///
+    /// The config is a singleton: it is not tied to any one conversation, so a
+    /// speaker declared here is visible from all of them. A speaker of the same
+    /// name is replaced rather than treated as an error, so a config can be
+    /// reloaded.
+    #[func]
+    pub fn load_config(context: Gd<LouderContext>, document: GString) -> i32 {
+      let mut context = context;
+      let mut context = context.bind_mut();
+      load_config(&mut context, &document.to_string())
+    }
+
+    /// What a [`LoadError`] code means, for a host that would rather read a name
+    /// than a number.
+    #[func]
+    pub fn error_name(code: i32) -> GString {
+      GString::from(match code {
+        LOUDER_LOAD_OK => "OK",
+        LOUDER_LOAD_MALFORMED_JSON => "MALFORMED_JSON",
+        LOUDER_LOAD_NOT_A_LIST => "NOT_A_LIST",
+        LOUDER_LOAD_NOT_AN_OBJECT => "NOT_AN_OBJECT",
+        LOUDER_LOAD_ALREADY_LOADED => "ALREADY_LOADED",
+        LOUDER_LOAD_BAD_ENCODING => "BAD_ENCODING",
+        _ => "UNKNOWN",
+      })
+    }
+  }
 }

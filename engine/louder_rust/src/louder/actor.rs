@@ -1,6 +1,9 @@
+#[cfg(feature = "godot-bindings")]
+use super::godot_api::{Array, Gd};
 use super::name::LouderName;
 use super::object::{HomogeneousObject, LouderVariant};
 use super::hub::LouderPosition;
+use super::hub::BLANK_POSITION;
 
 /// An actor participating in conversations.
 ///
@@ -12,7 +15,7 @@ pub const LOUDER_ACTOR_NONE : LouderActor = -1;
 bitflags::bitflags! {
   /// Flag bits describing an actor.
   #[repr(C)]
-  #[derive(Clone, Copy)]
+  #[derive(Clone, Copy, Default)]
   pub struct ActorFlags: i32 {
     /// All non-auto hubs appear to this actor. Choices only appear if
     /// [`ActorFlags::DEBUG`] is also set.
@@ -22,17 +25,25 @@ bitflags::bitflags! {
   }
 }
 
-/// An entity that speaks as and listens to speakers within a conversation.
-///
-/// Its id is assigned by the context when it is added, since ids are per
-/// conversation and the context is what hands them out.
-pub struct Actor {
-  id: LouderActor,
-  speak_as: Vec<LouderName>,
-  listen_to: Vec<LouderName>,
-  flags: ActorFlags,
+godot_class! {
+  /// An entity that speaks as and listens to speakers within a conversation.
+  ///
+  /// Its id is assigned by the context when it is added, since ids are per
+  /// conversation and the context is what hands them out.
+  ///
+  /// The actor a context holds is handed to GDScript as a copy, so a host that
+  /// wants one to move says so through
+  /// [`LouderContext`](super::context::LouderContext) rather than by writing to
+  /// the copy it was given.
+  #[derive(Clone)]
+  pub struct Actor {
+    id: LouderActor,
+    speak_as: Vec<LouderName>,
+    listen_to: Vec<LouderName>,
+    flags: ActorFlags,
 
-  state: ActorState,
+    state: ActorState,
+  }
 }
 
 impl Actor {
@@ -135,15 +146,31 @@ impl ActorFlags {
   }
 }
 
-/// Everything about an actor that depends on the hub it is standing on.
-///
-/// Grouped apart from [`Actor`] because all of it changes together when the
-/// actor travels.
-pub struct ActorState {
-  channel: LouderName,
-  position: LouderPosition,
-  priority: i32,
-  additional_data: HomogeneousObject,
+impl Default for Actor {
+  /// An actor belonging to nothing: no id, no channel, off the flow.
+  fn default() -> Self {
+    Actor::new(
+      BLANK_POSITION,
+      ActorFlags::empty(),
+      Vec::new(),
+      Vec::new(),
+      super::name::LOUDER_NAME_NONE,
+    )
+  }
+}
+
+godot_class! {
+  /// Everything about an actor that depends on the hub it is standing on.
+  ///
+  /// Grouped apart from [`Actor`] because all of it changes together when the
+  /// actor travels.
+  #[derive(Default, Clone)]
+  pub struct ActorState {
+    channel: LouderName,
+    position: LouderPosition,
+    priority: i32,
+    additional_data: HomogeneousObject,
+  }
 }
 
 impl ActorState {
@@ -200,5 +227,175 @@ impl ActorState {
   /// so that an actor does not accumulate stale keys from hubs it has left.
   pub fn replace_additional_data(&mut self, data: HomogeneousObject) {
     self.additional_data = data;
+  }
+}
+
+godot_api! {
+  impl Actor {
+    /// An actor starting at `position` on `channel`.
+    ///
+    /// Its id is left unset: the context hands one out when the actor is added to
+    /// a conversation.
+    #[func]
+    pub fn create(
+      position: LouderPosition,
+      flags: i32,
+      speak_as: Array<i64>,
+      listen_to: Array<i64>,
+      channel: LouderName,
+    ) -> Gd<Actor> {
+      Gd::from_object(Actor::new(
+        position,
+        ActorFlags::from_bits_truncate(flags),
+        speak_as.iter_shared().map(|name| name as LouderName).collect(),
+        listen_to.iter_shared().map(|name| name as LouderName).collect(),
+        channel,
+      ))
+    }
+
+    /// The id the context gave this actor, or [`LOUDER_ACTOR_NONE`].
+    #[func]
+    pub fn get_id(&self) -> LouderActor {
+      self.id()
+    }
+
+    /// The speakers this actor speaks as.
+    #[func(rename = "speak_as")]
+    pub fn gd_speak_as(&self) -> Array<i64> {
+      self.speak_as().iter().map(|name| *name as i64).collect()
+    }
+
+    /// The speakers this actor listens to directly.
+    #[func(rename = "listen_to")]
+    pub fn gd_listen_to(&self) -> Array<i64> {
+      self.listen_to().iter().map(|name| *name as i64).collect()
+    }
+
+    /// The flag bits, as [`ActorFlags::bits`].
+    #[func]
+    pub fn get_flags(&self) -> i32 {
+      self.flags().bits()
+    }
+
+    /// Whether this actor sees every hub but decides nothing.
+    #[func(rename = "is_spectator")]
+    pub fn gd_spectator(&self) -> bool {
+      Actor::is_spectator(self)
+    }
+
+    /// Whether this actor sees auto hubs and every choice.
+    #[func(rename = "is_debug")]
+    pub fn gd_debug(&self) -> bool {
+      Actor::is_debug(self)
+    }
+
+    /// Whether this actor takes part in channels and priority.
+    #[func]
+    pub fn in_flow(&self) -> bool {
+      self.flags().in_flow()
+    }
+
+    /// Where this actor is standing.
+    #[func]
+    pub fn get_position(&self) -> LouderPosition {
+      self.position()
+    }
+
+    /// The channel this actor is in, or [`LOUDER_NAME_NONE`](super::name::LOUDER_NAME_NONE).
+    #[func]
+    pub fn get_channel(&self) -> LouderName {
+      self.channel()
+    }
+
+    /// This actor's priority within its channel.
+    #[func]
+    pub fn get_priority(&self) -> i32 {
+      self.priority()
+    }
+
+    /// Everything about this actor that changes when it travels.
+    #[func]
+    pub fn get_state(&self) -> Gd<ActorState> {
+      Gd::from_object(self.state().clone())
+    }
+
+    /// Every key of this actor's additional data.
+    #[func]
+    pub fn additional_keys(&self) -> Array<i64> {
+      self.additional().sorted_keys().into_iter().map(|key| key as i64).collect()
+    }
+
+    /// The additional value under `key`, read as an integer, or 0.
+    #[func]
+    pub fn get_additional_int(&self, key: LouderName) -> i32 {
+      self.additional_get(key).map(LouderVariant::as_int).unwrap_or(0)
+    }
+
+    /// The additional value under `key`, read as a float, or 0.0.
+    #[func]
+    pub fn get_additional_float(&self, key: LouderName) -> f64 {
+      self.additional_get(key).map(LouderVariant::as_float).unwrap_or(0.0) as f64
+    }
+
+    /// The additional value under `key` as a name, or [`LOUDER_NAME_NONE`](super::name::LOUDER_NAME_NONE).
+    #[func]
+    pub fn get_additional_name(&self, key: LouderName) -> LouderName {
+      match self.additional_get(key) {
+        Some(LouderVariant::String(name)) => *name,
+        _ => super::name::LOUDER_NAME_NONE,
+      }
+    }
+  }
+}
+
+godot_api! {
+  impl ActorState {
+    /// Where the actor is standing.
+    #[func]
+    pub fn get_position(&self) -> LouderPosition {
+      ActorState::position(self)
+    }
+
+    /// Move the actor to `position`, without telling anyone.
+    #[func(rename = "set_position")]
+    pub fn gd_set_position(&mut self, position: LouderPosition) {
+      ActorState::set_position(self, position);
+    }
+
+    /// The channel the actor is in.
+    #[func]
+    pub fn get_channel(&self) -> LouderName {
+      ActorState::channel(self)
+    }
+
+    /// Put the actor on `channel`, without telling anyone.
+    #[func(rename = "set_channel")]
+    pub fn gd_set_channel(&mut self, channel: LouderName) {
+      ActorState::set_channel(self, channel);
+    }
+
+    /// The actor's priority within its channel.
+    #[func]
+    pub fn get_priority(&self) -> i32 {
+      ActorState::priority(self)
+    }
+
+    /// Rank the actor at `priority`, without telling anyone.
+    #[func(rename = "set_priority")]
+    pub fn gd_set_priority(&mut self, priority: i32) {
+      ActorState::set_priority(self, priority);
+    }
+
+    /// Take the actor out of the flow: no channel and the default priority.
+    #[func(rename = "clear_flow")]
+    pub fn gd_clear_flow(&mut self) {
+      ActorState::clear_flow(self);
+    }
+
+    /// Every key of this actor's additional data.
+    #[func]
+    pub fn additional_keys(&self) -> Array<i64> {
+      self.additional_data().sorted_keys().into_iter().map(|key| key as i64).collect()
+    }
   }
 }

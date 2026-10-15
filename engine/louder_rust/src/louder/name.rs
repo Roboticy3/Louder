@@ -1,4 +1,6 @@
 use super::context::LouderContext;
+#[cfg(feature = "godot-bindings")]
+use super::godot_api::{Array, GString, Gd, PackedByteArray};
 
 /// A generic hash map backing the engine's internal data stores.
 pub type Map<K, V> = std::collections::HashMap<K, V>;
@@ -20,14 +22,17 @@ pub const LOUDER_NAME_NONE: LouderName = -1;
 /// The channel every conversation starts on, before any hub changes it.
 pub const LOUDER_MAIN_CHANNEL: &str = "main";
 
-/// The value of a name stored in the engine.
-///
-/// Names map strings to integers. Obtain ids with [`crate::get_named_id`] and
-/// [`crate::declare_name`], and read strings back with [`crate::read_name`].
-/// Conversations are id'd by names containing the file they were loaded from.
-#[derive(PartialEq, Eq, Clone)]
-pub struct LouderNameContent {
-  pub bytes: Vec<u8>,
+godot_class! {
+  /// The value of a name stored in the engine.
+  ///
+  /// Names map strings to integers. Obtain ids with the static methods below and
+  /// read strings back the same way, rather than through
+  /// [`crate::get_named_id`] and [`crate::read_name`], which are the same
+  /// operations written for the C boundary.
+  #[derive(Default, PartialEq, Eq, Clone)]
+  pub struct LouderNameContent {
+    pub bytes: Vec<u8>,
+  }
 }
 
 impl LouderNameContent {
@@ -40,6 +45,91 @@ impl LouderNameContent {
   /// The content as UTF-8, or `None` if the bytes are not valid UTF-8.
   pub fn as_str(&self) -> Option<&str> {
     std::str::from_utf8(&self.bytes).ok()
+  }
+}
+
+godot_api! {
+  impl LouderNameContent {
+    /// A name holding `text`.
+    #[func]
+    pub fn from_text(text: GString) -> Gd<LouderNameContent> {
+      Gd::from_object(LouderNameContent::new(&text.to_string()))
+    }
+
+    /// The content as text, or an empty string if the bytes are not UTF-8.
+    #[func]
+    pub fn text(&self) -> GString {
+      GString::from(self.as_str().unwrap_or(""))
+    }
+
+    /// Replace the content with `text`.
+    #[func]
+    pub fn set_text(&mut self, text: GString) {
+      self.bytes = text.to_string().into_bytes();
+    }
+
+    /// The raw content, byte for byte.
+    #[func]
+    pub fn bytes(&self) -> PackedByteArray {
+      self.bytes.iter().copied().collect()
+    }
+
+    /// How many bytes the content is.
+    #[func]
+    pub fn size(&self) -> i32 {
+      self.bytes.len() as i32
+    }
+
+    /// The id `context` already gives `text`, or [`LOUDER_NAME_NONE`].
+    #[func]
+    pub fn find(context: Gd<LouderContext>, text: GString) -> LouderName {
+      let content = LouderNameContent::new(&text.to_string());
+      match context.bind().find_name(&content) {
+        LouderContextResult::Found(name) => name,
+        LouderContextResult::NotFound(_) => LOUDER_NAME_NONE,
+      }
+    }
+
+    /// The id `context` gives `text`, assigning one if it has none.
+    ///
+    /// A name that was already declared keeps the id it had.
+    #[func]
+    pub fn declare(context: Gd<LouderContext>, text: GString) -> LouderName {
+      let mut context = context;
+      let mut context = context.bind_mut();
+      let content = LouderNameContent::new(&text.to_string());
+      match context.add_name(&content) {
+        LouderContextResult::Found(_) => LOUDER_NAME_NONE,
+        LouderContextResult::NotFound(name) => name,
+      }
+    }
+
+    /// The text a name id stands for, or an empty string if there is none.
+    #[func]
+    pub fn resolve(context: Gd<LouderContext>, name: LouderName) -> GString {
+      match context.bind().resolve_name(name) {
+        Some(text) => GString::from(text),
+        None => GString::from(""),
+      }
+    }
+
+    /// `text` split on commas and/or runs of whitespace.
+    #[func]
+    pub fn split_inline(text: GString) -> Array<GString> {
+      split_inline(&text.to_string())
+        .into_iter()
+        .map(GString::from)
+        .collect()
+    }
+
+    /// `text` split on newlines, dropping empty entries.
+    #[func]
+    pub fn split_lines(text: GString) -> Array<GString> {
+      split_lines(&text.to_string())
+        .into_iter()
+        .map(GString::from)
+        .collect()
+    }
   }
 }
 
