@@ -55,6 +55,12 @@ pub enum LouderOption<T> {
   Some(T)
 }
 
+/// The blank starting value for an iterator over positions.
+///
+/// Positions are chosen by the editor, and the engine requires them to be
+/// non-negative so that this value is unambiguous.
+pub(crate) const BLANK_POSITION: LouderPosition = -1;
+
 // Constructors for the tagged unions above.
 //
 // cbindgen lowers each of these enums to a C++ struct of a tag and an anonymous
@@ -69,6 +75,10 @@ pub enum LouderOption<T> {
 // generics cannot cross the FFI, so LouderOption has one constructor per type
 // the engine hands back. These are calls rather than constants, so a union
 // cannot be built in a constexpr or a static initialiser.
+
+struct MyStructure {}
+
+impl MyStructure {
 
 /// Build a [`LouderVariant::Int`].
 #[unsafe(no_mangle)]
@@ -230,11 +240,7 @@ pub extern "C" fn make_event_data_load_error(failure: LoadFailure) -> EventData 
   EventData::LoadError(failure)
 }
 
-/// The blank starting value for an iterator over positions.
-///
-/// Positions are chosen by the editor, and the engine requires them to be
-/// non-negative so that this value is unambiguous.
-pub(crate) const BLANK_POSITION: LouderPosition = -1;
+
 
 /// Copy `text` into `buffer`, truncating if needed, and null terminate.
 ///
@@ -290,8 +296,8 @@ fn json_variant(context: &LouderContext, value: &LouderVariant) -> String {
       }
     }
     LouderVariant::String(name) => match context.resolve_name(*name) {
-      Some(text) => json_quote(text),
-      None => json_quote(""),
+      Some(text) => Self::json_quote(text),
+      None => Self::json_quote(""),
     },
   }
 }
@@ -304,10 +310,10 @@ fn json_object(context: &LouderContext, keys: &[LouderName], values: impl Fn(Lou
       out.push(',');
     }
     let name = match context.resolve_name(*key) {
-      Some(text) => json_quote(text),
-      None => json_quote(""),
+      Some(text) => Self::json_quote(text),
+      None => Self::json_quote(""),
     };
-    out.push_str(&format!("{}:{}", name, json_variant(context, &values(*key))));
+    out.push_str(&format!("{}:{}", name, Self::json_variant(context, &values(*key))));
   }
   out.push('}');
   out
@@ -435,11 +441,11 @@ pub extern "C" fn read_name(ctx: *const LouderContext, name: LouderName, buffer:
 
   let name_context = unsafe { (*ctx).get_name_content(&name) };
   let Some(name_context) = name_context else {
-    return write_text(buffer, max_size, "");
+    return Self::write_text(buffer, max_size, "");
   };
 
   let text = name_context.as_str().unwrap_or("");
-  write_text(buffer, max_size, text)
+  Self::write_text(buffer, max_size, text)
 }
 
 /// Get the event at `index`.
@@ -587,7 +593,7 @@ pub extern "C" fn get_next_speaker_listen_to(ctx: *const LouderContext, speaker:
 
   unsafe {
     match (*ctx).get_speaker(speaker) {
-      Some(s) => next_name_after(s.listening(), start),
+      Some(s) => Self::next_name_after(s.listening(), start),
       None => LOUDER_NAME_NONE,
     }
   }
@@ -711,7 +717,7 @@ pub extern "C" fn next_actor_speak_as(ctx: *const LouderContext, conversation: L
 
   unsafe {
     match (*ctx).get_actor(conversation, actor) {
-      Some(a) => next_name_after(a.speak_as(), start),
+      Some(a) => Self::next_name_after(a.speak_as(), start),
       None => LOUDER_NAME_NONE,
     }
   }
@@ -729,7 +735,7 @@ pub extern "C" fn next_actor_listening_base(ctx: *const LouderContext, conversat
 
   unsafe {
     match (*ctx).get_actor(conversation, actor) {
-      Some(a) => next_name_after(a.listen_to(), start),
+      Some(a) => Self::next_name_after(a.listen_to(), start),
       None => LOUDER_NAME_NONE,
     }
   }
@@ -746,7 +752,7 @@ pub extern "C" fn next_actor_listening(ctx: *const LouderContext, conversation: 
   }
 
   let speakers = unsafe { Simulator::speakers_heard_by(&*ctx, conversation, actor) };
-  next_name_after(&speakers, start)
+  Self::next_name_after(&speakers, start)
 }
 
 /// Iterate the actors in a channel.
@@ -760,8 +766,8 @@ pub extern "C" fn next_actor_in_channel(ctx: *const LouderContext, conversation:
   }
 
   unsafe {
-    let actors = matching_actors(&*ctx, conversation, |entry| entry.channel() == channel);
-    next_after(&actors, start, LOUDER_ACTOR_NONE)
+    let actors = Self::matching_actors(&*ctx, conversation, |entry| entry.channel() == channel);
+    Self::next_after(&actors, start, LOUDER_ACTOR_NONE)
   }
 }
 
@@ -775,10 +781,10 @@ pub extern "C" fn next_actor_in_channel_and_position(ctx: *const LouderContext, 
   }
 
   unsafe {
-    let actors = matching_actors(&*ctx, conversation, |entry| {
+    let actors = Self::matching_actors(&*ctx, conversation, |entry| {
       entry.channel() == channel && entry.position() == position
     });
-    next_after(&actors, start, LOUDER_ACTOR_NONE)
+    Self::next_after(&actors, start, LOUDER_ACTOR_NONE)
   }
 }
 
@@ -792,8 +798,8 @@ pub extern "C" fn next_actor_speaking_as(ctx: *const LouderContext, conversation
   }
 
   unsafe {
-    let actors = matching_actors(&*ctx, conversation, |entry| entry.speak_as().contains(&speaker));
-    next_after(&actors, start, LOUDER_ACTOR_NONE)
+    let actors = Self::matching_actors(&*ctx, conversation, |entry| entry.speak_as().contains(&speaker));
+    Self::next_after(&actors, start, LOUDER_ACTOR_NONE)
   }
 }
 
@@ -810,10 +816,10 @@ pub extern "C" fn next_actor_listening_to(ctx: *const LouderContext, conversatio
 
   unsafe {
     let context = &*ctx;
-    let actors = matching_actors(context, conversation, |entry| {
+    let actors = Self::matching_actors(context, conversation, |entry| {
       Simulator::speakers_heard_by(context, conversation, entry.id()).contains(&speaker)
     });
-    next_after(&actors, start, LOUDER_ACTOR_NONE)
+    Self::next_after(&actors, start, LOUDER_ACTOR_NONE)
   }
 }
 
@@ -829,10 +835,10 @@ pub extern "C" fn next_actor_from_flags(ctx: *const LouderContext, conversation:
 
   unsafe {
     let wanted = include.bits();
-    let actors = matching_actors(&*ctx, conversation, |entry| {
-      flags_match(entry.flags().bits(), wanted, exact)
+    let actors = Self::matching_actors(&*ctx, conversation, |entry| {
+      Self::flags_match(entry.flags().bits(), wanted, exact)
     });
-    next_after(&actors, start, LOUDER_ACTOR_NONE)
+    Self::next_after(&actors, start, LOUDER_ACTOR_NONE)
   }
 }
 
@@ -847,7 +853,7 @@ pub extern "C" fn next_hub_tag(ctx: *const LouderContext, conversation: LouderNa
 
   unsafe {
     match (*ctx).get_conversation(conversation).and_then(|c| c.hub(position)) {
-      Some(hub) => next_name_after(hub.tags(), start),
+      Some(hub) => Self::next_name_after(hub.tags(), start),
       None => LOUDER_NAME_NONE,
     }
   }
@@ -1026,7 +1032,7 @@ pub extern "C" fn next_hub_recipient(ctx: *const LouderContext, conversation: Lo
 
   unsafe {
     match (*ctx).get_conversation(conversation).and_then(|c| c.hub(position)) {
-      Some(hub) => next_name_after(hub.recipients(), start),
+      Some(hub) => Self::next_name_after(hub.recipients(), start),
       None => LOUDER_NAME_NONE,
     }
   }
@@ -1128,8 +1134,8 @@ pub extern "C" fn next_hub_by_channel(ctx: *const LouderContext, conversation: L
   unsafe {
     let context = &*ctx;
     let main = context.main_channel();
-    next_after(
-      &matching_hubs(context, conversation, |hub| match hub.channel() {
+    Self::next_after(
+      &Self::matching_hubs(context, conversation, |hub| match hub.channel() {
         LOUDER_NAME_NONE => main == channel,
         hub_channel => hub_channel == channel,
       }),
@@ -1150,8 +1156,8 @@ pub extern "C" fn next_hub_spoken_by(ctx: *const LouderContext, conversation: Lo
 
   unsafe {
     let context = &*ctx;
-    next_after(
-      &matching_hubs(context, conversation, |hub| hub.speaker() == speaker),
+    Self::next_after(
+      &Self::matching_hubs(context, conversation, |hub| hub.speaker() == speaker),
       start,
       BLANK_POSITION,
     )
@@ -1176,8 +1182,8 @@ pub extern "C" fn next_hub_heard_by(ctx: *const LouderContext, conversation: Lou
       heard.extend(entry.listening().iter().copied());
     }
 
-    next_after(
-      &matching_hubs(context, conversation, |hub| heard.contains(&hub.speaker())),
+    Self::next_after(
+      &Self::matching_hubs(context, conversation, |hub| heard.contains(&hub.speaker())),
       start,
       BLANK_POSITION,
     )
@@ -1195,8 +1201,8 @@ pub extern "C" fn next_hub_by_priority(ctx: *const LouderContext, conversation: 
 
   unsafe {
     let context = &*ctx;
-    next_after(
-      &matching_hubs(context, conversation, |hub| {
+    Self::next_after(
+      &Self::matching_hubs(context, conversation, |hub| {
         hub.priority() >= priority_min && hub.priority() <= priority_max
       }),
       start,
@@ -1223,8 +1229,8 @@ pub extern "C" fn next_hub_from_tags(ctx: *const LouderContext, conversation: Lo
 
   unsafe {
     let context = &*ctx;
-    next_after(
-      &matching_hubs(context, conversation, |hub| {
+    Self::next_after(
+      &Self::matching_hubs(context, conversation, |hub| {
         let tags = hub.tags();
         wanted.iter().all(|tag| tags.contains(tag))
           && (exact == 0 || tags.len() == wanted.len())
@@ -1248,8 +1254,8 @@ pub extern "C" fn next_hub_from_flags(ctx: *const LouderContext, conversation: L
   unsafe {
     let context = &*ctx;
     let wanted = include.bits();
-    next_after(
-      &matching_hubs(context, conversation, |hub| flags_match(hub.flags().bits(), wanted, exact)),
+    Self::next_after(
+      &Self::matching_hubs(context, conversation, |hub| Self::flags_match(hub.flags().bits(), wanted, exact)),
       start,
       BLANK_POSITION,
     )
@@ -1302,8 +1308,8 @@ pub extern "C" fn read_state_json(ctx: *const LouderContext, conversation: Loude
   unsafe {
     let context = &*ctx;
     let keys = (*ctx).all_state_keys(conversation);
-    let document = json_object(context, &keys, |key| context.get_state(conversation, key));
-    write_text(buffer, max_size, &document) as i32
+    let document = Self::json_object(context, &keys, |key| context.get_state(conversation, key));
+    Self::write_text(buffer, max_size, &document) as i32
   }
 }
 
@@ -1327,7 +1333,7 @@ pub extern "C" fn read_snapshot_json(ctx: *const LouderContext, conversation: Lo
 
     let context = &*ctx;
     let keys = (*ctx).all_state_keys(conversation);
-    let state = json_object(context, &keys, |key| context.get_state(conversation, key));
+    let state = Self::json_object(context, &keys, |key| context.get_state(conversation, key));
 
     let mut actors = String::from("[");
     let entries = (*ctx).actors(conversation);
@@ -1337,12 +1343,12 @@ pub extern "C" fn read_snapshot_json(ctx: *const LouderContext, conversation: Lo
       }
 
       let channel = match context.resolve_name(entry.channel()) {
-        Some(text) => json_quote(text),
+        Some(text) => Self::json_quote(text),
         None => "null".to_string(),
       };
 
       let additional_keys = entry.additional().sorted_keys();
-      let additional = json_object(context, &additional_keys, |key| {
+      let additional = Self::json_object(context, &additional_keys, |key| {
         entry.additional_get(key).cloned().unwrap_or_default()
       });
 
@@ -1353,15 +1359,15 @@ pub extern "C" fn read_snapshot_json(ctx: *const LouderContext, conversation: Lo
         channel,
         entry.priority(),
         entry.flags().bits(),
-        json_name_list(context, entry.speak_as()),
-        json_name_list(context, entry.listen_to()),
+        Self::json_name_list(context, entry.speak_as()),
+        Self::json_name_list(context, entry.listen_to()),
         additional
       ));
     }
     actors.push(']');
 
     let document = format!("{{\"state\":{},\"actors\":{}}}", state, actors);
-    write_text(buffer, max_size, &document) as i32
+    Self::write_text(buffer, max_size, &document) as i32
   }
 }
 
@@ -1373,7 +1379,7 @@ fn json_name_list(context: &LouderContext, names: &[LouderName]) -> String {
       out.push(',');
     }
     match context.resolve_name(*name) {
-      Some(text) => out.push_str(&json_quote(text)),
+      Some(text) => out.push_str(&Self::json_quote(text)),
       None => out.push_str("null"),
     }
   }
@@ -1662,4 +1668,6 @@ pub extern "C" fn force_position(ctx: *mut LouderContext, conversation: LouderNa
       Err(_) => 1,
     }
   }
+}
+
 }
