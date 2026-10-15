@@ -1,0 +1,14 @@
+[configuration]
+entry_symbol = "gdext_rust_init"
+compatibility_minimum = 4.1
+reloadable = true
+
+[libraries]
+linux.debug.x86_64 =     "res://Louder/target/debug/liblouder_gdext.so"
+linux.release.x86_64 =   "res://Louder/target/release/liblouder_gdext.so"
+windows.debug.x86_64 =   "res://Louder/target/debug/louder_gdext.dll"
+windows.release.x86_64 = "res://Louder/target/release/louder_gdext.dll"
+macos.debug =            "res://Louder/target/debug/liblouder_gdext.dylib"
+macos.release =          "res://Louder/target/release/liblouder_gdext.dylib"
+macos.debug.arm64 =      "res://Louder/target/debug/liblouder_gdext.dylib"
+macos.release.arm64 =    "res://Louder/target/release/liblouder_gdext.dylib"
