@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://d0ddo344ly56v"]
+
+[ext_resource type="Script" uid="uid://can6gj4y267pc" path="res://entities/camera_rig_simple.gd" id="1_yot0i"]
+
+[node name="CameraRig" type="Node3D" unique_id=167589696]
+script = ExtResource("1_yot0i")
+
+[node name="SpringBase" type="Node3D" parent="." unique_id=523622251]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 6, 2)
+
+[node name="SpringArm3D" type="SpringArm3D" parent="SpringBase" unique_id=1508058063]
+transform = Transform3D(0.7071068, -0.5, 0.5, 0, 0.70710677, 0.70710677, -0.7071068, -0.5, 0.5, 0, 0, 0)
+spring_length = 3.0
+
+[node name="Camera3D" type="Camera3D" parent="SpringBase/SpringArm3D" unique_id=1780982670]
+transform = Transform3D(1, 0, 0, 0, 0.9659258, 0.25881904, 0, -0.25881904, 0.9659258, 0, 0, 0)
+
+[node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=1232245788]
+size = Vector3(0.3, 0.3, 0.3)
