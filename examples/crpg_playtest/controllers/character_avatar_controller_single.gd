@@ -8,6 +8,7 @@ class_name CharacterAvatarControllerSingle extends Node
 			locate_character()
 
 @export var camera_rig:CameraRigSimple 
+@export var target_marker:Node3D
 
 var locate_timer:Timer
 signal controlled_avatar_changed(to: CharacterAvatar)
@@ -45,6 +46,8 @@ func _ready() -> void:
 	add_child(locate_timer)
 	
 	locate_character()
+	
+	target_marker.visible = false
 
 var camera_ray_out := false
 func _physics_process(_delta: float) -> void:
@@ -69,7 +72,12 @@ func _physics_process(_delta: float) -> void:
 		var position = result.position
 		var collider = result.collider
 		if collider is InteractableObject:
+			position = collider.get_interact_position()
 			controlled_avatar.navigate_to_interactable_rpc.rpc_id(1, collider.get_path())
 		else:
 			controlled_avatar.navigate_to_position_rpc.rpc_id(1, position)
 		
+		target_marker.position = position
+	
+	if controlled_avatar:
+		target_marker.visible = !controlled_avatar.navigation_agent.is_target_reached()

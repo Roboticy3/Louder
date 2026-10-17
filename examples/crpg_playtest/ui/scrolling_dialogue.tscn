@@ -1,6 +1,10 @@
 [gd_scene format=3 uid="uid://stb5khrpt47"]
 
-[node name="ScrollingDialogue" type="Control" unique_id=527292302]
+[ext_resource type="Script" uid="uid://cjjkwvrv3lhxw" path="res://ui/scrolling_dialogue.gd" id="1_scrolling_dialogue"]
+[ext_resource type="PackedScene" path="res://ui/dialogue_line.tscn" id="2_dialogue_line"]
+[ext_resource type="PackedScene" path="res://ui/dialogue_choice.tscn" id="3_dialogue_choice"]
+
+[node name="ScrollingDialogue" type="Control" unique_id=527292302 node_paths=PackedStringArray("scroll_container", "lines", "choices")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -8,6 +12,25 @@ anchor_bottom = 1.0
 offset_left = 791.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_scrolling_dialogue")
+scroll_container = NodePath("VSplitContainer/ScrollContainer")
+lines = NodePath("VSplitContainer/ScrollContainer/Lines")
+choices = NodePath("VSplitContainer/Choices")
+line_scene = ExtResource("2_dialogue_line")
+choice_scene = ExtResource("3_dialogue_choice")
+document_path = null
+start_tag = null
+player_speaker = null
+
+[node name="Background" type="ColorRect" parent="." unique_id=1183746520]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.086, 0.098, 0.129, 0.92)
 
 [node name="VSplitContainer" type="VBoxContainer" parent="." unique_id=2037545513]
 layout_mode = 1
@@ -22,10 +45,12 @@ layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 3.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VSplitContainer/ScrollContainer" unique_id=1386535107]
+[node name="Lines" type="VBoxContainer" parent="VSplitContainer/ScrollContainer" unique_id=1386535107]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_constants/separation = 12
 
-[node name="Control" type="Control" parent="VSplitContainer" unique_id=1979729747]
+[node name="Choices" type="VBoxContainer" parent="VSplitContainer" unique_id=1979729747]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_constants/separation = 6

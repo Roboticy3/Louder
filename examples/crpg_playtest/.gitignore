@@ -1,3 +1,7 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+
+# Where Louder.gdextension looks for the engine build, written by
+# run_test.ps1 and build_and_copy_target.ps1.
+/Louder/

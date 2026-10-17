@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://ui/dialogue_choice.gd" id="1_dialogue_choice"]
+
+[node name="DialogueChoice" type="Button"]
+size_flags_horizontal = 3
+alignment = 0
+autowrap_mode = 3
+script = ExtResource("1_dialogue_choice")
