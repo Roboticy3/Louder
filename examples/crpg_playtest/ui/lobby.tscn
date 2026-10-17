@@ -1,0 +1,139 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://ui/lobby.gd" id="1_lobby"]
+
+[node name="Lobby" type="CanvasLayer" node_paths=PackedStringArray("avatar", "controller")]
+script = ExtResource("1_lobby")
+
+[node name="Root" type="Control" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Background" type="ColorRect" parent="Root"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.086, 0.098, 0.129, 1)
+
+[node name="Center" type="CenterContainer" parent="Root"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Panel" type="PanelContainer" parent="Root/Center"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Rows" type="VBoxContainer" parent="Root/Center/Panel"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 10
+
+[node name="Menu" type="VBoxContainer" parent="Root/Center/Panel/Rows"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="Root/Center/Panel/Rows/Menu"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "CRPG Playtest"
+horizontal_alignment = 1
+
+[node name="AddressLabel" type="Label" parent="Root/Center/Panel/Rows/Menu"]
+layout_mode = 2
+text = "Address"
+
+[node name="AddressEdit" type="LineEdit" parent="Root/Center/Panel/Rows/Menu"]
+custom_minimum_size = Vector2(380, 0)
+layout_mode = 2
+text = "127.0.0.1"
+
+[node name="PortLabel" type="Label" parent="Root/Center/Panel/Rows/Menu"]
+layout_mode = 2
+text = "Port"
+
+[node name="PortEdit" type="LineEdit" parent="Root/Center/Panel/Rows/Menu"]
+layout_mode = 2
+text = "7000"
+
+[node name="Buttons" type="HBoxContainer" parent="Root/Center/Panel/Rows/Menu"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Host" type="Button" parent="Root/Center/Panel/Rows/Menu/Buttons"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Host"
+
+[node name="Join" type="Button" parent="Root/Center/Panel/Rows/Menu/Buttons"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Join"
+
+[node name="Dedicated" type="Button" parent="Root/Center/Panel/Rows/Menu/Buttons"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Dedicated server"
+
+[node name="Select" type="VBoxContainer" parent="Root/Center/Panel/Rows"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="Root/Center/Panel/Rows/Select"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "Select a character"
+horizontal_alignment = 1
+
+[node name="CharacterList" type="VBoxContainer" parent="Root/Center/Panel/Rows/Select"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Deselect" type="Button" parent="Root/Center/Panel/Rows/Select"]
+layout_mode = 2
+text = "Deselect character"
+
+[node name="Players" type="VBoxContainer" parent="Root/Center/Panel/Rows"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Title" type="Label" parent="Root/Center/Panel/Rows/Players"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Players"
+
+[node name="PlayerList" type="VBoxContainer" parent="Root/Center/Panel/Rows/Players"]
+layout_mode = 2
+
+[node name="Leave" type="Button" parent="Root/Center/Panel/Rows/Players"]
+layout_mode = 2
+text = "Leave lobby"
+
+[node name="Status" type="Label" parent="Root/Center/Panel/Rows"]
+layout_mode = 2
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Open" type="Button" parent="."]
+visible = false
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -140.0
+offset_top = 8.0
+offset_right = -12.0
+offset_bottom = 44.0
+grow_horizontal = 0
+text = "Character"

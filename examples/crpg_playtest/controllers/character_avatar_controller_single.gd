@@ -1,4 +1,4 @@
-extends Node
+class_name CharacterAvatarControllerSingle extends Node
 
 @export var character_avatar_group := &"character_avatar"
 @export var character_data:CharacterData
@@ -15,7 +15,7 @@ var controlled_avatar: CharacterAvatar :
 			if controlled_avatar:
 				camera_rig.target = controlled_avatar.body
 				print("located character avatar ", controlled_avatar)
-				
+			
 			
 			controlled_avatar_changed.emit(new_controlled_avatar)
 

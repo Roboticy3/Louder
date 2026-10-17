@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://brhato47qf82l" path="res://Blender/Merchant.glb" id="1_ig7tw"]
 [ext_resource type="PackedScene" uid="uid://bd2nfoignl8mj" path="res://entities/character_avatar.tscn" id="2_h2yge"]
 [ext_resource type="PackedScene" uid="uid://ms8dxd6kmlpu" path="res://controllers/character_avatar_controller_single.tscn" id="3_1bvp3"]
+[ext_resource type="PackedScene" path="res://ui/lobby.tscn" id="4_lobby"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_0xm2m"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -163,5 +164,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.7221947, -9.536743e-07, 5.3
 
 [node name="InteractableObject" parent="." unique_id=750230314 instance=ExtResource("1_1bvp3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9322212, -9.536743e-07, 8.671504)
+
+[node name="Lobby" parent="." node_paths=PackedStringArray("avatar", "controller") instance=ExtResource("4_lobby")]
+avatar = NodePath("../CharacterAvatar")
+controller = NodePath("../CharacterAvatarControllerSingle")
 
 [editable path="NavigationRegion3D/Merchant"]
