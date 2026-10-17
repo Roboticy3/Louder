@@ -1,4 +1,4 @@
-class_name InteractableObject extends StaticBody3D
+class_name InteractableObject extends PhysicsBody3D
 
 @export var interact_position_marker:Marker3D
 

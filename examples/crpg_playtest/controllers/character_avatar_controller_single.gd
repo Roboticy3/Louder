@@ -1,7 +1,11 @@
 class_name CharacterAvatarControllerSingle extends Node
 
 @export var character_avatar_group := &"character_avatar"
-@export var character_data:CharacterData
+@export var character_data:CharacterData :
+	set(new_character_data):
+		if new_character_data != character_data:
+			character_data = new_character_data
+			locate_character()
 
 @export var camera_rig:CameraRigSimple 
 
@@ -65,7 +69,7 @@ func _physics_process(_delta: float) -> void:
 		var position = result.position
 		var collider = result.collider
 		if collider is InteractableObject:
-			controlled_avatar.navigate_to_interactable(collider)
+			controlled_avatar.navigate_to_interactable_rpc.rpc_id(1, collider.get_path())
 		else:
-			controlled_avatar.navigate_to_position(position)
+			controlled_avatar.navigate_to_position_rpc.rpc_id(1, position)
 		

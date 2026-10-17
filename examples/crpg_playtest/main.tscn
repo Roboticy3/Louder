@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://brhato47qf82l" path="res://Blender/Merchant.glb" id="1_ig7tw"]
 [ext_resource type="PackedScene" uid="uid://bd2nfoignl8mj" path="res://entities/character_avatar.tscn" id="2_h2yge"]
 [ext_resource type="PackedScene" uid="uid://ms8dxd6kmlpu" path="res://controllers/character_avatar_controller_single.tscn" id="3_1bvp3"]
-[ext_resource type="PackedScene" path="res://ui/lobby.tscn" id="4_lobby"]
+[ext_resource type="Script" uid="uid://d13ef688jgy35" path="res://world.gd" id="4_world"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_0xm2m"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -67,7 +67,11 @@ points = PackedVector3Array(1, 1, 1, 1, 1, -1, -1, 1, 1, 1, -1, 1, 1, -1, -1, -1
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_cegan"]
 points = PackedVector3Array(1, 1, 1, 1, 1, -1, -1, 1, 1, 1, -1, 1, 1, -1, -1, -1, 1, -1, -1, -1, 1, -1, -1, -1)
 
-[node name="Node3D" type="Node3D" unique_id=1328221968]
+[node name="Node3D" type="Node3D" unique_id=1328221968 node_paths=PackedStringArray("avatar_root", "avatar_controller")]
+script = ExtResource("4_world")
+avatar_scene = ExtResource("2_h2yge")
+avatar_root = NodePath("Avatars")
+avatar_controller = NodePath("CharacterAvatarControllerSingle")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=753216289]
 environment = SubResource("Environment_1bvp3")
@@ -157,16 +161,11 @@ shape = SubResource("ConvexPolygonShape3D_074og")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Merchant/Cube_005/StaticBody3D" unique_id=1830212860]
 shape = SubResource("ConvexPolygonShape3D_cegan")
 
-[node name="CharacterAvatar" parent="." unique_id=2065816182 instance=ExtResource("2_h2yge")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.7221947, -9.536743e-07, 5.3295608)
+[node name="Avatars" type="Node3D" parent="." unique_id=412993837]
 
 [node name="CharacterAvatarControllerSingle" parent="." unique_id=2127838277 instance=ExtResource("3_1bvp3")]
 
 [node name="InteractableObject" parent="." unique_id=750230314 instance=ExtResource("1_1bvp3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9322212, -9.536743e-07, 8.671504)
-
-[node name="Lobby" parent="." node_paths=PackedStringArray("avatar", "controller") instance=ExtResource("4_lobby")]
-avatar = NodePath("../CharacterAvatar")
-controller = NodePath("../CharacterAvatarControllerSingle")
 
 [editable path="NavigationRegion3D/Merchant"]

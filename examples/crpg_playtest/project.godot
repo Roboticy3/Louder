@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="CRPG Playtest"
-run/main_scene="uid://dp8ynccgwt6de"
+run/main_scene="res://game.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://icon.svg"
 
