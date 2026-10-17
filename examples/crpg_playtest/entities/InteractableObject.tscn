@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://b0gocjddbmln"]
+
+[ext_resource type="Script" uid="uid://bfmfyrb05cbqo" path="res://entities/interactable_object.gd" id="1_d4wae"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_nunj6"]
+
+[node name="InteractableObject" type="StaticBody3D" unique_id=750230314 node_paths=PackedStringArray("interact_position_marker")]
+script = ExtResource("1_d4wae")
+interact_position_marker = NodePath("Marker3D")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1888544597]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+shape = SubResource("BoxShape3D_nunj6")
+debug_color = Color(0.8117647, 0.003921569, 0.9843137, 1)
+
+[node name="Marker3D" type="Marker3D" parent="." unique_id=1606314435]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0, 0)

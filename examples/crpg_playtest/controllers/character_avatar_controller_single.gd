@@ -62,4 +62,10 @@ func _physics_process(_delta: float) -> void:
 		camera_ray_out = false
 	
 	if controlled_avatar and !result.is_empty():
-		controlled_avatar.navigation_agent.target_position = result.position
+		var position = result.position
+		var collider = result.collider
+		if collider is InteractableObject:
+			controlled_avatar.navigate_to_interactable(collider)
+		else:
+			controlled_avatar.navigate_to_position(position)
+		

@@ -5,6 +5,7 @@
 
 [node name="CharacterAvatarControllerSingle" type="Node" unique_id=2127838277 node_paths=PackedStringArray("camera_rig")]
 script = ExtResource("1_urk7i")
+character_avatar_group = null
 camera_rig = NodePath("CameraRig")
 
 [node name="CameraRig" parent="." unique_id=167589696 instance=ExtResource("2_sn444")]
