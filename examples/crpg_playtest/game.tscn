@@ -1,0 +1,19 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="PackedScene" path="res://main.tscn" id="1_world"]
+[ext_resource type="PackedScene" path="res://ui/main_menu.tscn" id="2_main_menu"]
+[ext_resource type="PackedScene" path="res://ui/character_select.tscn" id="3_character_select"]
+[ext_resource type="Script" path="res://game.gd" id="4_game"]
+
+[node name="Game" type="Node" node_paths=PackedStringArray("world", "main_menu", "character_select")]
+script = ExtResource("4_game")
+world = NodePath("World")
+main_menu = NodePath("MainMenu")
+character_select = NodePath("CharacterSelect")
+
+[node name="World" parent="." instance=ExtResource("1_world")]
+
+[node name="MainMenu" parent="." instance=ExtResource("2_main_menu")]
+
+[node name="CharacterSelect" parent="." instance=ExtResource("3_character_select")]
+visible = false

@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CharacterData" format=3 uid="uid://cpyykkvykkfi0"]
+
+[ext_resource type="Script" uid="uid://bn1o1gx3ydww3" path="res://types/character_data.gd" id="1_l6qjy"]
+
+[resource]
+script = ExtResource("1_l6qjy")
+name = "Benjamin"
+description = "There was a night that shook the bones of the earth. The street prophets stared. The drinks sunk the great ship of you to the bottom of the sea of your mind. Years of self-abuse came crashing down in a thunderous tempest. There was music, loud bangs, and a vision of the only path to saving your people from the oppression of the Man-State. Ancient relics dance across the stars in you mind. You realized you must find them, and you know where to go.
+
+Then, you woke up half naked in a field. Your name, where you're from, where you are, it was all gone. Just a vague instinct to travel east. 
+
+Instinct carries more weight than one would expect. You got into East Breach with an official trade pass by feigning an appointment with a fake desert outpost you made up on the spot, \"the 42nd.\" Or maybe you didn't make it up. Whatever's going on, it got past customs, and you allegedly have a meeting with a fellow fish man named Norca, some 10 miles out in the sand about a spot for a water well. You were going that way anyway.
+
+Details:
+ - May start hallucinating
+ - May start crying
+ - Extremely Disco"
+metadata/_custom_type_script = "uid://bn1o1gx3ydww3"

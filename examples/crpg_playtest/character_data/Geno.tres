@@ -1,0 +1,36 @@
+[gd_resource type="Resource" script_class="CharacterData" format=3 uid="uid://cs83kft0c4n18"]
+
+[ext_resource type="Script" uid="uid://bn1o1gx3ydww3" path="res://types/character_data.gd" id="1_gmsw2"]
+
+[resource]
+script = ExtResource("1_gmsw2")
+name = "Geno"
+description = "RESUME
+
+Geno Krasimir, 32. CEC Inc. 2nd Street, East Breach, Lanmar.
+
+Education: 
+	Palace University, Dept. of Analysis (ages 18-22)
+	Clover Boarding School for the Gifted and Talented (ages 5-18)
+	General Knowledge Index of '08 - 80th percentile.
+Work Experience:
+	Computer, Cresti Expansion Company (ages 21-31)
+		Was responsible for calibrating artefact sensors
+		Analyzed sensor results, communicating results with coworkers and clients.
+		Oversae organization and shipping of artefacts to mainland.
+	Junior Coordinator, Palace Park (ages 16-19)
+		Tidied locations and equipment.
+		Second degree repairman access. Repair shadowship.
+		Guided students through landmarks and historical of importance of Palace Park.
+Skills:
+	Instrumental Analysis, Computing, Computer Reporting, General Knowledge, Exceptional Hygiene
+Background:
+	Degrees from royal blood: 5
+
+I haven't had a chance to update this since I moved to East Breach. Hopefully this is acceptable. I come from a reputable family and have relevant experience. 
+
+Details:
+ - Good at math.
+ - Exists in the first person.
+ - Really needs this."
+metadata/_custom_type_script = "uid://bn1o1gx3ydww3"
