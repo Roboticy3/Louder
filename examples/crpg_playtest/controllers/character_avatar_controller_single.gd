@@ -49,12 +49,12 @@ func _ready() -> void:
 var camera_ray_out := false
 func _physics_process(_delta: float) -> void:
 	var result:Dictionary
-	if Input.is_action_pressed("c_click_move"):
+	if controlled_avatar and Input.is_action_pressed("c_click_move"):
 		var mouse_pos := camera_rig.camera.get_viewport().get_mouse_position()
 		var ray_o := camera_rig.camera.project_ray_origin(mouse_pos)
 		var ray_n := camera_rig.camera.project_ray_normal(mouse_pos)
 		DebugDraw3d.draw_ray(ray_o, ray_o + ray_n * 100, Color.RED)
-		var query := PhysicsRayQueryParameters3D.create(ray_o, ray_o + ray_n * 100)
+		var query := PhysicsRayQueryParameters3D.create(ray_o, ray_o + ray_n * 100, -1, [controlled_avatar.body])
 		
 		var space_state := camera_rig.camera.get_world_3d().direct_space_state
 		result = space_state.intersect_ray(query)

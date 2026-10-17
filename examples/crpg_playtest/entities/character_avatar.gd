@@ -22,11 +22,7 @@ func _physics_process(delta: float) -> void:
 	if error.length() > 0.1:
 		body.velocity = navigation_input
 		
-		var angle_error := body.global_basis.z.signed_angle_to(navigation_input, body.global_basis.y)
-		if absf(angle_error) > 0.1:
-			body.rotation.y += 3 * signf(angle_error) * delta
-		else:
-			body.rotation.y += angle_error * delta
+		body.look_at(body.global_position + body.velocity, Vector3.UP, true)
 		DebugDraw3d.draw_arrow(body.global_position, -body.global_basis.z, Color.BLUE)
 	else:
 		body.velocity = Vector3.ZERO
@@ -73,8 +69,13 @@ func navigate_to_interactable(interactable_path:NodePath):
 
 func _on_target_reached():
 	if intent_to_interact:
+		body.look_at(intent_to_interact.global_position, Vector3.UP, true)
+		DebugDraw3d.draw_arrow_line(intent_to_interact.get_interact_position(), intent_to_interact.global_position, Color.RED)
+		DebugDraw3d.draw_arrow(body.global_position, -body.global_basis.z * 3, Color.BLUE)
+		
 		#Start dialogue. Connected controller should see this and trigger dialogue UI
 		print("starting dialogue with ", intent_to_interact)
+		
 	
 	intent_to_interact = null
 	
