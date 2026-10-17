@@ -18,9 +18,6 @@ lines = NodePath("VSplitContainer/ScrollContainer/Lines")
 choices = NodePath("VSplitContainer/Choices")
 line_scene = ExtResource("2_dialogue_line")
 choice_scene = ExtResource("3_dialogue_choice")
-document_path = null
-start_tag = null
-player_speaker = null
 
 [node name="Background" type="ColorRect" parent="." unique_id=1183746520]
 layout_mode = 1

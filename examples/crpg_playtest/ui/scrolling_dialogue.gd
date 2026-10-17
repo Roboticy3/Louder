@@ -6,21 +6,17 @@ class_name ScrollingDialogue extends Control
 @export var line_scene: PackedScene
 @export var choice_scene: PackedScene
 @export_file("*.json") var document_path := "res://conversations/jail.json"
+@export_file("*.json") var config_path := "res://configs/config.json"
 @export var start_tag := &"start"
 @export var player_speaker := &"Benjamin"
 
-var _session: DialogueSession
+var conversation := -1
+var player_actor := -1
 
 func _ready() -> void:
-	_session = DialogueSession.new()
-	_session.line_revealed.connect(_on_line_revealed)
-	_session.choices_revealed.connect(_on_choices_revealed)
-	_session.callback_raised.connect(_on_callback_raised)
-	_session.conversation_finished.connect(_on_conversation_finished)
-
-	var failure := _session.start(document_path, start_tag, player_speaker)
-	if !failure.is_empty():
-		push_error(failure)
+	LouderContextGlobal.load_conversation_config_file(config_path)
+	conversation = LouderContextGlobal.load_conversation_file(document_path)
+	LouderContextGlobal.add_actor(conversation, ["start"], 1, [player_speaker])
 
 func _on_line_revealed(speaker: String, text: String, background: bool) -> void:
 	var line := line_scene.instantiate() as DialogueLine
@@ -40,7 +36,8 @@ func _on_choices_revealed(texts: PackedStringArray) -> void:
 		choices.add_child(choice)
 
 func _on_choice_chosen(row: int) -> void:
-	_session.select_choice(row)
+	if conversation != -1:
+		LouderContextGlobal.select_choice(conversation, player_actor, row)
 
 func _on_callback_raised(callback: String) -> void:
 	# Callbacks are the engine's hook for game state. Nothing acts on them yet, so
