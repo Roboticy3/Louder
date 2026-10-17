@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="CharacterData" format=3 uid="uid://dmahbjxh3laqd"]
+
+[ext_resource type="Script" uid="uid://bn1o1gx3ydww3" path="res://types/character_data.gd" id="1_ied1f"]
+
+[resource]
+script = ExtResource("1_ied1f")
+name = "Reka"
+description = "Once each year, the coming-of-age cohorts of Saturnio, Brunils, and Extrimitas follow the unique tradition of travelling East, across Lanmar, to East Breach, an ancient holy site in some Roulite practices. And it's awesome. Parties, couples, discoveries, and magic all follow the trails like rainbow fish in a stream.
+
+You set out a year late, at 19, since you were helping your parents with their cartography business. You have an impeccable sense of direction, and believe that you can guide your soul as well. That's what saw in them, your new friends. You were \"directed\" towards them. Their names are Gabir and Stella. You didn't know them before, but all three of you are from [[Extrimitas]]. You like the same plays, and know the same dances. Summer is your favorite season, and theirs' too. 
+
+Along the trail, traveling concerts and theatre companies tell popular stories and draw large crowds. New advancements in radio waves allow them to amplify their voices to an entire field, over loud talking and yelling. The tech even lets them shift their voices up and down, to evoke powerful gods and creatures of the wood. Twice a week now, it seems the whole world stops to enjoy a blockbuster hit, best mixed with alcohol and sexy outfits. 
+
+You thought you were set for life. All you had to do was find a man, one compatible with the group of course, and come back home ready to be neighbors and the next generation of families. But just before reaching East Breach, your friends were kidnapped by the Rouge Bandits, the biggest organized crime group in Lanmar. Trafficking is only one of their many ventures, which often targets elves and takes advantage of your pilgrimage tradition. It happens enough that there are protocols for such situations:
+
+Step 1. Get a weapon. Step 2. Track them down. Step 3. Take back what they took from you. And if the couple isn't in one piece, show them what it feels like to be in pieces.
+
+You always had a dramatic side. A cartography shop didn't fit you much. While you're out here: Fight for your friends. Fight for what you believe in.
+
+Details
+ - Ironically, very easily distracted from life goals.
+ - Doesn't wear anything that won't match.
+ - Deadly."
+metadata/_custom_type_script = "uid://bn1o1gx3ydww3"

@@ -1,6 +1,7 @@
 class_name CameraRigSimple extends Node3D
 
 @export var target:Node3D
+@export var camera:Camera3D
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:

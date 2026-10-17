@@ -4,13 +4,15 @@
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_nunj6"]
 
-[node name="CharacterAvatar" type="Node3D" unique_id=2065816182 node_paths=PackedStringArray("body")]
+[node name="CharacterAvatar" type="Node3D" unique_id=2065816182 node_paths=PackedStringArray("body", "navigation_agent")]
 script = ExtResource("1_re4tr")
 body = NodePath("CharacterBody3D")
+navigation_agent = NodePath("CharacterBody3D/NavigationAgent3D")
 
 [node name="CharacterBody3D" type="CharacterBody3D" parent="." unique_id=481039361]
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="CharacterBody3D" unique_id=490416713]
+path_height_offset = 0.2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D" unique_id=688586654]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)

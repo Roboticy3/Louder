@@ -2,8 +2,9 @@
 
 [ext_resource type="Script" uid="uid://can6gj4y267pc" path="res://entities/camera_rig_simple.gd" id="1_yot0i"]
 
-[node name="CameraRig" type="Node3D" unique_id=167589696]
+[node name="CameraRig" type="Node3D" unique_id=167589696 node_paths=PackedStringArray("camera")]
 script = ExtResource("1_yot0i")
+camera = NodePath("SpringBase/SpringArm3D/Camera3D")
 
 [node name="SpringBase" type="Node3D" parent="." unique_id=523622251]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 6, 2)
