@@ -204,7 +204,7 @@ std::string text_of(LouderContext* ctx, LouderName name) {
   // Enough for any name in these documents, with room to spare. The engine
   // writes a terminator, so this is passed as size - 1.
   std::vector<uint8_t> buffer(8192, 0);
-  size_t written = read_name(ctx, name, buffer.data(), buffer.size() - 1, LOUDER_ENCODING_UTF8);
+  size_t written = read_name(ctx, name, buffer.data(), buffer.size() - 1);
   return std::string(reinterpret_cast<const char*>(buffer.data()), written);
 }
 

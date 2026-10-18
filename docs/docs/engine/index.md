@@ -10,6 +10,15 @@ character portraits, etc. This deficiency is the purpose of the [examples](../ex
 secion. Also, unless you are writing your game in Rust, you will probably be using
 one of the [adapters](./adapters)
 
+## Text and encodings
+The engine never displays anything, so it has no opinion about what a byte
+means. Strings cross its boundary as bytes and come back as the same bytes: a
+host that hands over text in some encoding reads back that same encoding, and is
+responsible for both halves of that. The one place the engine has to know is a
+JSON document, since JSON is text and cannot be parsed otherwise; those bytes
+have to be UTF-8, and a document that is not returns
+`LOUDER_LOAD_MALFORMED_JSON`.
+
 # Goals of Dialogue Rules
 The rules below essentially split dialogue into 3 non-mutually exclusive scenarios which may happen all at once in parallel.
 

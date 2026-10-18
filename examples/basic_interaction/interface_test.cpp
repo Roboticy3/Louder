@@ -63,13 +63,11 @@ struct Fixture {
     };
 
     CHECK(config.empty() == false, "the speaker config should be readable");
-    CHECK(load_conversation_config(ctx, mutable_bytes(config), config.size(),
-                                   LOUDER_ENCODING_UTF8) == LOUDER_LOAD_OK,
+    CHECK(load_conversation_config(ctx, mutable_bytes(config), config.size()) == LOUDER_LOAD_OK,
           "the speaker config should load");
 
     conversation = intern(ctx, "jail");
-    CHECK(load_conversation_json(ctx, conversation, mutable_bytes(document), document.size(),
-                                 LOUDER_ENCODING_UTF8) == LOUDER_LOAD_OK,
+    CHECK(load_conversation_json(ctx, conversation, mutable_bytes(document), document.size()) == LOUDER_LOAD_OK,
           "the conversation should load");
 
     LouderName tag = intern(ctx, "start");

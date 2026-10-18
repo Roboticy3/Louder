@@ -81,10 +81,9 @@ struct Session {
     auto mutable_bytes = [](std::string& text) {
       return reinterpret_cast<uint8_t*>(const_cast<char*>(text.data()));
     };
-    load_conversation_config(ctx, mutable_bytes(config), config.size(), LOUDER_ENCODING_UTF8);
+    load_conversation_config(ctx, mutable_bytes(config), config.size());
     conversation = intern(ctx, "jail");
-    load_conversation_json(ctx, conversation, mutable_bytes(document), document.size(),
-                           LOUDER_ENCODING_UTF8);
+    load_conversation_json(ctx, conversation, mutable_bytes(document), document.size());
 
     LouderName tag = intern(ctx, "start");
     start = next_hub_from_tags(ctx, conversation, &tag, 1, 0, -1);

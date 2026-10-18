@@ -1,5 +1,3 @@
-#[cfg(feature = "godot-bindings")]
-use super::godot_api::{Gd, GString};
 use serde_json::{Map as JsonMap, Value};
 
 use super::context::LouderContext;
@@ -26,24 +24,16 @@ pub const LOUDER_LOAD_NOT_A_LIST: LoadError = 2;
 pub const LOUDER_LOAD_NOT_AN_OBJECT: LoadError = 3;
 /// The conversation name was already occupied by a loaded conversation.
 pub const LOUDER_LOAD_ALREADY_LOADED: LoadError = 4;
-/// The requested encoding is not supported.
-pub const LOUDER_LOAD_BAD_ENCODING: LoadError = 5;
 
-/// The only encoding the engine decodes.
+/// Read `bytes` as the text of a document.
 ///
-/// Documents are exchanged as UTF-8, so every other index is rejected rather
-/// than silently mis-decoded.
-pub const LOUDER_ENCODING_UTF8: LouderEncoding = 0;
-
-/// Decode `bytes` under `encoding`.
-///
-/// Only UTF-8 is accepted, because the editor writes UTF-8 and re-encoding
-/// here would just move the problem to the host.
-pub fn decode(bytes: &[u8], encoding: LouderEncoding) -> Result<&str, LoadError> {
-  if encoding != LOUDER_ENCODING_UTF8 {
-    return Err(LOUDER_LOAD_BAD_ENCODING);
-  }
-
+/// JSON is text, so the engine has to know what the bytes say before it can
+/// parse them, and this is the one place where it does: UTF-8, because that is
+/// what the editor writes. This is a check on the input, not an encoding scheme
+/// the engine offers. Nothing here is converted, and a caller that holds bytes
+/// in some other encoding is expected to decode them on its own side rather than
+/// ask the engine to guess.
+pub fn decode(bytes: &[u8]) -> Result<&str, LoadError> {
   std::str::from_utf8(bytes).map_err(|_| LOUDER_LOAD_MALFORMED_JSON)
 }
 
@@ -367,58 +357,3 @@ fn read_additional(
   additional
 }
 
-/// Loading conversations and speaker configs out of JSON documents.
-///
-/// Both loaders take the document as a string rather than as a buffer and an
-/// encoding, since the Godot side has already decoded it by the time a
-/// `String` exists.
-#[cfg_attr(feature = "godot-bindings", derive(::godot::prelude::GodotClass))]
-#[cfg_attr(feature = "godot-bindings", class(init, tool))]
-pub struct LouderLoader {}
-
-godot_api! {
-  impl LouderLoader {
-    /// Load a conversation from a JSON document.
-    ///
-    /// The document must be a list of objects: `hub` records become hubs,
-    /// `connection` records become choices, and `camera` records are ignored.
-    /// Problems with individual records are reported through
-    /// [`EventData::LoadError`](super::event::EventData) events rather than
-    /// failing the whole load, so one malformed hub does not cost the caller the
-    /// rest of the conversation.
-    #[func]
-    pub fn load_conversation(context: Gd<LouderContext>, conversation: LouderName, document: GString) -> i32 {
-      let mut context = context;
-      let mut context = context.bind_mut();
-      load_conversation(&mut context, conversation, &document.to_string())
-    }
-
-    /// Load the speaker config from a JSON document.
-    ///
-    /// The config is a singleton: it is not tied to any one conversation, so a
-    /// speaker declared here is visible from all of them. A speaker of the same
-    /// name is replaced rather than treated as an error, so a config can be
-    /// reloaded.
-    #[func]
-    pub fn load_config(context: Gd<LouderContext>, document: GString) -> i32 {
-      let mut context = context;
-      let mut context = context.bind_mut();
-      load_config(&mut context, &document.to_string())
-    }
-
-    /// What a [`LoadError`] code means, for a host that would rather read a name
-    /// than a number.
-    #[func]
-    pub fn error_name(code: i32) -> GString {
-      GString::from(match code {
-        LOUDER_LOAD_OK => "OK",
-        LOUDER_LOAD_MALFORMED_JSON => "MALFORMED_JSON",
-        LOUDER_LOAD_NOT_A_LIST => "NOT_A_LIST",
-        LOUDER_LOAD_NOT_AN_OBJECT => "NOT_AN_OBJECT",
-        LOUDER_LOAD_ALREADY_LOADED => "ALREADY_LOADED",
-        LOUDER_LOAD_BAD_ENCODING => "BAD_ENCODING",
-        _ => "UNKNOWN",
-      })
-    }
-  }
-}

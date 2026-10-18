@@ -41,8 +41,6 @@ const char* load_error_text(int error) {
       return "a record is not an object";
     case LOUDER_LOAD_ALREADY_LOADED:
       return "that conversation name is already loaded";
-    case LOUDER_LOAD_BAD_ENCODING:
-      return "unsupported encoding";
     default:
       return "unknown error";
   }
@@ -93,8 +91,7 @@ int main(int argc, char** argv) {
     return 1;
   }
   int config_error = load_conversation_config(
-      ctx, reinterpret_cast<uint8_t*>(const_cast<char*>(config.data())), config.size(),
-      LOUDER_ENCODING_UTF8);
+      ctx, reinterpret_cast<uint8_t*>(const_cast<char*>(config.data())), config.size());
   if (config_error != LOUDER_LOAD_OK) {
     std::fprintf(stderr, "speaker config %s failed to load: %s\n", config_path.c_str(),
                  load_error_text(config_error));
@@ -111,7 +108,7 @@ int main(int argc, char** argv) {
   LouderName conversation = intern(ctx, "jail");
   int conversation_error = load_conversation_json(
       ctx, conversation, reinterpret_cast<uint8_t*>(const_cast<char*>(document.data())),
-      document.size(), LOUDER_ENCODING_UTF8);
+      document.size());
   if (conversation_error != LOUDER_LOAD_OK) {
     std::fprintf(stderr, "conversation %s failed to load: %s\n", conversation_path.c_str(),
                  load_error_text(conversation_error));

@@ -51,7 +51,7 @@ func start(document_path: String, start_tag: StringName, speaker: StringName) ->
 
 	# Actors are announced, so the queue has to start empty or the log opens with
 	# an actor that never said anything.
-	_context."flush_events"()
+	_context.flush_events()
 	_actor = _context.add_actor(_conversation, start_position, 0, [_context.make_name(speaker)], [])
 	if _actor == NO_ACTOR:
 		return "Could not add an actor to %s." % document_path

@@ -4,11 +4,11 @@ compatibility_minimum = 4.1
 reloadable = true
 
 [libraries]
-linux.debug.x86_64 =     "res://Louder/target/debug/liblouder_rust.so"
-linux.release.x86_64 =   "res://Louder/target/release/liblouder_rust.so"
-windows.debug.x86_64 =   "res://Louder/target/debug/louder_rust.dll"
-windows.release.x86_64 = "res://Louder/target/release/louder_rust.dll"
-macos.debug =            "res://Louder/target/debug/liblouder_rust.dylib"
-macos.release =          "res://Louder/target/release/liblouder_rust.dylib"
-macos.debug.arm64 =      "res://Louder/target/debug/liblouder_rust.dylib"
-macos.release.arm64 =    "res://Louder/target/release/liblouder_rust.dylib"
+linux.debug.x86_64 =     "res://Louder/target/debug/liblouder_godot.so"
+linux.release.x86_64 =   "res://Louder/target/release/liblouder_godot.so"
+windows.debug.x86_64 =   "res://Louder/target/debug/louder_godot.dll"
+windows.release.x86_64 = "res://Louder/target/release/louder_godot.dll"
+macos.debug =            "res://Louder/target/debug/liblouder_godot.dylib"
+macos.release =          "res://Louder/target/release/liblouder_godot.dylib"
+macos.debug.arm64 =      "res://Louder/target/debug/liblouder_godot.dylib"
+macos.release.arm64 =    "res://Louder/target/release/liblouder_godot.dylib"

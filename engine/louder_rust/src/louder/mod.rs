@@ -1,18 +1,17 @@
-//! The dialogue engine, and the Godot classes it is registered as.
+//! The dialogue engine.
 //!
-//! Each module here holds one part of the engine and, beside it, the
-//! declarations that make that part reachable from GDScript. Those declarations
-//! are pure additions: everything the engine does is still available to Rust
-//! through the ordinary methods next to them, and with the `godot-bindings`
-//! feature off the registered methods are not compiled at all and no class is
-//! registered.
+//! Each module here holds one part of the engine, and each is reached through an
+//! ordinary Rust API. None of them knows what host, if any, is driving it: a
+//! host that wants the classes as Godot types declares them in the `louder_godot`
+//! adapter over this crate, and a host that wants the `extern "C"` entry points
+//! finds them in the crate root.
 //!
-//! See [`godot_api`] for how the two halves of that work, and in particular for
-//! why the classes carry `cfg_attr` rather than sitting inside a macro.
-
-// First, so that `godot_api!` is in scope for every module below.
-#[macro_use]
-mod godot_api;
+//! The engine's own vocabulary is in [`context::LouderContext`]: one instance is
+//! one running dialogue, holding its name table, its conversations, its actors,
+//! its speaker config, its story state, its event queue, and its ask cache. The
+//! types it hands out are plain Rust values, so a host is free to read them and
+//! change them, and nothing here is tied to the shape any particular language
+//! wants them in.
 
 pub mod actor;
 pub mod callback;

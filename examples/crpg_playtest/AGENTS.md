@@ -14,7 +14,7 @@ because there was no way to run it. Write a test as a plain Node script, name it
 .\run_test.ps1 test_louder.gd
 ```
 
-`run_test.ps1` builds the engine with `--features godot-bindings`, copies the
+`run_test.ps1` builds `louder_godot` from the `engine/` workspace, copies the
 library into `Louder/target/debug` where `Louder.gdextension` looks for it, and
 runs the script headlessly. `test_louder.gd` is the example; new tests are new
 files, not additions to it. Several can run in one go, in the order given:
@@ -64,7 +64,19 @@ per script. Do not add tests to it: to add a test, add a script and pass its pat
 
 ## After changing the engine
 
-`run_test.ps1` rebuilds the engine every time, so changes under `engine/louder_rust`
-are picked up by the next run with no extra step. `build_and_copy_target.ps1` builds
-and copies the same way and then opens the editor, which is for working on the
-project by hand rather than for running tests.
+`run_test.ps1` rebuilds the extension every time, so changes under either
+`engine/louder_rust` or `engine/louder_godot` are picked up by the next run with
+no extra step. `build_and_copy_target.ps1` builds and copies the same way and then
+opens the editor, which is for working on the project by hand rather than for
+running tests.
+
+## Registering a method
+
+The classes come from `engine/louder_godot`, which wraps the engine types in
+Godot classes of its own. A method is registered under the name of the Rust
+function it came from, so the function is named what GDScript should call it.
+Do not write `#[func(rename = "...")]`: godot-rust reads that value as a token
+stream, so the string literal arrives carrying its own quotes and the method ends
+up registered under `"add_actor"`, which the script editor shows in quotes and
+only `call` can reach. `test_names.gd` fails on exactly that, so run it after any
+change to the adapter.
