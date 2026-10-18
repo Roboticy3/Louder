@@ -6,9 +6,10 @@
 //! name back up and calls whatever it means, which is what keeps the engine from
 //! having to know anything about the game.
 //!
-//! There is no type here to register with Godot, since a callback is just a
-//! name; see [`LouderNameContent`](super::name::LouderNameContent) and
-//! [`LouderEvent`](super::event::LouderEvent) for the Godot side.
+//! There is no type here, since a callback is only a name: what a host reads
+//! back out of one is in [`LouderNameContent`](super::name::LouderNameContent),
+//! and where a callback is announced is in
+//! [`LouderEvent`](super::event::LouderEvent).
 
 use super::name::LouderName;
 

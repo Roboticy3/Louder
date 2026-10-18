@@ -1,9 +1,3 @@
-#[cfg(feature = "godot-bindings")]
-use super::context::LouderContext;
-#[cfg(feature = "godot-bindings")]
-use super::godot_api::Array;
-#[cfg(feature = "godot-bindings")]
-use super::name::LouderInternContext;
 use super::name::{Map, LouderName};
 
 /// Extra data attached to an actor, hub, or speaker, keyed by name.
@@ -12,14 +6,7 @@ use super::name::{Map, LouderName};
 /// string names and [`LouderVariant`]s. Key order is not meaningful, so
 /// [`HomogeneousObject::sorted_keys`] is provided for output that must be
 /// deterministic.
-///
-/// A [`LouderVariant`] has no built-in Godot counterpart, so each value is
-/// read and written through the kind-specific `get_value_*` and `set_value_*`
-/// methods below rather than through one method that would have to return a
-/// tagged union across the boundary.
 #[derive(Clone)]
-#[cfg_attr(feature = "godot-bindings", derive(::godot::prelude::GodotClass))]
-#[cfg_attr(feature = "godot-bindings", class(init, tool))]
 pub struct HomogeneousObject {
   data: Map<LouderName, LouderVariant>,
 }
@@ -82,80 +69,6 @@ impl Default for HomogeneousObject {
   }
 }
 
-godot_api! {
-  impl HomogeneousObject {
-    /// How many keys are stored.
-    #[func]
-    pub fn size(&self) -> i32 {
-      self.len() as i32
-    }
-
-    /// Whether `key` has a value.
-    #[func]
-    pub fn has(&self, key: LouderName) -> bool {
-      self.get(key).is_some()
-    }
-
-    /// Every key, in ascending id order.
-    #[func]
-    pub fn keys(&self) -> Array<i64> {
-      self.sorted_keys().into_iter().map(|key| key as i64).collect()
-    }
-
-    /// The value under `key` read as an integer, or 0.
-    #[func]
-    pub fn get_value_int(&self, key: LouderName) -> i32 {
-      self.get(key).map(LouderVariant::as_int).unwrap_or(0)
-    }
-
-    /// The value under `key` read as a float, or 0.0.
-    #[func]
-    pub fn get_value_float(&self, key: LouderName) -> f64 {
-      self.get(key).map(LouderVariant::as_float).unwrap_or(0.0) as f64
-    }
-
-    /// The name under `key`, or
-    /// [`LOUDER_NAME_NONE`](super::name::LOUDER_NAME_NONE) if the value is not a
-    /// string.
-    #[func]
-    pub fn get_value_name(&self, key: LouderName) -> LouderName {
-      match self.get(key) {
-        Some(LouderVariant::String(name)) => *name,
-        _ => super::name::LOUDER_NAME_NONE,
-      }
-    }
-
-    /// Store an integer under `key`.
-    #[func]
-    pub fn set_value_int(&mut self, key: LouderName, value: i32) {
-      self.set(key, LouderVariant::Int(value));
-    }
-
-    /// Store a float under `key`.
-    #[func]
-    pub fn set_value_float(&mut self, key: LouderName, value: f64) {
-      self.set(key, LouderVariant::Float(value as f32));
-    }
-
-    /// Store a name under `key`.
-    #[func]
-    pub fn set_value_name(&mut self, key: LouderName, value: LouderName) {
-      self.set(key, LouderVariant::String(value));
-    }
-
-    /// Forget `key`.
-    #[func]
-    pub fn forget(&mut self, key: LouderName) {
-      HomogeneousObject::remove(self, key);
-    }
-
-    /// Forget every key.
-    #[func]
-    pub fn forget_all(&mut self) {
-      HomogeneousObject::clear(self);
-    }
-  }
-}
 
 /// One unit of data in an actor, hub, speaker, or story state.
 ///
@@ -348,51 +261,5 @@ impl LouderVariant {
       CmpOp::Gt => a > b,
       CmpOp::Ge => a >= b,
     }
-  }
-}
-
-/// The bridge between a [`LouderVariant`] and Godot's own dynamic value.
-///
-/// [`LouderVariant`] is a tagged union, which has no counterpart among Godot's
-/// built-in types, so a variant reaches GDScript as a
-/// [`Variant`](::godot::builtin::Variant): the one Godot
-/// type able to hold an int, a float, or a string without saying which in its
-/// Rust declaration. The integer and float kinds map across one for one, and a
-/// string becomes the text its name stands for.
-#[cfg(feature = "godot-bindings")]
-impl LouderVariant {
-  /// This variant as Godot sees it, reading a string through `context`.
-  pub fn to_godot(&self, context: &LouderContext) -> super::godot_api::Variant {
-    match self {
-      LouderVariant::Int(value) => super::godot_api::Variant::from(*value as i64),
-      LouderVariant::Float(value) => super::godot_api::Variant::from(*value as f64),
-      LouderVariant::String(name) => {
-        let text = context.resolve_name(*name).unwrap_or("");
-        super::godot_api::Variant::from(super::godot_api::GString::from(text))
-      }
-    }
-  }
-
-  /// Read a variant out of Godot, interning a string so it can be stored.
-  ///
-  /// Anything the engine has no kind for reads as 0, which is also what an
-  /// unset variable reads as.
-  pub fn from_godot(context: &mut LouderContext, value: &super::godot_api::Variant) -> LouderVariant {
-    use super::godot_api::GString;
-
-    if let Ok(found) = value.try_to::<bool>() {
-      return LouderVariant::from_bool(found);
-    }
-    if let Ok(found) = value.try_to::<i64>() {
-      return LouderVariant::Int(found as i32);
-    }
-    if let Ok(found) = value.try_to::<f64>() {
-      return LouderVariant::Float(found as f32);
-    }
-    if let Ok(found) = value.try_to::<GString>() {
-      return LouderVariant::String(context.intern_name(&found.to_string()));
-    }
-
-    LouderVariant::zero()
   }
 }

@@ -49,10 +49,11 @@ LouderEvent BareEvent(EventData data) {
   return event;
 }
 
-// Read a name back out of the engine as a std::string.
+// Read a name back out of the engine as a std::string. The engine hands over the
+// bytes it was given, so the decoding on this side is all there is to it.
 std::string ReadName(LouderName name) {
   std::vector<uint8_t> buffer(4096, 0);
-  size_t written = read_name(g_ctx, name, buffer.data(), buffer.size() - 1, 0);
+  size_t written = read_name(g_ctx, name, buffer.data(), buffer.size() - 1);
   return std::string(reinterpret_cast<char*>(buffer.data()), written);
 }
 
@@ -70,10 +71,10 @@ LouderName Declare(const std::string& text) {
   return declare_name(g_ctx, reinterpret_cast<const uint8_t*>(text.data()), text.size());
 }
 
-std::string ReadJson(LouderName (*fn)(const LouderContext*, LouderName, uint8_t*, size_t, LouderEncoding),
+std::string ReadJson(LouderName (*fn)(const LouderContext*, LouderName, uint8_t*, size_t),
                     LouderName conversation) {
   std::vector<uint8_t> buffer(65536, 0);
-  int32_t written = fn(g_ctx, conversation, buffer.data(), buffer.size() - 1, 0);
+  int32_t written = fn(g_ctx, conversation, buffer.data(), buffer.size() - 1);
   if (written < 0) {
     return "<error>";
   }
@@ -203,12 +204,12 @@ void TestLoadConversation() {
   LouderName conversation = Declare("conversation under test");
   LoadError error = load_conversation_json(g_ctx, conversation,
                                            reinterpret_cast<uint8_t*>(const_cast<char*>(ConversationJson())),
-                                           std::strlen(ConversationJson()), 0);
+                                           std::strlen(ConversationJson()));
   CHECK(error == 0, "loading a well formed conversation returned %d", error);
 
   LoadError again = load_conversation_json(g_ctx, conversation,
                                            reinterpret_cast<uint8_t*>(const_cast<char*>(ConversationJson())),
-                                           std::strlen(ConversationJson()), 0);
+                                           std::strlen(ConversationJson()));
   CHECK(again != 0, "loading over an occupied conversation name should fail");
 
   // Positions are sparse and unordered in the document: 0, 5, 9.
@@ -245,7 +246,7 @@ void TestLoadConversation() {
   const char* garbage = "not json at all";
   LoadError bad = load_conversation_json(g_ctx, Declare("garbage conversation"),
                                         reinterpret_cast<uint8_t*>(const_cast<char*>(garbage)),
-                                        std::strlen(garbage), 0);
+                                        std::strlen(garbage));
   CHECK(bad != 0, "malformed JSON should fail to load");
 }
 
@@ -254,7 +255,7 @@ void TestConfig() {
 
   LoadError error = load_conversation_config(g_ctx,
                                              reinterpret_cast<uint8_t*>(const_cast<char*>(ConfigJson())),
-                                             std::strlen(ConfigJson()), 0);
+                                             std::strlen(ConfigJson()));
   CHECK(error == 0, "loading the config returned %d", error);
 
   LouderName a = Lookup("A");
@@ -314,7 +315,7 @@ void TestConditionsUseTheGuidesTruthinessRules() {
   clear_config(g_ctx);
   const char* config = R"([{"type":"speaker","name":"A","flags":1}])";
   CHECK(load_conversation_config(g_ctx, reinterpret_cast<uint8_t*>(const_cast<char*>(config)),
-                                 std::strlen(config), 0) == 0,
+                                 std::strlen(config)) == 0,
         "the config should load");
 
   const char* document = R"([
@@ -328,7 +329,7 @@ void TestConditionsUseTheGuidesTruthinessRules() {
   LouderName conversation = Declare("condition conversation");
   CHECK(load_conversation_json(g_ctx, conversation,
                                reinterpret_cast<uint8_t*>(const_cast<char*>(document)),
-                               std::strlen(document), 0) == 0,
+                               std::strlen(document)) == 0,
         "the conversation should load");
 
   LouderName speaker[1] = {Lookup("A")};
@@ -370,7 +371,7 @@ void TestActors() {
   LouderName conversation = Declare("actor conversation");
   std::string json = ConversationJson();
   LoadError error = load_conversation_json(g_ctx, conversation,
-                                           reinterpret_cast<uint8_t*>(&json[0]), json.size(), 0);
+                                           reinterpret_cast<uint8_t*>(&json[0]), json.size());
   CHECK(error == 0, "loading the conversation returned %d", error);
 
   LouderName a = Lookup("A");
@@ -442,7 +443,7 @@ void TestChoices() {
   LouderName conversation = Declare("choice conversation");
   std::string json = ConversationJson();
   LoadError error = load_conversation_json(g_ctx, conversation,
-                                           reinterpret_cast<uint8_t*>(&json[0]), json.size(), 0);
+                                           reinterpret_cast<uint8_t*>(&json[0]), json.size());
   CHECK(error == 0, "loading the conversation returned %d", error);
 
   LouderName a = Lookup("A");
@@ -561,7 +562,7 @@ void TestWarpRecursion() {
   LouderName conversation = Declare("warp conversation");
   std::string json = ConversationJson();
   LoadError error = load_conversation_json(g_ctx, conversation,
-                                           reinterpret_cast<uint8_t*>(&json[0]), json.size(), 0);
+                                           reinterpret_cast<uint8_t*>(&json[0]), json.size());
   CHECK(error == 0, "loading the conversation returned %d", error);
 
   LouderName a = Lookup("A");
@@ -640,7 +641,7 @@ void TestAutoCycle() {
   LouderName conversation = Declare("auto cycle conversation");
   std::string json = AutoCycleJson();
   LoadError error = load_conversation_json(g_ctx, conversation,
-                                           reinterpret_cast<uint8_t*>(&json[0]), json.size(), 0);
+                                           reinterpret_cast<uint8_t*>(&json[0]), json.size());
   CHECK(error == 0, "loading the conversation returned %d", error);
 
   LouderName speak_a[1] = {Lookup("A")};
@@ -705,7 +706,7 @@ void TestChoiceCountAgreesWithProbing() {
   LouderName conversation = Declare("probing conversation");
   std::string json = GappedChoicesJson();
   CHECK(load_conversation_json(g_ctx, conversation, reinterpret_cast<uint8_t*>(&json[0]),
-                               json.size(), 0) == 0,
+                               json.size()) == 0,
         "loading the gapped conversation returned %d", 0);
 
   LouderName a = Lookup("A");
@@ -744,13 +745,13 @@ void TestAvailableChoiceIndicesCanHaveGaps() {
   clear_config(g_ctx);
   const char* config = GappedChoicesConfigJson();
   CHECK(load_conversation_config(g_ctx, reinterpret_cast<uint8_t*>(const_cast<char*>(config)),
-                                 std::strlen(config), 0) == 0,
+                                 std::strlen(config)) == 0,
         "the gapped config should load");
 
   LouderName conversation = Declare("gapped conversation");
   std::string json = GappedChoicesJson();
   CHECK(load_conversation_json(g_ctx, conversation, reinterpret_cast<uint8_t*>(&json[0]),
-                               json.size(), 0) == 0,
+                               json.size()) == 0,
         "loading the gapped conversation returned %d", 0);
 
   LouderName speak_a[1] = {Lookup("A")};
@@ -813,13 +814,13 @@ void TestPrivateHubIsOwnedByItsRecipients() {
   CHECK(load_conversation_config(
             g_ctx,
             reinterpret_cast<uint8_t*>(const_cast<char*>(PrivateConfigJson())),
-            std::strlen(PrivateConfigJson()), 0) == 0,
+            std::strlen(PrivateConfigJson())) == 0,
         "the private hub config should load");
 
   LouderName conversation = Declare("private conversation");
   std::string json = PrivateJson();
   CHECK(load_conversation_json(g_ctx, conversation,
-                               reinterpret_cast<uint8_t*>(&json[0]), json.size(), 0) == 0,
+                               reinterpret_cast<uint8_t*>(&json[0]), json.size()) == 0,
         "loading the private conversation returned %d", 0);
 
   LouderName a = Lookup("A");
@@ -957,13 +958,13 @@ void TestExampleFlow() {
   CHECK(load_conversation_config(
             g_ctx,
             reinterpret_cast<uint8_t*>(const_cast<char*>(ExampleFlowConfigJson())),
-            std::strlen(ExampleFlowConfigJson()), 0) == 0,
+            std::strlen(ExampleFlowConfigJson())) == 0,
         "the example flow config should load");
 
   LouderName conversation = Declare("example flow conversation");
   std::string json = ExampleFlowJson();
   CHECK(load_conversation_json(g_ctx, conversation,
-                               reinterpret_cast<uint8_t*>(&json[0]), json.size(), 0) == 0,
+                               reinterpret_cast<uint8_t*>(&json[0]), json.size()) == 0,
         "loading the example flow conversation returned %d", 0);
 
   LouderName a = Lookup("A");
@@ -1137,13 +1138,13 @@ void TestAutoSplitOnPrivateVoice() {
   CHECK(load_conversation_config(
             g_ctx,
             reinterpret_cast<uint8_t*>(const_cast<char*>(AutoSplitConfigJson())),
-            std::strlen(AutoSplitConfigJson()), 0) == 0,
+            std::strlen(AutoSplitConfigJson())) == 0,
         "the auto split config should load");
 
   LouderName conversation = Declare("auto split conversation");
   std::string json = AutoSplitJson();
   CHECK(load_conversation_json(g_ctx, conversation,
-                               reinterpret_cast<uint8_t*>(&json[0]), json.size(), 0) == 0,
+                               reinterpret_cast<uint8_t*>(&json[0]), json.size()) == 0,
         "loading the auto split conversation returned %d", 0);
 
   LouderName b = Lookup("B");
@@ -1256,13 +1257,13 @@ void TestSpokeRuleIsConfigurable() {
   CHECK(load_conversation_config(
             g_ctx,
             reinterpret_cast<uint8_t*>(const_cast<char*>(SpokeRuleConfigJson())),
-            std::strlen(SpokeRuleConfigJson()), 0) == 0,
+            std::strlen(SpokeRuleConfigJson())) == 0,
         "the spoke rule config should load");
 
   LouderName conversation = Declare("spoke rule conversation");
   std::string json = SpokeRuleJson();
   CHECK(load_conversation_json(g_ctx, conversation, reinterpret_cast<uint8_t*>(&json[0]),
-                               json.size(), 0) == 0,
+                               json.size()) == 0,
         "loading the spoke rule conversation returned %d", 0);
 
   LouderName speak_a[1] = {Lookup("A")};
@@ -1341,7 +1342,7 @@ void TestSpokeRuleIsConfigurable() {
     ])";
     CHECK(load_conversation_json(g_ctx, private_hub,
                                  reinterpret_cast<uint8_t*>(const_cast<char*>(document)),
-                                 std::strlen(document), 0) == 0,
+                                 std::strlen(document)) == 0,
           "the unreachable conversation should load");
 
     LouderActor alone = add_actor(g_ctx, private_hub, 0, ActorFlags(), speak_a, 1, nullptr, 0);
@@ -1408,13 +1409,13 @@ void TestSingleplayerRule() {
   CHECK(load_conversation_config(
             g_ctx,
             reinterpret_cast<uint8_t*>(const_cast<char*>(SingleplayerConfigJson())),
-            std::strlen(SingleplayerConfigJson()), 0) == 0,
+            std::strlen(SingleplayerConfigJson())) == 0,
         "the singleplayer config should load");
 
   LouderName conversation = Declare("singleplayer conversation");
   std::string json = SingleplayerJson();
   CHECK(load_conversation_json(g_ctx, conversation, reinterpret_cast<uint8_t*>(&json[0]),
-                               json.size(), 0) == 0,
+                               json.size()) == 0,
         "loading the singleplayer conversation returned %d", 0);
 
   LouderName speak_a[1] = {Lookup("A")};
@@ -1476,8 +1477,7 @@ void TestSingleplayerRule() {
   // the rule is what did it. A fresh conversation keeps the first one out of the
   // way without having to reason about where anybody ended up.
   LouderName without = Declare("singleplayer conversation, rule off");
-  CHECK(load_conversation_json(g_ctx, without, reinterpret_cast<uint8_t*>(&json[0]), json.size(),
-                               0) == 0,
+  CHECK(load_conversation_json(g_ctx, without, reinterpret_cast<uint8_t*>(&json[0]), json.size()) == 0,
         "the second singleplayer conversation should load");
 
   LouderActor plain_p = add_actor(g_ctx, without, 0, ActorFlags(), speak_p, 1, nullptr, 0);
@@ -1526,7 +1526,7 @@ void TestLoadErrorsAreReportedAsEvents() {
   LouderName conversation = Declare("bad records conversation");
   std::string json = BadRecordsJson();
   CHECK(load_conversation_json(g_ctx, conversation, reinterpret_cast<uint8_t*>(&json[0]),
-                               json.size(), 0) == 0,
+                               json.size()) == 0,
         "a document with unreadable records should still load, got %d", 0);
 
   // Both hubs made it, which is the point of reporting rather than failing. Hub
@@ -1573,7 +1573,7 @@ void TestLoadErrorsAreReportedAsEvents() {
   const char* garbage = "not json at all";
   CHECK(load_conversation_json(g_ctx, Declare("garbage conversation"),
                                reinterpret_cast<uint8_t*>(const_cast<char*>(garbage)),
-                               std::strlen(garbage), 0) != 0,
+                               std::strlen(garbage)) != 0,
         "malformed JSON should fail to load");
   failures = DrainLoadErrors();
   CHECK(failures.size() == 1, "a malformed document should be reported once, saw %zu",
@@ -1591,7 +1591,7 @@ void TestLoadErrorsAreReportedAsEvents() {
   const char* not_a_list = R"({"type":"hub","conversation_id":0})";
   CHECK(load_conversation_json(g_ctx, Declare("object conversation"),
                                reinterpret_cast<uint8_t*>(const_cast<char*>(not_a_list)),
-                               std::strlen(not_a_list), 0) == LOUDER_LOAD_NOT_A_LIST,
+                               std::strlen(not_a_list)) == LOUDER_LOAD_NOT_A_LIST,
         "a document that is not a list should be refused");
   failures = DrainLoadErrors();
   CHECK(failures.size() == 1, "a document that is not a list should be reported once, saw %zu",
@@ -1622,7 +1622,7 @@ void TestConfigLoadErrorsAreReportedAsEvents() {
 
   CHECK(load_conversation_config(g_ctx,
                                  reinterpret_cast<uint8_t*>(const_cast<char*>(config)),
-                                 std::strlen(config), 0) == 0,
+                                 std::strlen(config)) == 0,
         "a config with one bad record should still load");
 
   // The point of the change: the speakers on either side of the bad record both
@@ -1647,7 +1647,7 @@ void TestConfigLoadErrorsAreReportedAsEvents() {
   const char* garbage = "not json at all";
   CHECK(load_conversation_config(g_ctx,
                                  reinterpret_cast<uint8_t*>(const_cast<char*>(garbage)),
-                                 std::strlen(garbage), 0) != 0,
+                                 std::strlen(garbage)) != 0,
         "a malformed config should fail to load");
   failures = DrainLoadErrors();
   CHECK(failures.size() == 1, "a malformed config should be reported once, saw %zu",
@@ -1719,13 +1719,13 @@ void TestAPrivateHubReachedByAMeaningfulChoice() {
   CHECK(load_conversation_config(
             g_ctx,
             reinterpret_cast<uint8_t*>(const_cast<char*>(PrivateBranchConfigJson())),
-            std::strlen(PrivateBranchConfigJson()), 0) == 0,
+            std::strlen(PrivateBranchConfigJson())) == 0,
         "the private branch config should load");
 
   LouderName conversation = Declare("private branch conversation");
   std::string json = PrivateBranchJson();
   CHECK(load_conversation_json(g_ctx, conversation, reinterpret_cast<uint8_t*>(&json[0]),
-                               json.size(), 0) == 0,
+                               json.size()) == 0,
         "loading the private branch conversation returned %d", 0);
 
   LouderName speak_freya[1] = {Lookup("Freya")};
@@ -1844,7 +1844,7 @@ void TestAnUnownedHubWithOneChoiceIsEveryonesToTake() {
   LouderName conversation = Declare("continue conversation");
   std::string json = ContinueJson();
   CHECK(load_conversation_json(g_ctx, conversation, reinterpret_cast<uint8_t*>(&json[0]),
-                               json.size(), 0) == 0,
+                               json.size()) == 0,
         "loading the continue conversation returned %d", 0);
 
   LouderName speak_a[1] = {Lookup("A")};
@@ -1944,7 +1944,7 @@ void TestSerialization() {
 
   LouderName conversation = Declare("serialized conversation");
   std::string json = ConversationJson();
-  load_conversation_json(g_ctx, conversation, reinterpret_cast<uint8_t*>(&json[0]), json.size(), 0);
+  load_conversation_json(g_ctx, conversation, reinterpret_cast<uint8_t*>(&json[0]), json.size());
 
   LouderName a = Lookup("A");
   LouderName speak_a[1] = {a};
@@ -2012,7 +2012,7 @@ void TestNullSafety() {
   CHECK(get_hub_text(nullptr, 0, 0) == LOUDER_NAME_NONE, "get_hub_text should reject null");
   CHECK(get_actor_position(nullptr, 0, 0) == -1, "get_actor_position should reject null");
   CHECK(get_story_state(nullptr, 0, 0).tag == LouderVariant::Tag::Int, "get_story_state should reject null");
-  CHECK(read_name(nullptr, 0, nullptr, 0, 0) == 0, "read_name should reject null");
+  CHECK(read_name(nullptr, 0, nullptr, 0) == 0, "read_name should reject null");
   flush_events(nullptr);
   set_story_state(nullptr, 0, 0, make_variant_zero());
   CHECK(deinit_louder(nullptr) == LouderError::Missing, "deinit should reject null");

@@ -1,13 +1,5 @@
 extends Node
 
-## The engine binds a method it renamed with #[func(rename = "...")] under the
-## quoted string from that attribute, quotes and all. A plain call to "add_actor"
-## reports the method as missing; the name it is actually registered under is
-## "\"add_actor\"". Only these two need spelling that way, and they are spelled
-## this way only until the engine is fixed: go back to the plain names then.
-const ADD_ACTOR := "\"add_actor\""
-const FLUSH_EVENTS := "\"flush_events\""
-
 var context := LouderContext.new()
 
 func load_conversation_file(file_path) -> int:
@@ -42,7 +34,7 @@ func add_actor(conversation: int, start_tags: Array, flags: int, configured_spea
 	if start == -1:
 		push_error("Conversation %d has no hub tagged %s" % [conversation, start_tags])
 		return -1
-	return context.call(ADD_ACTOR, conversation, start, flags, _intern(configured_speakers), _intern(configured_listen_to))
+	return context.add_actor(conversation, start, flags, _intern(configured_speakers), _intern(configured_listen_to))
 
 ## Put the actor back where it already stands.
 ##
@@ -92,7 +84,7 @@ func get_event(index: int) -> LouderEvent:
 	return context.get_event(index)
 
 func flush_events() -> void:
-	context.call(FLUSH_EVENTS)
+	context.flush_events()
 
 func _intern(names: Array) -> Array[int]:
 	var interned: Array[int] = []

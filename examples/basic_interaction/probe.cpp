@@ -87,14 +87,14 @@ struct Session {
     };
 
     const int32_t config_result = load_conversation_config(
-        ctx, mutable_bytes(config), config.size(), LOUDER_ENCODING_UTF8);
+        ctx, mutable_bytes(config), config.size());
     if (config_result != LOUDER_LOAD_OK) {
       std::printf("speakers.json failed to load: %d\n", config_result);
     }
 
     conversation = intern(ctx, "jail");
     const int32_t document_result = load_conversation_json(
-        ctx, conversation, mutable_bytes(document), document.size(), LOUDER_ENCODING_UTF8);
+        ctx, conversation, mutable_bytes(document), document.size());
     if (document_result != LOUDER_LOAD_OK) {
       std::printf("jail.json failed to load: %d\n", document_result);
     }

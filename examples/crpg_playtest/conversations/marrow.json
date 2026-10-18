@@ -1,0 +1,354 @@
+[
+	{
+		"choices": "4",
+		"conversation_id": "2",
+		"flags": "1",
+		"position_offset:x": "-420.0",
+		"position_offset:y": "260.0",
+		"tags": "start",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "4",
+		"flags": "4",
+		"position_offset:x": "100.0",
+		"position_offset:y": "1000.0",
+		"recipients": "Geno",
+		"speaker": "Marrow",
+		"text": "\"Good leather and bags.\" Another day of those eyes that think they know better than mine. Why am I talking to my annoying neighbor?",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "0",
+		"position_offset:x": "100.0",
+		"position_offset:y": "1460.0",
+		"speaker": "Marrow",
+		"text": "\"Good leather and bags.\" A superior expression looks down at you.",
+		"type": "hub"
+	},
+	{
+		"choices": "1",
+		"conversation_id": "5",
+		"expressions": "0",
+		"flags": "1",
+		"position_offset:x": "100.0",
+		"position_offset:y": "-40.0",
+		"text": "(idk..)",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "8",
+		"position_offset:x": "620.0",
+		"position_offset:y": "760.0",
+		"speaker": "Note",
+		"text": "7 is an Auto domination of 6",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "3",
+		"flags": "4",
+		"position_offset:x": "100.0",
+		"position_offset:y": "540.0",
+		"recipients": "Freya",
+		"speaker": "Marrow",
+		"text": "\"Good leather and bags.\" The aging merchant looks up at you, light with joy and comfort.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "7",
+		"flags": "1",
+		"position_offset:x": "540.0",
+		"position_offset:y": "1120.0",
+		"speaker": "Geno",
+		"text": "\"Hello Marrow.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "6",
+		"position_offset:x": "1000.0",
+		"position_offset:y": "1040.0",
+		"speaker": "Marrow",
+		"text": "\"The Morehai is both hot and cold. If you're planning something, bring plenty of water and all the right fabrics.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "12",
+		"position_offset:x": "-780.0",
+		"position_offset:y": "-2100.0",
+		"speaker": "Note",
+		"text": "Reka and Benjamin can purchase supplies.",
+		"type": "hub"
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "15",
+		"description": "Marrow is a content-seeming and enigmatic shopkeep with a small inventory and a long legacy in the Breach. She is nearly blind. \n\nGeno hates her because of how successful she manages to kep her shop while not seeming to catalogue anything.\n\nMarrow stands as a contrast to Arias because Geno does not trust her, but she is a good person, while Arias is the opposite in both respects.",
+		"listening": "",
+		"name": "Marrow",
+		"position_offset:x": "-1440.0",
+		"position_offset:y": "-360.0",
+		"relationships": "0",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"conversation_id": "11",
+		"position_offset:x": "-780.0",
+		"position_offset:y": "-2680.0",
+		"speaker": "Note",
+		"text": "Geno can have a tense exchange about how to best run a shop.",
+		"type": "hub"
+	},
+	{
+		"choices": "3",
+		"conversation_id": "16",
+		"position_offset:x": "-360.0",
+		"position_offset:y": "-2680.0",
+		"speaker": "Note",
+		"text": "Geno has lots of thoughts towards Marrow, but ultimately doesn't say much, and any other character can guide things back to their path.",
+		"type": "hub"
+	},
+	{
+		"choices": "4",
+		"conversation_id": "17",
+		"position_offset:x": "-380.0",
+		"position_offset:y": "-2100.0",
+		"speaker": "Note",
+		"text": "Somebody may or may not purchase:\n - A deep leather pouch\n - A waterskin (belt equipment)\n - A vest and shirt (torso equipment, either Reka or Benjamin)\n\nGeno can make a crack about the selection. Freya can look around the shop.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "18",
+		"position_offset:x": "220.0",
+		"position_offset:y": "-1380.0",
+		"speaker": "Note",
+		"text": "Nothing is purchased",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "20",
+		"position_offset:x": "200.0",
+		"position_offset:y": "-1880.0",
+		"speaker": "Note",
+		"text": "Marrow explains that there are creatures in the desert with \"knife hands\" and they \"aim for the heart,\" so the vest acts as a second skin.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "21",
+		"position_offset:x": "200.0",
+		"position_offset:y": "-2400.0",
+		"speaker": "Note",
+		"text": "Marrow explains how this particular waterskin was carried here by her sister, on the North-South Pilgrimage, but it's ok to sell because a waterskin was meant to be used, and she's too old for expeditions.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "22",
+		"position_offset:x": "200.0",
+		"position_offset:y": "-2820.0",
+		"speaker": "Note",
+		"text": "While selling, if Reka is present and wearing the formula fabric, she complains that true leatherworking is a dying art. ",
+		"type": "hub"
+	},
+	{
+		"choices": "3",
+		"conversation_id": "10",
+		"position_offset:x": "-1240.0",
+		"position_offset:y": "-1960.0",
+		"speaker": "Note",
+		"text": "Entering the shop",
+		"type": "hub"
+	},
+	{
+		"choices": "2",
+		"conversation_id": "13",
+		"position_offset:x": "-740.0",
+		"position_offset:y": "-1060.0",
+		"speaker": "Note",
+		"text": "Freya can ask for either a story about the desert or for info on a criminal she's been tracking.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "23",
+		"position_offset:x": "-320.0",
+		"position_offset:y": "-1240.0",
+		"speaker": "Note",
+		"text": "Marrow talks about when she went on expeditions when she was younger, a near miss encounter with bandits, and her triumphant return. She describes it as a \"silent victory.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "24",
+		"position_offset:x": "-320.0",
+		"position_offset:y": "-740.0",
+		"speaker": "Note",
+		"text": "Marrow is getting protection from the Bani-Manci from the Rouge Bandits. But one of the implicit conditions is silence. Freya is able to tell this is what's happening just from her stance. Nothing needs to be said.",
+		"type": "hub"
+	},
+	{
+		"from_id": "0",
+		"from_port": 0,
+		"to_id": "6",
+		"type": "connection"
+	},
+	{
+		"from_id": "10",
+		"from_port": 0,
+		"to_id": "11",
+		"type": "connection"
+	},
+	{
+		"from_id": "10",
+		"from_port": 1,
+		"to_id": "12",
+		"type": "connection"
+	},
+	{
+		"from_id": "10",
+		"from_port": 2,
+		"to_id": "13",
+		"type": "connection"
+	},
+	{
+		"from_id": "11",
+		"from_port": 0,
+		"to_id": "16",
+		"type": "connection"
+	},
+	{
+		"from_id": "12",
+		"from_port": 0,
+		"to_id": "17",
+		"type": "connection"
+	},
+	{
+		"from_id": "13",
+		"from_port": 0,
+		"to_id": "23",
+		"type": "connection"
+	},
+	{
+		"from_id": "13",
+		"from_port": 1,
+		"to_id": "24",
+		"type": "connection"
+	},
+	{
+		"from_id": "16",
+		"from_port": 1,
+		"to_id": "12",
+		"type": "connection"
+	},
+	{
+		"from_id": "16",
+		"from_port": 2,
+		"to_id": "13",
+		"type": "connection"
+	},
+	{
+		"from_id": "17",
+		"from_port": 0,
+		"to_id": "22",
+		"type": "connection"
+	},
+	{
+		"from_id": "17",
+		"from_port": 1,
+		"to_id": "21",
+		"type": "connection"
+	},
+	{
+		"from_id": "17",
+		"from_port": 2,
+		"to_id": "20",
+		"type": "connection"
+	},
+	{
+		"from_id": "17",
+		"from_port": 3,
+		"to_id": "18",
+		"type": "connection"
+	},
+	{
+		"from_id": "18",
+		"from_port": 0,
+		"to_id": "10",
+		"type": "connection"
+	},
+	{
+		"from_id": "2",
+		"from_port": 0,
+		"to_id": "5",
+		"type": "connection"
+	},
+	{
+		"from_id": "2",
+		"from_port": 1,
+		"to_id": "3",
+		"type": "connection"
+	},
+	{
+		"from_id": "2",
+		"from_port": 2,
+		"to_id": "4",
+		"type": "connection"
+	},
+	{
+		"from_id": "2",
+		"from_port": 3,
+		"to_id": "0",
+		"type": "connection"
+	},
+	{
+		"from_id": "20",
+		"from_port": 0,
+		"to_id": "10",
+		"type": "connection"
+	},
+	{
+		"from_id": "21",
+		"from_port": 0,
+		"to_id": "10",
+		"type": "connection"
+	},
+	{
+		"from_id": "22",
+		"from_port": 0,
+		"to_id": "10",
+		"type": "connection"
+	},
+	{
+		"from_id": "23",
+		"from_port": 0,
+		"to_id": "13",
+		"type": "connection"
+	},
+	{
+		"from_id": "24",
+		"from_port": 0,
+		"to_id": "13",
+		"type": "connection"
+	},
+	{
+		"from_id": "3",
+		"from_port": 0,
+		"to_id": "6",
+		"type": "connection"
+	},
+	{
+		"from_id": "4",
+		"from_port": 0,
+		"to_id": "7",
+		"type": "connection"
+	},
+	{
+		"from_id": "7",
+		"from_port": 0,
+		"to_id": "6",
+		"type": "connection"
+	},
+	{
+		"position:x": "-914.684509277344",
+		"position:y": "-703.834350585938",
+		"type": "camera",
+		"zoom": "0.26333105564117"
+	}
+]

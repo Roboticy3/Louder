@@ -1,9 +1,9 @@
-cd ../../engine/louder_rust/
-cargo build --features godot-bindings
-cd ../../examples/crpg_playtest
+cd ../../engine
+cargo build -p louder_godot
+cd ../examples/crpg_playtest
 
 Remove-Item -Recurse Louder
 New-Item -ItemType Directory -Name "Louder"
-Copy-Item -Recurse ../../engine/louder_rust/target Louder/
+Copy-Item -Recurse ../../engine/target Louder/
 
 godot -e .

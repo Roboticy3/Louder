@@ -1,7 +1,24 @@
 # Engine
 
-When modifying the engine, run .\build_and_test.ps1 from the engine/ directory
-to validate the behavior of the engine on its own.
+`engine/` is a cargo workspace with two packages:
+
+- `louder_rust` is the engine: a plain Rust library with a `extern "C"`
+  boundary, and no dependency on any host language. Its docstrings are the
+  authoritative documentation of what the engine does.
+- `louder_godot` is the Godot adapter: a GDExtension that depends on
+  `louder_rust` and declares Godot classes over its types. It holds no engine
+  logic, only the wrappers.
+
+A new adapter for another language is a third package in that workspace,
+depending on `louder_rust` the same way. Rust does not allow an `impl` block for
+a type outside the crate that defines it, which is why the adapter wraps each
+engine type in a newtype of its own rather than extending it.
+
+When modifying the engine, run `.\build_and_test.ps1` from the `engine/`
+directory to build `louder_rust` alone, regenerate its C header, and run the C++
+tests against it. The example project has its own runner for the Godot side: from
+`examples/crpg_playtest`, `.\run_test.ps1 test_names.gd` builds the extension and
+checks that every method it registers is reachable under its own name.
 
 # Examples
 

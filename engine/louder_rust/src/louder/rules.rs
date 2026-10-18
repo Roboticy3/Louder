@@ -1,11 +1,11 @@
 //! The rules a host turns on and off.
 //!
-//! The rules themselves are a set of bits, which crosses into Godot as an
-//! `int`. [`DialogueRules`] is the class that turns those bits into the names a
-//! host actually wants to write in GDScript.
-
-#[cfg(feature = "godot-bindings")]
-use super::godot_api::{Array, GString};
+//! The rules themselves are a set of bits. A host reads and writes the whole
+//! configuration at once through
+//! [`LouderContext::rules`](super::context::LouderContext) and
+//! [`LouderContext::set_rules`](super::context::LouderContext), and gets the
+//! names to hand it from [`DialogueRules::from_name`] and
+//! [`DialogueRules::names`] rather than hard-coding the bits.
 
 bitflags::bitflags! {
   /// The dialogue rules a host can turn on and off.
@@ -36,52 +36,21 @@ bitflags::bitflags! {
   }
 }
 
-/// The dialogue rules, read and written by name.
-///
-/// A host reads and writes the whole configuration at once through
-/// [`LouderContext::get_dialogue_rules`](super::context::LouderContext) and
-/// [`LouderContext::set_dialogue_rules`](super::context::LouderContext), which
-/// take the bits. This class is how a GDScript writer gets at those bits
-/// without hard-coding them: pass the names they care about, and read back the
-/// names currently set.
-#[cfg_attr(feature = "godot-bindings", derive(::godot::prelude::GodotClass))]
-#[cfg_attr(feature = "godot-bindings", class(init, tool))]
-pub struct LouderDialogueRules {}
-
-godot_api! {
-  impl LouderDialogueRules {
-    /// The bits of a fresh engine, which has every rule on.
-    #[func]
-    pub fn defaults() -> i32 {
-      DialogueRules::all().bits()
+impl DialogueRules {
+  /// The name of each rule set, in declaration order.
+  ///
+  /// [`DialogueRules::from_name`] is the way back the other way, and returns
+  /// `None` for a name this build does not know, so a host carrying a
+  /// configuration written for a newer engine is not stopped by one.
+  pub fn names(&self) -> Vec<&'static str> {
+    let mut names: Vec<&'static str> = Vec::new();
+    if self.contains(DialogueRules::SPOKE) {
+      names.push("SPOKE");
     }
-
-    /// The bits named by `names`, ignoring anything that is not a rule.
-    #[func]
-    pub fn from_names(names: Array<GString>) -> i32 {
-      let mut rules = DialogueRules::empty();
-      for name in names.iter_shared() {
-        rules |= match &*name.to_string() {
-          "SPOKE" => DialogueRules::SPOKE,
-          "SINGLEPLAYER" => DialogueRules::SINGLEPLAYER,
-          _ => DialogueRules::empty(),
-        };
-      }
-      rules.bits()
+    if self.contains(DialogueRules::SINGLEPLAYER) {
+      names.push("SINGLEPLAYER");
     }
-
-    /// The names of the rules set in `bits`.
-    #[func]
-    pub fn to_names(bits: i32) -> Array<GString> {
-      let rules = DialogueRules::from_bits_truncate(bits);
-      let mut names: Vec<GString> = Vec::new();
-      if rules.contains(DialogueRules::SPOKE) {
-        names.push(GString::from("SPOKE"));
-      }
-      if rules.contains(DialogueRules::SINGLEPLAYER) {
-        names.push(GString::from("SINGLEPLAYER"));
-      }
-      names.into_iter().collect()
-    }
+    names
   }
 }
+

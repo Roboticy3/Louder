@@ -100,7 +100,6 @@ inliner = true
 layout_mode = 2
 size_flags_vertical = 0
 placeholder_text = "Description"
-wrap_mode = 0
 inliner = true
 
 [node name="flags" type="HBoxContainer" parent="TextSectionWrapper" unique_id=350594 groups=["hub_component"]]

@@ -6,8 +6,6 @@
 //! the context as it stands, and both are written in a fixed order so that
 //! asking twice gives the same bytes.
 
-#[cfg(feature = "godot-bindings")]
-use super::godot_api::{Gd, GString};
 use super::context::LouderContext;
 use super::name::{LouderInternContext, LouderName};
 use super::object::LouderVariant;
@@ -143,40 +141,3 @@ pub fn snapshot(context: &LouderContext, conversation: LouderName) -> Option<Str
   Some(format!("{{\"state\":{},\"actors\":{}}}", state, actors))
 }
 
-/// What the engine holds, written back out as JSON.
-///
-/// Every document is assembled from the context as it stands, and both are
-/// written in a fixed order, so that asking twice gives the same bytes. The
-/// C boundary returns these through a caller's buffer; here they are just
-/// strings.
-#[cfg_attr(feature = "godot-bindings", derive(::godot::prelude::GodotClass))]
-#[cfg_attr(feature = "godot-bindings", class(init, tool))]
-pub struct LouderJson {}
-
-godot_api! {
-  impl LouderJson {
-    /// The whole story state of a conversation, as a JSON object.
-    ///
-    /// Every bucket is included: the conversation's own saved and unsaved
-    /// variables, and the shared ones.
-    #[func]
-    pub fn state(context: Gd<LouderContext>, conversation: LouderName) -> GString {
-      let context = context.bind();
-      GString::from(state(&context, conversation).as_str())
-    }
-
-    /// The story state and every actor of a conversation, as a JSON document
-    /// with a `state` object and an `actors` array.
-    ///
-    /// An empty string stands for a conversation that is not loaded, since
-    /// there is then nothing to describe.
-    #[func]
-    pub fn snapshot(context: Gd<LouderContext>, conversation: LouderName) -> GString {
-      let context = context.bind();
-      match snapshot(&context, conversation) {
-        Some(document) => GString::from(document.as_str()),
-        None => GString::from(""),
-      }
-    }
-  }
-}

@@ -9,11 +9,14 @@
 //!
 //! None of it is reachable from GDScript. The three buffer helpers below exist
 //! because a C caller owns its own memory and the engine does not; Godot hands
-//! over a [`String`] that is already copied, so the
-//! corresponding methods on [`LouderContext`](super::context::LouderContext)
-//! take and return strings directly and never need to ask these questions.
-//! [`LouderError`] is the one piece of vocabulary that survives, and
-//! [`LouderStatus`] is the class that names its codes.
+//! over a [`String`] that is already copied, so an adapter can take and return
+//! text directly and never need to ask these questions. [`LouderError`] is the
+//! one piece of vocabulary that survives, and an adapter is free to name its
+//! codes however it likes.
+//!
+//! Bytes are bytes. Nothing here knows what encoding a caller wrote them in or
+//! reads them back out, because the engine never displays anything and so has no
+//! opinion on the matter.
 
 use super::name::{LouderName, LouderNameContent};
 
@@ -34,53 +37,17 @@ pub enum LouderOption<T> {
   Some(T)
 }
 
-/// The status codes an engine operation reports.
+/// Copy `bytes` into `buffer`, truncating if needed, and null terminate.
 ///
-/// A Godot caller mostly gets a `bool` back, since an operation either worked
-/// or the thing it was asked for was not there. This class is for the cases
-/// where the code itself matters, such as a load failure, which has a family
-/// of them; see [`LouderLoader`](super::json_loader::LouderLoader).
-#[cfg_attr(feature = "godot-bindings", derive(::godot::prelude::GodotClass))]
-#[cfg_attr(feature = "godot-bindings", class(init, tool))]
-pub struct LouderStatus {}
-
-godot_api! {
-  impl LouderStatus {
-    /// The code an operation returns when it worked.
-    #[func]
-    pub fn ok() -> i32 {
-      LouderError::Ok as i32
-    }
-
-    /// The code an operation returns when the thing it was asked for is not
-    /// there.
-    #[func]
-    pub fn missing() -> i32 {
-      LouderError::Missing as i32
-    }
-
-    /// What a code means, for a host that would rather read a name than a
-    /// number.
-    #[func]
-    pub fn name(code: i32) -> super::godot_api::GString {
-      super::godot_api::GString::from(match code {
-        0 => "OK",
-        1 => "MISSING",
-        _ => "UNKNOWN",
-      })
-    }
-  }
-}
-
-/// Copy `text` into `buffer`, truncating if needed, and null terminate.
-///
-/// Returns the number of bytes written, excluding the terminator.
-pub(crate) fn write_text(buffer: *mut u8, max_size: usize, text: &str) -> usize {
+/// Returns the number of bytes written, excluding the terminator. The bytes are
+/// copied through unchanged, so whatever the caller put in is what comes back
+/// out; the terminator is a convenience for callers treating the buffer as C
+/// text, and the return value is what a caller should trust instead.
+pub(crate) fn write_bytes(buffer: *mut u8, max_size: usize, bytes: &[u8]) -> usize {
   if buffer.is_null() {
     return 0;
   }
 
-  let bytes = text.as_bytes();
   let length = bytes.len().min(max_size);
 
   unsafe {

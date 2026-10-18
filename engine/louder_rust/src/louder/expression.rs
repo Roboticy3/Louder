@@ -1,13 +1,8 @@
-#[cfg(feature = "godot-bindings")]
-use super::godot_api::{Array, GString, Gd};
 use super::context::LouderContext;
 use super::event::*;
 use super::name::*;
 use super::actor::LouderActor;
 use super::object::{ArithOp, CmpOp, LouderVariant, VariantKind};
-
-#[cfg(feature = "godot-bindings")]
-use super::name::LouderInternContext;
 
 /// A snippet of code, identified by the interned copy of its own source text.
 ///
@@ -76,8 +71,6 @@ pub enum Token {
 
 /// An expression the engine could not read.
 #[derive(Debug, Clone, PartialEq, Default)]
-#[cfg_attr(feature = "godot-bindings", derive(::godot::prelude::GodotClass))]
-#[cfg_attr(feature = "godot-bindings", class(init, tool))]
 pub struct ParseError {
   pub message: String,
   pub offset: usize,
@@ -466,8 +459,6 @@ pub enum Evaluation {
 /// Identifies who an expression is being evaluated for, so that story state,
 /// events, and asks can all be attributed correctly.
 #[derive(Debug, Clone, Default)]
-#[cfg_attr(feature = "godot-bindings", derive(::godot::prelude::GodotClass))]
-#[cfg_attr(feature = "godot-bindings", class(init, tool))]
 pub struct EvaluationScope {
   pub conversation: LouderName,
   pub actor: LouderActor,
@@ -520,8 +511,6 @@ impl ExpressionHost for LouderContext {
 /// deferred until the expression has evaluated completely, so a retry cannot
 /// apply the same assignment twice.
 #[derive(Default, Clone)]
-#[cfg_attr(feature = "godot-bindings", derive(::godot::prelude::GodotClass))]
-#[cfg_attr(feature = "godot-bindings", class(init, tool))]
 pub struct Evaluator {
   scope: EvaluationScope,
 }
@@ -940,178 +929,5 @@ fn bin_op_text(op: BinOp) -> &'static str {
   }
 }
 
-godot_api! {
-  impl ParseError {
-    /// What went wrong, in the engine's own words.
-    #[func]
-    pub fn get_message(&self) -> GString {
-      GString::from(self.message.as_str())
-    }
 
-    /// How far into the expression the engine got before giving up.
-    #[func]
-    pub fn get_offset(&self) -> i32 {
-      self.offset as i32
-    }
-  }
-}
 
-godot_api! {
-  impl EvaluationScope {
-    /// A scope attributing events and asks to `actor` in `conversation`.
-    #[func]
-    pub fn create(conversation: LouderName, actor: LouderActor, channel: LouderName) -> Gd<EvaluationScope> {
-      Gd::from_object(EvaluationScope::new(conversation, actor, channel))
-    }
-
-    /// The conversation story state is read from.
-    #[func]
-    pub fn get_conversation(&self) -> LouderName {
-      self.conversation
-    }
-
-    /// The actor this evaluation is for.
-    #[func]
-    pub fn get_actor(&self) -> LouderActor {
-      self.actor
-    }
-
-    /// The channel this evaluation is for.
-    #[func]
-    pub fn get_channel(&self) -> LouderName {
-      self.channel
-    }
-
-    /// The move that triggered this evaluation, if any.
-    #[func]
-    pub fn get_motion(&self) -> Option<Gd<Motion>> {
-      self.motion.as_ref().map(|motion| Gd::from_object(motion.clone()))
-    }
-
-    /// Record the move that triggered this evaluation.
-    #[func(rename = "set_motion")]
-    pub fn gd_set_motion(&mut self, motion: Gd<Motion>) {
-      self.motion = Some(motion.bind().clone());
-    }
-  }
-}
-
-godot_api! {
-  impl Evaluator {
-    /// An evaluator that attributes everything it produces to `scope`.
-    #[func]
-    pub fn create(scope: Gd<EvaluationScope>) -> Gd<Evaluator> {
-      Gd::from_object(Evaluator::new(scope.bind().clone()))
-    }
-
-    /// Who this evaluator attributes its events and asks to.
-    #[func]
-    pub fn get_scope(&self) -> Gd<EvaluationScope> {
-      Gd::from_object(self.scope().clone())
-    }
-
-    /// Evaluate `source`, reporting what happened.
-    ///
-    /// Returns 0 for a value, 1 if the expression raised an ask and is waiting
-    /// on the host, and 2 if it could not be read. Use the `evaluate_*` methods
-    /// for the value itself.
-    #[func(rename = "evaluate")]
-    pub fn gd_evaluate(&self, context: Gd<LouderContext>, source: GString) -> i32 {
-      let mut context = context;
-      let mut context = context.bind_mut();
-      match self.evaluate(&mut context, &source.to_string()) {
-        Ok(Evaluation::Value(_)) => 0,
-        Ok(Evaluation::Suspended) => 1,
-        Err(_) => 2,
-      }
-    }
-
-    /// Evaluate `source` and read the result as an integer, or 0.
-    #[func]
-    pub fn evaluate_int(&self, context: Gd<LouderContext>, source: GString) -> i32 {
-      let mut context = context;
-      let mut context = context.bind_mut();
-      match self.evaluate(&mut context, &source.to_string()) {
-        Ok(Evaluation::Value(value)) => value.as_int(),
-        _ => 0,
-      }
-    }
-
-    /// Evaluate `source` and read the result as a float, or 0.0.
-    #[func]
-    pub fn evaluate_float(&self, context: Gd<LouderContext>, source: GString) -> f64 {
-      let mut context = context;
-      let mut context = context.bind_mut();
-      match self.evaluate(&mut context, &source.to_string()) {
-        Ok(Evaluation::Value(value)) => value.as_float() as f64,
-        _ => 0.0,
-      }
-    }
-
-    /// Evaluate `source` and read the result as a name, or
-    /// [`LOUDER_NAME_NONE`].
-    #[func]
-    pub fn evaluate_name(&self, context: Gd<LouderContext>, source: GString) -> LouderName {
-      let mut context = context;
-      let mut context = context.bind_mut();
-      match self.evaluate(&mut context, &source.to_string()) {
-        Ok(Evaluation::Value(LouderVariant::String(name))) => name,
-        _ => LOUDER_NAME_NONE,
-      }
-    }
-
-    /// What went wrong reading `source`, if anything did.
-    #[func]
-    pub fn parse(source: GString) -> Option<Gd<ParseError>> {
-      match parse(&source.to_string()) {
-        Ok(_) => None,
-        Err(error) => Some(Gd::from_object(error)),
-      }
-    }
-
-    /// Whether `source` is a condition or a statement, as an
-    /// [`ExpressionKind`] index.
-    #[func]
-    pub fn classify(source: GString) -> i32 {
-      match classify(&source.to_string()) {
-        ExpressionKind::Condition => 0,
-        ExpressionKind::Statement => 1,
-      }
-    }
-
-    /// Whether `source` only reads story state, and so can be re-run freely.
-    #[func]
-    pub fn reads_only(source: GString) -> bool {
-      match parse(&source.to_string()) {
-        Ok(expression) => reads_only(&expression),
-        Err(_) => true,
-      }
-    }
-
-    /// The tokens of `source`, as text, with the end of input as a final empty
-    /// entry. Useful for reporting where an expression stopped making sense.
-    #[func]
-    pub fn tokenize(source: GString) -> Array<GString> {
-      match tokenize(&source.to_string()) {
-        Ok(tokens) => tokens
-          .iter()
-          .map(|token| GString::from(format!("{token:?}").as_str()))
-          .collect(),
-        Err(_) => Array::new(),
-      }
-    }
-
-    /// Whether the condition `source` holds, without changing anything.
-    ///
-    /// An ask inside a condition contributes 0, since it has no verdict yet,
-    /// and an unknown function contributes 0 too.
-    #[func]
-    pub fn condition_holds(context: Gd<LouderContext>, conversation: LouderName, source: GString) -> bool {
-      let Ok(expression) = parse(&source.to_string()) else {
-        return false;
-      };
-      let context = context.bind();
-      condition_holds(&context, conversation, &expression)
-    }
-  }
-}

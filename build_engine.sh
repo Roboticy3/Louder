@@ -18,7 +18,7 @@ PROFILE="${PROFILE:-release}"
 STAGE="${STAGE:-site}"
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-crate="$repo_root/engine/louder_rust"
+workspace="$repo_root/engine"
 stage="$repo_root/$STAGE"
 
 # Matches the platform names in the workflow matrix, so a build job and its
@@ -59,9 +59,11 @@ if ! command -v cbindgen >/dev/null 2>&1; then
 fi
 
 echo "building louder_rust ($PROFILE) for $platform"
-cd "$crate"
+cd "$workspace"
+# The engine on its own: the C boundary is what this publishes, and the Godot
+# adapter in louder_godot is not part of it.
 cargo build -p louder_rust --profile "$cargo_profile"
-cbindgen --config cbindgen.toml --crate louder_rust --output "target/$target_dir/louder_rust.h"
+cbindgen --config louder_rust/cbindgen.toml --crate louder_rust --output "target/$target_dir/louder_rust.h"
 
 mkdir -p "$stage"
 cp "target/$target_dir/$library" "$stage/$library"

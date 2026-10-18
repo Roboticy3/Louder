@@ -1,0 +1,14 @@
+# The engine and the adapters that expose it.
+#
+# `louder_rust` is the engine itself: a plain Rust library with a C boundary, and
+# nothing else. `louder_godot` is the Godot adapter, and depends on the engine as
+# an ordinary library. Keeping them in one workspace means the engine's
+# dependencies and the adapter's are built once and share a target directory, so
+# a build of the Godot extension is a build of the engine with the adapter on
+# top rather than two independent builds.
+#
+# A third adapter, for another language, is a member here that depends on
+# `louder_rust` the same way `louder_godot` does. It does not change the engine.
+[workspace]
+members = ["louder_rust", "louder_godot"]
+resolver = "3"

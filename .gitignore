@@ -13,6 +13,11 @@ docs/docs/rustdoc/**
 **.dll
 **louder_rust.h
 **louder_rust.dll
+**louder_rust.so
+**louder_rust.dylib
+**louder_godot.dll
+**louder_godot.so
+**louder_godot.dylib
 
 # Staged engine binaries, assembled by build_engine.sh for the publish job
 /site/

@@ -1,0 +1,15 @@
+[package]
+name = "louder_godot"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "louder_godot"
+path = "src/lib.rs"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+godot = "0.5.5"
+# The engine, with the shared registration machinery turned on. Nothing else in
+# here depends on how the engine is built.
+louder_rust = { path = "../louder_rust", features = ["godot-bindings"] }

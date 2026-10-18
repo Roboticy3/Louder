@@ -6,20 +6,27 @@ edition = "2024"
 [lib]
 name = "louder_rust"
 path = "src/lib.rs"
-crate-type = ["cdylib"]
+# The rlib is what `louder_godot` links against; the cdylib is what the C header
+# in `tests/` is compiled and run against.
+crate-type = ["cdylib", "rlib"]
 
 [features]
-# Turns the Godot classes and their methods on. With `--no-default-features`
-# the engine compiles as an ordinary Rust library and every `godot_class!` and
-# `godot_api!` invocation expands to nothing, leaving the C interface in the
-# crate root as the only thing outside it.
+# The shared machinery an adapter crate needs in order to declare Godot classes
+# of its own, and nothing else. The engine registers no classes itself: it is
+# reached from Godot, or from any other host, through the C boundary below, and
+# `godot_api!` lives here only so that every adapter spells registration the
+# same way.
+#
+# With the feature off, `godot` is not compiled at all, so the C header, the C++
+# tests, and any host that does not care about Godot build against the engine
+# alone. `louder_godot` turns it on because it is the crate that registers
+# classes.
 default = []
-godot-bindings = []
+godot-bindings = ["dep:godot"]
 
 [dependencies]
 bitflags = "2.13.2"
-encoding = "0.2.33"
-godot = "0.5.5"
+godot = { version = "0.5.5", optional = true }
 serde_json = "1.0.151"
 strum = "0.28.0"
 strum_macros = "0.28.0"
