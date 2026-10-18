@@ -1,8 +1,9 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3 uid="uid://dji0px8iqhv25"]
 
-[ext_resource type="Script" path="res://ui/main_menu.gd" id="1_main_menu"]
+[ext_resource type="Script" uid="uid://djdbv10huovjm" path="res://ui/main_menu.gd" id="1_main_menu"]
 
-[node name="MainMenu" type="Control" node_paths=PackedStringArray("address_edit", "port_edit", "host_button", "join_button", "dedicated_button", "status_label")]
+[node name="MainMenu" type="Control" unique_id=693359571 node_paths=PackedStringArray("address_edit", "port_edit", "host_button", "join_button", "dedicated_button", "status_label")]
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -16,8 +17,8 @@ join_button = NodePath("Center/Box/Buttons/Join")
 dedicated_button = NodePath("Center/Box/Buttons/Dedicated")
 status_label = NodePath("Center/Box/Status")
 
-[node name="Background" type="ColorRect" parent="."]
-anchors_preset = 15
+[node name="Background" type="ColorRect" parent="." unique_id=1171220922]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
@@ -25,61 +26,61 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.086, 0.098, 0.129, 1)
 
-[node name="Center" type="CenterContainer" parent="."]
-anchors_preset = 15
+[node name="Center" type="CenterContainer" parent="." unique_id=357916404]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Box" type="VBoxContainer" parent="Center"]
+[node name="Box" type="VBoxContainer" parent="Center" unique_id=920249498]
 custom_minimum_size = Vector2(420, 0)
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="Title" type="Label" parent="Center/Box"]
+[node name="Title" type="Label" parent="Center/Box" unique_id=425052078]
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
 text = "CRPG Playtest"
 horizontal_alignment = 1
 
-[node name="AddressLabel" type="Label" parent="Center/Box"]
+[node name="AddressLabel" type="Label" parent="Center/Box" unique_id=161773965]
 layout_mode = 2
 text = "Address"
 
-[node name="AddressEdit" type="LineEdit" parent="Center/Box"]
+[node name="AddressEdit" type="LineEdit" parent="Center/Box" unique_id=1693321412]
 layout_mode = 2
 text = "127.0.0.1"
 
-[node name="PortLabel" type="Label" parent="Center/Box"]
+[node name="PortLabel" type="Label" parent="Center/Box" unique_id=83553097]
 layout_mode = 2
 text = "Port"
 
-[node name="PortEdit" type="LineEdit" parent="Center/Box"]
+[node name="PortEdit" type="LineEdit" parent="Center/Box" unique_id=1831007560]
 layout_mode = 2
 text = "7000"
 
-[node name="Buttons" type="HBoxContainer" parent="Center/Box"]
+[node name="Buttons" type="HBoxContainer" parent="Center/Box" unique_id=1629823361]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="Host" type="Button" parent="Center/Box/Buttons"]
+[node name="Host" type="Button" parent="Center/Box/Buttons" unique_id=746268398]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Host"
 
-[node name="Join" type="Button" parent="Center/Box/Buttons"]
+[node name="Join" type="Button" parent="Center/Box/Buttons" unique_id=1546006019]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Join"
 
-[node name="Dedicated" type="Button" parent="Center/Box/Buttons"]
+[node name="Dedicated" type="Button" parent="Center/Box/Buttons" unique_id=540948780]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Dedicated server"
 
-[node name="Status" type="Label" parent="Center/Box"]
+[node name="Status" type="Label" parent="Center/Box" unique_id=1455709152]
 layout_mode = 2
 horizontal_alignment = 1
 autowrap_mode = 3

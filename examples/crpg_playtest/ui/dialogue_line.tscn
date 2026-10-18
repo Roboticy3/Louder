@@ -1,0 +1,22 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://ui/dialogue_line.gd" id="1_dialogue_line"]
+
+[node name="DialogueLine" type="VBoxContainer" node_paths=PackedStringArray("speaker_label", "text_label")]
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+script = ExtResource("1_dialogue_line")
+speaker_label = NodePath("Speaker")
+text_label = NodePath("Text")
+
+[node name="Speaker" type="Label" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.749, 0.788, 0.898, 1)
+theme_override_font_sizes/font_size = 14
+text = "Speaker"
+
+[node name="Text" type="Label" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+autowrap_mode = 3

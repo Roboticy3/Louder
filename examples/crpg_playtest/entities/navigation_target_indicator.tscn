@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://diuoqkb3kjjwc"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nunj6"]
+albedo_color = Color(0.9633989, 0.8790815, 0.36126953, 1)
+
+[node name="NavigationTargetIndicator" type="Node3D" unique_id=956122953]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=1093567414]
+size = Vector3(0.3, 0.3, 0.3)
+material = SubResource("StandardMaterial3D_nunj6")

@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://1bw8rjpjpxfx" path="res://entities/character_avatar.gd" id="1_re4tr"]
 [ext_resource type="Script" uid="uid://bfmfyrb05cbqo" path="res://entities/interactable_object.gd" id="2_xu1r8"]
+[ext_resource type="PackedScene" uid="uid://d05i5kvek53t4" path="res://Blender/Mannequin.blend" id="3_nb3o6"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_nunj6"]
 
@@ -14,6 +15,8 @@ navigation_agent = NodePath("CharacterBody3D/NavigationAgent3D")
 script = ExtResource("2_xu1r8")
 interact_position_marker = NodePath("Marker3D")
 
+[node name="Mannequin" parent="CharacterBody3D" unique_id=1107157270 instance=ExtResource("3_nb3o6")]
+
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="CharacterBody3D" unique_id=490416713]
 path_height_offset = 0.2
 
@@ -21,9 +24,5 @@ path_height_offset = 0.2
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 shape = SubResource("CapsuleShape3D_nunj6")
 
-[node name="CSGBox3D" type="CSGBox3D" parent="CharacterBody3D" unique_id=680967864]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-size = Vector3(1, 2, 1)
-
 [node name="Marker3D" type="Marker3D" parent="CharacterBody3D" unique_id=1851467117]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.3999999)

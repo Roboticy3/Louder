@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dp8ynccgwt6de"]
 
-[ext_resource type="PackedScene" uid="uid://b0gocjddbmln" path="res://entities/InteractableObject.tscn" id="1_1bvp3"]
+[ext_resource type="PackedScene" uid="uid://b0gocjddbmln" path="res://entities/interactable_object.tscn" id="1_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://brhato47qf82l" path="res://Blender/Merchant.glb" id="1_ig7tw"]
 [ext_resource type="PackedScene" uid="uid://bd2nfoignl8mj" path="res://entities/character_avatar.tscn" id="2_h2yge"]
 [ext_resource type="PackedScene" uid="uid://ms8dxd6kmlpu" path="res://controllers/character_avatar_controller_single.tscn" id="3_1bvp3"]

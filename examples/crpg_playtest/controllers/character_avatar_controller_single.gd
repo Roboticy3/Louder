@@ -8,6 +8,7 @@ class_name CharacterAvatarControllerSingle extends Node
 			locate_character()
 
 @export var camera_rig:CameraRigSimple 
+@export var target_marker:Node3D
 
 var locate_timer:Timer
 signal controlled_avatar_changed(to: CharacterAvatar)
@@ -45,16 +46,18 @@ func _ready() -> void:
 	add_child(locate_timer)
 	
 	locate_character()
+	
+	target_marker.visible = false
 
 var camera_ray_out := false
 func _physics_process(_delta: float) -> void:
 	var result:Dictionary
-	if Input.is_action_pressed("c_click_move"):
+	if controlled_avatar and Input.is_action_pressed("c_click_move"):
 		var mouse_pos := camera_rig.camera.get_viewport().get_mouse_position()
 		var ray_o := camera_rig.camera.project_ray_origin(mouse_pos)
 		var ray_n := camera_rig.camera.project_ray_normal(mouse_pos)
 		DebugDraw3d.draw_ray(ray_o, ray_o + ray_n * 100, Color.RED)
-		var query := PhysicsRayQueryParameters3D.create(ray_o, ray_o + ray_n * 100)
+		var query := PhysicsRayQueryParameters3D.create(ray_o, ray_o + ray_n * 100, -1, [controlled_avatar.body])
 		
 		var space_state := camera_rig.camera.get_world_3d().direct_space_state
 		result = space_state.intersect_ray(query)
@@ -69,7 +72,12 @@ func _physics_process(_delta: float) -> void:
 		var position = result.position
 		var collider = result.collider
 		if collider is InteractableObject:
+			position = collider.get_interact_position()
 			controlled_avatar.navigate_to_interactable_rpc.rpc_id(1, collider.get_path())
 		else:
 			controlled_avatar.navigate_to_position_rpc.rpc_id(1, position)
 		
+		target_marker.position = position
+	
+	if controlled_avatar:
+		target_marker.visible = !controlled_avatar.navigation_agent.is_target_reached()
