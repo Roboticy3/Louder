@@ -30,7 +30,7 @@ func _ready() -> void:
 
 func _on_conversation_started(c:int, source:NodePath):
 	if source == get_path():
-		LouderContextGlobal.connect_actor.rpc_id(1, c, ["start"], 1, [player_speaker], [])
+		LouderContextGlobal.connect_actor.rpc_id(1, c, ["start"], actor_flags, [player_speaker], [])
 
 func _on_actor_added(c:int, a:int):
 	var speaker_name:int = LouderContextGlobal.context.make_name(player_speaker)

@@ -44,11 +44,15 @@ foreach ($argument in $args) {
   # that, so every argument is treated as text before it is inspected.
   $argument = [string]$argument
   if ($argument.EndsWith(".gd") -and -not $argument.Contains("://")) {
+    # A bare script name is one of the tests, and the tests live in tests/ next
+    # to the runner, so the short name is the one worth typing. A name with a
+    # path in it is taken as given.
+    if (-not $argument.Contains("/")) { $argument = "tests/$argument" }
     $testArguments += "res://$argument"
   } else {
     $testArguments += $argument
   }
 }
 
-& godot --headless --path $project --script res://test_runner.gd -- @testArguments
+& godot --headless --path $project --script res://tests/test_runner.gd -- @testArguments
 exit $LASTEXITCODE

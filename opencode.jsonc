@@ -10,5 +10,9 @@
     {
       "action": "git diff *", "resource": "*", "effect": "allow"
     },
+
+    {
+      "action": "read", "resource": "engine/bindings/*", "effect": "deny"
+    }
   ]
 }

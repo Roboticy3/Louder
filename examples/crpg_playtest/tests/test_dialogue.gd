@@ -23,6 +23,11 @@ func _ready() -> void:
 	if scene != null:
 		_dialogue = scene.instantiate() as Control
 		add_child(_dialogue)
+		# Two frames, because the scene asks the autoload to start its conversation
+		# as a deferred call: the scene has to be up and listening before the
+		# answer comes back, and a deferred call waits for the scene's own _ready
+		# to be over first.
+		await get_tree().process_frame
 		await get_tree().process_frame
 
 		var conversation: int = _dialogue.conversation

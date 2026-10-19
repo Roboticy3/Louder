@@ -1071,7 +1071,7 @@ if ctx.is_null() || buffer.is_null() {
 }
 
 let bytes = unsafe { std::slice::from_raw_parts(buffer, max_size) };
-let document = match decode(bytes) {
+let document: &str = match decode(bytes) {
   Ok(document) => document,
   Err(error) => return error,
 };
