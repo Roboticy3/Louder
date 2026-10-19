@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://cjjkwvrv3lhxw" path="res://ui/scrolling_dialogue.gd" id="1_scrolling_dialogue"]
 [ext_resource type="PackedScene" path="res://ui/dialogue_line.tscn" id="2_dialogue_line"]
 [ext_resource type="PackedScene" path="res://ui/dialogue_choice.tscn" id="3_dialogue_choice"]
+[ext_resource type="PackedScene" uid="uid://duecvsytbpui1" path="res://controllers/dialogue_debug_controller.tscn" id="4_ij8a5"]
 
 [node name="ScrollingDialogue" type="Control" unique_id=527292302 node_paths=PackedStringArray("scroll_container", "lines", "choices")]
 layout_mode = 3
@@ -59,3 +60,5 @@ theme_override_constants/separation = 6
 [node name="Control" type="Control" parent="VSplitContainer" unique_id=1027195600]
 layout_mode = 2
 size_flags_vertical = 3
+
+[node name="DialogueDebugController" parent="." unique_id=1355120518 instance=ExtResource("4_ij8a5")]

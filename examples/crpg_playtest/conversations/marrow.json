@@ -37,14 +37,6 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "8",
-		"position_offset:x": "620.0",
-		"position_offset:y": "760.0",
-		"speaker": "Note",
-		"text": "7 is an Auto domination of 6",
-		"type": "hub"
-	},
-	{
 		"conversation_id": "3",
 		"flags": "4",
 		"position_offset:x": "100.0",
@@ -61,14 +53,6 @@
 		"position_offset:y": "1120.0",
 		"speaker": "Geno",
 		"text": "\"Hello Marrow.\"",
-		"type": "hub"
-	},
-	{
-		"conversation_id": "6",
-		"position_offset:x": "1000.0",
-		"position_offset:y": "1040.0",
-		"speaker": "Marrow",
-		"text": "\"The Morehai is both hot and cold. If you're planning something, bring plenty of water and all the right fabrics.\"",
 		"type": "hub"
 	},
 	{
@@ -181,6 +165,248 @@
 		"position_offset:y": "-740.0",
 		"speaker": "Note",
 		"text": "Marrow is getting protection from the Bani-Manci from the Rouge Bandits. But one of the implicit conditions is silence. Freya is able to tell this is what's happening just from her stance. Nothing needs to be said.",
+		"type": "hub"
+	},
+	{
+		"choices": "3",
+		"conversation_id": "6",
+		"position_offset:x": "1060.0",
+		"position_offset:y": "500.0",
+		"speaker": "Marrow",
+		"text": "\"The Morehai is both hot and cold. If you're planning something, bring plenty of water and all the right fabrics.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "26",
+		"position_offset:x": "1839.43701171875",
+		"position_offset:y": "11.1564178466797",
+		"speaker": "Geno",
+		"text": "\"How's business?\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "27",
+		"position_offset:x": "2260.0",
+		"position_offset:y": "20.0",
+		"speaker": "Evil",
+		"text": "Realistically, why am I talking to her? Might as well pry a little.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "31",
+		"position_offset:x": "2600.0",
+		"position_offset:y": "2160.0",
+		"speaker": "Sight",
+		"text": "Freya was surprised when she felt relief at the thought of being blind, at the thought of not being troubled by the exact color and shape of things. ",
+		"type": "hub"
+	},
+	{
+		"choices": "3",
+		"conversation_id": "28",
+		"position_offset:x": "2700.0",
+		"position_offset:y": "20.0",
+		"speaker": "Marrow",
+		"text": "\"Fine. Just fine. And what's that to you, young man? Slow day?\" The old woman changes her stance. Suddenly, two businessmen doing business.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "33",
+		"position_offset:x": "3640.0",
+		"position_offset:y": "-900.0",
+		"speaker": "Geno",
+		"text": "\"Maybe you don't understand.\"",
+		"type": "hub"
+	},
+	{
+		"choices": "2",
+		"conversation_id": "34",
+		"flags": "1",
+		"position_offset:x": "3180.0",
+		"position_offset:y": "120.0",
+		"speaker": "Good",
+		"text": "Do the right thing.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "36",
+		"position_offset:x": "3300.0",
+		"position_offset:y": "-420.0",
+		"speaker": "Note",
+		"text": "Dice check:\n - Auto node\n - Link to a node with a \"check\" ask",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "32",
+		"flags": "5",
+		"position_offset:x": "3240.0",
+		"position_offset:y": "-940.0",
+		"recipients": "Geno",
+		"text": "(Keep arguing)",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "30",
+		"flags": "4",
+		"position_offset:x": "2240.0",
+		"position_offset:y": "2180.0",
+		"recipients": "Freya",
+		"speaker": "Marrow",
+		"text": "The leatherworking shop is warm, and it's been here for a long time. The small shopkeep has seen things, though on closer inspection her eyes are poor.",
+		"type": "hub"
+	},
+	{
+		"choices": "2",
+		"conversation_id": "29",
+		"position_offset:x": "1700.0",
+		"position_offset:y": "2100.0",
+		"text": "(Look around the shop)",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "25",
+		"position_offset:x": "1740.0",
+		"position_offset:y": "760.0",
+		"text": "\"What do you have?\"",
+		"type": "hub"
+	},
+	{
+		"choices": "4",
+		"conversation_id": "37",
+		"position_offset:x": "2200.0",
+		"position_offset:y": "760.0",
+		"speaker": "Marrow",
+		"text": "\"Oh. Not much today.\" She effortfully pulls an ancient drawer off its rails and places it on the counter.",
+		"type": "hub"
+	},
+	{
+		"choices": "2",
+		"conversation_id": "38",
+		"position_offset:x": "3660.0",
+		"position_offset:y": "160.0",
+		"speaker": "Evil",
+		"text": "The \"right\" thing? In 10 Thousand years, our determination will have decided our memory. Don't let this pitiful creature stand in our way. This business is only the beginning.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "39",
+		"flags": "4",
+		"position_offset:x": "4140.0",
+		"position_offset:y": "140.0",
+		"recipients": "Geno",
+		"text": "Wait, what am I about to do exactly?",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "42",
+		"position_offset:x": "5500.0",
+		"position_offset:y": "240.0",
+		"speaker": "Evil",
+		"text": "Correct. ",
+		"type": "hub"
+	},
+	{
+		"choices": "2",
+		"conversation_id": "40",
+		"position_offset:x": "4620.0",
+		"position_offset:y": "140.0",
+		"speaker": "Rhetoric",
+		"text": "Use words. Create a situation where my existence is so above hers that there's nothing left for her to do.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "41",
+		"flags": "4",
+		"position_offset:x": "5080.0",
+		"position_offset:y": "120.0",
+		"recipients": "Geno",
+		"text": "That feels wrong.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "43",
+		"flags": "4",
+		"position_offset:x": "5080.0",
+		"position_offset:y": "600.0",
+		"recipients": "Geno",
+		"text": "Ok. Here we go!",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "45",
+		"flags": "1",
+		"position_offset:x": "5900.0",
+		"position_offset:y": "400.0",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "47",
+		"position_offset:x": "4120.0",
+		"position_offset:y": "-380.0",
+		"speaker": "Good",
+		"text": "This is pointless, but I'm not in too deep yet.",
+		"type": "hub"
+	},
+	{
+		"callbacks": "check Good 10",
+		"conversation_id": "35",
+		"position_offset:x": "3660.0",
+		"position_offset:y": "-400.0",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "49",
+		"flags": "4",
+		"position_offset:x": "3200.0",
+		"position_offset:y": "700.0",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "50",
+		"position_offset:x": "2700.0",
+		"position_offset:y": "720.0",
+		"speaker": "Note",
+		"text": "In 49, I want the ability for Reka, Benjamin, or Freya to interrupt, but don't have a concise way to represent this in the current engine limits.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "8",
+		"position_offset:x": "560.0",
+		"position_offset:y": "740.0",
+		"speaker": "Note",
+		"text": "7 is an Auto domination of 6, but this mechanic is not implemented yet.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "48",
+		"position_offset:x": "4640.0",
+		"position_offset:y": "-400.0",
+		"speaker": "Geno",
+		"text": "\"Actually, I came to buy something.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "51",
+		"position_offset:x": "4100.0",
+		"position_offset:y": "-900.0",
+		"speaker": "Marrow",
+		"text": "\"Don't understand? Don't understand what. Your spreadsheet? Those are for department stores, not popup shops.\"",
+		"type": "hub"
+	},
+	{
+		"choices": "2",
+		"conversation_id": "52",
+		"position_offset:x": "4600.0",
+		"position_offset:y": "-900.0",
+		"speaker": "Geno",
+		"text": "\"You don't understand the long game.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "53",
+		"position_offset:x": "5000.0",
+		"position_offset:y": "-900.0",
+		"speaker": "Rhetoric",
+		"text": "Immediate regret. She's like 500 times older than me.",
 		"type": "hub"
 	},
 	{
@@ -328,9 +554,99 @@
 		"type": "connection"
 	},
 	{
+		"from_id": "25",
+		"from_port": 0,
+		"to_id": "37",
+		"type": "connection"
+	},
+	{
+		"from_id": "26",
+		"from_port": 0,
+		"to_id": "27",
+		"type": "connection"
+	},
+	{
+		"from_id": "27",
+		"from_port": 0,
+		"to_id": "28",
+		"type": "connection"
+	},
+	{
+		"from_id": "28",
+		"from_port": 0,
+		"to_id": "32",
+		"type": "connection"
+	},
+	{
+		"from_id": "28",
+		"from_port": 1,
+		"to_id": "34",
+		"type": "connection"
+	},
+	{
+		"from_id": "28",
+		"from_port": 2,
+		"to_id": "49",
+		"type": "connection"
+	},
+	{
+		"from_id": "29",
+		"from_port": 0,
+		"to_id": "30",
+		"type": "connection"
+	},
+	{
 		"from_id": "3",
 		"from_port": 0,
 		"to_id": "6",
+		"type": "connection"
+	},
+	{
+		"from_id": "30",
+		"from_port": 0,
+		"to_id": "31",
+		"type": "connection"
+	},
+	{
+		"from_id": "32",
+		"from_port": 0,
+		"to_id": "33",
+		"type": "connection"
+	},
+	{
+		"from_id": "33",
+		"from_port": 0,
+		"to_id": "51",
+		"type": "connection"
+	},
+	{
+		"from_id": "34",
+		"from_port": 0,
+		"to_id": "35",
+		"type": "connection"
+	},
+	{
+		"from_id": "34",
+		"from_port": 1,
+		"to_id": "38",
+		"type": "connection"
+	},
+	{
+		"from_id": "35",
+		"from_port": 0,
+		"to_id": "47",
+		"type": "connection"
+	},
+	{
+		"from_id": "38",
+		"from_port": 0,
+		"to_id": "39",
+		"type": "connection"
+	},
+	{
+		"from_id": "39",
+		"from_port": 0,
+		"to_id": "40",
 		"type": "connection"
 	},
 	{
@@ -340,15 +656,93 @@
 		"type": "connection"
 	},
 	{
+		"from_id": "40",
+		"from_port": 0,
+		"to_id": "41",
+		"type": "connection"
+	},
+	{
+		"from_id": "40",
+		"from_port": 1,
+		"to_id": "43",
+		"type": "connection"
+	},
+	{
+		"from_id": "41",
+		"from_port": 0,
+		"to_id": "42",
+		"type": "connection"
+	},
+	{
+		"from_id": "42",
+		"from_port": 0,
+		"to_id": "45",
+		"type": "connection"
+	},
+	{
+		"from_id": "43",
+		"from_port": 0,
+		"to_id": "45",
+		"type": "connection"
+	},
+	{
+		"from_id": "45",
+		"from_port": 0,
+		"to_id": "33",
+		"type": "connection"
+	},
+	{
+		"from_id": "47",
+		"from_port": 0,
+		"to_id": "48",
+		"type": "connection"
+	},
+	{
+		"from_id": "48",
+		"from_port": 0,
+		"to_id": "37",
+		"type": "connection"
+	},
+	{
+		"from_id": "51",
+		"from_port": 0,
+		"to_id": "52",
+		"type": "connection"
+	},
+	{
+		"from_id": "52",
+		"from_port": 0,
+		"to_id": "53",
+		"type": "connection"
+	},
+	{
+		"from_id": "6",
+		"from_port": 0,
+		"to_id": "26",
+		"type": "connection"
+	},
+	{
+		"from_id": "6",
+		"from_port": 1,
+		"to_id": "25",
+		"type": "connection"
+	},
+	{
+		"from_id": "6",
+		"from_port": 2,
+		"to_id": "29",
+		"type": "connection"
+	},
+	{
 		"from_id": "7",
 		"from_port": 0,
 		"to_id": "6",
 		"type": "connection"
 	},
 	{
-		"position:x": "-914.684509277344",
-		"position:y": "-703.834350585938",
+		"position:x": "-72.887939453125",
+		"position:y": "-213.754974365234",
 		"type": "camera",
-		"zoom": "0.26333105564117"
+		"zoom": "0.1798584908247"
 	}
 ]

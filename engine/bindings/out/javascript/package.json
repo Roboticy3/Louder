@@ -1,0 +1,16 @@
+{
+  "name": "louder",
+  "version": "0.1.0",
+  "description": "Bindings for the Louder dialogue engine",
+  "type": "module",
+  "main": "./louder/index.js",
+  "types": "./louder/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./louder/index.d.ts",
+      "default": "./louder/index.js"
+    }
+  },
+  "files": ["louder"],
+  "license": "MIT"
+}

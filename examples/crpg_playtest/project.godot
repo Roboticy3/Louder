@@ -19,7 +19,7 @@ config/icon="res://icon.svg"
 
 DebugDraw3d="*res://addons/debug_draw/debug_draw_3d.tscn"
 Network="*res://network/network_handler.gd"
-LouderContextGlobal="*uid://bhjgytf4frhqm"
+LouderContextGlobal="*uid://u3c1q5irnk04"
 
 [display]
 

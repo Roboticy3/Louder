@@ -1,0 +1,3617 @@
+{
+  "engine": "louder_rust",
+  "target": {
+    "triple": "wasm32-unknown-unknown",
+    "pointerSize": 4,
+    "sizeTSize": 4
+  },
+  "module": {
+    "exportsMemory": true,
+    "memoryPages": null
+  },
+  "callingConvention": [
+    "An aggregate larger than one register is returned through a pointer the caller passes as the first argument; the function returns nothing.",
+    "An aggregate passed by value is copied into linear memory by the caller and arrives as a pointer.",
+    "A pointer and a size_t are both i32 on wasm32."
+  ],
+  "aliases": {
+    "LouderName": "int32_t",
+    "LouderPosition": "int32_t",
+    "LouderActor": "int32_t",
+    "LouderCallback": "int32_t",
+    "LouderExpression": "int32_t",
+    "LoadError": "int32_t"
+  },
+  "enums": {
+    "LouderError": {
+      "underlying": "int32_t",
+      "variants": {
+        "Ok": 0,
+        "Missing": 0
+      }
+    },
+    "LouderVariant_Tag": {
+      "underlying": "int32_t",
+      "variants": {
+        "Int": 0,
+        "Float": 0,
+        "String": 0
+      }
+    },
+    "LouderOption_LouderAsk_Tag": {
+      "underlying": "int32_t",
+      "variants": {
+        "None_LouderAsk": 0,
+        "Some_LouderAsk": 0
+      }
+    },
+    "EventData_Tag": {
+      "underlying": "int32_t",
+      "variants": {
+        "None": 0,
+        "RegularMotion": 0,
+        "Warp": 0,
+        "ForceMotion": 0,
+        "EventData_Tag_ChoiceAppearance": 0,
+        "ChannelChange": 0,
+        "EventData_Tag_AdditionalDataChange": 0,
+        "SpeakerChange": 0,
+        "TextChange": 0,
+        "Statement": 0,
+        "Condition": 0,
+        "Callback": 0,
+        "ActorAdded": 0,
+        "ActorRemoved": 0,
+        "SpeakerAdded": 0,
+        "SpeakerRemoved": 0,
+        "ConversationAdded": 0,
+        "ConversationRemoved": 0,
+        "EventData_Tag_LoadError": 0
+      }
+    },
+    "LouderOption_LouderEvent_Tag": {
+      "underlying": "int32_t",
+      "variants": {
+        "None_LouderEvent": 0,
+        "Some_LouderEvent": 0
+      }
+    }
+  },
+  "constants": {
+    "ActorFlags_SPECTATOR": 1,
+    "ActorFlags_DEBUG": 2,
+    "DialogueRules_SPOKE": 1,
+    "DialogueRules_SINGLEPLAYER": 2,
+    "HubFlags_AUTO": 1,
+    "HubFlags_ASK": 2,
+    "SpeakerFlags_PUBLIC": 1,
+    "LOUDER_ACTOR_NONE": -1,
+    "LOUDER_LOAD_ALREADY_LOADED": 4,
+    "LOUDER_LOAD_MALFORMED_JSON": 1,
+    "LOUDER_LOAD_NOT_AN_OBJECT": 3,
+    "LOUDER_LOAD_NOT_A_LIST": 2,
+    "LOUDER_LOAD_OK": 0,
+    "LOUDER_NAME_NONE": -1
+  },
+  "bitflags": {
+    "ActorFlags": {
+      "underlying": "int32_t",
+      "flags": {
+        "SPECTATOR": 1,
+        "DEBUG": 2
+      }
+    },
+    "DialogueRules": {
+      "underlying": "int32_t",
+      "flags": {
+        "SPOKE": 1,
+        "SINGLEPLAYER": 2
+      }
+    },
+    "HubFlags": {
+      "underlying": "int32_t",
+      "flags": {
+        "AUTO": 1,
+        "ASK": 2
+      }
+    },
+    "SpeakerFlags": {
+      "underlying": "int32_t",
+      "flags": {
+        "PUBLIC": 1
+      }
+    }
+  },
+  "opaques": [
+    "LouderContext"
+  ],
+  "types": [
+    {
+      "name": "ActorFlags",
+      "kind": "struct",
+      "size": 4,
+      "align": 4,
+      "fields": [
+        {
+          "name": "bits",
+          "type": "int32_t",
+          "offset": 0,
+          "size": 4
+        }
+      ]
+    },
+    {
+      "name": "AdditionalDataChange",
+      "kind": "struct",
+      "size": 4,
+      "align": 4,
+      "fields": [
+        {
+          "name": "key",
+          "type": "int32_t",
+          "offset": 0,
+          "size": 4
+        }
+      ]
+    },
+    {
+      "name": "ChoiceAppearance",
+      "kind": "struct",
+      "size": 8,
+      "align": 4,
+      "fields": [
+        {
+          "name": "position",
+          "type": "int32_t",
+          "offset": 0,
+          "size": 4
+        },
+        {
+          "name": "choice_index",
+          "type": "int32_t",
+          "offset": 4,
+          "size": 4
+        }
+      ]
+    },
+    {
+      "name": "LouderVariant_Body",
+      "kind": "struct",
+      "size": 4,
+      "align": 4,
+      "fields": [
+        {
+          "name": "int_",
+          "type": "int32_t",
+          "offset": 0,
+          "size": 4
+        },
+        {
+          "name": "float_",
+          "type": "float",
+          "offset": 0,
+          "size": 4
+        },
+        {
+          "name": "string",
+          "type": "int32_t",
+          "offset": 0,
+          "size": 4
+        }
+      ]
+    },
+    {
+      "name": "LouderVariant",
+      "kind": "tagged-union",
+      "size": 8,
+      "align": 4,
+      "tag": "LouderVariant_Tag",
+      "bodyOffset": 4,
+      "arms": [
+        {
+          "tag": 0,
+          "name": "Int",
+          "carries": "int32_t"
+        },
+        {
+          "tag": 1,
+          "name": "Float",
+          "carries": "float"
+        },
+        {
+          "tag": 2,
+          "name": "String",
+          "carries": "int32_t"
+        }
+      ]
+    },
+    {
+      "name": "ConditionOutcome",
+      "kind": "struct",
+      "size": 12,
+      "align": 4,
+      "fields": [
+        {
+          "name": "condition",
+          "type": "int32_t",
+          "offset": 0,
+          "size": 4
+        },
+        {
+          "name": "outcome",
+          "type": "LouderVariant",
+          "offset": 4,
+          "size": 8
+        }
+      ]
+    },
+    {
+      "name": "DialogueRules",
+      "kind": "struct",
+      "size": 4,
+      "align": 4,
+      "fields": [
+        {
+          "name": "bits",
+          "type": "int32_t",
+          "offset": 0,
+          "size": 4
+        }
+      ]
+    },
+    {
+      "name": "Motion",
+      "kind": "struct",
+      "size": 16,
+      "align": 4,
+      "fields": [
+        {
+          "name": "source_position",
+          "type": "int32_t",
+          "offset": 0,
+          "size": 4
+        },
+        {
+          "name": "target_position",
+          "type": "int32_t",
+          "offset": 4,
+          "size": 4
+        },
+        {
+          "name": "choice_index",
+          "type": "int32_t",
+          "offset": 8,
+          "size": 4
+        },
+        {
+          "name": "background",
+          "type": "bool",
+          "offset": 12,
+          "size": 1
+        }
+      ]
+    },
+    {
+      "name": "LoadFailure",
+      "kind": "struct",
+      "size": 8,
+      "align": 4,
+      "fields": [
+        {
+          "name": "position",
+          "type": "int32_t",
+          "offset": 0,
+          "size": 4
+        },
+        {
+          "name": "error",
+          "type": "int32_t",
+          "offset": 4,
+          "size": 4
+        }
+      ]
+    },
+    {
+      "name": "EventData_Body",
+      "kind": "struct",
+      "size": 16,
+      "align": 4,
+      "fields": [
+        {
+          "name": "regular_motion",
+          "type": "Motion",
+          "offset": 0,
+          "size": 16
+        },
+        {
+          "name": "warp",
+          "type": "Motion",
+          "offset": 0,
+          "size": 16
+        },
+        {
+          "name": "force_motion",
+          "type": "Motion",
+          "offset": 0,
+          "size": 16
+        },
+        {
+          "name": "choice_appearance",
+          "type": "ChoiceAppearance",
+          "offset": 0,
+          "size": 8
+        },
+        {
+          "name": "additional_data_change",
+          "type": "AdditionalDataChange",
+          "offset": 0,
+          "size": 4
+        },
+        {
+          "name": "speaker_change",
+          "type": "int32_t",
+          "offset": 0,
+          "size": 4
+        },
+        {
+          "name": "text_change",
+          "type": "int32_t",
+          "offset": 0,
+          "size": 4
+        },
+        {
+          "name": "statement",
+          "type": "int32_t",
+          "offset": 0,
+          "size": 4
+        },
+        {
+          "name": "condition",
+          "type": "ConditionOutcome",
+          "offset": 0,
+          "size": 12
+        },
+        {
+          "name": "callback",
+          "type": "int32_t",
+          "offset": 0,
+          "size": 4
+        },
+        {
+          "name": "speaker_added",
+          "type": "int32_t",
+          "offset": 0,
+          "size": 4
+        },
+        {
+          "name": "speaker_removed",
+          "type": "int32_t",
+          "offset": 0,
+          "size": 4
+        },
+        {
+          "name": "conversation_added",
+          "type": "int32_t",
+          "offset": 0,
+          "size": 4
+        },
+        {
+          "name": "conversation_removed",
+          "type": "int32_t",
+          "offset": 0,
+          "size": 4
+        },
+        {
+          "name": "load_error",
+          "type": "LoadFailure",
+          "offset": 0,
+          "size": 8
+        }
+      ]
+    },
+    {
+      "name": "EventData",
+      "kind": "tagged-union",
+      "size": 20,
+      "align": 4,
+      "tag": "EventData_Tag",
+      "bodyOffset": 4,
+      "arms": [
+        {
+          "tag": 0,
+          "name": "None",
+          "carries": null
+        },
+        {
+          "tag": 1,
+          "name": "RegularMotion",
+          "carries": "Motion"
+        },
+        {
+          "tag": 2,
+          "name": "Warp",
+          "carries": "Motion"
+        },
+        {
+          "tag": 3,
+          "name": "ForceMotion",
+          "carries": "Motion"
+        },
+        {
+          "tag": 4,
+          "name": "EventData_ChoiceAppearance",
+          "carries": "ChoiceAppearance"
+        },
+        {
+          "tag": 5,
+          "name": "ChannelChange",
+          "carries": null
+        },
+        {
+          "tag": 6,
+          "name": "EventData_AdditionalDataChange",
+          "carries": "AdditionalDataChange"
+        },
+        {
+          "tag": 7,
+          "name": "SpeakerChange",
+          "carries": "int32_t"
+        },
+        {
+          "tag": 8,
+          "name": "TextChange",
+          "carries": "int32_t"
+        },
+        {
+          "tag": 9,
+          "name": "Statement",
+          "carries": "int32_t"
+        },
+        {
+          "tag": 10,
+          "name": "Condition",
+          "carries": "ConditionOutcome"
+        },
+        {
+          "tag": 11,
+          "name": "Callback",
+          "carries": "int32_t"
+        },
+        {
+          "tag": 12,
+          "name": "ActorAdded",
+          "carries": null
+        },
+        {
+          "tag": 13,
+          "name": "ActorRemoved",
+          "carries": null
+        },
+        {
+          "tag": 14,
+          "name": "SpeakerAdded",
+          "carries": "int32_t"
+        },
+        {
+          "tag": 15,
+          "name": "SpeakerRemoved",
+          "carries": "int32_t"
+        },
+        {
+          "tag": 16,
+          "name": "ConversationAdded",
+          "carries": "int32_t"
+        },
+        {
+          "tag": 17,
+          "name": "ConversationRemoved",
+          "carries": "int32_t"
+        },
+        {
+          "tag": 18,
+          "name": "EventData_LoadError",
+          "carries": "LoadFailure"
+        }
+      ]
+    },
+    {
+      "name": "HubFlags",
+      "kind": "struct",
+      "size": 4,
+      "align": 4,
+      "fields": [
+        {
+          "name": "bits",
+          "type": "int32_t",
+          "offset": 0,
+          "size": 4
+        }
+      ]
+    },
+    {
+      "name": "LouderAsk",
+      "kind": "struct",
+      "size": 32,
+      "align": 4,
+      "fields": [
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "offset": 0,
+          "size": 4
+        },
+        {
+          "name": "channel",
+          "type": "int32_t",
+          "offset": 4,
+          "size": 4
+        },
+        {
+          "name": "actor",
+          "type": "int32_t",
+          "offset": 8,
+          "size": 4
+        },
+        {
+          "name": "motion",
+          "type": "Motion",
+          "offset": 12,
+          "size": 16
+        },
+        {
+          "name": "ask",
+          "type": "int32_t",
+          "offset": 28,
+          "size": 4
+        }
+      ]
+    },
+    {
+      "name": "LouderEvent",
+      "kind": "struct",
+      "size": 32,
+      "align": 4,
+      "fields": [
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "offset": 0,
+          "size": 4
+        },
+        {
+          "name": "channel",
+          "type": "int32_t",
+          "offset": 4,
+          "size": 4
+        },
+        {
+          "name": "actor",
+          "type": "int32_t",
+          "offset": 8,
+          "size": 4
+        },
+        {
+          "name": "data",
+          "type": "EventData",
+          "offset": 12,
+          "size": 20
+        }
+      ]
+    },
+    {
+      "name": "LouderOption_LouderAsk_Body",
+      "kind": "struct",
+      "size": 32,
+      "align": 4,
+      "fields": [
+        {
+          "name": "some",
+          "type": "LouderAsk",
+          "offset": 0,
+          "size": 32
+        }
+      ]
+    },
+    {
+      "name": "LouderOption_LouderAsk",
+      "kind": "tagged-union",
+      "size": 36,
+      "align": 4,
+      "tag": "LouderOption_LouderAsk_Tag",
+      "bodyOffset": 4,
+      "arms": [
+        {
+          "tag": 0,
+          "name": "None_LouderAsk",
+          "carries": null
+        },
+        {
+          "tag": 1,
+          "name": "Some_LouderAsk",
+          "carries": null
+        }
+      ]
+    },
+    {
+      "name": "LouderOption_LouderEvent_Body",
+      "kind": "struct",
+      "size": 32,
+      "align": 4,
+      "fields": [
+        {
+          "name": "some",
+          "type": "LouderEvent",
+          "offset": 0,
+          "size": 32
+        }
+      ]
+    },
+    {
+      "name": "LouderOption_LouderEvent",
+      "kind": "tagged-union",
+      "size": 36,
+      "align": 4,
+      "tag": "LouderOption_LouderEvent_Tag",
+      "bodyOffset": 4,
+      "arms": [
+        {
+          "tag": 0,
+          "name": "None_LouderEvent",
+          "carries": null
+        },
+        {
+          "tag": 1,
+          "name": "Some_LouderEvent",
+          "carries": null
+        }
+      ]
+    },
+    {
+      "name": "SpeakerFlags",
+      "kind": "struct",
+      "size": 4,
+      "align": 4,
+      "fields": [
+        {
+          "name": "bits",
+          "type": "int32_t",
+          "offset": 0,
+          "size": 4
+        }
+      ]
+    }
+  ],
+  "functions": [
+    {
+      "name": "add_actor",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Add an actor to a conversation and return the integer id'ing it. The actor starts at `start_position` on the default channel, with priority 0. Ids are per conversation and are never reused, so ascending order is a stable iteration order. - `speak_as` and `listen_to` are arrays of `count` names; either may be null when its count is 0. - ActorFlags::SPECTATOR and ActorFlags::DEBUG actors are given no channel or priority. Emits an EventData::ActorAdded event on success. Returns the new actor id, or LOUDER_ACTOR_NONE if the conversation is not loaded or a pointer was null.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "LouderContext*",
+          "wasm": "LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "start_position",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "flags",
+          "type": "ActorFlags",
+          "wasm": "ActorFlags*",
+          "byValue": true
+        },
+        {
+          "name": "speak_as",
+          "type": "const int32_t*",
+          "wasm": "const int32_t*",
+          "byValue": false
+        },
+        {
+          "name": "speak_as_count",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "listen_to",
+          "type": "const int32_t*",
+          "wasm": "const int32_t*",
+          "byValue": false
+        },
+        {
+          "name": "listen_to_count",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "answer_ask",
+      "returns": "LouderError",
+      "returnsWasm": "i32",
+      "doc": "Answer the ask at `index` with `verdict`. Answering marks the ask complete and moves it to the back of the cache, so indexes shift: read get_ask again after each answer. Answered asks stay readable but no longer accept answers, so a host can simply keep answering until LouderError::Missing comes back and the cache has flushed itself. Returns LouderError::Ok if the answer was recorded, or LouderError::Missing if `index` was out of range or that ask had already been answered.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "LouderContext*",
+          "wasm": "LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "index",
+          "type": "size_t",
+          "wasm": "size_t",
+          "byValue": false
+        },
+        {
+          "name": "verdict",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "clear_config",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Remove all speakers in the config. Returns 0 on success, or 1 if `ctx` was null. Conversations and actors are untouched, so hubs naming a now-missing speaker become public again.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "LouderContext*",
+          "wasm": "LouderContext*",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "declare_name",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Assign the id of a string. If the string was already declared, returns LOUDER_NAME_NONE and leaves the existing id alone. Otherwise a new id is assigned and returned.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "LouderContext*",
+          "wasm": "LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "buffer",
+          "type": "const uint8_t*",
+          "wasm": "const uint8_t*",
+          "byValue": false
+        },
+        {
+          "name": "max_size",
+          "type": "size_t",
+          "wasm": "size_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "deinit_louder",
+      "returns": "LouderError",
+      "returnsWasm": "i32",
+      "doc": "Release a context and everything it holds. Returns LouderError::Ok on success, or LouderError::Missing if `ctx` was null. Every conversation, speaker, actor, and queued event goes with it.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "LouderContext*",
+          "wasm": "LouderContext*",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "flush_events",
+      "returns": "void",
+      "returnsWasm": null,
+      "doc": "Remove every queued event. The queue is indexed from 0 again afterwards, so the next get_event with index 0 reads the first event queued after this call.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "LouderContext*",
+          "wasm": "LouderContext*",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "name": "force_position",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Move an actor to another position directly. - `fake_priority` is unused if `0`, otherwise overrides the priority of the destination. Because 0 is the ordinary default priority, this cannot force an actor's priority *to* 0 over a hub that sets one. - `fake_channel` is unused if LOUDER_NAME_NONE, otherwise overrides the channel of the destination. Returns 0 on success, or 1 if the conversation, actor, or destination was missing, or if an auto hub ran out of choices.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "LouderContext*",
+          "wasm": "LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "actor",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "target_position",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "fake_channel",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "fake_priority",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "force_warp",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Move an actor to another position as if it had moved through the network. - `fake_priority` is unused if `0`, otherwise overrides the priority of the destination. Because 0 is the ordinary default priority, this cannot force an actor's priority *to* 0 over a hub that sets one. - `fake_channel` is unused if LOUDER_NAME_NONE, otherwise overrides the channel of the destination. Other actors sharing the actor's channel may be pulled along, exactly as if the actor had chosen. Returns 0 on success, or 1 if the conversation, actor, or destination was missing, or if an auto hub ran out of choices.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "LouderContext*",
+          "wasm": "LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "actor",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "target_position",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "fake_channel",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "fake_priority",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "get_actor_additional",
+      "returns": "void",
+      "returnsWasm": null,
+      "doc": "Get an actor's additional data under `key`. Returns a zero variant if the actor does not exist or has nothing stored under `key`.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "actor",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "key",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": []
+      },
+      "returnsThrough": 0
+    },
+    {
+      "name": "get_actor_channel",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Get the channel of an actor. Actors with ActorFlags::SPECTATOR or ActorFlags::DEBUG are not part of the flow and read as LOUDER_NAME_NONE.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "actor",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "get_actor_flags",
+      "returns": "ActorFlags",
+      "returnsWasm": "i32",
+      "doc": "Get the flags of an actor. Returns ActorFlags::empty if the actor does not exist.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "actor",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "get_actor_position",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Get the position of an actor. Returns BLANK_POSITION if the actor does not exist.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "actor",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "get_actor_priority",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Get the priority of an actor. Actors outside the flow read as 0.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "actor",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "get_ask",
+      "returns": "void",
+      "returnsWasm": null,
+      "doc": "Get the ask at `index`. Asks are not in a stable order, so read them until one comes back LouderOption::None rather than assuming the queue only grows.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "index",
+          "type": "size_t",
+          "wasm": "size_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": []
+      },
+      "returnsThrough": 0
+    },
+    {
+      "name": "get_dialogue_rules",
+      "returns": "DialogueRules",
+      "returnsWasm": "i32",
+      "doc": "Read the dialogue rules currently in effect. A fresh context has every rule on. Returns an empty set if `ctx` was null, since a null context is not running any dialogue.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "get_event",
+      "returns": "void",
+      "returnsWasm": null,
+      "doc": "Get the event at `index`. Returns LouderOption::None once `index` is past the end of the queue, or if `ctx` is null. Poll from index 0 upwards until that happens, then call flush_events.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "index",
+          "type": "size_t",
+          "wasm": "size_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": []
+      },
+      "returnsThrough": 0
+    },
+    {
+      "name": "get_hub_additional",
+      "returns": "void",
+      "returnsWasm": null,
+      "doc": "Get a hub's additional data under `key`. Returns a zero variant if the hub does not exist or has nothing stored under `key`.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "position",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "key",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": []
+      },
+      "returnsThrough": 0
+    },
+    {
+      "name": "get_hub_callbacks",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Get the callbacks associated with a hub as a name. The schema stores callbacks newline separated; this returns the whole block as one name. Returns LOUDER_NAME_NONE if the hub has none.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "position",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "get_hub_channel",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Get the channel of a hub. Returns LOUDER_NAME_NONE if the hub does not change the channel, in which case an actor keeps whatever channel it already had.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "position",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "get_hub_choice_count",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Get the number of choices on a hub from an actor's perspective. Only choices the actor could actually take are counted, so this applies the visibility, recipient, and spoke rules. Returns 0 for an unknown hub or actor.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "position",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "actor_perspective",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "get_hub_choice_link",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Get the position a choice on a hub links to. Returns BLANK_POSITION if the choice does not exist or is not available to `actor_perspective`.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "position",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "actor_perspective",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "choice_index",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "get_hub_choice_text",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Get the text of a choice on a hub as a name. A choice has no text of its own, so this is the text of the hub it links to. Returns LOUDER_NAME_NONE if the choice does not exist or is not available to `actor_perspective`.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "position",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "actor_perspective",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "choice_index",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "get_hub_expressions",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Get the expressions associated with a hub as a name. The schema stores expressions newline separated; this returns the whole block as one name, so the caller splits it to get individual expressions. Returns LOUDER_NAME_NONE if the hub has none.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "position",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "get_hub_flags",
+      "returns": "HubFlags",
+      "returnsWasm": "i32",
+      "doc": "Get the flags of a hub. Returns HubFlags::empty if the hub does not exist.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "position",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "get_hub_priority",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Get the priority of a hub. Returns 0 if the hub does not exist, which is also the default priority.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "position",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "get_hub_speaker",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Get the speaker of a hub. Returns LOUDER_NAME_NONE if the hub has no speaker, which means it is visible to everyone, or if the hub does not exist.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "position",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "get_hub_text",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Get the text of a hub as a name. Returns LOUDER_NAME_NONE if the hub has no text or does not exist. Read the string back with read_name.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "position",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "get_named_id",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Get the id of a string. Returns LOUDER_NAME_NONE if the string was never declared, or if either pointer was null. - `buffer`: the string bytes to look up. - `max_size`: the number of bytes to read from `buffer`.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "buffer",
+          "type": "const uint8_t*",
+          "wasm": "const uint8_t*",
+          "byValue": false
+        },
+        {
+          "name": "max_size",
+          "type": "size_t",
+          "wasm": "size_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "get_next_speaker_listen_to",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Iterate the speakers that `speaker` is listening to. Pass LOUDER_NAME_NONE as `start` to begin, then pass the previous result until LOUDER_NAME_NONE comes back. Returns LOUDER_NAME_NONE for an unknown speaker.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "speaker",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "start",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "get_speaker_additional",
+      "returns": "void",
+      "returnsWasm": null,
+      "doc": "Get a speaker's additional data under `key`. The speaker config is a singleton rather than a per-conversation object, so this takes no conversation. Returns a zero variant if the speaker is unknown or has nothing stored under `key`.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "speaker",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "key",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": []
+      },
+      "returnsThrough": 0
+    },
+    {
+      "name": "get_speaker_flags",
+      "returns": "SpeakerFlags",
+      "returnsWasm": "i32",
+      "doc": "Get the flags of a speaker. A speaker that has not been declared reads as SpeakerFlags::empty, which is public by default, so a hub naming it still appears to everyone.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "speaker",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "get_story_state",
+      "returns": "void",
+      "returnsWasm": null,
+      "doc": "Get a story state value under `state`. The variable's own name decides where it is stored: a leading underscore means it is not saved, and an uppercase first letter means it is shared across conversations. Variables that have never been written read as 0. Reading from a conversation that is not loaded also reads as 0.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "state",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": []
+      },
+      "returnsThrough": 0
+    },
+    {
+      "name": "init_louder",
+      "returns": "LouderContext*",
+      "returnsWasm": "i32",
+      "doc": "Initialize the engine and return a new context. Initializes the name table, the event queue, and the ask cache. Release the returned handle with deinit_louder. Returns null only if allocation failed.",
+      "params": [],
+      "module": {
+        "params": [],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "load_conversation_config",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Load the conversation config from a JSON document in `buffer`. - The bytes have to be UTF-8 and the error scheme is the one in load_conversation_json, with speakers as the target objects instead of hubs. - The config is a singleton as opposed to a named conversation instance, so this takes no conversation name. - Objects are speakers and their configurations. A speaker already in the config is replaced rather than treated as an error.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "LouderContext*",
+          "wasm": "LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "buffer",
+          "type": "uint8_t*",
+          "wasm": "uint8_t*",
+          "byValue": false
+        },
+        {
+          "name": "max_size",
+          "type": "size_t",
+          "wasm": "size_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "load_conversation_json",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Load a conversation from a JSON document in `buffer`. The buffer holds `max_size` bytes. JSON is text, so those bytes have to be UTF-8 for the engine to read them; LOUDER_LOAD_MALFORMED_JSON is returned if they are not, and re-encoding them is the host's job rather than the engine's. - The JSON is expected in array form; LOUDER_LOAD_NOT_A_LIST is returned otherwise. - Standard JSON syntax errors are returned as LOUDER_LOAD_MALFORMED_JSON. - Standard properties are left default or read from matching JSON fields. - Additional JSON fields are treated as additional data on hubs. - LOUDER_LOAD_ALREADY_LOADED is returned if `conversation` is already occupied by another loaded conversation. - Problems with individual records do not fail the load. They are emitted as events instead, carrying the offending hub's position in Motion::source_position and the LoadError in Motion::target_position.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "LouderContext*",
+          "wasm": "LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "buffer",
+          "type": "uint8_t*",
+          "wasm": "uint8_t*",
+          "byValue": false
+        },
+        {
+          "name": "max_size",
+          "type": "size_t",
+          "wasm": "size_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "make_event_data_actor_added",
+      "returns": "void",
+      "returnsWasm": null,
+      "doc": "Build an EventData::ActorAdded.",
+      "params": [],
+      "module": {
+        "params": [
+          "i32"
+        ],
+        "results": []
+      },
+      "returnsThrough": 0
+    },
+    {
+      "name": "make_event_data_actor_removed",
+      "returns": "void",
+      "returnsWasm": null,
+      "doc": "Build an EventData::ActorRemoved.",
+      "params": [],
+      "module": {
+        "params": [
+          "i32"
+        ],
+        "results": []
+      },
+      "returnsThrough": 0
+    },
+    {
+      "name": "make_event_data_additional_data_change",
+      "returns": "void",
+      "returnsWasm": null,
+      "doc": "Build an EventData::AdditionalDataChange.",
+      "params": [
+        {
+          "name": "change",
+          "type": "AdditionalDataChange",
+          "wasm": "AdditionalDataChange*",
+          "byValue": true
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      },
+      "returnsThrough": 0
+    },
+    {
+      "name": "make_event_data_callback",
+      "returns": "void",
+      "returnsWasm": null,
+      "doc": "Build an EventData::Callback, naming the callback.",
+      "params": [
+        {
+          "name": "callback",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      },
+      "returnsThrough": 0
+    },
+    {
+      "name": "make_event_data_channel_change",
+      "returns": "void",
+      "returnsWasm": null,
+      "doc": "Build an EventData::ChannelChange.",
+      "params": [],
+      "module": {
+        "params": [
+          "i32"
+        ],
+        "results": []
+      },
+      "returnsThrough": 0
+    },
+    {
+      "name": "make_event_data_choice_appearance",
+      "returns": "void",
+      "returnsWasm": null,
+      "doc": "Build an EventData::ChoiceAppearance.",
+      "params": [
+        {
+          "name": "appearance",
+          "type": "ChoiceAppearance",
+          "wasm": "ChoiceAppearance*",
+          "byValue": true
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      },
+      "returnsThrough": 0
+    },
+    {
+      "name": "make_event_data_condition",
+      "returns": "void",
+      "returnsWasm": null,
+      "doc": "Build an EventData::Condition.",
+      "params": [
+        {
+          "name": "outcome",
+          "type": "ConditionOutcome",
+          "wasm": "ConditionOutcome*",
+          "byValue": true
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      },
+      "returnsThrough": 0
+    },
+    {
+      "name": "make_event_data_conversation_added",
+      "returns": "void",
+      "returnsWasm": null,
+      "doc": "Build an EventData::ConversationAdded, naming the conversation.",
+      "params": [
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      },
+      "returnsThrough": 0
+    },
+    {
+      "name": "make_event_data_conversation_removed",
+      "returns": "void",
+      "returnsWasm": null,
+      "doc": "Build an EventData::ConversationRemoved, naming the conversation.",
+      "params": [
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      },
+      "returnsThrough": 0
+    },
+    {
+      "name": "make_event_data_force_motion",
+      "returns": "void",
+      "returnsWasm": null,
+      "doc": "Build an EventData::ForceMotion.",
+      "params": [
+        {
+          "name": "motion",
+          "type": "Motion",
+          "wasm": "Motion*",
+          "byValue": true
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      },
+      "returnsThrough": 0
+    },
+    {
+      "name": "make_event_data_load_error",
+      "returns": "void",
+      "returnsWasm": null,
+      "doc": "Build an EventData::LoadError. The engine emits these itself when it cannot read a record of a loaded document, so this exists to round out the set rather than because a host has a reason to raise one.",
+      "params": [
+        {
+          "name": "failure",
+          "type": "LoadFailure",
+          "wasm": "LoadFailure*",
+          "byValue": true
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      },
+      "returnsThrough": 0
+    },
+    {
+      "name": "make_event_data_none",
+      "returns": "void",
+      "returnsWasm": null,
+      "doc": "Build the EventData::None variant, which carries nothing.",
+      "params": [],
+      "module": {
+        "params": [
+          "i32"
+        ],
+        "results": []
+      },
+      "returnsThrough": 0
+    },
+    {
+      "name": "make_event_data_regular_motion",
+      "returns": "void",
+      "returnsWasm": null,
+      "doc": "Build an EventData::RegularMotion.",
+      "params": [
+        {
+          "name": "motion",
+          "type": "Motion",
+          "wasm": "Motion*",
+          "byValue": true
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      },
+      "returnsThrough": 0
+    },
+    {
+      "name": "make_event_data_speaker_added",
+      "returns": "void",
+      "returnsWasm": null,
+      "doc": "Build an EventData::SpeakerAdded, naming the speaker.",
+      "params": [
+        {
+          "name": "speaker",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      },
+      "returnsThrough": 0
+    },
+    {
+      "name": "make_event_data_speaker_change",
+      "returns": "void",
+      "returnsWasm": null,
+      "doc": "Build an EventData::SpeakerChange, naming the speaker.",
+      "params": [
+        {
+          "name": "speaker",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      },
+      "returnsThrough": 0
+    },
+    {
+      "name": "make_event_data_speaker_removed",
+      "returns": "void",
+      "returnsWasm": null,
+      "doc": "Build an EventData::SpeakerRemoved, naming the speaker.",
+      "params": [
+        {
+          "name": "speaker",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      },
+      "returnsThrough": 0
+    },
+    {
+      "name": "make_event_data_statement",
+      "returns": "void",
+      "returnsWasm": null,
+      "doc": "Build an EventData::Statement, naming the expression.",
+      "params": [
+        {
+          "name": "expression",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      },
+      "returnsThrough": 0
+    },
+    {
+      "name": "make_event_data_text_change",
+      "returns": "void",
+      "returnsWasm": null,
+      "doc": "Build an EventData::TextChange, naming the text.",
+      "params": [
+        {
+          "name": "text",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      },
+      "returnsThrough": 0
+    },
+    {
+      "name": "make_event_data_warp",
+      "returns": "void",
+      "returnsWasm": null,
+      "doc": "Build an EventData::Warp.",
+      "params": [
+        {
+          "name": "motion",
+          "type": "Motion",
+          "wasm": "Motion*",
+          "byValue": true
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      },
+      "returnsThrough": 0
+    },
+    {
+      "name": "make_some_ask",
+      "returns": "void",
+      "returnsWasm": null,
+      "doc": "Build a LouderOption::Some holding an ask.",
+      "params": [
+        {
+          "name": "value",
+          "type": "LouderAsk",
+          "wasm": "LouderAsk*",
+          "byValue": true
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      },
+      "returnsThrough": 0
+    },
+    {
+      "name": "make_some_event",
+      "returns": "void",
+      "returnsWasm": null,
+      "doc": "Build a LouderOption::Some holding an event.",
+      "params": [
+        {
+          "name": "value",
+          "type": "LouderEvent",
+          "wasm": "LouderEvent*",
+          "byValue": true
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      },
+      "returnsThrough": 0
+    },
+    {
+      "name": "make_variant_bool",
+      "returns": "void",
+      "returnsWasm": null,
+      "doc": "Build a boolean as a LouderVariant::Int of 1 or 0.",
+      "params": [
+        {
+          "name": "value",
+          "type": "bool",
+          "wasm": "bool",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      },
+      "returnsThrough": 0
+    },
+    {
+      "name": "make_variant_float",
+      "returns": "void",
+      "returnsWasm": null,
+      "doc": "Build a LouderVariant::Float.",
+      "params": [
+        {
+          "name": "value",
+          "type": "float",
+          "wasm": "float",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "f32"
+        ],
+        "results": []
+      },
+      "returnsThrough": 0
+    },
+    {
+      "name": "make_variant_int",
+      "returns": "void",
+      "returnsWasm": null,
+      "doc": "Build a LouderVariant::Int.",
+      "params": [
+        {
+          "name": "value",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      },
+      "returnsThrough": 0
+    },
+    {
+      "name": "make_variant_string",
+      "returns": "void",
+      "returnsWasm": null,
+      "doc": "Build a LouderVariant::String, naming the string rather than carrying it.",
+      "params": [
+        {
+          "name": "value",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": []
+      },
+      "returnsThrough": 0
+    },
+    {
+      "name": "make_variant_zero",
+      "returns": "void",
+      "returnsWasm": null,
+      "doc": "Build the LouderVariant::Int of 0 that an unwritten variable reads as.",
+      "params": [],
+      "module": {
+        "params": [
+          "i32"
+        ],
+        "results": []
+      },
+      "returnsThrough": 0
+    },
+    {
+      "name": "next_actor_from_flags",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Iterate the actors matching certain flags. With `exact` nonzero the flags must match exactly; otherwise every bit in `include` must be present. Pass LOUDER_ACTOR_NONE as `start` to begin.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "include",
+          "type": "ActorFlags",
+          "wasm": "ActorFlags*",
+          "byValue": true
+        },
+        {
+          "name": "exact",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "start",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "next_actor_in_channel",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Iterate the actors in a channel. Pass LOUDER_ACTOR_NONE as `start` to begin. Actors outside the flow have no channel and are never returned.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "channel",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "start",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "next_actor_in_channel_and_position",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Iterate the actors in a channel at a specific position. Pass LOUDER_ACTOR_NONE as `start` to begin.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "channel",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "position",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "start",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "next_actor_listening",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Iterate the speakers an actor listens to. Includes the actor's `listen_to` speakers plus the listening speakers of the speakers it speaks as. Pass LOUDER_NAME_NONE as `start` to begin.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "actor",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "start",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "next_actor_listening_base",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Iterate the base speakers an actor listens to. These are the actor's own `listen_to` speakers, without the ones reachable through who it speaks as. See next_actor_listening for the wider set.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "actor",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "start",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "next_actor_listening_to",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Iterate the actors listening to a speaker. This covers `listen_to` plus the listening actors derived from the listening speakers of the speakers an actor speaks as. Pass LOUDER_ACTOR_NONE as `start` to begin.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "speaker",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "start",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "next_actor_speak_as",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Iterate the speakers an actor speaks as. Pass LOUDER_NAME_NONE as `start` to begin, then pass the previous result until LOUDER_NAME_NONE comes back.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "actor",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "start",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "next_actor_speaking_as",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Iterate the actors speaking as a speaker. Pass LOUDER_ACTOR_NONE as `start` to begin.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "speaker",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "start",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "next_hub_by_channel",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Iterate the hubs in a channel. Hubs that name no channel belong to the default channel, so searching for it also finds them. Pass BLANK_POSITION as `start` to begin.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "channel",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "start",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "next_hub_by_priority",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Iterate the hubs with a priority within `[priority_min, priority_max]`. The bounds are inclusive. Pass BLANK_POSITION as `start` to begin.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "priority_min",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "priority_max",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "start",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "next_hub_from_flags",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Iterate the hubs matching certain flags. With `exact` nonzero the flags must match exactly; otherwise every bit in `include` must be present. Pass BLANK_POSITION as `start` to begin.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "include",
+          "type": "HubFlags",
+          "wasm": "HubFlags*",
+          "byValue": true
+        },
+        {
+          "name": "exact",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "start",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "next_hub_from_tags",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Iterate the hubs containing all, or exactly, the given tags. With `exact` nonzero the hub must carry exactly the listed tags; otherwise carrying extra tags is fine. Pass BLANK_POSITION as `start` to begin.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "include",
+          "type": "const int32_t*",
+          "wasm": "const int32_t*",
+          "byValue": false
+        },
+        {
+          "name": "include_count",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "exact",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "start",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "next_hub_heard_by",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Iterate the hubs heard by a speaker. This searches the speaker's own listening speakers as well as the speaker itself, which are the hubs that may appear to an actor speaking as this speaker. Pass BLANK_POSITION as `start` to begin.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "speaker",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "start",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "next_hub_recipient",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Iterate the recipients of a hub. Returns LOUDER_NAME_NONE when the hub has no recipients, which means the hub is not restricted. Pass LOUDER_NAME_NONE as `start` to begin.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "position",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "start",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "next_hub_spoken_by",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Iterate the hubs spoken by a speaker. Pass BLANK_POSITION as `start` to begin.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "speaker",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "start",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "next_hub_tag",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Iterate the tags of a position. Pass LOUDER_NAME_NONE as `start` to begin.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "position",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "start",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "push_ask",
+      "returns": "LouderError",
+      "returnsWasm": "i32",
+      "doc": "Push an ask onto the ask cache, used for testing. Returns LouderError::Ok on success, or LouderError::Missing if either pointer was null.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "LouderContext*",
+          "wasm": "LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "ask",
+          "type": "const LouderAsk*",
+          "wasm": "const LouderAsk*",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "read_name",
+      "returns": "size_t",
+      "returnsWasm": "i32",
+      "doc": "Read the bytes associated with an id into `buffer`. The bytes come back exactly as they went in, so a name declared in some encoding is read in that same one. Decoding them is the host's job, since the engine never displays anything itself. Writes 0 bytes and a terminator if no name is associated with the id, or if either pointer was null. Returns the number of bytes written, excluding the terminator.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "name",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "buffer",
+          "type": "uint8_t*",
+          "wasm": "uint8_t*",
+          "byValue": false
+        },
+        {
+          "name": "max_size",
+          "type": "size_t",
+          "wasm": "size_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "read_snapshot_json",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Serialize the story state, along with the positions and details of every actor, in JSON into `buffer`. The document has a `state` object and an `actors` array, both ordered so that the output is reproducible. The document is written as UTF-8. Returns the number of bytes written excluding the terminator; a negative value means the conversation is not loaded.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "buffer",
+          "type": "uint8_t*",
+          "wasm": "uint8_t*",
+          "byValue": false
+        },
+        {
+          "name": "max_size",
+          "type": "size_t",
+          "wasm": "size_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "read_state_json",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Serialize the story state in JSON into `buffer`. Every bucket is included: the conversation's own saved and unsaved variables, and the shared ones. Keys are written in ascending id order so the output is reproducible. The document is written as UTF-8. Returns the number of bytes written excluding the terminator; a negative value means the conversation is not loaded.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "const LouderContext*",
+          "wasm": "const LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "buffer",
+          "type": "uint8_t*",
+          "wasm": "uint8_t*",
+          "byValue": false
+        },
+        {
+          "name": "max_size",
+          "type": "size_t",
+          "wasm": "size_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "remove_actor",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Remove an actor from a conversation. Returns 0 on success, or 1 if the actor or conversation did not exist. Emits an EventData::ActorRemoved event on success.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "LouderContext*",
+          "wasm": "LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "actor",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "remove_conversation",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Remove a conversation and all associated actors. Returns 0 on success, or 1 if the conversation was not loaded. Shared story state is kept, since it outlives any one conversation.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "LouderContext*",
+          "wasm": "LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "select_choice",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Select a choice on an actor's current hub. The choice must be one the actor could actually take; see get_hub_choice_count for what that means. Auto hubs along the way are resolved by taking the first choice available at each one. Returns 0 on success, or 1 if the actor, hub, or choice was missing, if the choice is not available to this actor, or if an auto hub ran out of choices.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "LouderContext*",
+          "wasm": "LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "actor",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "choice_index",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "set_dialogue_rules",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": "Replace the dialogue rules. A rule takes effect on the next move rather than being applied to the conversation as it stands, so a host can turn one off while an actor is standing on a hub it would otherwise resolve through. Bits outside DialogueRules are ignored rather than refused, so a host carrying a configuration written for a newer engine still gets the rules this build knows about.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "LouderContext*",
+          "wasm": "LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "rules",
+          "type": "DialogueRules",
+          "wasm": "DialogueRules*",
+          "byValue": true
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "set_story_state",
+      "returns": "void",
+      "returnsWasm": null,
+      "doc": "Set a story state value. The variable's own name decides where it is stored, as in get_story_state. Doing nothing if `ctx` is null.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "LouderContext*",
+          "wasm": "LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "conversation",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "key",
+          "type": "int32_t",
+          "wasm": "int32_t",
+          "byValue": false
+        },
+        {
+          "name": "value",
+          "type": "LouderVariant",
+          "wasm": "LouderVariant*",
+          "byValue": true
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32",
+          "i32",
+          "i32"
+        ],
+        "results": []
+      }
+    },
+    {
+      "name": "test_linkage",
+      "returns": "int32_t",
+      "returnsWasm": "i32",
+      "doc": null,
+      "params": [],
+      "module": {
+        "params": [],
+        "results": [
+          "i32"
+        ]
+      }
+    },
+    {
+      "name": "test_push_event",
+      "returns": "LouderError",
+      "returnsWasm": "i32",
+      "doc": "Push an event onto the event queue, used for testing. The caller fills in the event themselves, so nothing about `code` is interpreted here. Returns LouderError::Ok on success, or LouderError::Missing if either pointer was null.",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "LouderContext*",
+          "wasm": "LouderContext*",
+          "byValue": false
+        },
+        {
+          "name": "event",
+          "type": "const LouderEvent*",
+          "wasm": "const LouderEvent*",
+          "byValue": false
+        }
+      ],
+      "module": {
+        "params": [
+          "i32",
+          "i32"
+        ],
+        "results": [
+          "i32"
+        ]
+      }
+    }
+  ]
+}

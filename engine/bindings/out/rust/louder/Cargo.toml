@@ -1,0 +1,16 @@
+# Generated from the C header of the Louder engine.
+
+# Its own package rather than a member of the engine workspace: it is a host
+# of the engine, not a part of it. The empty `[workspace]` stops cargo from
+# reaching up and mistaking it for one.
+[workspace]
+
+[package]
+name = "louder"
+version = "0.1.0"
+edition = "2021"
+description = "Bindings for the Louder dialogue engine"
+
+[lib]
+name = "louder"
+path = "src/lib.rs"

@@ -67,7 +67,7 @@ func deserialize_selection(clipboard:String) -> bool:
 				hub_data["position_offset"] = ProjectManagerHelpers.join_vector(s, "position_offset") + paste_offset
 				entity.hub_data = hub_data
 				entity.id = IdSystem.assign_id(entity)
-				editor.add_child(entity)
+				editor.add_child.call_deferred(entity)
 				entity.selected = true
 				hubs_created.append(entity) 
 	print("pasted ", hubs_created.size(), " objects")

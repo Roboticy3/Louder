@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://duecvsytbpui1"]
+
+[ext_resource type="Script" uid="uid://c2pbeinw5hxxf" path="res://controllers/dialogue_debug_controller.gd" id="1_sthdx"]
+
+[node name="DialogueDebugController" type="Node" unique_id=1355120518]
+script = ExtResource("1_sthdx")

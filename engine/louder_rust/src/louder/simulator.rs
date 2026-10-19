@@ -56,6 +56,27 @@ pub enum SimError {
   Suspended,
 }
 
+/// Whether a choice was visible. If not, this code provides the reason the
+/// choice was not available
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ChoiceAvailableError {
+  NoError,
+  ConversationMissing,
+  FromMissing,
+  ChoiceMissing,
+  ToMissing,
+  ActorMissing,
+  Spectator, // Actor asking for the choice is a spectator
+  //FromInvisible, // Choice was from a hub that is generally invisible due to
+  // being flagged auto.
+  FromInvisibleToActor, // Choice from a hub that was specifically invisible to
+  // the actor the choice was being checked for.
+  ToInvisibleToActor, // Choice to a hub that was specifically invisible to the
+  // actor being checked for.
+  HeldNoSpoke, // Choice to a hub spoken by another actor in the conversation in
+  // a context where the spoke rule does not apply.
+}
+
 /// The rules that decide who sees what, and how actors move through hubs.
 ///
 /// Every method is a static one: the simulator holds no state of its own, and
@@ -358,39 +379,39 @@ impl Simulator {
     actor: LouderActor,
     hub_position: LouderPosition,
     choice_index: usize,
-  ) -> bool {
+  ) -> ChoiceAvailableError {
     let Some(conversation_ref) = context.get_conversation(conversation) else {
-      return false;
+      return ChoiceAvailableError::ConversationMissing;
     };
     let Some(hub) = conversation_ref.hub(hub_position) else {
-      return false;
+      return ChoiceAvailableError::FromMissing;
     };
     let Some(choice) = hub.choice(choice_index) else {
-      return false;
+      return ChoiceAvailableError::ChoiceMissing;
     };
     let Some(target) = conversation_ref.hub(choice.position()) else {
-      return false;
+      return ChoiceAvailableError::ToMissing;
     };
     let Some(entry) = context.get_actor(conversation, actor) else {
-      return false;
+      return ChoiceAvailableError::ActorMissing;
     };
 
     // Debug actors see every choice regardless of the rules.
     if entry.is_debug() {
-      return true;
+      return ChoiceAvailableError::NoError;
     }
 
     // A spectator sees every hub but is not allowed to decide, so it is only
     // given choices when it is also a debug actor.
     if entry.is_spectator() {
-      return false;
+      return ChoiceAvailableError::Spectator;
     }
 
     // An actor may only decide from a hub that appears to them. Auto hubs are
     // the exception: they are resolved on the way through and never stood on,
     // so an actor passing through one still gets to make the decision there.
     if !hub.is_auto() && !Self::hub_appears(context, conversation, actor, hub_position) {
-      return false;
+      return ChoiceAvailableError::FromInvisibleToActor;
     }
 
     // A choice can only be taken where it leads somewhere real. An auto hub is
@@ -399,7 +420,7 @@ impl Simulator {
     // logic that decides where it actually lands.
     let target_is_auto = target.is_auto();
     if !target_is_auto && !Self::hub_appears(context, conversation, actor, target.position()) {
-      return false;
+      return ChoiceAvailableError::ToInvisibleToActor;
     }
 
     // The target's owners decide whether this actor may lead it. For a private
@@ -409,14 +430,16 @@ impl Simulator {
 
     // Speaking as an owner is an outright claim.
     if owners.spoken_by(entry.speak_as()) {
-      return true;
+      return ChoiceAvailableError::NoError;
     }
 
     // Whether the voice reaches this actor at all: it is theirs to speak, or
     // listen to, or is public. Every case below is about a voice that does.
+
+    // --redundant with hub logic
     let heard = Self::speakers_heard_by(context, conversation, actor);
     if !owners.reaches(context, &heard) {
-      return false;
+      return ChoiceAvailableError::ToInvisibleToActor;
     }
 
     // The second and third cases: the voice is heard but nobody is playing it,
@@ -424,13 +447,18 @@ impl Simulator {
     // is what carries a choice out of a multi-choice hub rather than only out of
     // a linear one.
     if !owners.held_by_other(context, conversation, actor) {
-      return true;
+      return ChoiceAvailableError::NoError;
     }
 
     // The spoke rule. Somebody else is playing the voice, but this hub has one
     // choice and the actor can see where it goes, so refusing it would leave them
     // standing on a hub with no way off it.
-    context.rules().contains(DialogueRules::SPOKE) && hub.choice_count() == 1
+    if !context.rules().contains(DialogueRules::SPOKE) || hub.choice_count() != 1 {
+      ChoiceAvailableError::HeldNoSpoke;
+      
+    }
+
+    return ChoiceAvailableError::NoError;
   }
 
   /// The indices of the choices available to `actor` from `hub_position`.
@@ -448,7 +476,7 @@ impl Simulator {
     };
 
     (0..hub.choice_count())
-      .filter(|index| Self::choice_available(context, conversation, actor, hub_position, *index))
+      .filter(|index| Self::choice_available(context, conversation, actor, hub_position, *index) == ChoiceAvailableError::NoError)
       .collect()
   }
 
@@ -1113,7 +1141,7 @@ impl Simulator {
       .ok_or(SimError::Missing)?;
 
     let choice_index = choice_index as usize;
-    if !Self::choice_available(context, conversation, actor, position, choice_index) {
+    if Self::choice_available(context, conversation, actor, position, choice_index) != ChoiceAvailableError::NoError {
       return Err(SimError::NoSuchChoice);
     }
 

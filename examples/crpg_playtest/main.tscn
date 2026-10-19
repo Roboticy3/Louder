@@ -166,6 +166,6 @@ shape = SubResource("ConvexPolygonShape3D_cegan")
 [node name="CharacterAvatarControllerSingle" parent="." unique_id=2127838277 instance=ExtResource("3_1bvp3")]
 
 [node name="InteractableObject" parent="." unique_id=750230314 instance=ExtResource("1_1bvp3")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9322212, -9.536743e-07, 8.671504)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.0509653, -9.536743e-07, 7.2240896)
 
 [editable path="NavigationRegion3D/Merchant"]

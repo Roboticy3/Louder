@@ -4,7 +4,7 @@ class_name CrpgWorld extends Node3D
 @export var avatar_root: Node3D
 @export var avatar_controller: CharacterAvatarControllerSingle
 @export var spawn_origin := Vector3(2.72, 0, 5.33)
-@export var spawn_radius := 2.5
+@export var spawn_radius := 2.0
 
 var _avatars: Dictionary = {}
 
@@ -43,5 +43,5 @@ func _despawn(peer_id: int) -> void:
 	_avatars.erase(peer_id)
 
 func _spawn_offset(index: int) -> Vector3:
-	var angle := TAU * float(index) / 4.0
+	var angle := TAU * float(index) / 6.0
 	return Vector3(cos(angle), 0, sin(angle)) * spawn_radius

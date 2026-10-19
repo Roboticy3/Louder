@@ -10,6 +10,7 @@ use crate::engine;
 use louder_rust::godot_api;
 
 use godot::prelude::*;
+use louder_rust::louder::simulator::ChoiceAvailableError;
 
 /// What an actor may see and where it may go.
 #[derive(GodotClass)]
@@ -43,17 +44,25 @@ godot_api! {
       actor: engine::LouderActor,
       hub_position: engine::LouderPosition,
       choice_index: i32,
-    ) -> bool {
-      if choice_index < 0 {
-        return false;
-      }
-      engine::Simulator::choice_available(
+    ) -> String {
+      match engine::Simulator::choice_available(
         &context.bind().inner,
         conversation,
         actor,
         hub_position,
         choice_index as usize,
-      )
+      ) {
+        ChoiceAvailableError::ActorMissing => String::from("Actor Missing"),
+        ChoiceAvailableError::ChoiceMissing => String::from("Choice Missing"),
+        ChoiceAvailableError::ConversationMissing => String::from("Conversation Missing"),
+        ChoiceAvailableError::FromInvisibleToActor => String::from("From Invisible hub for actor"),
+        ChoiceAvailableError::FromMissing => String::from("From missing hub"),
+        ChoiceAvailableError::HeldNoSpoke => String::from("Choice held by other actor, spoke rule does not apply"),
+        ChoiceAvailableError::Spectator => String::from("Actor is a spectator"),
+        ChoiceAvailableError::ToInvisibleToActor => String::from("To a hub invisible to actor"),
+        ChoiceAvailableError::ToMissing => String::from("To missing hub"),
+        ChoiceAvailableError::NoError => String::from("No Error")
+      }
     }
 
     /// The indices of the choices available to `actor` from `hub_position`.

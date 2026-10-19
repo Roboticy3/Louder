@@ -3,6 +3,8 @@ class_name CharacterAvatar extends Node3D
 @export var character_data:CharacterData
 @export var body:CharacterBody3D
 @export var navigation_agent:NavigationAgent3D
+@export var animation_tree:CharacterAvatarAnimationTree
+
 @export var walk_speed := 3.0
 
 @export var group := &"character_avatar"
@@ -13,26 +15,49 @@ func _ready() -> void:
 	navigation_agent.target_reached.connect(_on_target_reached)
 
 var navigation_input := Vector3.ZERO
+
+enum NavigationState {
+	Idle,
+	Navigating,
+	Turning,
+}
+var nav_state := NavigationState.Idle
+
 func _physics_process(delta: float) -> void:
-	var next_position := navigation_agent.get_next_path_position()
-	var current_position := body.global_position
-	var error := next_position - current_position
-	navigation_input = error.normalized() * walk_speed
+	var gravity := Vector3.DOWN
 	
-	if error.length() > 0.1:
-		body.velocity = navigation_input
-		
-		body.look_at(body.global_position + body.velocity, Vector3.UP, true)
-		DebugDraw3d.draw_arrow(body.global_position, -body.global_basis.z, Color.BLUE)
-	else:
-		body.velocity = Vector3.ZERO
+	match nav_state:
+		NavigationState.Navigating:
+			var next_position := navigation_agent.get_next_path_position()
+			var current_position := body.global_position
+			var error := next_position - current_position
+			navigation_input = error.normalized() * walk_speed
+			
+			if error.length() > 0.1:
+				body.velocity = navigation_input
+				
+				body.look_at(body.global_position + body.velocity, Vector3.UP, true)
+				DebugDraw3d.draw_arrow(body.global_position, -body.global_basis.z, Color.BLUE)
+			else:
+				body.velocity = Vector3.ZERO
+			
+			DebugDraw3d.draw_box(navigation_agent.target_position, Quaternion.IDENTITY, Vector3.ONE, Color.BLACK)
+			DebugDraw3d.draw_box(next_position, Quaternion.IDENTITY, Vector3.ONE, Color.RED)
+		NavigationState.Idle: 
+			navigation_input = Vector3.ZERO
+			body.velocity = body.velocity.project(gravity)
 	
-	body.velocity += Vector3.DOWN * delta
-	
+	if !body.is_on_floor():
+		body.velocity += gravity * delta
 	body.move_and_slide()
-	
-	DebugDraw3d.draw_box(navigation_agent.target_position, Quaternion.IDENTITY, Vector3.ONE, Color.BLACK)
-	DebugDraw3d.draw_box(next_position, Quaternion.IDENTITY, Vector3.ONE, Color.RED)
+
+func _process(_delta: float) -> void:
+	match nav_state:
+		NavigationState.Idle:
+			animation_tree.idling = true
+		NavigationState.Navigating:
+			animation_tree.idling = false
+			animation_tree.walk_speed = body.velocity.length()
 
 @rpc("call_local", "any_peer", "reliable")
 func navigate_to_position_rpc(to:Vector3):
@@ -41,11 +66,12 @@ func navigate_to_position_rpc(to:Vector3):
 	var remote_id := multiplayer.get_remote_sender_id()
 	var remote_data := Network.get_character_of(remote_id)
 	if remote_data == character_data:
-		navigate_to_position.rpc(to)
+		_navigate_to_position.rpc(to)
 
 @rpc("call_local", "authority", "reliable")
-func navigate_to_position(to:Vector3):
+func _navigate_to_position(to:Vector3):
 	navigation_agent.target_position = to
+	nav_state = NavigationState.Navigating
 
 @rpc("call_local", "any_peer", "reliable")
 func navigate_to_interactable_rpc(interactable_path:NodePath):
@@ -55,27 +81,28 @@ func navigate_to_interactable_rpc(interactable_path:NodePath):
 	var remote_id := multiplayer.get_remote_sender_id()
 	var remote_data := Network.get_character_of(remote_id)
 	if remote_data == character_data:
-		navigate_to_interactable.rpc(interactable_path)
+		_navigate_to_interactable.rpc(interactable_path)
 
 var intent_to_interact:InteractableObject
 @rpc("call_local", "authority", "reliable")
-func navigate_to_interactable(interactable_path:NodePath):
+func _navigate_to_interactable(interactable_path:NodePath):
 	var i = get_node_or_null(interactable_path)
 	if !(i is InteractableObject):
 		return
 	
-	navigate_to_position(i.get_interact_position())
+	_navigate_to_position(i.get_interact_position())
 	intent_to_interact = i
 
 func _on_target_reached():
 	if intent_to_interact:
-		body.look_at(intent_to_interact.global_position, Vector3.UP, true)
+		nav_state = NavigationState.Turning
+		
+		body.look_at.call_deferred(intent_to_interact.global_position, Vector3.UP, true)
 		DebugDraw3d.draw_arrow_line(intent_to_interact.get_interact_position(), intent_to_interact.global_position, Color.RED)
 		DebugDraw3d.draw_arrow(body.global_position, -body.global_basis.z * 3, Color.BLUE)
 		
 		#Start dialogue. Connected controller should see this and trigger dialogue UI
 		print("starting dialogue with ", intent_to_interact)
-		
 	
 	intent_to_interact = null
-	
+	nav_state = NavigationState.Idle

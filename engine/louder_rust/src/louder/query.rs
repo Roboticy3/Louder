@@ -10,6 +10,8 @@
 //! makes that walk terminate: a host passes the last id it saw and gets either a
 //! larger one or the blank that tells it the list is done.
 
+use crate::louder::simulator::ChoiceAvailableError::{self};
+
 use super::actor::{Actor, ActorFlags, LouderActor, LOUDER_ACTOR_NONE};
 use super::context::LouderContext;
 use super::hub::{Choice, Hub, HubFlags, LouderPosition, BLANK_POSITION};
@@ -274,7 +276,7 @@ pub fn available_choice(
   actor: LouderActor,
   choice_index: usize,
 ) -> Option<&Choice> {
-  if !Simulator::choice_available(context, conversation, actor, position, choice_index) {
+  if Simulator::choice_available(context, conversation, actor, position, choice_index) != ChoiceAvailableError::NoError {
     return None;
   }
 
