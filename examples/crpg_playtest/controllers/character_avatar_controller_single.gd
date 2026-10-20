@@ -96,4 +96,5 @@ func _physics_process(_delta: float) -> void:
 func _on_avatar_request_dialogue(avatar:CharacterAvatar, other:InteractableObject):
 	if avatar == controlled_avatar:
 		in_conversation = true
+		scrolling_dialogue.player_speaker = character_data.name
 		LouderContextGlobal.start_conversation_rpc.rpc(other.conversation_path, scrolling_dialogue.get_path())
