@@ -65,10 +65,10 @@
 	},
 	{
 		"conversation_id": "15",
-		"text": "Marrow is a content-seeming and enigmatic shopkeep with a small inventory and a long legacy in the Breach. She is nearly blind. \n\nGeno hates her because of how successful she manages to kep her shop while not seeming to catalogue anything.\n\nMarrow stands as a contrast to Arias because Geno does not trust her, but she is a good person, while Arias is the opposite in both respects.",
-		"speaker": "Marrow",
 		"position_offset:x": "-1440.0",
 		"position_offset:y": "-360.0",
+		"speaker": "Marrow",
+		"text": "Marrow is a content-seeming and enigmatic shopkeep with a small inventory and a long legacy in the Breach. She is nearly blind. \n\nGeno hates her because of how successful she manages to kep her shop while not seeming to catalogue anything.\n\nMarrow stands as a contrast to Arias because Geno does not trust her, but she is a good person, while Arias is the opposite in both respects.",
 		"type": "hub"
 	},
 	{
@@ -497,12 +497,6 @@
 	},
 	{
 		"from_id": "2",
-		"from_port": 0,
-		"to_id": "5",
-		"type": "connection"
-	},
-	{
-		"from_id": "2",
 		"from_port": 1,
 		"to_id": "3",
 		"type": "connection"
@@ -736,9 +730,9 @@
 		"type": "connection"
 	},
 	{
-		"position:x": "-72.887939453125",
-		"position:y": "-213.754974365234",
+		"position:x": "-462.762145996094",
+		"position:y": "16.6787109375",
 		"type": "camera",
-		"zoom": "0.1798584908247"
+		"zoom": "0.75131374597549"
 	}
 ]
