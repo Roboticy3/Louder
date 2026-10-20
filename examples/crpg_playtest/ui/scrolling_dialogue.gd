@@ -27,6 +27,8 @@ func _ready() -> void:
 	LouderContextGlobal.actor_added.connect(_on_actor_added)
 	LouderContextGlobal.actor_removed.connect(_on_actor_removed)
 	LouderContextGlobal.motion.connect(_on_motion)
+	
+	visible = false
 
 func _on_conversation_started(c:int, source:NodePath):
 	if source == get_path():

@@ -8,6 +8,7 @@ class_name CharacterAvatar extends Node3D
 @export var walk_speed := 3.0
 
 @export var group := &"character_avatar"
+@export var character_controller_group := &"character_controller"
 
 func _ready() -> void:
 	add_to_group(group)
@@ -45,10 +46,7 @@ func _physics_process(delta: float) -> void:
 			DebugDraw3d.draw_box(next_position, Quaternion.IDENTITY, Vector3.ONE, Color.RED)
 		NavigationState.Idle: 
 			navigation_input = Vector3.ZERO
-			body.velocity = body.velocity.project(gravity)
-	
-	if !body.is_on_floor():
-		body.velocity += gravity * delta
+			body.velocity = Vector3.ZERO
 	body.move_and_slide()
 
 func _process(_delta: float) -> void:
@@ -103,6 +101,7 @@ func _on_target_reached():
 		
 		#Start dialogue. Connected controller should see this and trigger dialogue UI
 		print("starting dialogue with ", intent_to_interact)
+		get_tree().call_group(character_controller_group, &"_on_avatar_request_dialogue", self, intent_to_interact)
 	
 	intent_to_interact = null
 	nav_state = NavigationState.Idle

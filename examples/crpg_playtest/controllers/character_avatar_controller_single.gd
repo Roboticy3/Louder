@@ -1,6 +1,13 @@
 class_name CharacterAvatarControllerSingle extends Node
 
+## Control a single narrative character, representing them in dialogue and connecting to the appropriate avatar in
+## the game world if available.
+
+@export var group := &"character_controller"
+
+# The group of character avatars.
 @export var character_avatar_group := &"character_avatar"
+
 @export var character_data:CharacterData :
 	set(new_character_data):
 		if new_character_data != character_data:
@@ -8,6 +15,7 @@ class_name CharacterAvatarControllerSingle extends Node
 			locate_character()
 
 @export var camera_rig:CameraRigSimple 
+@export var scrolling_dialogue:ScrollingDialogue
 @export var target_marker:Node3D
 
 var locate_timer:Timer
@@ -39,6 +47,8 @@ func locate_character() -> void:
 	locate_timer.start()
 
 func _ready() -> void:
+	add_to_group(group)
+	
 	locate_timer = Timer.new()
 	locate_timer.one_shot = false
 	locate_timer.wait_time = 1.0
@@ -50,9 +60,10 @@ func _ready() -> void:
 	target_marker.visible = false
 
 var camera_ray_out := false
+var in_conversation := false
 func _physics_process(_delta: float) -> void:
 	var result:Dictionary
-	if controlled_avatar and Input.is_action_pressed("c_click_move"):
+	if !in_conversation and controlled_avatar and Input.is_action_pressed("c_click_move"):
 		var mouse_pos := camera_rig.camera.get_viewport().get_mouse_position()
 		var ray_o := camera_rig.camera.project_ray_origin(mouse_pos)
 		var ray_n := camera_rig.camera.project_ray_normal(mouse_pos)
@@ -81,3 +92,8 @@ func _physics_process(_delta: float) -> void:
 	
 	if controlled_avatar:
 		target_marker.visible = !controlled_avatar.navigation_agent.is_target_reached()
+
+func _on_avatar_request_dialogue(avatar:CharacterAvatar, other:InteractableObject):
+	if avatar == controlled_avatar:
+		in_conversation = true
+		LouderContextGlobal.start_conversation_rpc.rpc(other.conversation_path, scrolling_dialogue.get_path())

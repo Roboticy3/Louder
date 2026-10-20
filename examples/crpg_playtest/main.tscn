@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://bd2nfoignl8mj" path="res://entities/character_avatar.tscn" id="2_h2yge"]
 [ext_resource type="PackedScene" uid="uid://ms8dxd6kmlpu" path="res://controllers/character_avatar_controller_single.tscn" id="3_1bvp3"]
 [ext_resource type="Script" uid="uid://d13ef688jgy35" path="res://world.gd" id="4_world"]
+[ext_resource type="PackedScene" uid="uid://duecvsytbpui1" path="res://controllers/dialogue_debug_controller.tscn" id="6_7mycd"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_0xm2m"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -163,9 +164,12 @@ shape = SubResource("ConvexPolygonShape3D_cegan")
 
 [node name="Avatars" type="Node3D" parent="." unique_id=412993837]
 
-[node name="CharacterAvatarControllerSingle" parent="." unique_id=2127838277 instance=ExtResource("3_1bvp3")]
-
 [node name="InteractableObject" parent="." unique_id=750230314 instance=ExtResource("1_1bvp3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.0509653, -9.536743e-07, 7.2240896)
+conversation_path = "res://conversations/marrow.json"
+
+[node name="CharacterAvatarControllerSingle" parent="." unique_id=2127838277 instance=ExtResource("3_1bvp3")]
+
+[node name="DialogueDebugController" parent="." unique_id=1355120518 instance=ExtResource("6_7mycd")]
 
 [editable path="NavigationRegion3D/Merchant"]
