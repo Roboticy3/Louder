@@ -348,7 +348,9 @@ impl Simulator {
   ///
   /// The choice rules of the engine guide, in four steps:
   ///  1. the actor can only decide from a hub that actually appears to them;
-  ///  2. the choice has to lead somewhere that appears to them;
+  ///  2. the choice has to lead somewhere that appears to them — an auto hub
+  ///     never appears, but a choice may still lead through one, in which case
+  ///     only its conditions have to hold;
   ///  3. they have to own the target: speaking as one of its owners settles the
   ///     matter outright, and otherwise listening to an owner, or the owner
   ///     being public, settles it as long as nobody else plays the voice;
@@ -417,9 +419,16 @@ impl Simulator {
     // A choice can only be taken where it leads somewhere real. An auto hub is
     // the exception: it never appears to anyone, but entering one is a way of
     // moving, and selecting such a choice is how an actor gets into the auto
-    // logic that decides where it actually lands.
-    let target_is_auto = target.is_auto();
-    if !target_is_auto && !Self::hub_appears(context, conversation, actor, target.position()) {
+    // logic that decides where it actually lands. Its conditions still gate it:
+    // "auto hubs never appear" means they are never shown, not that they
+    // always hold, and a choice must not lead into a hub whose conditions say
+    // it is not there. This is the half of the visibility rules auto logic is
+    // left to read, since nothing ever stands on an auto hub to see it.
+    if target.is_auto() {
+      if !Self::conditions_hold(context, conversation, target.expressions()) {
+        return ChoiceAvailableError::ToInvisibleToActor;
+      }
+    } else if !Self::hub_appears(context, conversation, actor, target.position()) {
       return ChoiceAvailableError::ToInvisibleToActor;
     }
 
@@ -454,11 +463,10 @@ impl Simulator {
     // choice and the actor can see where it goes, so refusing it would leave them
     // standing on a hub with no way off it.
     if !context.rules().contains(DialogueRules::SPOKE) || hub.choice_count() != 1 {
-      ChoiceAvailableError::HeldNoSpoke;
-      
+      return ChoiceAvailableError::HeldNoSpoke;
     }
 
-    return ChoiceAvailableError::NoError;
+    ChoiceAvailableError::NoError
   }
 
   /// The indices of the choices available to `actor` from `hub_position`.

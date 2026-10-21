@@ -173,17 +173,9 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "26",
-		"position_offset:x": "1839.43701171875",
-		"position_offset:y": "11.1564178466797",
-		"speaker": "Geno",
-		"text": "\"How's business?\"",
-		"type": "hub"
-	},
-	{
 		"conversation_id": "27",
-		"position_offset:x": "2260.0",
-		"position_offset:y": "20.0",
+		"position_offset:x": "2100.0",
+		"position_offset:y": "-1520.0",
 		"speaker": "Evil",
 		"text": "Realistically, why am I talking to her? Might as well pry a little.",
 		"type": "hub"
@@ -199,16 +191,16 @@
 	{
 		"choices": "3",
 		"conversation_id": "28",
-		"position_offset:x": "2700.0",
-		"position_offset:y": "20.0",
+		"position_offset:x": "2540.0",
+		"position_offset:y": "-1520.0",
 		"speaker": "Marrow",
 		"text": "\"Fine. Just fine. And what's that to you, young man? Slow day?\" The old woman changes her stance. Suddenly, two businessmen doing business.",
 		"type": "hub"
 	},
 	{
 		"conversation_id": "33",
-		"position_offset:x": "3640.0",
-		"position_offset:y": "-900.0",
+		"position_offset:x": "3480.0",
+		"position_offset:y": "-2440.0",
 		"speaker": "Geno",
 		"text": "\"Maybe you don't understand.\"",
 		"type": "hub"
@@ -216,17 +208,17 @@
 	{
 		"choices": "2",
 		"conversation_id": "34",
-		"flags": "1",
-		"position_offset:x": "3180.0",
-		"position_offset:y": "120.0",
-		"speaker": "Good",
-		"text": "Do the right thing.",
+		"flags": "5",
+		"position_offset:x": "3020.0",
+		"position_offset:y": "-1420.0",
+		"recipients": "Geno",
+		"text": "(Do the right thing.)",
 		"type": "hub"
 	},
 	{
 		"conversation_id": "36",
-		"position_offset:x": "3300.0",
-		"position_offset:y": "-420.0",
+		"position_offset:x": "3140.0",
+		"position_offset:y": "-1960.0",
 		"speaker": "Note",
 		"text": "Dice check:\n - Auto node\n - Link to a node with a \"check\" ask",
 		"type": "hub"
@@ -234,8 +226,8 @@
 	{
 		"conversation_id": "32",
 		"flags": "5",
-		"position_offset:x": "3240.0",
-		"position_offset:y": "-940.0",
+		"position_offset:x": "3080.0",
+		"position_offset:y": "-2480.0",
 		"recipients": "Geno",
 		"text": "(Keep arguing)",
 		"type": "hub"
@@ -253,6 +245,7 @@
 	{
 		"choices": "2",
 		"conversation_id": "29",
+		"flags": "1",
 		"position_offset:x": "1700.0",
 		"position_offset:y": "2100.0",
 		"text": "(Look around the shop)",
@@ -266,19 +259,10 @@
 		"type": "hub"
 	},
 	{
-		"choices": "4",
-		"conversation_id": "37",
-		"position_offset:x": "2200.0",
-		"position_offset:y": "760.0",
-		"speaker": "Marrow",
-		"text": "\"Oh. Not much today.\" She effortfully pulls an ancient drawer off its rails and places it on the counter.",
-		"type": "hub"
-	},
-	{
 		"choices": "2",
 		"conversation_id": "38",
-		"position_offset:x": "3660.0",
-		"position_offset:y": "160.0",
+		"position_offset:x": "3500.0",
+		"position_offset:y": "-1380.0",
 		"speaker": "Evil",
 		"text": "The \"right\" thing? In 10 Thousand years, our determination will have decided our memory. Don't let this pitiful creature stand in our way. This business is only the beginning.",
 		"type": "hub"
@@ -286,16 +270,16 @@
 	{
 		"conversation_id": "39",
 		"flags": "4",
-		"position_offset:x": "4140.0",
-		"position_offset:y": "140.0",
+		"position_offset:x": "3980.0",
+		"position_offset:y": "-1400.0",
 		"recipients": "Geno",
 		"text": "Wait, what am I about to do exactly?",
 		"type": "hub"
 	},
 	{
 		"conversation_id": "42",
-		"position_offset:x": "5500.0",
-		"position_offset:y": "240.0",
+		"position_offset:x": "5340.0",
+		"position_offset:y": "-1300.0",
 		"speaker": "Evil",
 		"text": "Correct. ",
 		"type": "hub"
@@ -303,8 +287,8 @@
 	{
 		"choices": "2",
 		"conversation_id": "40",
-		"position_offset:x": "4620.0",
-		"position_offset:y": "140.0",
+		"position_offset:x": "4460.0",
+		"position_offset:y": "-1400.0",
 		"speaker": "Rhetoric",
 		"text": "Use words. Create a situation where my existence is so above hers that there's nothing left for her to do.",
 		"type": "hub"
@@ -312,8 +296,8 @@
 	{
 		"conversation_id": "41",
 		"flags": "4",
-		"position_offset:x": "5080.0",
-		"position_offset:y": "120.0",
+		"position_offset:x": "4920.0",
+		"position_offset:y": "-1420.0",
 		"recipients": "Geno",
 		"text": "That feels wrong.",
 		"type": "hub"
@@ -321,8 +305,8 @@
 	{
 		"conversation_id": "43",
 		"flags": "4",
-		"position_offset:x": "5080.0",
-		"position_offset:y": "600.0",
+		"position_offset:x": "4920.0",
+		"position_offset:y": "-940.0",
 		"recipients": "Geno",
 		"text": "Ok. Here we go!",
 		"type": "hub"
@@ -330,14 +314,14 @@
 	{
 		"conversation_id": "45",
 		"flags": "1",
-		"position_offset:x": "5900.0",
-		"position_offset:y": "400.0",
+		"position_offset:x": "5740.0",
+		"position_offset:y": "-1140.0",
 		"type": "hub"
 	},
 	{
 		"conversation_id": "47",
-		"position_offset:x": "4120.0",
-		"position_offset:y": "-380.0",
+		"position_offset:x": "3960.0",
+		"position_offset:y": "-1920.0",
 		"speaker": "Good",
 		"text": "This is pointless, but I'm not in too deep yet.",
 		"type": "hub"
@@ -345,21 +329,21 @@
 	{
 		"callbacks": "check Good 10",
 		"conversation_id": "35",
-		"position_offset:x": "3660.0",
-		"position_offset:y": "-400.0",
+		"position_offset:x": "3500.0",
+		"position_offset:y": "-1940.0",
 		"type": "hub"
 	},
 	{
 		"conversation_id": "49",
 		"flags": "4",
-		"position_offset:x": "3200.0",
-		"position_offset:y": "700.0",
+		"position_offset:x": "3040.0",
+		"position_offset:y": "-840.0",
 		"type": "hub"
 	},
 	{
 		"conversation_id": "50",
-		"position_offset:x": "2700.0",
-		"position_offset:y": "720.0",
+		"position_offset:x": "2540.0",
+		"position_offset:y": "-820.0",
 		"speaker": "Note",
 		"text": "In 49, I want the ability for Reka, Benjamin, or Freya to interrupt, but don't have a concise way to represent this in the current engine limits.",
 		"type": "hub"
@@ -374,16 +358,16 @@
 	},
 	{
 		"conversation_id": "48",
-		"position_offset:x": "4640.0",
-		"position_offset:y": "-400.0",
+		"position_offset:x": "4480.0",
+		"position_offset:y": "-1940.0",
 		"speaker": "Geno",
 		"text": "\"Actually, I came to buy something.\"",
 		"type": "hub"
 	},
 	{
 		"conversation_id": "51",
-		"position_offset:x": "4100.0",
-		"position_offset:y": "-900.0",
+		"position_offset:x": "3940.0",
+		"position_offset:y": "-2440.0",
 		"speaker": "Marrow",
 		"text": "\"Don't understand? Don't understand what. Your spreadsheet? Those are for department stores, not popup shops.\"",
 		"type": "hub"
@@ -391,18 +375,69 @@
 	{
 		"choices": "2",
 		"conversation_id": "52",
-		"position_offset:x": "4600.0",
-		"position_offset:y": "-900.0",
+		"position_offset:x": "4440.0",
+		"position_offset:y": "-2440.0",
 		"speaker": "Geno",
 		"text": "\"You don't understand the long game.\"",
 		"type": "hub"
 	},
 	{
 		"conversation_id": "53",
-		"position_offset:x": "5000.0",
-		"position_offset:y": "-900.0",
+		"position_offset:x": "4840.0",
+		"position_offset:y": "-2440.0",
 		"speaker": "Rhetoric",
 		"text": "Immediate regret. She's like 500 times older than me.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "54",
+		"position_offset:x": "2212.11499023438",
+		"position_offset:y": "2762.46655273438",
+		"speaker": "Marrow",
+		"text": "A leatherworker's shop staffed by an old woman.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "26",
+		"position_offset:x": "1680.0",
+		"position_offset:y": "-1520.0",
+		"speaker": "Geno",
+		"text": "\"How's business?\"",
+		"type": "hub"
+	},
+	{
+		"additional_data": "hover_item: waterskin",
+		"conversation_id": "56",
+		"flags": "1",
+		"position_offset:x": "2800.0",
+		"position_offset:y": "920.0",
+		"text": "(Inspect the waterskin)",
+		"type": "hub"
+	},
+	{
+		"choices": "4",
+		"conversation_id": "37",
+		"position_offset:x": "2200.0",
+		"position_offset:y": "860.0",
+		"speaker": "Marrow",
+		"text": "\"Oh. Not much today.\" She slowly pulls an ancient drawer off its rails and places it on the counter.",
+		"type": "hub"
+	},
+	{
+		"additional_data": "hover_item: leather_pouch",
+		"conversation_id": "55",
+		"flags": "1",
+		"position_offset:x": "2800.0",
+		"position_offset:y": "300.0",
+		"text": "(Inspect the leather pouch)",
+		"type": "hub"
+	},
+	{
+		"additional_data": "hover_item: vest",
+		"conversation_id": "57",
+		"position_offset:x": "2800.0",
+		"position_offset:y": "1560.0",
+		"text": "(Inspect the vest)",
 		"type": "hub"
 	},
 	{
@@ -497,6 +532,12 @@
 	},
 	{
 		"from_id": "2",
+		"from_port": 0,
+		"to_id": "5",
+		"type": "connection"
+	},
+	{
+		"from_id": "2",
 		"from_port": 1,
 		"to_id": "3",
 		"type": "connection"
@@ -586,6 +627,12 @@
 		"type": "connection"
 	},
 	{
+		"from_id": "29",
+		"from_port": 1,
+		"to_id": "54",
+		"type": "connection"
+	},
+	{
 		"from_id": "3",
 		"from_port": 0,
 		"to_id": "6",
@@ -625,6 +672,24 @@
 		"from_id": "35",
 		"from_port": 0,
 		"to_id": "47",
+		"type": "connection"
+	},
+	{
+		"from_id": "37",
+		"from_port": 0,
+		"to_id": "55",
+		"type": "connection"
+	},
+	{
+		"from_id": "37",
+		"from_port": 1,
+		"to_id": "56",
+		"type": "connection"
+	},
+	{
+		"from_id": "37",
+		"from_port": 2,
+		"to_id": "57",
 		"type": "connection"
 	},
 	{
@@ -706,6 +771,12 @@
 		"type": "connection"
 	},
 	{
+		"from_id": "54",
+		"from_port": 0,
+		"to_id": "6",
+		"type": "connection"
+	},
+	{
 		"from_id": "6",
 		"from_port": 0,
 		"to_id": "26",
@@ -730,9 +801,9 @@
 		"type": "connection"
 	},
 	{
-		"position:x": "-462.762145996094",
-		"position:y": "16.6787109375",
+		"position:x": "2195.47021484375",
+		"position:y": "1533.4580078125",
 		"type": "camera",
-		"zoom": "0.75131374597549"
+		"zoom": "0.90908968448639"
 	}
 ]

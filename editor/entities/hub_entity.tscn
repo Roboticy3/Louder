@@ -228,6 +228,11 @@ placeholder_text = "Callback 1
 Callback 2
 ..."
 
+[node name="additional_data" parent="OtherSection/VBoxContainer" unique_id=37265135 groups=["hub_component"] instance=ExtResource("3_f5yrs")]
+layout_mode = 2
+placeholder_text = "additional_data_field: value"
+delimiter_strings = Array[String](["\" \"", "' '"])
+
 [node name="ChoicesSection" type="HBoxContainer" parent="." unique_id=356226356]
 layout_mode = 2
 
