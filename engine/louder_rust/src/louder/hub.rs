@@ -1,4 +1,4 @@
-use super::name::LouderName;
+use super::name::{LouderName, LOUDER_NAME_NONE};
 use super::object::HomogeneousObject;
 use super::expression::LouderExpression;
 use super::callback::LouderCallback;
@@ -151,6 +151,24 @@ impl Hub {
   /// when the hub has no speaker and is therefore public to everyone.
   pub fn speaker(&self) -> LouderName {
     self.speaker
+  }
+
+  /// The speaker this hub speaks as, as an actor would hear it.
+  ///
+  /// A hub with a speaker of its own speaks as that speaker. A hub without one
+  /// is anonymous: it speaks as the first voice in the speak as list of whoever
+  /// is standing on it, which is the projection the engine guide describes.
+  /// That is why the answer needs the actor as well as the hub.
+  pub fn speaker_for(&self, speak_as: &[LouderName]) -> LouderName {
+    if self.speaker != LOUDER_NAME_NONE {
+      return self.speaker;
+    }
+
+    speak_as
+      .iter()
+      .copied()
+      .find(|name| *name != LOUDER_NAME_NONE)
+      .unwrap_or(LOUDER_NAME_NONE)
   }
 
   /// Speak this hub as somebody else.

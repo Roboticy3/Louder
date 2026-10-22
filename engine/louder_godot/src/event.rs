@@ -37,6 +37,17 @@ godot_api! {
       self.inner.choice_index
     }
 
+    /// The speaker the hub appears to have, for this move.
+    ///
+    /// A hub with a speaker of its own speaks as that speaker. A hub without one
+    /// is anonymous, and the voice of the actor making the move is projected
+    /// onto it for the length of the move, so the same hub carries a different
+    /// speaker for each actor that walks onto it.
+    #[func]
+    pub fn get_speaker(&self) -> engine::LouderName {
+      self.inner.speaker
+    }
+
     /// Whether the actor saw this hub without moving onto it.
     #[func]
     pub fn is_background(&self) -> bool {

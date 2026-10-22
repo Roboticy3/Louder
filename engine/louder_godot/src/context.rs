@@ -495,6 +495,22 @@ godot_api! {
       }
     }
 
+    /// The speaker of a hub, as an actor would hear it.
+    ///
+    /// A hub with a speaker of its own speaks as that speaker. A hub without one
+    /// is anonymous: it speaks as the first voice in the speak as list of
+    /// whoever is standing on it, so the answer depends on the actor, and a hub
+    /// that has no speaker of its own answers differently for each of them.
+    #[func]
+    pub fn get_hub_speaker_for_actor(
+      &self,
+      conversation: engine::LouderName,
+      position: engine::LouderPosition,
+      actor_perspective: engine::LouderActor,
+    ) -> engine::LouderName {
+      engine::Simulator::hub_speaker_for(&self.inner, conversation, actor_perspective, position)
+    }
+
     /// The text of a hub as a name, or
     /// [`LOUDER_NAME_NONE`](engine::LOUDER_NAME_NONE).
     #[func]

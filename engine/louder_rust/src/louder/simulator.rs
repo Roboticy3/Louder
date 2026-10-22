@@ -155,6 +155,92 @@ impl Simulator {
       .filter(|entry| entry.id() != actor)
       .any(|entry| entry.speak_as().contains(&speaker))
   }
+
+  /// The speaker of a hub, as an actor would hear it.
+  ///
+  /// A hub with a speaker of its own speaks as that speaker. A hub without one
+  /// is anonymous, and speaks as the first voice in the speak as list of
+  /// whoever is standing on it. That is the projection the engine guide
+  /// describes, and it is why the answer needs the actor as well as the hub.
+  ///
+  /// The hub itself is left alone: an anonymous hub stays anonymous, and the
+  /// voice is projected onto it for as long as somebody is standing there.
+  pub fn hub_speaker_for(
+    context: &LouderContext,
+    conversation: LouderName,
+    actor: LouderActor,
+    position: LouderPosition,
+  ) -> LouderName {
+    let Some(hub) = context.get_conversation(conversation).and_then(|c| c.hub(position)) else {
+      return LOUDER_NAME_NONE;
+    };
+
+    let speak_as: Vec<LouderName> = context
+      .get_actor(conversation, actor)
+      .map(|entry| entry.speak_as().to_vec())
+      .unwrap_or_default();
+
+    hub.speaker_for(&speak_as)
+  }
+
+  /// The speaker a hub appears to have, for a move onto it.
+  ///
+  /// This is the hub's own speaker, or the voice projected onto it by the
+  /// actor arriving, unless the hub writes `%speaker`. A write changes who the
+  /// hub appears to speak as for that move alone, and the hub itself is left as
+  /// it was, so the next actor to arrive gets the projection again.
+  fn apparent_speaker(
+    context: &mut LouderContext,
+    conversation: LouderName,
+    actor: LouderActor,
+    position: LouderPosition,
+  ) -> LouderName {
+    let speaker = Self::hub_speaker_for(context, conversation, actor, position);
+
+    let Some(hub) = context.get_conversation(conversation).and_then(|c| c.hub(position)) else {
+      return speaker;
+    };
+
+    // The source text is copied out because evaluating it needs mutable access
+    // to the same context that holds it.
+    let sources: Vec<String> = hub
+      .expressions()
+      .iter()
+      .filter_map(|expression| context.resolve_name(*expression).map(|source| source.to_string()))
+      .collect();
+
+    let channel = context
+      .get_actor(conversation, actor)
+      .map(|entry| entry.channel())
+      .unwrap_or(LOUDER_NAME_NONE);
+
+    let mut scope = EvaluationScope::new(conversation, actor, channel);
+    scope.hub = position;
+
+    for source in sources {
+      let Ok(expr) = super::expression::parse(&source) else {
+        continue;
+      };
+
+      let Some((name, value)) = super::expression::special_write(context, &scope, &expr) else {
+        continue;
+      };
+
+      if name != super::expression::SPEAKER_VARIABLE {
+        continue;
+      }
+
+      // A write that does not name a speaker changes nothing, which is what
+      // keeps a hub with a broken write from losing its voice.
+      if let LouderVariant::String(written) = value
+        && written != LOUDER_NAME_NONE
+      {
+        return written;
+      }
+    }
+
+    speaker
+  }
 }
 
 /// Who a hub belongs to, which is not the same as who is speaking it.
@@ -263,7 +349,7 @@ impl Simulator {
       return false;
     }
 
-    Self::conditions_hold(context, conversation, hub.expressions())
+    Self::conditions_hold(context, conversation, actor, position, hub.expressions())
   }
 
   /// Whether every condition on a hub holds.
@@ -273,9 +359,14 @@ impl Simulator {
   /// and a question must not be able to change the answer. The corresponding
   /// [`Self::report_conditions`] events are emitted when an actor actually
   /// travels to the hub.
+  ///
+  /// The actor and the hub are needed because a condition may ask the engine
+  /// about the hub it is attached to, as `%speaker` does.
   fn conditions_hold(
     context: &LouderContext,
     conversation: LouderName,
+    actor: LouderActor,
+    hub_position: LouderPosition,
     expressions: &[LouderExpression],
   ) -> bool {
     expressions.iter().all(|expression| {
@@ -288,7 +379,7 @@ impl Simulator {
       // for every hub on every choice query.
       match super::expression::parse(source) {
         Ok(expr) if super::expression::reads_only(&expr) => {
-          super::expression::condition_holds(context, conversation, &expr)
+          super::expression::condition_holds(context, conversation, actor, hub_position, &expr)
         }
         Ok(_) => true,
         // A condition that cannot be parsed cannot be relied on.
@@ -316,6 +407,7 @@ impl Simulator {
       .collect();
 
     let mut scope = EvaluationScope::new(conversation, actor, channel);
+    scope.hub = motion.target_position;
     scope.motion = Some(motion.clone());
     let evaluator = Evaluator::new(scope);
 
@@ -425,7 +517,7 @@ impl Simulator {
     // it is not there. This is the half of the visibility rules auto logic is
     // left to read, since nothing ever stands on an auto hub to see it.
     if target.is_auto() {
-      if !Self::conditions_hold(context, conversation, target.expressions()) {
+      if !Self::conditions_hold(context, conversation, actor, target.position(), target.expressions()) {
         return ChoiceAvailableError::ToInvisibleToActor;
       }
     } else if !Self::hub_appears(context, conversation, actor, target.position()) {
@@ -512,6 +604,7 @@ impl Simulator {
         source_position: position,
         target_position: auto_hub,
         choice_index: -1,
+        speaker: Self::hub_speaker_for(context, conversation, actor, auto_hub),
         background: false,
       };
       let event = LouderEvent {
@@ -643,6 +736,7 @@ impl Simulator {
       source_position: source,
       target_position: destination,
       choice_index: chosen,
+      speaker: Self::apparent_speaker(context, conversation, actor, destination),
       background: false,
     };
 
@@ -831,6 +925,7 @@ impl Simulator {
     hub: &Hub,
   ) {
     let mut scope = EvaluationScope::new(conversation, actor, channel);
+    scope.hub = motion.target_position;
     scope.motion = Some(motion.clone());
     let evaluator = Evaluator::new(scope);
 
@@ -1010,6 +1105,7 @@ impl Simulator {
             source_position: from,
             target_position: motion.target_position,
             choice_index: Self::NO_CHOICE,
+            speaker: Self::hub_speaker_for(context, conversation, follower, motion.target_position),
             background: true,
           };
           let event = LouderEvent {

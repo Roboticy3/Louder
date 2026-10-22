@@ -69,8 +69,16 @@ Speakers are themselves defined by their own name, flags, "listening" and additi
  as a speaker, they implicitly listen to these speakers as well.
  - see Homogeneous Objects.
 
-When this guide says that a hub "appears" to a speaker, it's referring to
-appearing to an actor that is either speaking as or listening to this speakers.
+How speakers interact with hubs/choices appearing is explained in the Choices
+section.
+
+The speaker can also be left blank. In this case, the speaker is the first
+speaker in the speak as list of whichever actor is intending to move onto
+this hub. For example, if an actor is making a choice to a hub with no speaker, and speaking as "A", 
+"A" is projected onto the hub temporarily and events emitted by their motion
+will appear as if that hub had speaker "A" the whole time, but if another actor
+with speaker "B" makes the same choice, later, they will move onto the hub
+and emit events as if the hub had speaker "B". These are called "anonymous" hubs.
 
 ## Text Content
 Arbitrary text content of the hub. Typically this is what you would want to
@@ -136,7 +144,7 @@ Checkboxes that hubs can have checked:
 
 Hubs can also be implicitly auto under very specific conditions. This is called
 the "singleplayer rule". If hub A was reached from a hub B that had multiple
-choices, and A is only visible to the actor that made the choice, it should
+choices, and A is spoken by the actor that made the choice (the speaker of the hub is in the actor's speak as list), it should
 behave as an auto node temporariliy with all the implications that follow from
 that. In this case, hub A behaves like a "player choice" node in a more traditional
 singleplayer system, which the user may want to have progress automatically.
@@ -220,6 +228,7 @@ The "additional properties" of hubs are homogeneous objects.
 The story state is the memory where variables are mapped to values. It is
 composed of homogeneous objects.
 
+## Variable Names
 Variable names starting with `/_+[A-Z]/` (`_A` or `__Shared`) are shared across conversations and not saved.
 
 Variable names starting with `/_+[a-z0-9]?/` (`_a` or `__1`) are local to each conversation and
@@ -229,10 +238,15 @@ Variable names starting with `/[A-Z]/` are shared and saved.
 
 Variable names starting with `/[a-z0-9]?/` are local and saved.
 
-The user can also specify their own naming rules, like variables "Inventory_..."
-can be items in the player's inventory. However, naming rules can cause conflicts
-and become hard to manage and synchronize. If this becomes the case, use Asks
-instead.
+## Special Variables
+Special variables are prefixed with %. This list will be expanded as it becomes
+convenient to give quick interfaces between engine internals and dialogue
+scripting.
+
+%speaker - the speaker that would speak this hub if it were traveled to.
+Evaluation is done from the perspective of an actor, so in the case of a hub
+with no speaker this variable is filled in using the actor's speak as list. See
+Speakers.  Assigning this variable changes the apparent speaker of the hub.
 
 ## Variants
 Variants are integers, floats, booleans, or strings.

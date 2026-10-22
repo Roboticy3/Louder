@@ -122,14 +122,6 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "22",
-		"position_offset:x": "200.0",
-		"position_offset:y": "-2820.0",
-		"speaker": "Note",
-		"text": "While selling, if Reka is present and wearing the formula fabric, she complains that true leatherworking is a dying art. ",
-		"type": "hub"
-	},
-	{
 		"choices": "3",
 		"conversation_id": "10",
 		"position_offset:x": "-1240.0",
@@ -164,7 +156,7 @@
 		"type": "hub"
 	},
 	{
-		"choices": "3",
+		"choices": "4",
 		"conversation_id": "6",
 		"position_offset:x": "1060.0",
 		"position_offset:y": "500.0",
@@ -174,8 +166,8 @@
 	},
 	{
 		"conversation_id": "27",
-		"position_offset:x": "2100.0",
-		"position_offset:y": "-1520.0",
+		"position_offset:x": "2040.0",
+		"position_offset:y": "-3520.0",
 		"speaker": "Evil",
 		"text": "Realistically, why am I talking to her? Might as well pry a little.",
 		"type": "hub"
@@ -191,16 +183,16 @@
 	{
 		"choices": "3",
 		"conversation_id": "28",
-		"position_offset:x": "2540.0",
-		"position_offset:y": "-1520.0",
+		"position_offset:x": "2480.0",
+		"position_offset:y": "-3520.0",
 		"speaker": "Marrow",
 		"text": "\"Fine. Just fine. And what's that to you, young man? Slow day?\" The old woman changes her stance. Suddenly, two businessmen doing business.",
 		"type": "hub"
 	},
 	{
 		"conversation_id": "33",
-		"position_offset:x": "3480.0",
-		"position_offset:y": "-2440.0",
+		"position_offset:x": "3420.0",
+		"position_offset:y": "-4440.0",
 		"speaker": "Geno",
 		"text": "\"Maybe you don't understand.\"",
 		"type": "hub"
@@ -209,16 +201,16 @@
 		"choices": "2",
 		"conversation_id": "34",
 		"flags": "5",
-		"position_offset:x": "3020.0",
-		"position_offset:y": "-1420.0",
+		"position_offset:x": "2960.0",
+		"position_offset:y": "-3420.0",
 		"recipients": "Geno",
 		"text": "(Do the right thing.)",
 		"type": "hub"
 	},
 	{
 		"conversation_id": "36",
-		"position_offset:x": "3140.0",
-		"position_offset:y": "-1960.0",
+		"position_offset:x": "3080.0",
+		"position_offset:y": "-3960.0",
 		"speaker": "Note",
 		"text": "Dice check:\n - Auto node\n - Link to a node with a \"check\" ask",
 		"type": "hub"
@@ -226,8 +218,8 @@
 	{
 		"conversation_id": "32",
 		"flags": "5",
-		"position_offset:x": "3080.0",
-		"position_offset:y": "-2480.0",
+		"position_offset:x": "3020.0",
+		"position_offset:y": "-4480.0",
 		"recipients": "Geno",
 		"text": "(Keep arguing)",
 		"type": "hub"
@@ -261,8 +253,8 @@
 	{
 		"choices": "2",
 		"conversation_id": "38",
-		"position_offset:x": "3500.0",
-		"position_offset:y": "-1380.0",
+		"position_offset:x": "3440.0",
+		"position_offset:y": "-3380.0",
 		"speaker": "Evil",
 		"text": "The \"right\" thing? In 10 Thousand years, our determination will have decided our memory. Don't let this pitiful creature stand in our way. This business is only the beginning.",
 		"type": "hub"
@@ -270,16 +262,16 @@
 	{
 		"conversation_id": "39",
 		"flags": "4",
-		"position_offset:x": "3980.0",
-		"position_offset:y": "-1400.0",
+		"position_offset:x": "3920.0",
+		"position_offset:y": "-3400.0",
 		"recipients": "Geno",
 		"text": "Wait, what am I about to do exactly?",
 		"type": "hub"
 	},
 	{
 		"conversation_id": "42",
-		"position_offset:x": "5340.0",
-		"position_offset:y": "-1300.0",
+		"position_offset:x": "5280.0",
+		"position_offset:y": "-3300.0",
 		"speaker": "Evil",
 		"text": "Correct. ",
 		"type": "hub"
@@ -287,8 +279,8 @@
 	{
 		"choices": "2",
 		"conversation_id": "40",
-		"position_offset:x": "4460.0",
-		"position_offset:y": "-1400.0",
+		"position_offset:x": "4400.0",
+		"position_offset:y": "-3400.0",
 		"speaker": "Rhetoric",
 		"text": "Use words. Create a situation where my existence is so above hers that there's nothing left for her to do.",
 		"type": "hub"
@@ -296,8 +288,8 @@
 	{
 		"conversation_id": "41",
 		"flags": "4",
-		"position_offset:x": "4920.0",
-		"position_offset:y": "-1420.0",
+		"position_offset:x": "4860.0",
+		"position_offset:y": "-3420.0",
 		"recipients": "Geno",
 		"text": "That feels wrong.",
 		"type": "hub"
@@ -305,8 +297,8 @@
 	{
 		"conversation_id": "43",
 		"flags": "4",
-		"position_offset:x": "4920.0",
-		"position_offset:y": "-940.0",
+		"position_offset:x": "4860.0",
+		"position_offset:y": "-2940.0",
 		"recipients": "Geno",
 		"text": "Ok. Here we go!",
 		"type": "hub"
@@ -314,14 +306,14 @@
 	{
 		"conversation_id": "45",
 		"flags": "1",
-		"position_offset:x": "5740.0",
-		"position_offset:y": "-1140.0",
+		"position_offset:x": "5680.0",
+		"position_offset:y": "-3140.0",
 		"type": "hub"
 	},
 	{
 		"conversation_id": "47",
-		"position_offset:x": "3960.0",
-		"position_offset:y": "-1920.0",
+		"position_offset:x": "3900.0",
+		"position_offset:y": "-3920.0",
 		"speaker": "Good",
 		"text": "This is pointless, but I'm not in too deep yet.",
 		"type": "hub"
@@ -329,21 +321,22 @@
 	{
 		"callbacks": "check Good 10",
 		"conversation_id": "35",
-		"position_offset:x": "3500.0",
-		"position_offset:y": "-1940.0",
+		"position_offset:x": "3440.0",
+		"position_offset:y": "-3940.0",
 		"type": "hub"
 	},
 	{
 		"conversation_id": "49",
+		"expressions": "%speaker != \"Geno\"",
 		"flags": "4",
-		"position_offset:x": "3040.0",
-		"position_offset:y": "-840.0",
+		"position_offset:x": "2980.0",
+		"position_offset:y": "-2840.0",
 		"type": "hub"
 	},
 	{
 		"conversation_id": "50",
-		"position_offset:x": "2540.0",
-		"position_offset:y": "-820.0",
+		"position_offset:x": "2480.0",
+		"position_offset:y": "-2820.0",
 		"speaker": "Note",
 		"text": "In 49, I want the ability for Reka, Benjamin, or Freya to interrupt, but don't have a concise way to represent this in the current engine limits.",
 		"type": "hub"
@@ -358,16 +351,16 @@
 	},
 	{
 		"conversation_id": "48",
-		"position_offset:x": "4480.0",
-		"position_offset:y": "-1940.0",
+		"position_offset:x": "4420.0",
+		"position_offset:y": "-3940.0",
 		"speaker": "Geno",
 		"text": "\"Actually, I came to buy something.\"",
 		"type": "hub"
 	},
 	{
 		"conversation_id": "51",
-		"position_offset:x": "3940.0",
-		"position_offset:y": "-2440.0",
+		"position_offset:x": "3880.0",
+		"position_offset:y": "-4440.0",
 		"speaker": "Marrow",
 		"text": "\"Don't understand? Don't understand what. Your spreadsheet? Those are for department stores, not popup shops.\"",
 		"type": "hub"
@@ -375,16 +368,16 @@
 	{
 		"choices": "2",
 		"conversation_id": "52",
-		"position_offset:x": "4440.0",
-		"position_offset:y": "-2440.0",
+		"position_offset:x": "4380.0",
+		"position_offset:y": "-4440.0",
 		"speaker": "Geno",
 		"text": "\"You don't understand the long game.\"",
 		"type": "hub"
 	},
 	{
 		"conversation_id": "53",
-		"position_offset:x": "4840.0",
-		"position_offset:y": "-2440.0",
+		"position_offset:x": "4780.0",
+		"position_offset:y": "-4440.0",
 		"speaker": "Rhetoric",
 		"text": "Immediate regret. She's like 500 times older than me.",
 		"type": "hub"
@@ -398,20 +391,267 @@
 		"type": "hub"
 	},
 	{
+		"choices": "2",
+		"conversation_id": "59",
+		"flags": "1",
+		"position_offset:x": "3100.0",
+		"position_offset:y": "-1640.0",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "22",
+		"position_offset:x": "180.0",
+		"position_offset:y": "-2920.0",
+		"speaker": "Note",
+		"text": "While selling, if Reka is present and wearing the formula fabric, she complains that true leatherworking is a dying art.",
+		"type": "hub"
+	},
+	{
+		"choices": "2",
+		"conversation_id": "63",
+		"position_offset:x": "4580.0",
+		"position_offset:y": "-1560.0",
+		"speaker": "Planets",
+		"text": "In Wenth, south of Ironand, families farming cattle for dozens of generations work their leather into whatever they can manage before its time to go back out on the field. It's pretty, but sad, and serves no purpose.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "65",
+		"expressions": "bought_something = 0",
+		"position_offset:x": "5140.0",
+		"position_offset:y": "-1560.0",
+		"text": "\"I don't know if I can use this.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "64",
+		"flags": "1",
+		"position_offset:x": "5140.0",
+		"position_offset:y": "-1920.0",
+		"text": "\"I'll take it.\" (10 gold)",
+		"type": "hub"
+	},
+	{
+		"callbacks": "buy %speaker Marrow \"Leather Bag\" 10",
+		"conversation_id": "68",
+		"expressions": "bought_something = 1",
+		"flags": "1",
+		"position_offset:x": "5540.0",
+		"position_offset:y": "-1920.0",
+		"text": "\"I'll take it.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "70",
+		"position_offset:x": "7640.0",
+		"position_offset:y": "-60.0",
+		"speaker": "Marrow",
+		"text": "\"And look out, in that desert. Whatever you do. Come back alive. So you can get something else next time.\"",
+		"type": "hub"
+	},
+	{
+		"choices": "2",
+		"conversation_id": "62",
+		"position_offset:x": "4580.0",
+		"position_offset:y": "-2120.0",
+		"speaker": "Body",
+		"text": "A deep brown hue and heavy stitches line a deep pocket worn around the belt. A suitable container for the hearts of your enemies.",
+		"type": "hub"
+	},
+	{
+		"additional_data": "\"hover_item\": \"Duster\"",
+		"choices": "4",
+		"conversation_id": "57",
+		"position_offset:x": "2820.0",
+		"position_offset:y": "1140.0",
+		"text": "(Inspect the vest)",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "58",
+		"position_offset:x": "2840.0",
+		"position_offset:y": "1840.0",
+		"text": "\"Nevermind\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "74",
+		"position_offset:x": "4020.0",
+		"position_offset:y": "1600.0",
+		"text": "\"Who did you get this from?\"",
+		"type": "hub"
+	},
+	{
+		"choices": "2",
+		"conversation_id": "73",
+		"position_offset:x": "3460.0",
+		"position_offset:y": "1460.0",
+		"speaker": "Sight",
+		"text": "The vest came with a black shirt. Freya felt a presence from both. Sure enough, as she turned it over, there was an embroidery on the back of the vest. Small red letters: \"Sandman\", a common Duster nickname. ",
+		"type": "hub"
+	},
+	{
+		"choices": "2",
+		"conversation_id": "61",
+		"position_offset:x": "4140.0",
+		"position_offset:y": "-1340.0",
+		"speaker": "Marrow",
+		"text": "\"I found this bag at a pawn shop many miles south of here. It's clearly desert gear, but nobody has picked it up yet. If you don't think it's ominous, I'll give you a good price.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "67",
+		"expressions": "bought_something",
+		"position_offset:x": "7220.0",
+		"position_offset:y": "-280.0",
+		"speaker": "Marrow",
+		"text": "\"Thank you! Your funds won't go to waste.\" She motions to a crooked wheel on the drawer.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "83",
+		"position_offset:x": "4720.0",
+		"position_offset:y": "-80.0",
+		"speaker": "Marrow",
+		"text": "\"For food.\" For the first time, she does not look forward. \"It's ok. It's a strong skin. My sister is dead and buried a long time now, and my traveling days are well over.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "85",
+		"position_offset:x": "4280.0",
+		"position_offset:y": "280.0",
+		"text": "\"Sounds important.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "86",
+		"position_offset:x": "4720.0",
+		"position_offset:y": "380.0",
+		"speaker": "Marrow",
+		"text": "\"Anything can become important. Even a simple waterskin.\"",
+		"type": "hub"
+	},
+	{
 		"conversation_id": "26",
-		"position_offset:x": "1680.0",
-		"position_offset:y": "-1520.0",
+		"position_offset:x": "1620.0",
+		"position_offset:y": "-3520.0",
 		"speaker": "Geno",
 		"text": "\"How's business?\"",
 		"type": "hub"
 	},
 	{
-		"additional_data": "hover_item: waterskin",
-		"conversation_id": "56",
+		"conversation_id": "69",
+		"position_offset:x": "7220.0",
+		"position_offset:y": "500.0",
+		"speaker": "Marrow",
+		"text": "\"Oh well. I'll keep it then.\"",
+		"type": "hub"
+	},
+	{
+		"choices": "3",
+		"conversation_id": "75",
+		"position_offset:x": "3520.0",
+		"position_offset:y": "-420.0",
+		"speaker": "Marrow",
+		"text": "\"Ah. This particular artifact was carried by my sister on the north-south pilgrimmage over 30 years ago.\"",
+		"type": "hub"
+	},
+	{
+		"choices": "2",
+		"conversation_id": "87",
+		"position_offset:x": "5200.0",
+		"position_offset:y": "-100.0",
+		"speaker": "Marrow",
+		"text": "\"Anyway, since you've been such good conversation, I'll let go of it for 15 gold.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "71",
+		"position_offset:x": "4700.0",
+		"position_offset:y": "-500.0",
+		"speaker": "Bones",
+		"text": "Gray skin feels primed to become one with you.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "82",
+		"position_offset:x": "4280.0",
+		"position_offset:y": "-80.0",
+		"text": "\"Why are you selling it?\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "88",
 		"flags": "1",
-		"position_offset:x": "2800.0",
-		"position_offset:y": "920.0",
-		"text": "(Inspect the waterskin)",
+		"position_offset:x": "4240.0",
+		"position_offset:y": "-440.0",
+		"speaker": "Reka",
+		"text": "(Touch the waterskin)",
+		"type": "hub"
+	},
+	{
+		"choices": "2",
+		"conversation_id": "89",
+		"position_offset:x": "5200.0",
+		"position_offset:y": "-520.0",
+		"speaker": "Marrow",
+		"text": "\"I'd be willing to let go for 25 gold.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "91",
+		"expressions": "bought_something = 0",
+		"position_offset:x": "5640.0",
+		"position_offset:y": "-300.0",
+		"text": "\"I think I'll keep looking.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "92",
+		"flags": "1",
+		"position_offset:x": "5640.0",
+		"position_offset:y": "300.0",
+		"text": "\"Perfect, thank you.\" (15 gold)",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "90",
+		"flags": "1",
+		"position_offset:x": "5640.0",
+		"position_offset:y": "-660.0",
+		"text": "\"Deal\" (25 gold)",
+		"type": "hub"
+	},
+	{
+		"callbacks": "buy %speaker Marrow \"Waterskin\" 15",
+		"conversation_id": "95",
+		"expressions": "bought_something = 1",
+		"position_offset:x": "6080.0",
+		"position_offset:y": "300.0",
+		"text": "\"Perfect, thank you.\"",
+		"type": "hub"
+	},
+	{
+		"callbacks": "buy %speaker Marrow \"Waterskin\" 25",
+		"conversation_id": "94",
+		"expressions": "bought_something = 1",
+		"position_offset:x": "6060.0",
+		"position_offset:y": "-800.0",
+		"text": "\"Deal\"",
+		"type": "hub"
+	},
+	{
+		"choices": "2",
+		"conversation_id": "76",
+		"flags": "1",
+		"position_offset:x": "6800.0",
+		"position_offset:y": "0.0",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "72",
+		"position_offset:x": "3420.0",
+		"position_offset:y": "880.0",
 		"type": "hub"
 	},
 	{
@@ -424,20 +664,58 @@
 		"type": "hub"
 	},
 	{
-		"additional_data": "hover_item: leather_pouch",
+		"additional_data": "\"hover_item\": \"Waterskin\"",
+		"callbacks": "has_item Marrow \"Waterskin\"",
+		"choices": "1",
+		"conversation_id": "56",
+		"flags": "1",
+		"position_offset:x": "2860.0",
+		"position_offset:y": "-340.0",
+		"text": "(Inspect the waterskin)",
+		"type": "hub"
+	},
+	{
+		"choices": "2",
+		"conversation_id": "60",
+		"expressions": "$(get_equipment Reka Torso) == \"Polymer Blend Black (Top)\"\n$(is_present Reka)",
+		"position_offset:x": "4140.0",
+		"position_offset:y": "-2080.0",
+		"speaker": "Marrow",
+		"text": "\"Leatherworking is a dying art. I heard that deep in the capital factories they've developed strong fibers that are much lighter. But there's still a beauty to an old bag, don't you think?\"",
+		"type": "hub"
+	},
+	{
+		"additional_data": "\"hover_item\": \"Leather Pouch\"",
+		"callbacks": "has_item Marrow \"Leather Pouch\"",
 		"conversation_id": "55",
 		"flags": "1",
-		"position_offset:x": "2800.0",
-		"position_offset:y": "300.0",
+		"position_offset:x": "2640.0",
+		"position_offset:y": "-1640.0",
 		"text": "(Inspect the leather pouch)",
 		"type": "hub"
 	},
 	{
-		"additional_data": "hover_item: vest",
-		"conversation_id": "57",
-		"position_offset:x": "2800.0",
-		"position_offset:y": "1560.0",
-		"text": "(Inspect the vest)",
+		"conversation_id": "96",
+		"flags": "4",
+		"position_offset:x": "4001.61669921875",
+		"position_offset:y": "1966.49853515625",
+		"recipients": "Freya",
+		"text": "(Leave it alone.)",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "97",
+		"position_offset:x": "1240.0",
+		"position_offset:y": "2740.0",
+		"text": "\"I think I'll come back later.\"",
+		"type": "hub"
+	},
+	{
+		"callbacks": "kick %speaker",
+		"conversation_id": "98",
+		"flags": "1",
+		"position_offset:x": "1620.0",
+		"position_offset:y": "2780.0",
 		"type": "hub"
 	},
 	{
@@ -693,6 +971,12 @@
 		"type": "connection"
 	},
 	{
+		"from_id": "37",
+		"from_port": 3,
+		"to_id": "58",
+		"type": "connection"
+	},
+	{
 		"from_id": "38",
 		"from_port": 0,
 		"to_id": "39",
@@ -777,6 +1061,48 @@
 		"type": "connection"
 	},
 	{
+		"from_id": "55",
+		"from_port": 0,
+		"to_id": "59",
+		"type": "connection"
+	},
+	{
+		"from_id": "56",
+		"from_port": 0,
+		"to_id": "75",
+		"type": "connection"
+	},
+	{
+		"from_id": "57",
+		"from_port": 0,
+		"to_id": "72",
+		"type": "connection"
+	},
+	{
+		"from_id": "57",
+		"from_port": 2,
+		"to_id": "73",
+		"type": "connection"
+	},
+	{
+		"from_id": "58",
+		"from_port": 0,
+		"to_id": "6",
+		"type": "connection"
+	},
+	{
+		"from_id": "59",
+		"from_port": 0,
+		"to_id": "60",
+		"type": "connection"
+	},
+	{
+		"from_id": "59",
+		"from_port": 1,
+		"to_id": "61",
+		"type": "connection"
+	},
+	{
 		"from_id": "6",
 		"from_port": 0,
 		"to_id": "26",
@@ -795,15 +1121,231 @@
 		"type": "connection"
 	},
 	{
+		"from_id": "6",
+		"from_port": 3,
+		"to_id": "97",
+		"type": "connection"
+	},
+	{
+		"from_id": "60",
+		"from_port": 0,
+		"to_id": "62",
+		"type": "connection"
+	},
+	{
+		"from_id": "60",
+		"from_port": 1,
+		"to_id": "63",
+		"type": "connection"
+	},
+	{
+		"from_id": "61",
+		"from_port": 0,
+		"to_id": "62",
+		"type": "connection"
+	},
+	{
+		"from_id": "61",
+		"from_port": 1,
+		"to_id": "63",
+		"type": "connection"
+	},
+	{
+		"from_id": "62",
+		"from_port": 0,
+		"to_id": "64",
+		"type": "connection"
+	},
+	{
+		"from_id": "62",
+		"from_port": 1,
+		"to_id": "65",
+		"type": "connection"
+	},
+	{
+		"from_id": "63",
+		"from_port": 0,
+		"to_id": "64",
+		"type": "connection"
+	},
+	{
+		"from_id": "63",
+		"from_port": 1,
+		"to_id": "65",
+		"type": "connection"
+	},
+	{
+		"from_id": "64",
+		"from_port": 0,
+		"to_id": "68",
+		"type": "connection"
+	},
+	{
+		"from_id": "65",
+		"from_port": 0,
+		"to_id": "76",
+		"type": "connection"
+	},
+	{
+		"from_id": "67",
+		"from_port": 0,
+		"to_id": "70",
+		"type": "connection"
+	},
+	{
+		"from_id": "68",
+		"from_port": 0,
+		"to_id": "76",
+		"type": "connection"
+	},
+	{
 		"from_id": "7",
 		"from_port": 0,
 		"to_id": "6",
 		"type": "connection"
 	},
 	{
-		"position:x": "2195.47021484375",
-		"position:y": "1533.4580078125",
+		"from_id": "71",
+		"from_port": 0,
+		"to_id": "89",
+		"type": "connection"
+	},
+	{
+		"from_id": "73",
+		"from_port": 0,
+		"to_id": "74",
+		"type": "connection"
+	},
+	{
+		"from_id": "73",
+		"from_port": 1,
+		"to_id": "96",
+		"type": "connection"
+	},
+	{
+		"from_id": "75",
+		"from_port": 0,
+		"to_id": "88",
+		"type": "connection"
+	},
+	{
+		"from_id": "75",
+		"from_port": 1,
+		"to_id": "82",
+		"type": "connection"
+	},
+	{
+		"from_id": "75",
+		"from_port": 2,
+		"to_id": "85",
+		"type": "connection"
+	},
+	{
+		"from_id": "76",
+		"from_port": 0,
+		"to_id": "67",
+		"type": "connection"
+	},
+	{
+		"from_id": "76",
+		"from_port": 1,
+		"to_id": "69",
+		"type": "connection"
+	},
+	{
+		"from_id": "82",
+		"from_port": 0,
+		"to_id": "83",
+		"type": "connection"
+	},
+	{
+		"from_id": "83",
+		"from_port": 0,
+		"to_id": "87",
+		"type": "connection"
+	},
+	{
+		"from_id": "85",
+		"from_port": 0,
+		"to_id": "86",
+		"type": "connection"
+	},
+	{
+		"from_id": "86",
+		"from_port": 0,
+		"to_id": "87",
+		"type": "connection"
+	},
+	{
+		"from_id": "87",
+		"from_port": 0,
+		"to_id": "92",
+		"type": "connection"
+	},
+	{
+		"from_id": "87",
+		"from_port": 1,
+		"to_id": "91",
+		"type": "connection"
+	},
+	{
+		"from_id": "88",
+		"from_port": 0,
+		"to_id": "71",
+		"type": "connection"
+	},
+	{
+		"from_id": "89",
+		"from_port": 0,
+		"to_id": "90",
+		"type": "connection"
+	},
+	{
+		"from_id": "89",
+		"from_port": 1,
+		"to_id": "91",
+		"type": "connection"
+	},
+	{
+		"from_id": "90",
+		"from_port": 0,
+		"to_id": "94",
+		"type": "connection"
+	},
+	{
+		"from_id": "92",
+		"from_port": 0,
+		"to_id": "95",
+		"type": "connection"
+	},
+	{
+		"from_id": "94",
+		"from_port": 0,
+		"to_id": "76",
+		"type": "connection"
+	},
+	{
+		"from_id": "95",
+		"from_port": 0,
+		"to_id": "76",
+		"type": "connection"
+	},
+	{
+		"from_id": "97",
+		"from_port": 0,
+		"to_id": "98",
+		"type": "connection"
+	},
+	{
+		"from_id": "98",
+		"from_port": 0,
+		"to_id": "6",
+		"type": "connection"
+	},
+	{
+		"position:x": "2908.1376953125",
+		"position:y": "-120.549346923828",
 		"type": "camera",
-		"zoom": "0.90908968448639"
+		"zoom": "0.51315450668335"
 	}
 ]

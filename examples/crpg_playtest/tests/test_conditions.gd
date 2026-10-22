@@ -33,8 +33,8 @@ func _ready() -> void:
 
 	_check(Evaluator.classify(GATE_CONDITION) == 0, "a comparison classifies as a condition")
 	_check(Evaluator.classify(VISITS_STATEMENT) == 1, "an assignment classifies as a statement")
-	_check(not Evaluator.condition_holds(_ctx, _conversation, "0"), "the condition \"0\" does not hold")
-	_check(Evaluator.condition_holds(_ctx, _conversation, "1"), "the condition \"1\" holds")
+	_check(not Evaluator.condition_holds(_ctx, _conversation, _actor, 3, "0"), "the condition \"0\" does not hold")
+	_check(Evaluator.condition_holds(_ctx, _conversation, _actor, 3, "1"), "the condition \"1\" holds")
 
 	_test_auto_target_conditions()
 	_test_statement_runs_once()

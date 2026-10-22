@@ -671,6 +671,29 @@ unsafe {
 }
 }
 
+/// Get the speaker of a hub, as an actor would hear it.
+///
+/// A hub with a speaker of its own speaks as that speaker. A hub without one is
+/// anonymous: it speaks as the first voice in the speak as list of whoever is
+/// standing on it, so the answer depends on the actor, and a hub that has no
+/// speaker of its own answers differently for each of them.
+///
+/// Returns [`LOUDER_NAME_NONE`] if the hub does not exist, or if the actor has
+/// no voice to speak it with.
+#[unsafe(no_mangle)]
+pub extern "C" fn get_hub_speaker_for_actor(
+  ctx: *const LouderContext,
+  conversation: LouderName,
+  position: LouderPosition,
+  actor_perspective: LouderActor,
+) -> LouderName {
+if ctx.is_null() {
+  return LOUDER_NAME_NONE;
+}
+
+unsafe { Simulator::hub_speaker_for(&*ctx, conversation, actor_perspective, position) }
+}
+
 /// Get the text of a hub as a name.
 ///
 /// Returns [`LOUDER_NAME_NONE`] if the hub has no text or does not exist. Read

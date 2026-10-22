@@ -105,6 +105,36 @@ int CountEventsOfKind(const std::vector<LouderEvent>& events, EventData::Tag tag
   return count;
 }
 
+// The move an actor made onto a hub, if it made one.
+//
+// Every kind of move carries the same motion, so the search covers all of them:
+// what a test is looking for is where somebody went and who the hub was heard
+// as while they were going there.
+bool FindMotion(const std::vector<LouderEvent>& events, LouderActor actor, LouderPosition target,
+                Motion* found) {
+  for (const auto& event : events) {
+    if (event.actor != actor) {
+      continue;
+    }
+
+    const Motion* motion = nullptr;
+    if (event.data.tag == EventData::Tag::RegularMotion) {
+      motion = &event.data.regular_motion._0;
+    } else if (event.data.tag == EventData::Tag::Warp) {
+      motion = &event.data.warp._0;
+    } else if (event.data.tag == EventData::Tag::ForceMotion) {
+      motion = &event.data.force_motion._0;
+    }
+
+    if (motion != nullptr && motion->target_position == target) {
+      *found = *motion;
+      return true;
+    }
+  }
+
+  return false;
+}
+
 // Every load error in the queue, as (position, error) pairs.
 //
 // The order matters only in that it is the order the loader reported them in,
@@ -1921,6 +1951,250 @@ void TestAnUnownedHubWithOneChoiceIsEveryonesToTake() {
   remove_conversation(g_ctx, conversation);
 }
 
+// A hub with no speaker of its own is anonymous: it says whatever whoever is
+// standing on it says, and the voice is projected onto the hub for as long as
+// that actor is there.
+//
+//   0 -> 5 -> 9
+//
+// Every hub here is anonymous, so the conversation does not depend on who is
+// public: an anonymous hub is reached by everybody and owned by nobody.
+const char* AnonymousJson() {
+  return R"([
+    {"type":"hub","conversation_id":0,"text":"start","tags":"start","flags":0},
+    {"type":"hub","conversation_id":5,"text":"anonymous","flags":0},
+    {"type":"hub","conversation_id":9,"text":"the end","flags":0},
+    {"type":"connection","from_id":0,"from_port":0,"to_id":5},
+    {"type":"connection","from_id":5,"from_port":0,"to_id":9}
+  ])";
+}
+
+// The same conversation, except that hub 5 asks who would be speaking it and
+// turns itself away from that actor.
+const char* GatedJson() {
+  return R"([
+    {"type":"hub","conversation_id":0,"text":"start","tags":"start","flags":0},
+    {"type":"hub","conversation_id":5,"text":"gated","expressions":"%speaker != \"A\"","flags":0},
+    {"type":"hub","conversation_id":9,"text":"the end","flags":0},
+    {"type":"connection","from_id":0,"from_port":0,"to_id":5},
+    {"type":"connection","from_id":5,"from_port":0,"to_id":9}
+  ])";
+}
+
+// The same conversation again, except that hub 5 remembers who would be
+// speaking it.
+const char* RememberedJson() {
+  return R"([
+    {"type":"hub","conversation_id":0,"text":"start","tags":"start","flags":0},
+    {"type":"hub","conversation_id":5,"text":"remembered","expressions":"last = %speaker","flags":0},
+    {"type":"hub","conversation_id":9,"text":"the end","flags":0},
+    {"type":"connection","from_id":0,"from_port":0,"to_id":5},
+    {"type":"connection","from_id":5,"from_port":0,"to_id":9}
+  ])";
+}
+
+// And again, except that hub 5 says who it is speaking as, whatever the actor
+// walking onto it would have said.
+const char* AssignedJson() {
+  return R"([
+    {"type":"hub","conversation_id":0,"text":"start","tags":"start","flags":0},
+    {"type":"hub","conversation_id":5,"text":"assigned","expressions":"%speaker = \"Narrator\"","flags":0},
+    {"type":"hub","conversation_id":9,"text":"the end","flags":0},
+    {"type":"connection","from_id":0,"from_port":0,"to_id":5},
+    {"type":"connection","from_id":5,"from_port":0,"to_id":9}
+  ])";
+}
+
+void TestAnAnonymousHubSpeaksAsWhoeverWalksOntoIt() {
+  std::printf("an anonymous hub speaks as whoever walks onto it\n");
+
+  LouderName conversation = Declare("anonymous conversation");
+  std::string json = AnonymousJson();
+  CHECK(load_conversation_json(g_ctx, conversation, reinterpret_cast<uint8_t*>(&json[0]),
+                               json.size()) == 0,
+        "loading the anonymous conversation returned %d", 0);
+
+  LouderName speak_a[1] = {Declare("A")};
+  LouderName speak_b[1] = {Declare("B")};
+  LouderActor actor_a = add_actor(g_ctx, conversation, 0, ActorFlags(), speak_a, 1, nullptr, 0);
+  LouderActor actor_b = add_actor(g_ctx, conversation, 0, ActorFlags(), speak_b, 1, nullptr, 0);
+
+  // Put the two actors in their own channels, so that neither is dragged along
+  // by the other and each of them walks onto the hub on its own.
+  force_position(g_ctx, conversation, actor_a, 0, Declare("left"), 0);
+  force_position(g_ctx, conversation, actor_b, 0, Declare("right"), 0);
+  flush_events(g_ctx);
+
+  // The hub carries no speaker of its own, which is what makes it anonymous.
+  CHECK(get_hub_speaker(g_ctx, conversation, 5) == LOUDER_NAME_NONE,
+        "hub 5 should carry no speaker of its own");
+
+  // The voice it answers with is the one of the actor asking, so the same hub
+  // answers differently for each of them.
+  CHECK(ReadName(get_hub_speaker_for_actor(g_ctx, conversation, 5, actor_a)) == "A",
+        "the hub should answer as A for the first actor, saw %s",
+        ReadName(get_hub_speaker_for_actor(g_ctx, conversation, 5, actor_a)).c_str());
+  CHECK(ReadName(get_hub_speaker_for_actor(g_ctx, conversation, 5, actor_b)) == "B",
+        "and as B for the second, saw %s",
+        ReadName(get_hub_speaker_for_actor(g_ctx, conversation, 5, actor_b)).c_str());
+
+  // The first actor walks onto the hub, which speaks in that actor's voice.
+  CHECK(select_choice(g_ctx, conversation, actor_a, 0) == 0,
+        "the first actor should be able to walk onto the anonymous hub");
+  CHECK(get_actor_position(g_ctx, conversation, actor_a) == 5,
+        "and should land on it, saw %d", get_actor_position(g_ctx, conversation, actor_a));
+
+  std::vector<LouderEvent> events = DrainEvents();
+  Motion motion{};
+  CHECK(FindMotion(events, actor_a, 5, &motion), "the move onto the hub should be announced");
+  CHECK(ReadName(motion.speaker) == "A", "the move should be spoken by A, saw %s",
+        ReadName(motion.speaker).c_str());
+
+  // The second actor walks onto the same hub later, and the hub speaks in that
+  // actor's voice instead: the voice is projected onto the hub for the length
+  // of the move, and no longer.
+  CHECK(select_choice(g_ctx, conversation, actor_b, 0) == 0,
+        "the second actor should be able to walk onto the same hub");
+  CHECK(get_actor_position(g_ctx, conversation, actor_b) == 5,
+        "and should land on it too, saw %d", get_actor_position(g_ctx, conversation, actor_b));
+
+  events = DrainEvents();
+  CHECK(FindMotion(events, actor_b, 5, &motion), "the second move onto the hub should be announced");
+  CHECK(ReadName(motion.speaker) == "B", "the second move should be spoken by B, saw %s",
+        ReadName(motion.speaker).c_str());
+
+  // And the hub itself is left as it was: it is still anonymous, and it still
+  // answers for each actor in that actor's own voice.
+  CHECK(get_hub_speaker(g_ctx, conversation, 5) == LOUDER_NAME_NONE,
+        "the hub should still carry no speaker of its own");
+  CHECK(ReadName(get_hub_speaker_for_actor(g_ctx, conversation, 5, actor_a)) == "A",
+        "the hub should still answer as A for the first actor, saw %s",
+        ReadName(get_hub_speaker_for_actor(g_ctx, conversation, 5, actor_a)).c_str());
+  CHECK(ReadName(get_hub_speaker_for_actor(g_ctx, conversation, 5, actor_b)) == "B",
+        "and as B for the second, saw %s",
+        ReadName(get_hub_speaker_for_actor(g_ctx, conversation, 5, actor_b)).c_str());
+
+  remove_conversation(g_ctx, conversation);
+}
+
+void TestTheSpeakerVariableGatesAHubPerActor() {
+  std::printf("the speaker variable gates a hub per actor\n");
+
+  LouderName conversation = Declare("gated conversation");
+  std::string json = GatedJson();
+  CHECK(load_conversation_json(g_ctx, conversation, reinterpret_cast<uint8_t*>(&json[0]),
+                               json.size()) == 0,
+        "loading the gated conversation returned %d", 0);
+
+  LouderName speak_a[1] = {Declare("A")};
+  LouderName speak_b[1] = {Declare("B")};
+  LouderActor actor_a = add_actor(g_ctx, conversation, 0, ActorFlags(), speak_a, 1, nullptr, 0);
+  LouderActor actor_b = add_actor(g_ctx, conversation, 0, ActorFlags(), speak_b, 1, nullptr, 0);
+
+  flush_events(g_ctx);
+
+  // The hub asks who would be speaking it, and turns itself away from that
+  // actor: it is there for the other one.
+  CHECK(get_hub_choice_count(g_ctx, conversation, 0, actor_a) == 0,
+        "the hub should not be offered to the actor it would speak as, saw %d",
+        get_hub_choice_count(g_ctx, conversation, 0, actor_a));
+  CHECK(get_hub_choice_count(g_ctx, conversation, 0, actor_b) == 1,
+        "and should be offered to the other one, saw %d",
+        get_hub_choice_count(g_ctx, conversation, 0, actor_b));
+
+  // The actor it was offered to takes it, and lands on the hub.
+  CHECK(select_choice(g_ctx, conversation, actor_b, 0) == 0,
+        "the second actor should be able to take the gated hub");
+  CHECK(get_actor_position(g_ctx, conversation, actor_b) == 5,
+        "and should land on it, saw %d", get_actor_position(g_ctx, conversation, actor_b));
+  CHECK(get_actor_position(g_ctx, conversation, actor_a) == 0,
+        "while the actor it turned away from stays put, saw %d",
+        get_actor_position(g_ctx, conversation, actor_a));
+
+  remove_conversation(g_ctx, conversation);
+}
+
+void TestTheSpeakerVariableCanBeStoredInStoryState() {
+  std::printf("the speaker variable can be stored in story state\n");
+
+  LouderName conversation = Declare("remembered speaker conversation");
+  std::string json = RememberedJson();
+  CHECK(load_conversation_json(g_ctx, conversation, reinterpret_cast<uint8_t*>(&json[0]),
+                               json.size()) == 0,
+        "loading the remembered speaker conversation returned %d", 0);
+
+  LouderName speak_a[1] = {Declare("A")};
+  LouderActor actor_a = add_actor(g_ctx, conversation, 0, ActorFlags(), speak_a, 1, nullptr, 0);
+
+  flush_events(g_ctx);
+
+  // The hub remembers who would be speaking it, which is the actor's own voice.
+  CHECK(select_choice(g_ctx, conversation, actor_a, 0) == 0,
+        "the actor should be able to walk onto the hub");
+  CHECK(get_actor_position(g_ctx, conversation, actor_a) == 5,
+        "and should land on it, saw %d", get_actor_position(g_ctx, conversation, actor_a));
+
+  LouderVariant stored = get_story_state(g_ctx, conversation, Declare("last"));
+  CHECK(stored.tag == LouderVariant::Tag::String, "the stored value should be a string");
+  if (stored.tag == LouderVariant::Tag::String) {
+    CHECK(ReadName(stored.string._0) == "A",
+          "the hub should have stored the voice it would have been spoken by, saw %s",
+          ReadName(stored.string._0).c_str());
+  }
+
+  remove_conversation(g_ctx, conversation);
+}
+
+void TestAssigningTheSpeakerChangesTheHubForThatArrivalOnly() {
+  std::printf("assigning the speaker changes the hub for that arrival only\n");
+
+  LouderName conversation = Declare("assigned speaker conversation");
+  std::string json = AssignedJson();
+  CHECK(load_conversation_json(g_ctx, conversation, reinterpret_cast<uint8_t*>(&json[0]),
+                               json.size()) == 0,
+        "loading the assigned speaker conversation returned %d", 0);
+
+  LouderName speak_a[1] = {Declare("A")};
+  LouderName speak_b[1] = {Declare("B")};
+  LouderActor actor_a = add_actor(g_ctx, conversation, 0, ActorFlags(), speak_a, 1, nullptr, 0);
+  LouderActor actor_b = add_actor(g_ctx, conversation, 0, ActorFlags(), speak_b, 1, nullptr, 0);
+
+  force_position(g_ctx, conversation, actor_a, 0, Declare("left"), 0);
+  force_position(g_ctx, conversation, actor_b, 0, Declare("right"), 0);
+  flush_events(g_ctx);
+
+  // The hub says who it is speaking as, and the move it belongs to is spoken
+  // in that voice rather than in the actor's.
+  CHECK(select_choice(g_ctx, conversation, actor_a, 0) == 0,
+        "the first actor should be able to walk onto the hub");
+  std::vector<LouderEvent> events = DrainEvents();
+  Motion motion{};
+  CHECK(FindMotion(events, actor_a, 5, &motion), "the move onto the hub should be announced");
+  CHECK(ReadName(motion.speaker) == "Narrator",
+        "the move should be spoken by the voice the hub chose, saw %s",
+        ReadName(motion.speaker).c_str());
+
+  // The hub itself is left as it was: the assignment belongs to the arrival, so
+  // the hub is still anonymous and still answers in each actor's own voice.
+  CHECK(get_hub_speaker(g_ctx, conversation, 5) == LOUDER_NAME_NONE,
+        "the hub should still carry no speaker of its own");
+  CHECK(ReadName(get_hub_speaker_for_actor(g_ctx, conversation, 5, actor_a)) == "A",
+        "the hub should still answer as A for the first actor, saw %s",
+        ReadName(get_hub_speaker_for_actor(g_ctx, conversation, 5, actor_a)).c_str());
+
+  // And the assignment happens on every arrival rather than only the first: a
+  // later actor walking onto the same hub is spoken by the same voice.
+  CHECK(select_choice(g_ctx, conversation, actor_b, 0) == 0,
+        "the second actor should be able to walk onto the same hub");
+  events = DrainEvents();
+  CHECK(FindMotion(events, actor_b, 5, &motion), "the second move onto the hub should be announced");
+  CHECK(ReadName(motion.speaker) == "Narrator",
+        "the second move should be spoken by the same voice, saw %s",
+        ReadName(motion.speaker).c_str());
+
+  remove_conversation(g_ctx, conversation);
+}
+
 void TestAsks() {
   std::printf("asks\n");
 
@@ -1976,7 +2250,7 @@ void TestBuiltEvents() {
   LouderEvent callback = BareEvent(make_event_data_callback(Declare("on_arrival")));
   CHECK(test_push_event(g_ctx, &callback) == LouderError::Ok, "pushing a built event should succeed");
 
-  LouderEvent motion = BareEvent(make_event_data_regular_motion(Motion{0, 5, 1, false}));
+  LouderEvent motion = BareEvent(make_event_data_regular_motion(Motion{0, 5, 1, LOUDER_NAME_NONE, false}));
   CHECK(test_push_event(g_ctx, &motion) == LouderError::Ok, "pushing a built motion should succeed");
 
   LouderEvent failure = BareEvent(make_event_data_load_error(LoadFailure{9, LOUDER_LOAD_NOT_AN_OBJECT}));
@@ -2046,6 +2320,10 @@ int main(int argc, char** argv) {
   TestSingleplayerRule();
   TestAPrivateHubReachedByAMeaningfulChoice();
   TestAnUnownedHubWithOneChoiceIsEveryonesToTake();
+  TestAnAnonymousHubSpeaksAsWhoeverWalksOntoIt();
+  TestTheSpeakerVariableGatesAHubPerActor();
+  TestTheSpeakerVariableCanBeStoredInStoryState();
+  TestAssigningTheSpeakerChangesTheHubForThatArrivalOnly();
   TestLoadErrorsAreReportedAsEvents();
   TestConfigLoadErrorsAreReportedAsEvents();
   TestAsks();

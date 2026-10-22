@@ -2,6 +2,7 @@ use super::context::LouderContext;
 use super::event::*;
 use super::name::*;
 use super::actor::LouderActor;
+use super::hub::LouderPosition;
 use super::object::{ArithOp, CmpOp, LouderVariant, VariantKind};
 
 /// A snippet of code, identified by the interned copy of its own source text.
@@ -21,6 +22,13 @@ pub enum Expr {
   /// A story state variable, named by its source text.
   Var(String),
 
+  /// A special variable, named by its source text.
+  ///
+  /// Special variables are written with a `%` in front, and are read from the
+  /// engine rather than from story state. The name keeps its `%`, so that a
+  /// special variable can be told from an ordinary one by looking at it.
+  Special(String),
+
   Neg(Box<Expr>),
   Not(Box<Expr>),
 
@@ -34,6 +42,17 @@ pub enum Expr {
   Call(String, Vec<Expr>),
   /// `$(a, b)` — suspends for the host to answer.
   Ask(Vec<Expr>),
+}
+
+/// The name of the special variable that says who speaks a hub.
+pub const SPEAKER_VARIABLE: &str = "%speaker";
+
+/// Whether a name is a special variable rather than a story state one.
+///
+/// Special variables are written with a `%` in front, and that is what tells
+/// them apart from the variables an author defines.
+pub fn is_special(name: &str) -> bool {
+  name.starts_with('%')
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -64,6 +83,8 @@ pub enum Token {
   Float(f32),
   Str(String),
   Ident(String),
+  /// A special variable, with its `%` still attached.
+  Special(String),
   Op(&'static str),
   Ask,
   Eof,
@@ -186,6 +207,26 @@ pub fn tokenize(source: &str) -> Result<Vec<Token>, ParseError> {
       continue;
     }
 
+    // A `%` that follows an operand is the modulo operator. One that does not
+    // opens a special variable, which is how an expression can ask the engine
+    // about itself without the two spellings colliding. A compound assignment
+    // is a modulo that happens to be followed by an `=`, so it is left to the
+    // operator table below.
+    if c == '%' && !ends_operand(tokens.last()) {
+      let start = i;
+      i += 1;
+      if i >= bytes.len() || !(bytes[i] == '_' || bytes[i].is_alphabetic()) {
+        return Err(ParseError::new("expected a variable name after `%`", start));
+      }
+      let name_start = i;
+      while i < bytes.len() && (bytes[i] == '_' || bytes[i].is_alphanumeric()) {
+        i += 1;
+      }
+      let name: String = bytes[name_start..i].iter().collect();
+      tokens.push(Token::Special(format!("%{name}")));
+      continue;
+    }
+
     let rest: String = bytes[i..].iter().collect();
     match OPERATORS.iter().find(|op| rest.starts_with(**op)) {
       Some(op) => {
@@ -206,6 +247,23 @@ fn start_of(bytes: &[char], i: usize) -> usize {
   } else {
     i
   }
+}
+
+/// Whether a token ends an operand, and so can be followed by an operator.
+///
+/// This is what tells a `%` that opens a special variable from one that is the
+/// modulo operator: the operator follows an operand, and a special variable
+/// does not.
+fn ends_operand(token: Option<&Token>) -> bool {
+  matches!(
+    token,
+    Some(Token::Ident(_))
+      | Some(Token::Int(_))
+      | Some(Token::Float(_))
+      | Some(Token::Str(_))
+      | Some(Token::Special(_))
+      | Some(Token::Op(")"))
+  )
 }
 
 struct Parser {
@@ -295,14 +353,14 @@ impl Parser {
     }
 
     if self.eat_op("++") {
-      if let Token::Ident(name) = self.next() {
+      if let Token::Ident(name) | Token::Special(name) = self.next() {
         return Ok(Expr::PreInc(name, 1));
       }
       return Err(ParseError::new("`++` needs a variable", self.position));
     }
 
     if self.eat_op("--") {
-      if let Token::Ident(name) = self.next() {
+      if let Token::Ident(name) | Token::Special(name) = self.next() {
         return Ok(Expr::PreInc(name, -1));
       }
       return Err(ParseError::new("`--` needs a variable", self.position));
@@ -324,7 +382,7 @@ impl Parser {
       }
 
       if self.eat_op("++") {
-        if let Expr::Var(name) = expr {
+        if let Expr::Var(name) | Expr::Special(name) = expr {
           expr = Expr::PostInc(name, 1);
           continue;
         }
@@ -332,7 +390,7 @@ impl Parser {
       }
 
       if self.eat_op("--") {
-        if let Expr::Var(name) = expr {
+        if let Expr::Var(name) | Expr::Special(name) = expr {
           expr = Expr::PostInc(name, -1);
           continue;
         }
@@ -394,6 +452,18 @@ impl Parser {
         }
 
         Ok(Expr::Var(name))
+      }
+      Token::Special(name) => {
+        // A special variable may turn out to be a write to it.
+        if let Token::Op(op) = self.peek().clone()
+          && matches!(op, "=" | "+=" | "-=" | "*=" | "/=" | "%=")
+        {
+          self.position += 1;
+          let value = self.parse_expression()?;
+          return Ok(Expr::Assign(name, Box::new(value)));
+        }
+
+        Ok(Expr::Special(name))
       }
       Token::Op("(") => {
         let inner = self.parse_expression()?;
@@ -463,6 +533,11 @@ pub struct EvaluationScope {
   pub conversation: LouderName,
   pub actor: LouderActor,
   pub channel: LouderName,
+  /// The hub the evaluation is about.
+  ///
+  /// A special variable is read from the hub in hand, so that `%speaker` says
+  /// who would speak *this* hub rather than whichever one comes first.
+  pub hub: LouderPosition,
   /// The motion that triggered this evaluation, if any.
   pub motion: Option<Motion>,
 }
@@ -473,6 +548,7 @@ impl EvaluationScope {
       conversation,
       actor,
       channel,
+      hub: super::hub::BLANK_POSITION,
       motion: None,
     }
   }
@@ -534,6 +610,15 @@ impl Evaluator {
     self.eval(context, &expr)
   }
 
+  /// Evaluate one expression that has already been parsed.
+  pub fn evaluate_expr(
+    &self,
+    context: &mut LouderContext,
+    expr: &Expr,
+  ) -> Result<Evaluation, ParseError> {
+    self.eval(context, expr)
+  }
+
   fn eval(
     &self,
     context: &mut LouderContext,
@@ -554,6 +639,8 @@ impl Evaluator {
         let value = context.get_state(self.scope.conversation, key);
         Ok(Evaluation::Value(value))
       }
+
+      Expr::Special(name) => Ok(Evaluation::Value(self.special_value(context, name))),
 
       Expr::Neg(inner) => match self.eval(context, inner)? {
         Evaluation::Suspended => Ok(Evaluation::Suspended),
@@ -588,6 +675,13 @@ impl Evaluator {
           Evaluation::Value(computed) => computed,
         };
 
+        // A special variable is not story state. The engine applies a write to
+        // `%speaker` to the move that made it, and the hub keeps the identity it
+        // had, so the write itself changes nothing here.
+        if is_special(name) {
+          return Ok(Evaluation::Value(computed));
+        }
+
         let key = context.intern_name(name);
         context.set_state(self.scope.conversation, key, computed.clone());
         let statement = EventData::Statement(key);
@@ -596,6 +690,12 @@ impl Evaluator {
       }
 
       Expr::PreInc(name, step) => {
+        // A special variable is read from the engine, and there is nothing to
+        // count, so the increment is worth nothing.
+        if is_special(name) {
+          return Ok(Evaluation::Value(self.special_value(context, name)));
+        }
+
         let key = context.intern_name(name);
         let current = context.get_state(self.scope.conversation, key);
         let updated = current.arith(if *step > 0 { ArithOp::Add } else { ArithOp::Sub }, &LouderVariant::Int(step.abs()));
@@ -606,6 +706,10 @@ impl Evaluator {
       }
 
       Expr::PostInc(name, step) => {
+        if is_special(name) {
+          return Ok(Evaluation::Value(self.special_value(context, name)));
+        }
+
         let key = context.intern_name(name);
         let current = context.get_state(self.scope.conversation, key);
         let updated = current.arith(if *step > 0 { ArithOp::Add } else { ArithOp::Sub }, &LouderVariant::Int(step.abs()));
@@ -649,6 +753,7 @@ impl Evaluator {
           source_position: super::hub::LouderPosition::MIN,
           target_position: super::hub::LouderPosition::MIN,
           choice_index: -1,
+          speaker: LOUDER_NAME_NONE,
           background: false,
         });
 
@@ -671,6 +776,20 @@ impl Evaluator {
       _ => None,
     };
     value.is_truthy(text)
+  }
+
+  /// The value of a special variable, read from the engine.
+  ///
+  /// A special variable is not story state, so it is read from the hub and the
+  /// actor in hand rather than from the state table.
+  fn special_value(&self, context: &LouderContext, name: &str) -> LouderVariant {
+    special_value(
+      context,
+      self.scope.conversation,
+      self.scope.actor,
+      self.scope.hub,
+      name,
+    )
   }
 
   fn apply(&self, context: &mut LouderContext, op: BinOp, left: &LouderVariant, right: &LouderVariant) -> LouderVariant {
@@ -757,6 +876,29 @@ fn apply_binary(
   }
 }
 
+/// The value of a special variable.
+///
+/// Special variables are read from the engine rather than from story state, so
+/// they need to know who is asking and which hub is being asked about.
+pub fn special_value(
+  context: &LouderContext,
+  conversation: LouderName,
+  actor: LouderActor,
+  hub: LouderPosition,
+  name: &str,
+) -> LouderVariant {
+  match name {
+    // The speaker that would speak this hub, seen from where the actor stands.
+    SPEAKER_VARIABLE => {
+      let speaker = super::simulator::Simulator::hub_speaker_for(context, conversation, actor, hub);
+      LouderVariant::String(speaker)
+    }
+    // A special variable the engine does not know is worth nothing, which is
+    // how an unset variable behaves.
+    _ => LouderVariant::Int(0),
+  }
+}
+
 /// Evaluate a condition without touching the engine.
 ///
 /// Conditions are the read-only half of an expression set: by construction
@@ -765,42 +907,56 @@ fn apply_binary(
 /// a `const` handle, and asking "what can this actor see" must not be able to
 /// change the conversation.
 ///
+/// The actor and the hub are needed because a condition may ask the engine
+/// about the hub it is attached to, as `%speaker` does.
+///
 /// Anything that would need to mutate resolves to 0: an ask has no verdict
 /// yet, and an unknown function has no implementation.
 ///
 /// The result is the condition's own value, not its truthiness, so that this
 /// can be used for nested subexpressions. Use [`condition_holds`] for the
 /// yes-or-no answer.
-pub fn eval_condition(context: &LouderContext, conversation: LouderName, expr: &Expr) -> LouderVariant {
+pub fn eval_condition(
+  context: &LouderContext,
+  conversation: LouderName,
+  actor: LouderActor,
+  hub: LouderPosition,
+  expr: &Expr,
+) -> LouderVariant {
   match expr {
     Expr::Int(value) => LouderVariant::Int(*value),
     Expr::Float(value) => LouderVariant::Float(*value),
     Expr::Bool(value) => LouderVariant::from_bool(*value),
     Expr::Str(value) => LouderVariant::String(lookup(context, value)),
     Expr::Var(name) => context.get_state(conversation, lookup(context, name)),
+    Expr::Special(name) => special_value(context, conversation, actor, hub, name),
 
     Expr::Neg(inner) => {
-      let value = eval_condition(context, conversation, inner);
+      let value = eval_condition(context, conversation, actor, hub, inner);
       LouderVariant::Int(-value.as_int())
     }
     Expr::Not(inner) => {
-      let value = eval_condition(context, conversation, inner);
+      let value = eval_condition(context, conversation, actor, hub, inner);
       let text = string_text(context, &value);
       LouderVariant::from_bool(!value.is_truthy(text.as_deref()))
     }
 
     Expr::Binary(op, lhs, rhs) => {
-      let left = eval_condition(context, conversation, lhs);
-      let right = eval_condition(context, conversation, rhs);
+      let left = eval_condition(context, conversation, actor, hub, lhs);
+      let right = eval_condition(context, conversation, actor, hub, rhs);
       apply_readonly(context, *op, &left, &right)
     }
 
     // A statement in a condition position cannot happen: classification sends
     // these to the statement pass, so treating them as their own value is a
     // safety net rather than a real path.
-    Expr::Assign(_, value) => eval_condition(context, conversation, value),
+    Expr::Assign(_, value) => eval_condition(context, conversation, actor, hub, value),
     Expr::PreInc(name, _) | Expr::PostInc(name, _) => {
-      context.get_state(conversation, lookup(context, name))
+      if is_special(name) {
+        special_value(context, conversation, actor, hub, name)
+      } else {
+        context.get_state(conversation, lookup(context, name))
+      }
     }
 
     Expr::Call(_, args) => {
@@ -817,8 +973,14 @@ pub fn eval_condition(context: &LouderContext, conversation: LouderName, expr: &
 
 /// Whether a condition holds, applying the truthiness rules of the engine
 /// guide: 0, false, and the empty string are all falsy.
-pub fn condition_holds(context: &LouderContext, conversation: LouderName, expr: &Expr) -> bool {
-  let value = eval_condition(context, conversation, expr);
+pub fn condition_holds(
+  context: &LouderContext,
+  conversation: LouderName,
+  actor: LouderActor,
+  hub: LouderPosition,
+  expr: &Expr,
+) -> bool {
+  let value = eval_condition(context, conversation, actor, hub, expr);
   let text = string_text(context, &value);
   value.is_truthy(text.as_deref())
 }
@@ -865,6 +1027,50 @@ fn string_id(value: &LouderVariant) -> LouderName {
   }
 }
 
+/// Whether an expression writes anything or asks anything.
+///
+/// The engine reads the value of a special variable before the move it belongs
+/// to is announced, and an expression that writes or asks would then do so
+/// twice: once there, and once when the hub's own statements run.
+fn has_side_effects(expr: &Expr) -> bool {
+  match expr {
+    Expr::Assign(..) | Expr::PreInc(..) | Expr::PostInc(..) | Expr::Ask(_) => true,
+    Expr::Neg(inner) | Expr::Not(inner) => has_side_effects(inner),
+    Expr::Binary(_, lhs, rhs) => has_side_effects(lhs) || has_side_effects(rhs),
+    Expr::Call(_, args) => args.iter().any(has_side_effects),
+    _ => false,
+  }
+}
+
+/// The special variable an expression writes to, and the value it writes.
+///
+/// The engine has one writable special variable, `%speaker`, and a write to it
+/// belongs to the move that made it rather than to the hub: it changes who the
+/// hub appears to speak as for that move, and leaves the hub itself alone.
+///
+/// The value is only read when it can be read without side effects, since the
+/// write is evaluated before the move is announced and a second write to story
+/// state would be counted twice.
+pub fn special_write(
+  context: &mut LouderContext,
+  scope: &EvaluationScope,
+  expr: &Expr,
+) -> Option<(String, LouderVariant)> {
+  let Expr::Assign(name, value) = expr else {
+    return None;
+  };
+
+  if !is_special(name) || has_side_effects(value) {
+    return None;
+  }
+
+  let evaluator = Evaluator::new(scope.clone());
+  match evaluator.evaluate_expr(context, value) {
+    Ok(Evaluation::Value(value)) => Some((name.clone(), value)),
+    _ => None,
+  }
+}
+
 /// Reconstruct the text of an ask's arguments for the host to read back.
 fn args_to_text(args: &[Expr]) -> String {
   args.iter().map(expr_to_text).collect::<Vec<String>>().join(" ")
@@ -877,6 +1083,7 @@ fn expr_to_text(expr: &Expr) -> String {
     Expr::Bool(value) => value.to_string(),
     Expr::Str(value) => value.clone(),
     Expr::Var(name) => name.clone(),
+    Expr::Special(name) => name.clone(),
     Expr::Ask(args) => format!("($({}))", args_to_text(args)),
     Expr::Neg(inner) => format!("-{}", expr_to_text(inner)),
     Expr::Not(inner) => format!("!{}", expr_to_text(inner)),

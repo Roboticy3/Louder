@@ -72,6 +72,21 @@ godot_api! {
       self.inner.channel
     }
 
+    /// The hub this evaluation is about.
+    ///
+    /// A special variable is read from the hub in hand, so that `%speaker` says
+    /// who would speak *this* hub rather than whichever one comes first.
+    #[func]
+    pub fn get_hub(&self) -> engine::LouderPosition {
+      self.inner.hub
+    }
+
+    /// Point this evaluation at a hub.
+    #[func]
+    pub fn set_hub(&mut self, hub: engine::LouderPosition) {
+      self.inner.hub = hub;
+    }
+
     /// The move that triggered this evaluation, if any.
     #[func]
     pub fn get_motion(&self) -> Option<Gd<Motion>> {
@@ -200,16 +215,27 @@ godot_api! {
     ///
     /// An ask inside a condition contributes 0, since it has no verdict yet,
     /// and an unknown function contributes 0 too.
+    ///
+    /// The actor and the hub are needed because a condition may ask the engine
+    /// about the hub it is attached to, as `%speaker` does.
     #[func]
     pub fn condition_holds(
       context: Gd<LouderContext>,
       conversation: engine::LouderName,
+      actor_perspective: engine::LouderActor,
+      position: engine::LouderPosition,
       source: GString,
     ) -> bool {
       let Ok(expression) = engine::parse(&source.to_string()) else {
         return false;
       };
-      engine::condition_holds(&context.bind().inner, conversation, &expression)
+      engine::condition_holds(
+        &context.bind().inner,
+        conversation,
+        actor_perspective,
+        position,
+        &expression,
+      )
     }
   }
 }

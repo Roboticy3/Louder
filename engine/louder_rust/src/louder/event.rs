@@ -18,6 +18,14 @@ pub struct Motion {
   pub target_position: LouderPosition,
   pub choice_index: i32,
 
+  /// The speaker the hub appears to have, for this move.
+  ///
+  /// A hub with a speaker of its own speaks as that speaker. A hub without one
+  /// is anonymous, and the voice of the actor making the move is projected onto
+  /// it for the length of the move, so the same hub carries a different
+  /// speaker for each actor that walks onto it.
+  pub speaker: LouderName,
+
   pub background: bool,
 }
 
