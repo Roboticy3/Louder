@@ -15,24 +15,47 @@ The engine never displays anything, so it has no opinion about what a byte
 means. Strings cross its boundary as bytes and come back as the same bytes: a
 host that hands over text in some encoding reads back that same encoding, and is
 responsible for both halves of that. The one place the engine has to know is a
-JSON document, since JSON is text and cannot be parsed otherwise; those bytes
-have to be UTF-8, and a document that is not returns
-`LOUDER_LOAD_MALFORMED_JSON`.
+JSON document, since JSON is text and cannot be parsed otherwise. The encoding must be passed along with the json string in this case.
 
 # Goals of Dialogue Rules
-The rules below essentially split dialogue into 3 non-mutually exclusive scenarios which may happen all at once in parallel.
+These three core values are what all structures and rules below exist to serve.
+ - The engine should store and drive dialogue trees.
+ - The engine should manage multiple users and dialogue trees easily.
+ - The engine should be extensible in two aspects. First, it should be easy to extend single user trees to multi user trees using the structures provided. For example, introducing a new playable character or making an npc into a playable character should both be as simple as adding choices to a tree. Second, it should be simple to hook custom scripting behavior into the engine without compromising its existing structure.
 
-The goal is to make a dialogue system that is friendly to multiple players.
+# Structures
+Structures are the objects managed by the engine.
 
-The 3 scenarios are the following:
- - Synchronous dialogue. 1 or more actors moves through a dialogue tree synchronously in a single channel. Story priority and appearance rules drive who is "leading" the conversation at any given time and lower-priority sections are intended to be displayed on the side of the "main" flow, where the leading actor is making decisions. The leading actor can change freely.
- - Spoke dialogue/spoke rule. Subset of synchronous dialogue where the leading actor cannot change for the portion of time where no meaningful choices can be made. This makes it so the leading actor decides when dialogue proceeds, but still can't make any meaningful choices on behalf of other actors who may be in the scene.
- - Asynchronous dialogue. 2 or more actors split into multiple channels to explore different parts of a conversation independenlty.
+"Names" are integers mapped to strings provided by the user. When the engine is just as a core library, names must be declared explicitly, but when the engine is wrapped in a framework that takes care of encoding, the user should be able to pass strings wherever a name can be passed. The context is responsible for avoiding name collisions. The "NONE" name is -1, and the "ZERO" name is 0. Both have no string mapping and are used as special codes.
 
-The consequence of these scenarios is that dialogue is:
- - Visible. Synchronous dialogue is mostly centered on the rules which make dialogue appear/not appear to different actors.
- - Extensible. Choices can be added to break the spoke rule. Actors can then be assigned to speakers not previously intended to be possessed by players to "bring them to life." Choices can also be removed and the spoke rule would "fix" the flow of a complex section, turning it into a simple one.
- - Concurrent. Like in real conversations, channels allow for actors to "break out" into separate flows which can be explored independently. This allows more actors to be in control at the same time. Priority rules allow these flows to cleanly merge with each other, too, without interrupting any one channel's flow unless absolutely necessary.
+"Sets" should be represented as lists of objects. And the engine should generally be tolerant of duplicate items in these lists.
+
+"Positions" are integer ids that refer to nodes in a conversation (dialogue tree), paired with a channel, a name describing which "flow" this position belongs to. The default channel is ZERO. The id part of the position is unique within a conversation, and considered equivalent to POSITION_NONE -1 if it is invalid.
+
+"Variants" are values that may be integers, floats, or names.
+
+"Additional Data" are maps between names and Variants. 
+
+"Flags" are 32 bit integers interpreted bitwise with named booleans for some or all 32 bits.
+
+"Unrecognized Objects" objects that are not recognized by the engine may be produced by the editor. A conversation created by the editor may have hubs, voices, and other objects that are discarded when the stream is loaded.
+
+"Optionals" are objects which may or may not be present.
+
+## Context
+A context is a set of actors, voices (previously called speakers), conversations, events, and interrupts.
+
+## Actors
+An actor represents a user and is composed of 2 disjoint sets of voices, one which they "speak as" and another which they "listen to", flags, a position, and additional data.
+
+## Voices
+A voice represents a voice which a user can use to interact with a conversation. Voices are composed of a name, a set of voices which they "listen to", flags, and additional data.
+
+## Conversations
+The conversation represents a dialogue tree and is composed of a set of hubs and a set of connections
+
+## Hubs
+A hub represents a position in a conversation and is composed of the integer id of a position, optional voice, a set of voices called "recipients", flags, a name "text", a number of choices
 
 # Dialogue Rules
 Conversations are made up of hubs connected by choices. 
