@@ -1030,6 +1030,17 @@ impl Simulator {
       return None;
     }
 
+    // The hub must be spoken by the actor that made the choice.
+    let hub = conversation_ref.hub(position)?;
+    let speak_as: Vec<LouderName> = context
+      .get_actor(conversation, actor)
+      .map(|entry| entry.speak_as().to_vec())
+      .unwrap_or_default();
+    let hub_speaker = hub.speaker_for(&speak_as);
+    if hub_speaker == LOUDER_NAME_NONE || !speak_as.contains(&hub_speaker) {
+      return None;
+    }
+
     Some(position)
   }
 

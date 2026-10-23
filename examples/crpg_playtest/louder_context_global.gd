@@ -26,7 +26,14 @@ extends Node
 signal conversation_started(conversation: int, source: NodePath)
 signal actor_added(conversation: int, actor: int)
 signal actor_removed(conversation: int, actor: int)
-signal motion(conversation: int, actor: int, target: int, background: int)
+## A move, as the engine announced it.
+##
+## The speaker is the voice the hub was heard in for that move, which is not
+## always the voice the hub carries: a hub without a speaker of its own speaks
+## in the voice of whoever walked onto it. It travels as text because that is
+## what a line needs, and because a name only means something on the peer that
+## interned it.
+signal motion(conversation: int, actor: int, target: int, background: int, speaker: String)
 signal callback_raised(callback: String)
 
 const SERVER_ID := 1
@@ -175,10 +182,14 @@ func get_choice_text(conversation: int, position: int, actor: int, choice_index:
 	return resolve_name(context.get_hub_choice_text(conversation, position, actor, choice_index))
 
 
-## The speaker of a hub, already as text. Empty when the hub has no speaker,
-## which is how the engine says a hub is narration rather than something said.
-func get_line_speaker(conversation: int, position: int) -> String:
-	return resolve_name(context.get_hub_speaker(conversation, position))
+## The speaker of a hub, already as text, as the actor in hand would hear it.
+##
+## A hub with no speaker of its own is anonymous: it speaks in the voice of
+## whoever is standing on it, so the answer depends on the actor as much as on
+## the hub. Empty when even that voice is missing, which is how the engine says
+## a hub is narration rather than something said.
+func get_line_speaker(conversation: int, position: int, actor: int) -> String:
+	return resolve_name(context.get_hub_speaker_for_actor(conversation, position, actor))
 
 
 ## The text of a hub, already as text.
@@ -237,7 +248,8 @@ func _drain() -> void:
 			_EVENT_REGULAR_MOTION, _EVENT_WARP, _EVENT_FORCE_MOTION:
 				var travel: Motion = event.get_motion()
 				_pass_motion(event.get_conversation(), event.get_actor(),
-					travel.get_target_position(), travel.is_background())
+					travel.get_target_position(), travel.is_background(),
+					resolve_name(travel.get_speaker()))
 			_EVENT_CALLBACK:
 				_pass_callback(event.get_name())
 			_EVENT_ACTOR_ADDED:
@@ -305,21 +317,21 @@ func _callback(callback: int) -> void:
 
 
 @rpc("authority", "call_remote", "reliable")
-func _motion(conversation: int, actor: int, target: int, background: int) -> void:
+func _motion(conversation: int, actor: int, target: int, background: int, speaker: String) -> void:
 	# Only a peer that is not running the engine gets here, so the actor is this
 	# peer's copy of one the server owns, and the copy is still standing where it
 	# stood when it was copied. Putting it where the server put it is what keeps
 	# the choices this peer offers the choices of the hub the actor is on.
 	_follow_motion(conversation, actor, target)
-	motion.emit(conversation, actor, target, background)
+	motion.emit(conversation, actor, target, background, speaker)
 
 
-func _pass_motion(conversation: int, actor: int, target: int, background: bool) -> void:
+func _pass_motion(conversation: int, actor: int, target: int, background: bool, speaker: String) -> void:
 	# The flag travels as an int: a listener reads it as `!= 0`, which is what it
 	# has to do to read one that crossed a network boundary anyway.
 	var background_flag := 1 if background else 0
-	motion.emit(conversation, actor, target, background_flag)
-	_motion.rpc(conversation, actor, target, background_flag)
+	motion.emit(conversation, actor, target, background_flag, speaker)
+	_motion.rpc(conversation, actor, target, background_flag, speaker)
 
 
 func _pass_actor_added(conversation: int, actor: int) -> void:

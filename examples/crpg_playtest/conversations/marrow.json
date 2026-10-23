@@ -173,14 +173,6 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "31",
-		"position_offset:x": "2600.0",
-		"position_offset:y": "2160.0",
-		"speaker": "Sight",
-		"text": "Freya was surprised when she felt relief at the thought of being blind, at the thought of not being troubled by the exact color and shape of things. ",
-		"type": "hub"
-	},
-	{
 		"choices": "3",
 		"conversation_id": "28",
 		"position_offset:x": "2480.0",
@@ -227,20 +219,11 @@
 	{
 		"conversation_id": "30",
 		"flags": "4",
-		"position_offset:x": "2240.0",
-		"position_offset:y": "2180.0",
+		"position_offset:x": "2580.0",
+		"position_offset:y": "3320.0",
 		"recipients": "Freya",
 		"speaker": "Marrow",
 		"text": "The leatherworking shop is warm, and it's been here for a long time. The small shopkeep has seen things, though on closer inspection her eyes are poor.",
-		"type": "hub"
-	},
-	{
-		"choices": "2",
-		"conversation_id": "29",
-		"flags": "1",
-		"position_offset:x": "1700.0",
-		"position_offset:y": "2100.0",
-		"text": "(Look around the shop)",
 		"type": "hub"
 	},
 	{
@@ -384,8 +367,8 @@
 	},
 	{
 		"conversation_id": "54",
-		"position_offset:x": "2212.11499023438",
-		"position_offset:y": "2762.46655273438",
+		"position_offset:x": "2540.0",
+		"position_offset:y": "3900.0",
 		"speaker": "Marrow",
 		"text": "A leatherworker's shop staffed by an old woman.",
 		"type": "hub"
@@ -442,52 +425,12 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "70",
-		"position_offset:x": "7640.0",
-		"position_offset:y": "-60.0",
-		"speaker": "Marrow",
-		"text": "\"And look out, in that desert. Whatever you do. Come back alive. So you can get something else next time.\"",
-		"type": "hub"
-	},
-	{
 		"choices": "2",
 		"conversation_id": "62",
 		"position_offset:x": "4580.0",
 		"position_offset:y": "-2120.0",
 		"speaker": "Body",
 		"text": "A deep brown hue and heavy stitches line a deep pocket worn around the belt. A suitable container for the hearts of your enemies.",
-		"type": "hub"
-	},
-	{
-		"additional_data": "\"hover_item\": \"Duster\"",
-		"choices": "4",
-		"conversation_id": "57",
-		"position_offset:x": "2820.0",
-		"position_offset:y": "1140.0",
-		"text": "(Inspect the vest)",
-		"type": "hub"
-	},
-	{
-		"conversation_id": "58",
-		"position_offset:x": "2840.0",
-		"position_offset:y": "1840.0",
-		"text": "\"Nevermind\"",
-		"type": "hub"
-	},
-	{
-		"conversation_id": "74",
-		"position_offset:x": "4020.0",
-		"position_offset:y": "1600.0",
-		"text": "\"Who did you get this from?\"",
-		"type": "hub"
-	},
-	{
-		"choices": "2",
-		"conversation_id": "73",
-		"position_offset:x": "3460.0",
-		"position_offset:y": "1460.0",
-		"speaker": "Sight",
-		"text": "The vest came with a black shirt. Freya felt a presence from both. Sure enough, as she turned it over, there was an embroidery on the back of the vest. Small red letters: \"Sandman\", a common Duster nickname. ",
 		"type": "hub"
 	},
 	{
@@ -524,14 +467,6 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "86",
-		"position_offset:x": "4720.0",
-		"position_offset:y": "380.0",
-		"speaker": "Marrow",
-		"text": "\"Anything can become important. Even a simple waterskin.\"",
-		"type": "hub"
-	},
-	{
 		"conversation_id": "26",
 		"position_offset:x": "1620.0",
 		"position_offset:y": "-3520.0",
@@ -540,6 +475,7 @@
 		"type": "hub"
 	},
 	{
+		"choices": "2",
 		"conversation_id": "69",
 		"position_offset:x": "7220.0",
 		"position_offset:y": "500.0",
@@ -649,12 +585,6 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "72",
-		"position_offset:x": "3420.0",
-		"position_offset:y": "880.0",
-		"type": "hub"
-	},
-	{
 		"choices": "4",
 		"conversation_id": "37",
 		"position_offset:x": "2200.0",
@@ -696,17 +626,16 @@
 	},
 	{
 		"conversation_id": "96",
-		"flags": "4",
-		"position_offset:x": "4001.61669921875",
-		"position_offset:y": "1966.49853515625",
-		"recipients": "Freya",
+		"flags": "6",
+		"position_offset:x": "5100.0",
+		"position_offset:y": "2560.0",
 		"text": "(Leave it alone.)",
 		"type": "hub"
 	},
 	{
 		"conversation_id": "97",
-		"position_offset:x": "1240.0",
-		"position_offset:y": "2740.0",
+		"position_offset:x": "1580.0",
+		"position_offset:y": "3880.0",
 		"text": "\"I think I'll come back later.\"",
 		"type": "hub"
 	},
@@ -714,8 +643,192 @@
 		"callbacks": "kick %speaker",
 		"conversation_id": "98",
 		"flags": "1",
-		"position_offset:x": "1620.0",
-		"position_offset:y": "2780.0",
+		"position_offset:x": "1960.0",
+		"position_offset:y": "3920.0",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "31",
+		"position_offset:x": "2940.0",
+		"position_offset:y": "3300.0",
+		"speaker": "Sight",
+		"text": "Freya was surprised when she felt relief at the thought of being blind, at the thought of not being troubled by the exact color and shape of things. ",
+		"type": "hub"
+	},
+	{
+		"choices": "2",
+		"conversation_id": "29",
+		"flags": "1",
+		"position_offset:x": "2040.0",
+		"position_offset:y": "3240.0",
+		"text": "(Look around the shop)",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "86",
+		"position_offset:x": "4720.0",
+		"position_offset:y": "440.0",
+		"speaker": "Marrow",
+		"text": "\"Anything can become important. Even a simple waterskin.\"",
+		"type": "hub"
+	},
+	{
+		"choices": "2",
+		"conversation_id": "73",
+		"position_offset:x": "3680.0",
+		"position_offset:y": "2420.0",
+		"speaker": "Sight",
+		"text": "The vest came with a black shirt. Freya felt a presence from both. Sure enough, as she turned it over, there was an embroidery on the back of the vest. Small red letters: \"Sandman\", a common Duster nickname. ",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "100",
+		"position_offset:x": "3680.0",
+		"position_offset:y": "3020.0",
+		"speaker": "Speed",
+		"text": "A Duster vest? Where did she get that? Does she have an errant grandson?",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "101",
+		"flags": "4",
+		"position_offset:x": "4180.0",
+		"position_offset:y": "1580.0",
+		"recipients": "Benjamin",
+		"text": "What? Why?",
+		"type": "hub"
+	},
+	{
+		"choices": "2",
+		"conversation_id": "103",
+		"position_offset:x": "4660.0",
+		"position_offset:y": "1960.0",
+		"speaker": "Future",
+		"text": "You're new to this world. Follow my lead and the fewest people will get hurt.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "102",
+		"flags": "4",
+		"position_offset:x": "4180.0",
+		"position_offset:y": "2020.0",
+		"recipients": "Benjamin",
+		"text": "Don't tell me what to do.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "104",
+		"position_offset:x": "4180.0",
+		"position_offset:y": "3020.0",
+		"speaker": "Rhetoric",
+		"text": "The Dusters are a loose gang that you see around from time to time. Mostly juvenile. But it's not impossible they have some sway here. ",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "74",
+		"position_offset:x": "5120.0",
+		"position_offset:y": "2180.0",
+		"text": "\"Who did you get this from?\"",
+		"type": "hub"
+	},
+	{
+		"choices": "2",
+		"conversation_id": "105",
+		"position_offset:x": "4620.0",
+		"position_offset:y": "3020.0",
+		"speaker": "Evil",
+		"text": "Like hell I'll be held up for protection money by a teenager. Remember the protocol from Cresti: Diagnose, solve, and continue.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "58",
+		"position_offset:x": "2280.0",
+		"position_offset:y": "2400.0",
+		"text": "\"Nevermind\"",
+		"type": "hub"
+	},
+	{
+		"additional_data": "\"hover_item\": \"Duster\"",
+		"choices": "4",
+		"conversation_id": "57",
+		"flags": "1",
+		"position_offset:x": "3140.0",
+		"position_offset:y": "2100.0",
+		"text": "(Inspect the vest)",
+		"type": "hub"
+	},
+	{
+		"choices": "2",
+		"conversation_id": "99",
+		"position_offset:x": "3720.0",
+		"position_offset:y": "1860.0",
+		"speaker": "Future",
+		"text": "Don't touch that. You're still vulnerable.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "72",
+		"position_offset:x": "3660.0",
+		"position_offset:y": "1120.0",
+		"speaker": "Body",
+		"text": "No. No good. This heavy vest would weight you down and cause sweating.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "110",
+		"flags": "1",
+		"position_offset:x": "8080.0",
+		"position_offset:y": "240.0",
+		"text": "(Go back to the shop)",
+		"type": "hub"
+	},
+	{
+		"choices": "2",
+		"conversation_id": "70",
+		"position_offset:x": "7640.0",
+		"position_offset:y": "-40.0",
+		"speaker": "Marrow",
+		"text": "\"And look out, in that desert. Whatever you do. Come back alive. So you can get something else next time.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "112",
+		"position_offset:x": "-1848.15490722656",
+		"position_offset:y": "-2104.529296875",
+		"speaker": "Note",
+		"text": "Nodes spoken \"Note\" are supposed to sit outside of the dialogue flow and describe the general structure of the conversation.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "113",
+		"position_offset:x": "3140.0",
+		"position_offset:y": "1540.0",
+		"speaker": "Note",
+		"text": "Note sure how I feel about this \"split-based\" flow in hub 57, since it's not easily extensible to new characters. Adding a new character either softlocks here or breaks the splitting behavior with no warning. ",
+		"type": "hub"
+	},
+	{
+		"callbacks": "kick %speaker",
+		"conversation_id": "111",
+		"flags": "1",
+		"position_offset:x": "8080.0",
+		"position_offset:y": "600.0",
+		"text": "(Leave)",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "114",
+		"position_offset:x": "8520.0",
+		"position_offset:y": "600.0",
+		"speaker": "Note",
+		"text": "Not sure if %speaker is evaluated in callbacks like it's used in 111. Would be more convenient than something like `_x = $(kick %speaker)` though.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "108",
+		"position_offset:x": "4240.0",
+		"position_offset:y": "1120.0",
+		"text": "\"Sorry, not for me.\"",
 		"type": "hub"
 	},
 	{
@@ -743,9 +856,75 @@
 		"type": "connection"
 	},
 	{
+		"from_id": "100",
+		"from_port": 0,
+		"to_id": "104",
+		"type": "connection"
+	},
+	{
+		"from_id": "101",
+		"from_port": 0,
+		"to_id": "103",
+		"type": "connection"
+	},
+	{
+		"from_id": "102",
+		"from_port": 0,
+		"to_id": "103",
+		"type": "connection"
+	},
+	{
+		"from_id": "103",
+		"from_port": 0,
+		"to_id": "74",
+		"type": "connection"
+	},
+	{
+		"from_id": "103",
+		"from_port": 1,
+		"to_id": "96",
+		"type": "connection"
+	},
+	{
+		"from_id": "104",
+		"from_port": 0,
+		"to_id": "105",
+		"type": "connection"
+	},
+	{
+		"from_id": "105",
+		"from_port": 0,
+		"to_id": "74",
+		"type": "connection"
+	},
+	{
+		"from_id": "105",
+		"from_port": 1,
+		"to_id": "96",
+		"type": "connection"
+	},
+	{
+		"from_id": "108",
+		"from_port": 0,
+		"to_id": "69",
+		"type": "connection"
+	},
+	{
 		"from_id": "11",
 		"from_port": 0,
 		"to_id": "16",
+		"type": "connection"
+	},
+	{
+		"from_id": "110",
+		"from_port": 0,
+		"to_id": "6",
+		"type": "connection"
+	},
+	{
+		"from_id": "111",
+		"from_port": 0,
+		"to_id": "6",
 		"type": "connection"
 	},
 	{
@@ -1080,8 +1259,20 @@
 	},
 	{
 		"from_id": "57",
+		"from_port": 1,
+		"to_id": "99",
+		"type": "connection"
+	},
+	{
+		"from_id": "57",
 		"from_port": 2,
 		"to_id": "73",
+		"type": "connection"
+	},
+	{
+		"from_id": "57",
+		"from_port": 3,
+		"to_id": "100",
 		"type": "connection"
 	},
 	{
@@ -1199,15 +1390,45 @@
 		"type": "connection"
 	},
 	{
+		"from_id": "69",
+		"from_port": 0,
+		"to_id": "110",
+		"type": "connection"
+	},
+	{
+		"from_id": "69",
+		"from_port": 1,
+		"to_id": "111",
+		"type": "connection"
+	},
+	{
 		"from_id": "7",
 		"from_port": 0,
 		"to_id": "6",
 		"type": "connection"
 	},
 	{
+		"from_id": "70",
+		"from_port": 0,
+		"to_id": "110",
+		"type": "connection"
+	},
+	{
+		"from_id": "70",
+		"from_port": 1,
+		"to_id": "111",
+		"type": "connection"
+	},
+	{
 		"from_id": "71",
 		"from_port": 0,
 		"to_id": "89",
+		"type": "connection"
+	},
+	{
+		"from_id": "72",
+		"from_port": 0,
+		"to_id": "108",
 		"type": "connection"
 	},
 	{
@@ -1343,9 +1564,21 @@
 		"type": "connection"
 	},
 	{
-		"position:x": "2908.1376953125",
-		"position:y": "-120.549346923828",
+		"from_id": "99",
+		"from_port": 0,
+		"to_id": "101",
+		"type": "connection"
+	},
+	{
+		"from_id": "99",
+		"from_port": 1,
+		"to_id": "102",
+		"type": "connection"
+	},
+	{
+		"position:x": "-193.277954101563",
+		"position:y": "-139.095489501953",
 		"type": "camera",
-		"zoom": "0.51315450668335"
+		"zoom": "0.092295140028"
 	}
 ]

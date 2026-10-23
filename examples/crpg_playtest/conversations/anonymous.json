@@ -1,0 +1,22 @@
+[
+	{
+		"conversation_id": "0",
+		"flags": "0",
+		"tags": "start",
+		"text": "The room is quiet.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "1",
+		"flags": "0",
+		"speaker": "Benjamin",
+		"text": "\"Hello.\"",
+		"type": "hub"
+	},
+	{
+		"from_id": "0",
+		"from_port": "0",
+		"to_id": "1",
+		"type": "connection"
+	}
+]

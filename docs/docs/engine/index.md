@@ -149,6 +149,9 @@ behave as an auto node temporariliy with all the implications that follow from
 that. In this case, hub A behaves like a "player choice" node in a more traditional
 singleplayer system, which the user may want to have progress automatically.
 
+The singleplayer rule is non-recursive. It can only make one hub implicitly
+auto per choice made by the actor before returning to normal flow.
+
 ## Recipients
 List of names, like tags. If not empty, the hub may only appear to actors
 speaking as or listening to speakers in this list.

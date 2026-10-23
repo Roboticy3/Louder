@@ -46,12 +46,14 @@ func _on_actor_removed(c:int, a:int):
 	if conversation == c and player_actor == a:
 		_on_conversation_finished()
 
-func _on_motion(c:int, a:int, target:int, background:int):
+func _on_motion(c:int, a:int, target:int, background:int, speaker:String):
 	if c == conversation and a == player_actor:
-		var speaker_name:int = LouderContextGlobal.context.get_hub_speaker(c, target)
+		# The speaker comes with the move rather than from the hub: a hub without
+		# a speaker of its own is spoken in the voice of whoever walked onto it,
+		# and the move is where that voice is said out loud.
 		var text_name:int = LouderContextGlobal.context.get_hub_text(c, target)
 		var is_background:bool = background != 0
-		_on_line_revealed(LouderContextGlobal.context.make_string_name(speaker_name), LouderContextGlobal.context.make_string_name(text_name), is_background)
+		_on_line_revealed(speaker, LouderContextGlobal.context.make_string_name(text_name), is_background)
 		_refresh_choices()
 
 ## Which hub the player is standing on. Not named get_position: Control already

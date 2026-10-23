@@ -87,6 +87,7 @@ func get_position() -> int:
 func _drain() -> void:
 	var positions := PackedInt32Array()
 	var backgrounds := PackedByteArray()
+	var speakers := PackedInt32Array()
 	var callbacks := PackedInt32Array()
 
 	var index := 0
@@ -100,6 +101,10 @@ func _drain() -> void:
 					var motion: Motion = event.get_motion()
 					positions.append(motion.get_target_position())
 					backgrounds.append(1 if motion.is_background() else 0)
+					# The speaker comes with the move rather than from the hub: a
+					# hub without a speaker of its own is spoken in the voice of
+					# whoever walked onto it.
+					speakers.append(motion.get_speaker())
 				_EVENT_CALLBACK:
 					callbacks.append(event.get_name())
 		index += 1
@@ -112,7 +117,7 @@ func _drain() -> void:
 	for revealed in positions.size():
 		var position := positions[revealed]
 		_revealed_anything = true
-		line_revealed.emit(_speaker_of(position), _text_of(position), backgrounds[revealed] == 1)
+		line_revealed.emit(_resolve(speakers[revealed]), _text_of(position), backgrounds[revealed] == 1)
 
 	for callback in callbacks:
 		callback_raised.emit(_resolve(callback))
@@ -135,9 +140,6 @@ func _refresh_choices() -> void:
 	# choices available is the end of it. Multiplayer will need a better test.
 	if texts.is_empty() and _revealed_anything:
 		conversation_finished.emit()
-
-func _speaker_of(position: int) -> String:
-	return _resolve(_context.get_hub_speaker(_conversation, position))
 
 func _text_of(position: int) -> String:
 	return _resolve(_context.get_hub_text(_conversation, position))

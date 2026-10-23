@@ -80,8 +80,8 @@ func _walk_the_chain(dialogue: Control) -> void:
 	context.flush_events()
 
 
-func _on_motion(conversation: int, actor: int, target: int, background: int) -> void:
-	_motions.append([conversation, actor, target, background])
+func _on_motion(conversation: int, actor: int, target: int, background: int, speaker: String) -> void:
+	_motions.append([conversation, actor, target, background, speaker])
 
 
 ## The queue as kinds, since the names of the kinds are what says which call
