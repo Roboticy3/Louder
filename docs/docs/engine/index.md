@@ -42,22 +42,45 @@ Structures are the objects managed by the engine.
 
 "Optionals" are objects which may or may not be present.
 
+"Unions" are special variants with different possible types depending on context.
+
 ## Context
 A context is a set of actors, voices (previously called speakers), conversations, events, and interrupts.
 
 ## Actors
-An actor represents a user and is composed of 2 disjoint sets of voices, one which they "speak as" and another which they "listen to", flags, a position, and additional data.
+An actor represents a user and is composed of an integer uniquely identifying this actor within the context, 2 disjoint sets of voices, one which they "speak as" and another which they "listen to", flags, a position, and additional data.
 
 ## Voices
-A voice represents a voice which a user can use to interact with a conversation. Voices are composed of a name, a set of voices which they "listen to", flags, and additional data.
+A voice represents a voice which a user can use to interact with a conversation. Voices are composed of a name uniquely identifying this voice within the context, a set of voices which they "listen to", flags, and additional data.
 
 ## Conversations
-The conversation represents a dialogue tree and is composed of a set of hubs and a set of connections
+The conversation represents a dialogue tree and is composed of a name uniquely identifying this conversation within the context, a set of hubs and a set of connections
 
 ## Hubs
-A hub represents a position in a conversation and is composed of the integer id of a position, optional voice, a set of voices called "recipients", flags, a name "text", a number of choices
+A hub represents a position in a conversation and is composed of the integer id of a position (unique within the set of hubs of a conversation), optional channel, an integer "priority", optional voice, a set of voices called "recipients", flags, a name "text", a number of choices, a set of names "expressions", a set of names "tags", and additonal data.
 
-# Dialogue Rules
+## Connections
+Connections are composed of two integer ids of positions in a conversation "from" and "to", as well as an integer "port" into the number or choices available at the "from" hub.
+
+## Choices
+In the presence of an Actor, the word "choice" is used to describe a hub for which there exists a connection from the actor's position to that hub.
+
+## Events
+Events are unions of Motion events, Actor added events, Actor removed events, Voice added events, Voice removed events, Conversation added events, and Conversation removed events.
+
+### Motion events
+Motion events are composed of a start position, end position, and actor.
+
+
+### Added/removed events
+Added/removed events of type X are composed of X's unique identifier (integer for Actor, name for Voice and and Conversation), as well as a copy of the object itself.
+
+## Interrupts
+Interrupts are composed of an actor and the name of an expression at the hub of the actor's current position.
+
+# Rules
+Rules are named interactions for the structures described in Structures. As per the first goal, the primary goal of the engine is to provide an action of an actor making a choice. If multiple rules say "an actor can make a choice if", they will exhibit OR logic on a choice being available. If rules say "an actor cannot make a choice if", they will exhibit NAND logic on a choice being available. 
+
 Conversations are made up of hubs connected by choices. 
 
 Conversations are interfaced with via Conversation Actors, entities which can speak as
