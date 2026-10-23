@@ -33,7 +33,12 @@ signal actor_removed(conversation: int, actor: int)
 ## in the voice of whoever walked onto it. It travels as text because that is
 ## what a line needs, and because a name only means something on the peer that
 ## interned it.
-signal motion(conversation: int, actor: int, target: int, background: int, speaker: String)
+##
+## The kind is what sort of move it was: the peer chose, the peer was carried
+## along by somebody else's choice, or the peer was put somewhere. A peer that
+## was carried along has not chosen anything, which is what tells one apart
+## from the other.
+signal motion(conversation: int, actor: int, target: int, background: int, speaker: String, kind: int)
 signal callback_raised(callback: String)
 
 const SERVER_ID := 1
@@ -249,7 +254,7 @@ func _drain() -> void:
 				var travel: Motion = event.get_motion()
 				_pass_motion(event.get_conversation(), event.get_actor(),
 					travel.get_target_position(), travel.is_background(),
-					resolve_name(travel.get_speaker()))
+					resolve_name(travel.get_speaker()), event.get_kind())
 			_EVENT_CALLBACK:
 				_pass_callback(event.get_name())
 			_EVENT_ACTOR_ADDED:
@@ -317,21 +322,21 @@ func _callback(callback: int) -> void:
 
 
 @rpc("authority", "call_remote", "reliable")
-func _motion(conversation: int, actor: int, target: int, background: int, speaker: String) -> void:
+func _motion(conversation: int, actor: int, target: int, background: int, speaker: String, kind: int) -> void:
 	# Only a peer that is not running the engine gets here, so the actor is this
 	# peer's copy of one the server owns, and the copy is still standing where it
 	# stood when it was copied. Putting it where the server put it is what keeps
 	# the choices this peer offers the choices of the hub the actor is on.
 	_follow_motion(conversation, actor, target)
-	motion.emit(conversation, actor, target, background, speaker)
+	motion.emit(conversation, actor, target, background, speaker, kind)
 
 
-func _pass_motion(conversation: int, actor: int, target: int, background: bool, speaker: String) -> void:
+func _pass_motion(conversation: int, actor: int, target: int, background: bool, speaker: String, kind: int) -> void:
 	# The flag travels as an int: a listener reads it as `!= 0`, which is what it
 	# has to do to read one that crossed a network boundary anyway.
 	var background_flag := 1 if background else 0
-	motion.emit(conversation, actor, target, background_flag, speaker)
-	_motion.rpc(conversation, actor, target, background_flag, speaker)
+	motion.emit(conversation, actor, target, background_flag, speaker, kind)
+	_motion.rpc(conversation, actor, target, background_flag, speaker, kind)
 
 
 func _pass_actor_added(conversation: int, actor: int) -> void:

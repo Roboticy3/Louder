@@ -144,7 +144,7 @@ Checkboxes that hubs can have checked:
 
 Hubs can also be implicitly auto under very specific conditions. This is called
 the "singleplayer rule". If hub A was reached from a hub B that had multiple
-choices, and A is spoken by the actor that made the choice (the speaker of the hub is in the actor's speak as list), it should
+choices, A is spoken by the actor that made the choice (the speaker of the hub is in the actor's speak as list), and appears to no other actors, it should
 behave as an auto node temporariliy with all the implications that follow from
 that. In this case, hub A behaves like a "player choice" node in a more traditional
 singleplayer system, which the user may want to have progress automatically.
@@ -316,7 +316,7 @@ having to expose complex collections to the user.
 Modifiers
  - Load a conversation from a file created from the editor
  - Unload a conversation
- - Load actors and speakers from a speaker config created from the editor and add them to a conversation
+ - Load speakers from a speaker config created from the editor
  - Add an actor with speak as, listen to config to a conversation
  - Add a spectator to a conversation
  - Add a debug actor to a conversation
