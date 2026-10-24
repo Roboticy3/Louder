@@ -46,7 +46,7 @@ func _on_actor_removed(c:int, a:int):
 	if conversation == c and player_actor == a:
 		_on_conversation_finished()
 
-func _on_motion(c:int, a:int, target:int, background:int, speaker:String):
+func _on_motion(c:int, a:int, target:int, background:int, speaker:String, _f: int):
 	if c == conversation and a == player_actor:
 		# The speaker comes with the move rather than from the hub: a hub without
 		# a speaker of its own is spoken in the voice of whoever walked onto it,
