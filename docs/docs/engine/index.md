@@ -45,10 +45,10 @@ Structures are the objects managed by the engine.
 "Unions" are special variants with different possible types depending on context.
 
 ## Context
-A context is a set of actors, voices (previously called speakers), conversations, events, and interrupts.
+A context is a set of actors, voices (previously called speakers), conversations, events, interrupts, and a config.
 
 ## Actors
-An actor represents a user and is composed of an integer uniquely identifying this actor within the context, 2 disjoint sets of voices, one which they "speak as" and another which they "listen to", flags, a position, and additional data.
+An actor represents a user and is composed of an integer uniquely identifying this actor within the context, 2 disjoint sets of voices, one which they "speak as" and another which they "listen to", flags, a set of conversations and positions, and additional data.
 
 ## Voices
 A voice represents a voice which a user can use to interact with a conversation. Voices are composed of a name uniquely identifying this voice within the context, a set of voices which they "listen to", flags, and additional data.
@@ -65,21 +65,91 @@ Connections are composed of two integer ids of positions in a conversation "from
 ## Choices
 In the presence of an Actor, the word "choice" is used to describe a hub for which there exists a connection from the actor's position to that hub.
 
+For example, if connections from 0 to 10, 0 to 20, 0 to 30 exist, then "choice 1" for an actor at position 0 describes hub 20.
+
 ## Events
 Events are unions of Motion events, Actor added events, Actor removed events, Voice added events, Voice removed events, Conversation added events, and Conversation removed events.
 
 ### Motion events
 Motion events are composed of a start position, end position, and actor.
 
+### Added/removed events for Actors
+Actors emit events when they are added/removed *to conversations*, not to the context. Event is comprised of actor id, conversation name, Position where actor was added/removed, and a copy of the actor object.
 
-### Added/removed events
-Added/removed events of type X are composed of X's unique identifier (integer for Actor, name for Voice and and Conversation), as well as a copy of the object itself.
+### Added/removed events for Voices and Conversations
+Added/removed events of type X are composed of X's name, as well as a copy of the object itself.
 
 ## Interrupts
 Interrupts are composed of an actor and the name of an expression at the hub of the actor's current position.
 
+## Configs
+The config adjusts the rules of the engine.
+
 # Rules
-Rules are named interactions for the structures described in Structures. As per the first goal, the primary goal of the engine is to provide an action of an actor making a choice. If multiple rules say "an actor can make a choice if", they will exhibit OR logic on a choice being available. If rules say "an actor cannot make a choice if", they will exhibit NAND logic on a choice being available. 
+Rules are named interactions for the structures described in Structures. As per the first goal, the primary goal of the engine is to provide an action of an actor making a choice. Making a choice describes updating an actor's position using one of its choices. If multiple rules say "an actor can make a choice if", they will exhibit OR logic on a choice being available. If rules say "an actor cannot make a choice if", they will exhibit NAND logic on a choice being available. For example, actors can make a choice if rules A or B or C apply, and not if D or E or F apply, so if rules A B D apply for a particular choice, that choice is not available with reason D. 
+
+When asked what choices are available for a given actor (choices(x, A) for choices at hub x or choices(A)), the engine should return a list of booleans and Unions, one for each choice at the actor's current position. If the choice is available, the first rule that made it available is the value of the union. if the choice is unavailable, the first rule that made it unavailable is the value of the union. the boolean stores availability. The philosophy here is transparency, the user always knows why a choice is available or not.
+
+The same is true for other interactions introduced in the rules section. For example, with visibility, "visible to actor" rules would exhibit OR behavior and "not visible to actor" rules would exhibit NAND behavior.
+
+This is not a spec for the code syntax of the engine. This is more of a mathematical formal syntax to strongly describe behaviors so engine implementation is more straightforward.
+
+## Copy Rule
+A rule R can be copied as a new rule S. All behaviors are copied under a new name, then other properties are overridden as described.
+
+## Experiment Rule
+All rules can be enabled/disabled via a flag in the config.
+
+## Public Voice
+Voice v can be flagged as PUBLIC. In this case, flag(v) | PUBLIC
+
+## Private Hub
+Hub x can be flagged as PRIVATE. In this case, flag(x) | PRIVATE
+
+## Visible Hub
+Hub x can be "visible" to actor A. In this case, visible(x, A)
+
+## Hub Voice
+voice(x, A) = voice(x) if voice(x) is present, the first element of speak_as(A) if speak_as(A) is not empty, and an empty optional otherwise.
+
+## Visible Speaker
+Voice v can be "visible" to actor A. In this case, visible(v, A)
+
+## Visibility rule 1
+if voice(x, A) in speak_as(A), visible(x, A)
+
+## Visibility rule 2
+if voice(x, A) in listen_to(A), visible(x, A).
+
+## Visibility rule 3
+if flag(voice(x, A)) | PUBLIC, visible(x, A) for all actors A.
+
+## Visibility counter 1
+if flag(x) | PRIVATE and recipients(x) \cap speak_as(A) is empty, !visible(x, A)
+
+## Choice Hub
+choice(x, A) is defined if there exists a connection c from position_id(A) to x, and may be "available"
+
+## Choice Text
+If choice(x, A) is defined, choice_text(x, A) returns text(x)
+
+## Standard Rule
+if voice(x, A) in speak_as(x, A), then choice(x, A) = available, standard
+
+## Skill Rule
+if voice(x, A) in listen_to(x, A) and voice(x, A) not in speak_as(x, B) for all B != A, choice(x, B) = available, skill
+
+## Removal hub
+configurable with optional removal tag and optional removal text.
+
+if choice(x, A) is not available for all choices x, choice(POSITION_NONE, A) = available, removal and has the effect of removing A from the conversation.
+
+if removal tag is configured, rule only applies if the removal tag is in tag(x)
+
+if removal text is configured, and choice(POSITION_NONE, A) = available, removal, choice_text(POSITION_NONE, A) is removal text
+
+## Softlock Rule
+Copy of removal rule. If the rule applies, choice(x, A) is defined only when x is the last hub touched by A where choices(x, A) had more than 1 element.
 
 Conversations are made up of hubs connected by choices. 
 
