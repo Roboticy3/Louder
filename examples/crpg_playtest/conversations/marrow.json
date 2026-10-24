@@ -311,9 +311,10 @@
 	{
 		"conversation_id": "49",
 		"expressions": "%speaker != \"Geno\"",
-		"flags": "4",
+		"flags": "5",
 		"position_offset:x": "2980.0",
 		"position_offset:y": "-2840.0",
+		"text": "(Interrupt)",
 		"type": "hub"
 	},
 	{
@@ -445,8 +446,8 @@
 	{
 		"conversation_id": "67",
 		"expressions": "bought_something",
-		"position_offset:x": "7220.0",
-		"position_offset:y": "-280.0",
+		"position_offset:x": "7400.0",
+		"position_offset:y": "-700.0",
 		"speaker": "Marrow",
 		"text": "\"Thank you! Your funds won't go to waste.\" She motions to a crooked wheel on the drawer.",
 		"type": "hub"
@@ -468,6 +469,7 @@
 	},
 	{
 		"conversation_id": "26",
+		"expressions": "marrow_argument_blocked == 0",
 		"position_offset:x": "1620.0",
 		"position_offset:y": "-3520.0",
 		"speaker": "Geno",
@@ -477,8 +479,8 @@
 	{
 		"choices": "2",
 		"conversation_id": "69",
-		"position_offset:x": "7220.0",
-		"position_offset:y": "500.0",
+		"position_offset:x": "7400.0",
+		"position_offset:y": "80.0",
 		"speaker": "Marrow",
 		"text": "\"Oh well. I'll keep it then.\"",
 		"type": "hub"
@@ -551,14 +553,6 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "90",
-		"flags": "1",
-		"position_offset:x": "5640.0",
-		"position_offset:y": "-660.0",
-		"text": "\"Deal\" (25 gold)",
-		"type": "hub"
-	},
-	{
 		"callbacks": "buy %speaker Marrow \"Waterskin\" 15",
 		"conversation_id": "95",
 		"expressions": "bought_something = 1",
@@ -574,14 +568,6 @@
 		"position_offset:x": "6060.0",
 		"position_offset:y": "-800.0",
 		"text": "\"Deal\"",
-		"type": "hub"
-	},
-	{
-		"choices": "2",
-		"conversation_id": "76",
-		"flags": "1",
-		"position_offset:x": "6800.0",
-		"position_offset:y": "0.0",
 		"type": "hub"
 	},
 	{
@@ -625,14 +611,6 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "96",
-		"flags": "6",
-		"position_offset:x": "5100.0",
-		"position_offset:y": "2560.0",
-		"text": "(Leave it alone.)",
-		"type": "hub"
-	},
-	{
 		"conversation_id": "97",
 		"position_offset:x": "1580.0",
 		"position_offset:y": "3880.0",
@@ -645,14 +623,6 @@
 		"flags": "1",
 		"position_offset:x": "1960.0",
 		"position_offset:y": "3920.0",
-		"type": "hub"
-	},
-	{
-		"conversation_id": "31",
-		"position_offset:x": "2940.0",
-		"position_offset:y": "3300.0",
-		"speaker": "Sight",
-		"text": "Freya was surprised when she felt relief at the thought of being blind, at the thought of not being troubled by the exact color and shape of things. ",
 		"type": "hub"
 	},
 	{
@@ -725,13 +695,6 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "74",
-		"position_offset:x": "5120.0",
-		"position_offset:y": "2180.0",
-		"text": "\"Who did you get this from?\"",
-		"type": "hub"
-	},
-	{
 		"choices": "2",
 		"conversation_id": "105",
 		"position_offset:x": "4620.0",
@@ -749,6 +712,7 @@
 	},
 	{
 		"additional_data": "\"hover_item\": \"Duster\"",
+		"callbacks": "has_item Marrow \"Duster\"",
 		"choices": "4",
 		"conversation_id": "57",
 		"flags": "1",
@@ -777,18 +741,9 @@
 	{
 		"conversation_id": "110",
 		"flags": "1",
-		"position_offset:x": "8080.0",
-		"position_offset:y": "240.0",
+		"position_offset:x": "8340.0",
+		"position_offset:y": "-420.0",
 		"text": "(Go back to the shop)",
-		"type": "hub"
-	},
-	{
-		"choices": "2",
-		"conversation_id": "70",
-		"position_offset:x": "7640.0",
-		"position_offset:y": "-40.0",
-		"speaker": "Marrow",
-		"text": "\"And look out, in that desert. Whatever you do. Come back alive. So you can get something else next time.\"",
 		"type": "hub"
 	},
 	{
@@ -811,15 +766,15 @@
 		"callbacks": "kick %speaker",
 		"conversation_id": "111",
 		"flags": "1",
-		"position_offset:x": "8080.0",
-		"position_offset:y": "600.0",
+		"position_offset:x": "8340.0",
+		"position_offset:y": "-60.0",
 		"text": "(Leave)",
 		"type": "hub"
 	},
 	{
 		"conversation_id": "114",
-		"position_offset:x": "8520.0",
-		"position_offset:y": "600.0",
+		"position_offset:x": "8780.0",
+		"position_offset:y": "-60.0",
 		"speaker": "Note",
 		"text": "Not sure if %speaker is evaluated in callbacks like it's used in 111. Would be more convenient than something like `_x = $(kick %speaker)` though.",
 		"type": "hub"
@@ -829,6 +784,294 @@
 		"position_offset:x": "4240.0",
 		"position_offset:y": "1120.0",
 		"text": "\"Sorry, not for me.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "96",
+		"flags": "7",
+		"position_offset:x": "5120.0",
+		"position_offset:y": "2520.0",
+		"text": "(Leave it alone.)",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "90",
+		"flags": "1",
+		"position_offset:x": "5640.0",
+		"position_offset:y": "-680.0",
+		"text": "\"Deal\" (25 gold)",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "116",
+		"expressions": "bought_something = 0",
+		"position_offset:x": "6260.0",
+		"position_offset:y": "2960.0",
+		"text": "\"Nevermind.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "120",
+		"flags": "1",
+		"position_offset:x": "6260.0",
+		"position_offset:y": "2580.0",
+		"text": "\"Deal\" (5 gold)",
+		"type": "hub"
+	},
+	{
+		"choices": "2",
+		"conversation_id": "115",
+		"position_offset:x": "5640.0",
+		"position_offset:y": "2520.0",
+		"speaker": "Marrow",
+		"text": "\"What do you think? 5 gold?\" It's a good deal. She's been trying to get rid of this for a while.",
+		"type": "hub"
+	},
+	{
+		"callbacks": "buy %speaker Marrow \"Vest\" 5",
+		"conversation_id": "119",
+		"expressions": "bought_something = 1",
+		"position_offset:x": "6760.0",
+		"position_offset:y": "2780.0",
+		"text": "\"Deal\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "74",
+		"position_offset:x": "5120.0",
+		"position_offset:y": "2100.0",
+		"text": "\"Who did you get this from?\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "123",
+		"position_offset:x": "6440.0",
+		"position_offset:y": "1040.0",
+		"speaker": "Evil",
+		"text": "That would be just like her.",
+		"type": "hub"
+	},
+	{
+		"choices": "3",
+		"conversation_id": "124",
+		"position_offset:x": "6800.0",
+		"position_offset:y": "1040.0",
+		"speaker": "Rhetoric",
+		"text": "No. It wouldn't. She probably just mis-spoke.",
+		"type": "hub"
+	},
+	{
+		"choices": "2",
+		"conversation_id": "121",
+		"position_offset:x": "5620.0",
+		"position_offset:y": "1540.0",
+		"speaker": "Marrow",
+		"text": "\"Oh.\" She wasn't expecting the question. \"I found it- I mean-\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "122",
+		"position_offset:x": "6060.0",
+		"position_offset:y": "1040.0",
+		"speaker": "Speed",
+		"text": "\"I found it\" in desert speak means \"I found it on a corpse.\" Officially, these relics are the domain of The Heart, a charity that collects and recycles items of the dead. Aside from morale issues, Marrow may be looking at a fine.",
+		"type": "hub"
+	},
+	{
+		"choices": "2",
+		"conversation_id": "125",
+		"flags": "4",
+		"position_offset:x": "6040.0",
+		"position_offset:y": "1640.0",
+		"recipients": "Freya\nBenjamin",
+		"speaker": "Marrow",
+		"text": "She shifts uncomfortably.",
+		"type": "hub"
+	},
+	{
+		"choices": "3",
+		"conversation_id": "126",
+		"position_offset:x": "6440.0",
+		"position_offset:y": "1460.0",
+		"speaker": "Strategy",
+		"text": "Maybe there's a connection between her and that gang, Freya thought. This is just an introductory conversation. Better not to expect much, but all the more reason to pay attention.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "127",
+		"position_offset:x": "7660.0",
+		"position_offset:y": "2720.0",
+		"speaker": "Note",
+		"text": "As of writing, there is no way to check whether a speaker is present in scripting. This would be an engine built-in. \n\nWithout this functionality, I run into a pacing issue. \n\nAt 121, Geno, Freya, and Benjamin may be present and actionable, meaning connected to the conversation and having meaningful choices. However, Geno and Freya have much more to think about than Benjamin.\n\nThis imbalanced load, depending on how it's approached, could either create a situation where:\n - Benjamin interrupts Geno's or Freya's trains of thoughts by continuing the public conversation with Marrow, warping all actors.\n - Benjamin loses agency in the conversation to make way for dialogue choices that are invisible to him. If Benjamin spoke to Marrow alone, this would be a softlock (at 125) because he could reach this node without the necessary actors being present to proceed.\n\nThe proposed \"escape\" would be available at 128 for Benjamin if Freya is occupied.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "132",
+		"position_offset:x": "7320.0",
+		"position_offset:y": "1200.0",
+		"speaker": "Geno",
+		"text": "\"I always knew there was something off about you.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "128",
+		"expressions": "freya is present",
+		"flags": "5",
+		"position_offset:x": "7300.0",
+		"position_offset:y": "2720.0",
+		"recipients": "Benjamin",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "133",
+		"flags": "1",
+		"position_offset:x": "7325.3525390625",
+		"position_offset:y": "1561.060546875",
+		"text": "\"Business is busines\" (Leave it alone)",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "129",
+		"position_offset:x": "7320.0",
+		"position_offset:y": "1920.0",
+		"text": "\"This is a Duster vest. What do you know about them?\"",
+		"type": "hub"
+	},
+	{
+		"choices": "2",
+		"conversation_id": "70",
+		"position_offset:x": "7900.0",
+		"position_offset:y": "-700.0",
+		"speaker": "Marrow",
+		"text": "\"And look out, in that desert. Whatever you do. Come back alive. So you can get something else next time.\"",
+		"type": "hub"
+	},
+	{
+		"choices": "2",
+		"conversation_id": "76",
+		"flags": "1",
+		"position_offset:x": "6980.0",
+		"position_offset:y": "-420.0",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "134",
+		"position_offset:x": "7740.0",
+		"position_offset:y": "1200.0",
+		"speaker": "Marrow",
+		"text": "\"What's that supposed to mean? I've seen you do worse. I choose to keep to myself, you know.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "136",
+		"position_offset:x": "3449.2587890625",
+		"position_offset:y": "-2643.02124023438",
+		"text": "\"Sorry, can we talk about something else?\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "137",
+		"expressions": "marrow_argument_blocked = 1",
+		"position_offset:x": "3860.0",
+		"position_offset:y": "-2620.0",
+		"speaker": "Marrow",
+		"text": "\"Please.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "138",
+		"position_offset:x": "4280.0",
+		"position_offset:y": "-2620.0",
+		"speaker": "Good",
+		"text": "I overstepped, there.",
+		"type": "hub"
+	},
+	{
+		"choices": "2",
+		"conversation_id": "140",
+		"flags": "1",
+		"position_offset:x": "8120.0",
+		"position_offset:y": "1300.0",
+		"type": "hub"
+	},
+	{
+		"choices": "3",
+		"conversation_id": "135",
+		"expressions": "marrow_argument_blocked == 0",
+		"position_offset:x": "8580.0",
+		"position_offset:y": "960.0",
+		"speaker": "Rhetoric",
+		"text": "She does not correct herself. What she says this time is true. I have looted for my storefront, and that's standard around here despite the regulations. ",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "143",
+		"position_offset:x": "9020.0",
+		"position_offset:y": "960.0",
+		"speaker": "Note",
+		"text": "One of the desired behaviors of linked nodes is to pull choices from another node while overriding its properties. This is done manually in 135, which in future versions would ideally be a linked node to 28.\n\nDrawing the wires individually is of course very tedious, error prone and not extensible. However, linked nodes are further down the pipeline than some other features as of writing.\n\nLinked nodes could also be used to more easily draw long connections like 141 -> 6. This takes a lot of scrolling in the editor and could be replaced by creating a new linked node for 6 with no properties overriden, but visually next to 141, then linking 141 to that instead.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "141",
+		"position_offset:x": "8580.0",
+		"position_offset:y": "1720.0",
+		"speaker": "Marrow",
+		"text": "\"I'm not going to waste more time with you. What else were we talking about?\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "130",
+		"position_offset:x": "7320.0",
+		"position_offset:y": "2280.0",
+		"text": "\"Do you know why 'Sandman' is embroidered on the back of this vest?\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "131",
+		"position_offset:x": "7320.0",
+		"position_offset:y": "820.0",
+		"text": "\"That doesn't seem right. How did you actually get it?\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "144",
+		"position_offset:x": "8580.0",
+		"position_offset:y": "2340.0",
+		"speaker": "Marrow",
+		"text": "The shopkeep becomes distant and says nothing. She only hopes the people she is speaking to are kind enough to leave her be after this is over.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "145",
+		"position_offset:x": "9040.0",
+		"position_offset:y": "2160.0",
+		"speaker": "Life",
+		"text": "Freya saw herself in Marrow for a moment, though there was at least one and a half feet between them in stature. If she pushed, she could come up with a reason to detain and question her about the Dusters, kids who constantly trouble the guard. But this information could be revealed more easily with patience, by dropping by and being a friend over time. ",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "146",
+		"position_offset:x": "9440.0",
+		"position_offset:y": "2480.0",
+		"speaker": "Freya",
+		"text": "\"That is all. Thank you for your cooperation.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "31",
+		"position_offset:x": "2960.0",
+		"position_offset:y": "3320.0",
+		"speaker": "Sight",
+		"text": "Freya was surprised when she felt relief at the thought of being blind, at the thought of not being troubled by the exact color and shape of things. ",
+		"type": "hub"
+	},
+	{
+		"callbacks": "kick %speaker",
+		"conversation_id": "147",
+		"flags": "1",
+		"position_offset:x": "9940.0",
+		"position_offset:y": "2480.0",
 		"type": "hub"
 	},
 	{
@@ -928,9 +1171,123 @@
 		"type": "connection"
 	},
 	{
+		"from_id": "115",
+		"from_port": 0,
+		"to_id": "120",
+		"type": "connection"
+	},
+	{
+		"from_id": "115",
+		"from_port": 1,
+		"to_id": "116",
+		"type": "connection"
+	},
+	{
+		"from_id": "116",
+		"from_port": 0,
+		"to_id": "76",
+		"type": "connection"
+	},
+	{
+		"from_id": "119",
+		"from_port": 0,
+		"to_id": "76",
+		"type": "connection"
+	},
+	{
 		"from_id": "12",
 		"from_port": 0,
 		"to_id": "17",
+		"type": "connection"
+	},
+	{
+		"from_id": "120",
+		"from_port": 0,
+		"to_id": "119",
+		"type": "connection"
+	},
+	{
+		"from_id": "121",
+		"from_port": 0,
+		"to_id": "122",
+		"type": "connection"
+	},
+	{
+		"from_id": "121",
+		"from_port": 1,
+		"to_id": "125",
+		"type": "connection"
+	},
+	{
+		"from_id": "122",
+		"from_port": 0,
+		"to_id": "123",
+		"type": "connection"
+	},
+	{
+		"from_id": "123",
+		"from_port": 0,
+		"to_id": "124",
+		"type": "connection"
+	},
+	{
+		"from_id": "124",
+		"from_port": 0,
+		"to_id": "131",
+		"type": "connection"
+	},
+	{
+		"from_id": "124",
+		"from_port": 1,
+		"to_id": "132",
+		"type": "connection"
+	},
+	{
+		"from_id": "124",
+		"from_port": 2,
+		"to_id": "133",
+		"type": "connection"
+	},
+	{
+		"from_id": "125",
+		"from_port": 0,
+		"to_id": "126",
+		"type": "connection"
+	},
+	{
+		"from_id": "125",
+		"from_port": 1,
+		"to_id": "128",
+		"type": "connection"
+	},
+	{
+		"from_id": "126",
+		"from_port": 0,
+		"to_id": "129",
+		"type": "connection"
+	},
+	{
+		"from_id": "126",
+		"from_port": 1,
+		"to_id": "130",
+		"type": "connection"
+	},
+	{
+		"from_id": "126",
+		"from_port": 2,
+		"to_id": "96",
+		"type": "connection"
+	},
+	{
+		"from_id": "128",
+		"from_port": 0,
+		"to_id": "37",
+		"type": "connection"
+	},
+	{
+		"from_id": "129",
+		"from_port": 0,
+		"to_id": "144",
 		"type": "connection"
 	},
 	{
@@ -943,6 +1300,114 @@
 		"from_id": "13",
 		"from_port": 1,
 		"to_id": "24",
+		"type": "connection"
+	},
+	{
+		"from_id": "130",
+		"from_port": 0,
+		"to_id": "144",
+		"type": "connection"
+	},
+	{
+		"from_id": "131",
+		"from_port": 0,
+		"to_id": "144",
+		"type": "connection"
+	},
+	{
+		"from_id": "132",
+		"from_port": 0,
+		"to_id": "134",
+		"type": "connection"
+	},
+	{
+		"from_id": "133",
+		"from_port": 0,
+		"to_id": "96",
+		"type": "connection"
+	},
+	{
+		"from_id": "134",
+		"from_port": 0,
+		"to_id": "140",
+		"type": "connection"
+	},
+	{
+		"from_id": "135",
+		"from_port": 0,
+		"to_id": "32",
+		"type": "connection"
+	},
+	{
+		"from_id": "135",
+		"from_port": 1,
+		"to_id": "34",
+		"type": "connection"
+	},
+	{
+		"from_id": "135",
+		"from_port": 2,
+		"to_id": "49",
+		"type": "connection"
+	},
+	{
+		"from_id": "136",
+		"from_port": 0,
+		"to_id": "137",
+		"type": "connection"
+	},
+	{
+		"from_id": "137",
+		"from_port": 0,
+		"to_id": "138",
+		"type": "connection"
+	},
+	{
+		"from_id": "138",
+		"from_port": 0,
+		"to_id": "6",
+		"type": "connection"
+	},
+	{
+		"from_id": "140",
+		"from_port": 0,
+		"to_id": "135",
+		"type": "connection"
+	},
+	{
+		"from_id": "140",
+		"from_port": 1,
+		"to_id": "141",
+		"type": "connection"
+	},
+	{
+		"from_id": "141",
+		"from_port": 0,
+		"to_id": "6",
+		"type": "connection"
+	},
+	{
+		"from_id": "144",
+		"from_port": 0,
+		"to_id": "145",
+		"type": "connection"
+	},
+	{
+		"from_id": "145",
+		"from_port": 0,
+		"to_id": "146",
+		"type": "connection"
+	},
+	{
+		"from_id": "146",
+		"from_port": 0,
+		"to_id": "147",
+		"type": "connection"
+	},
+	{
+		"from_id": "147",
+		"from_port": 0,
+		"to_id": "6",
 		"type": "connection"
 	},
 	{
@@ -1102,6 +1567,12 @@
 		"type": "connection"
 	},
 	{
+		"from_id": "31",
+		"from_port": 0,
+		"to_id": "6",
+		"type": "connection"
+	},
+	{
 		"from_id": "32",
 		"from_port": 0,
 		"to_id": "33",
@@ -1219,6 +1690,12 @@
 		"from_id": "48",
 		"from_port": 0,
 		"to_id": "37",
+		"type": "connection"
+	},
+	{
+		"from_id": "49",
+		"from_port": 0,
+		"to_id": "136",
 		"type": "connection"
 	},
 	{
@@ -1444,6 +1921,12 @@
 		"type": "connection"
 	},
 	{
+		"from_id": "74",
+		"from_port": 0,
+		"to_id": "121",
+		"type": "connection"
+	},
+	{
 		"from_id": "75",
 		"from_port": 0,
 		"to_id": "88",
@@ -1552,6 +2035,12 @@
 		"type": "connection"
 	},
 	{
+		"from_id": "96",
+		"from_port": 0,
+		"to_id": "115",
+		"type": "connection"
+	},
+	{
 		"from_id": "97",
 		"from_port": 0,
 		"to_id": "98",
@@ -1576,9 +2065,9 @@
 		"type": "connection"
 	},
 	{
-		"position:x": "-193.277954101563",
-		"position:y": "-139.095489501953",
+		"position:x": "-159.75537109375",
+		"position:y": "-102.081909179688",
 		"type": "camera",
-		"zoom": "0.092295140028"
+		"zoom": "0.27799358963966"
 	}
 ]
