@@ -44,11 +44,13 @@ Structures are the objects managed by the engine.
 
 "Unions" are special variants with different possible types depending on context.
 
+To see how the objects of dialogue are encoded by the editor, see [schema](/editor/schema.md)
+
 ## Context
 A context is a set of actors, voices (previously called speakers), conversations, events, interrupts, and a config.
 
 ## Actors
-An actor represents a user and is composed of an integer uniquely identifying this actor within the context, 2 disjoint sets of voices, one which they "speak as" and another which they "listen to", flags, a set of conversations and positions, and additional data.
+An actor represents a user and is composed of an integer uniquely identifying this actor within a conversation, the name of their parent conversation, 2 disjoint sets of voices, one which they "speak as" and another which they "listen to", flags, an set of positions called their "history", with the last position just being called their "position", and additional data.
 
 ## Voices
 A voice represents a voice which a user can use to interact with a conversation. Voices are composed of a name uniquely identifying this voice within the context, a set of voices which they "listen to", flags, and additional data.
@@ -109,6 +111,9 @@ Hub x can be flagged as PRIVATE. In this case, flag(x) | PRIVATE
 ## Visible Hub
 Hub x can be "visible" to actor A. In this case, visible(x, A)
 
+## Priority
+Hub x has priority(x). An actor A positioned at hub x has priority(A) = priority(x)
+
 ## Hub Voice
 voice(x, A) = voice(x) if voice(x) is present, the first element of speak_as(A) if speak_as(A) is not empty, and an empty optional otherwise.
 
@@ -139,7 +144,7 @@ if voice(x, A) in speak_as(x, A), then choice(x, A) = available, standard
 ## Skill Rule
 if voice(x, A) in listen_to(x, A) and voice(x, A) not in speak_as(x, B) for all B != A, choice(x, B) = available, skill
 
-## Removal hub
+## Removal Rule
 configurable with optional removal tag and optional removal text.
 
 if choice(x, A) is not available for all choices x, choice(POSITION_NONE, A) = available, removal and has the effect of removing A from the conversation.
@@ -148,8 +153,11 @@ if removal tag is configured, rule only applies if the removal tag is in tag(x)
 
 if removal text is configured, and choice(POSITION_NONE, A) = available, removal, choice_text(POSITION_NONE, A) is removal text
 
+## Meaningful choice rule
+if choices(x, A) had more than 1 element, meaningful(x, A). if choices(A) has more than one element, meaningful(A). Otherwise, !meaningful(A)
+
 ## Softlock Rule
-Copy of removal rule. If the rule applies, choice(x, A) is defined only when x is the last hub touched by A where choices(x, A) had more than 1 element.
+Copy of removal rule. If the rule applies, choice(POSITION_NONE, A) is undefined and choice(x, A) is defined if and only if x is the most recent hub in A's history where meaningful(x, A)
 
 Conversations are made up of hubs connected by choices. 
 
@@ -158,7 +166,54 @@ and listen to different speakers.
 
 As actors make dialogue choices, hubs "appear" to them.
 
-To see how the objects of dialogue are encoded by the editor, see [schema](/editor/schema.md)
+## Spoke Rule
+If choice(x, A) is defined, visible(x, A), choice(x, B) and !meaningful(B) for all B != A, choice(x, A) = available, spoke. 
+
+Basically, if A is in a spot where other actors can move, but don't have meaningful choices, and A could move in their place without breaking visibility rules, A can.
+
+## Auto Hubs
+Hub x can be flagged AUTO. In this case, tag(x) | AUTO. 
+
+## Auto Traces
+Let y be the first element of choices(x, A), ordered by port of the associated connection.
+
+if not tag(x) | AUTO, auto(x, A) = x
+
+If tag(x) | AUTO, and not tag(y) | AUTO, auto(x, A) = y.
+
+If tag(y) | AUTO, y = the first element of choices(y, A). Repeat until not tag(y) | AUTO or choices(y, A) is empty. If choices(y, A) becomes empty, auto(x) is undefined. Otherwise, auto(x, A) = y after repetition.
+
+## Auto Trap Rule
+If choice(x, a) and auto(x, A) is undefined, choice(x, A) = unavailable, auto_trap
+
+## Standard Choose
+If choice(x, A) is available, choose(x, A) = standard, x, moving A to x and returning the rule which caused it. The expression "If choose(x, A)" means "if actor A makes choice x".
+
+## Auto Choose
+if choose(x, A) and auto(x), choose(x, a) = auto, auto(x).
+
+## Auto Visible Rule
+If tag(x) | AUTO, visible(x, A) for all A.
+
+## Singleplayer Rule 1
+If choose(x, A) != singleplayer, visible(x, A), and !visible(x, B) for all B != A, choose(y, A) = singleplayer
+
+The "!= singleplayer" clause prevents recursion of this rule.
+
+## Singleplayer Rule 2
+If choose(x, A), !visible(x, A), and !visible(x, B) for all B != A, choose(y, A) = singleplayer_2
+
+This is singleplayer rule 1, but with recursion allowed for the special case where there are nodes nobody can see.
+
+## Warp Rule
+If choose(x, A), visible(x, B) and priority(x) >= priority(B), choose(x, B) = warp
+
+Here we have an emergent behavior with Auto Rule and Auto Visible Rule. if tag(x) | AUTO, then visible(x, B) and choose(x, B) = warp, then choose(y, B) = auto
+
+## Non-warp Rule
+If choose(x, A), visible(x, B) and priority(x) < priority(B), do nothing
+
+This rule is named for the purpose of event calling via other rules.
 
 # Hubs
 Hubs have a position, tags, speakers,
