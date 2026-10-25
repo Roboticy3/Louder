@@ -272,7 +272,11 @@ This is a control rule and not a visibility rule because evaluate(x, A) describe
 A second crucial emergent behavior, since choice(x, A) is unavailable if invisible, evaluating an expression can hide a choice.
 
 ### Interrupt Rule
-evaluate(x, A, i) can equal _, interrupt
+evaluate(x, A, i) can equal _, interrupt (see Expressions)
+
+### Parse Error Rule
+evaluate(x, A, i) can equal 1, parse_error
+(see Expressions)
 
 ## Event Rules
 Rules for observing dialogue
@@ -289,14 +293,14 @@ if B has position y != x, appear(x, A), and priority(y) > priority(x), appear(x,
 ### Ask Rule
 ask(y, A, i) is an event that asks the user to resolve the i'th expression on y from A's perspective 
 
-if evaluate(y, A, i) = _, interrupt, hang ask(y, A, i) = e, ask
+if evaluate(y, A, i) = n, interrupt, n is the name of the expression that is being deferred to the user. hang and ask(n) = e, ask
 
 "hanging" means not exiting the execution stack. If evaluate(y, A, i) is being called because of evaluate(y, A) (Evaluation Andedness), the program hangs by not exiting from this call stack. The opposite of hang is resume.
 
 ### Answer Rule
-answer(y, A, i, r) is a user-made event to unhang the program. From a user-interface perspective, it would be smart to instead expose the raw expression string instead of making the user do with all these indices as they please.
+answer(n, r) is a user-made event to unhang the program.
 
-if hang, ask(y, A, i), and answer(y, A, i, r), then evaluate(y, A, i) = answer(y, A, i, r) = r, answer and resume 
+if hang, ask(n, i), and answer(n, r), then evaluate(y, A, i) = answer(n, r) = r, answer and resume 
 
 ### Warp Event Rule
 warp(x, A) is an event indicating A has (or has not) warped to x. results are of the form e, rule
@@ -325,7 +329,27 @@ if B was at position x and channel(B) = channel(A), choose(y, B), and visible(y,
 if B was at position x and channel(B) != channel(A), choose(y, B) and channel(B) != channel(A) still, do nothing
 
 # Expressions
-Originally, I intended to have an "internal" expression parser. However, this posed a lot of issues as it was hard to adapt the parser to different environments/needs. Instead of designing my own language, all expressions are ask expressions- hanging the program and waiting for the user program to respond with the value of the expression. This way, bindings can provide tailored expression sets for different environments.
+By default, expressions are parsed using an internal parser with the following syntax:
+
+Expressions are made up of identifiers, literals and operators. Each identifier represents a function.
+
+Operators are the same as C, without pointers, offsets, or precompiler declarations, with the same precedence rules.
+
+Identifiers are any string beginning with an alphabetical character or an underscore, and consisting entirely of alphanumeric characters and underscores. 
+
+There are also special identifiers, which begin with $.
+
+Finally, there are literals for integers, floats, and strings.
+
+Whitespace is used to separate symbols. Any character not caught by the above categories, such as $ in the middle of an identifier or #, is treated as invalid.
+
+The expression `identifier` asks the user for the value of the function "identifier" with no arguments, using an interrupt. Then, `identifier` is replaced with the literal for that value.
+
+An expression made up of literals and operators alone has a known value.
+
+The expression `a(b, c)` first evaluates b and c. If b is only made up of literals and operators, the value is known already. If not, the user is asked the value of b. Same with c. Once b, c are resolved, the user is asked the value of a, which must be an identifier in this expression, with arguments equal to the literals that b and c resolved to. If a is not an identifier, the expression is invalid. 
+
+Again, we have to make an exception to the aspiration about encoding-free implementation, since the encoding of expressions must be known to parse them. The encoding used by expressions can be set in the context config.
 
 # Example Flows
 !!!WARNING Extremely boring technical program flow ahead! Not really practical? More to help me implement and test the code. Lol.
