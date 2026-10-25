@@ -57,6 +57,24 @@ func _process(_delta: float) -> void:
 			animation_tree.idling = false
 			animation_tree.walk_speed = body.velocity.length()
 
+var avoid_rng := RandomNumberGenerator.new()
+func avoid_occupied(pos:Vector3, offset:Vector3, seed:int) -> Vector3:
+	avoid_rng.seed = seed
+	var space_state = get_world_3d().direct_space_state
+	var occupation_query := PhysicsPointQueryParameters3D.new()
+	occupation_query.collision_mask = body.collision_mask
+	occupation_query.position = pos + offset
+	
+	var occupation_result := space_state.intersect_point(occupation_query)
+	while !occupation_result.is_empty():
+		pos += Vector3.FORWARD.rotated(Vector3.UP, avoid_rng.randf_range(0.0, 2 * PI)) * 1.5
+		occupation_query.position = pos + offset
+		occupation_result = space_state.intersect_point(occupation_query)
+		occupation_result = space_state.intersect_point(occupation_query)
+	
+	return pos
+
+
 @rpc("call_local", "any_peer", "reliable")
 func navigate_to_position_rpc(to:Vector3):
 	if !multiplayer.is_server():
@@ -68,6 +86,7 @@ func navigate_to_position_rpc(to:Vector3):
 
 @rpc("call_local", "authority", "reliable")
 func _navigate_to_position(to:Vector3):
+	to = avoid_occupied(to, body.global_basis.y, to.x + to.y + to.z)
 	intent_to_interact = null
 	navigation_agent.target_position = to
 	nav_state = NavigationState.Navigating

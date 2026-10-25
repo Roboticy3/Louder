@@ -30,8 +30,9 @@ func _ready() -> void:
 	
 	visible = false
 
-func _on_conversation_started(c:int, source:NodePath):
-	if source == get_path():
+func _on_conversation_started(c:int, source:NodePath, source_character:String):
+	var source_cdata := Network.get_character_of(get_multiplayer_authority())
+	if source_cdata and source == get_path() and source_character == source_cdata.name:
 		LouderContextGlobal.connect_actor.rpc_id(1, c, ["start"], actor_flags, [player_speaker], [])
 
 func _on_actor_added(c:int, a:int):

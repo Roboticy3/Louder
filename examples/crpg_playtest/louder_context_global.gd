@@ -23,7 +23,7 @@ extends Node
 ## peer in place, and that peer answers as id 1, so the playtest and the headless
 ## tests go down the same path a hosted session does.
 
-signal conversation_started(conversation: int, source: NodePath)
+signal conversation_started(conversation: int, source: NodePath, source_character:String)
 signal actor_added(conversation: int, actor: int)
 signal actor_removed(conversation: int, actor: int)
 ## A move, as the engine announced it.
@@ -115,13 +115,13 @@ func load_conversation_config_file(file_path) -> int:
 ## a peer addressed by its own id is refused outright, and a lone peer with no
 ## lobby is addressing itself.
 @rpc("any_peer", "call_local", "reliable")
-func start_conversation_rpc(document_path: String, source: NodePath) -> void:
+func start_conversation_rpc(document_path: String, source: NodePath, source_character:String) -> void:
 	# The id is settled by whoever answers the call and handed to the others
 	# rather than made again on each peer, so that this is one conversation and
 	# not one per peer's interning order.
 	var conversation: int = context.make_name(document_path)
-	_started(conversation, document_path, source)
-	_started.rpc(conversation, document_path, source)
+	_started(conversation, document_path, source, source_character)
+	_started.rpc(conversation, document_path, source, source_character)
 
 
 ## Put an actor into a conversation on the hub carrying any of `start_tags`, and
@@ -266,13 +266,13 @@ func _drain() -> void:
 
 
 @rpc("authority", "call_remote", "reliable")
-func _started(conversation: int, document_path: String, source: NodePath) -> void:
+func _started(conversation: int, document_path: String, source: NodePath, source_character:String) -> void:
 	if !_load_conversation(conversation, document_path):
 		return
 	# Every peer read the document itself, so every peer is the one that knows
 	# which records in it could not be read.
 	_report_load_failures()
-	conversation_started.emit(conversation, source)
+	conversation_started.emit(conversation, source, source_character)
 
 
 ## Copy of an actor added on the server, as this peer's own actors are added.

@@ -77,17 +77,6 @@ func _physics_process(_delta: float) -> void:
 		if result:
 			DebugDraw3d.draw_box(result.position, Quaternion.IDENTITY, Vector3.ONE, Color.BLUE)
 		
-			var occupation_query := PhysicsPointQueryParameters3D.new()
-			occupation_query.collision_mask = controlled_avatar.body.collision_mask
-			occupation_query.position = result.position + result.normal
-			
-			var occupation_result := space_state.intersect_point(occupation_query)
-			while !occupation_result.is_empty():
-				result.position += Vector3.FORWARD.rotated(Vector3.UP, randf_range(0.0, 2 * PI)) * 1.5
-				occupation_query.position = result.position + result.normal
-				occupation_result = space_state.intersect_point(occupation_query)
-				occupation_result = space_state.intersect_point(occupation_query)
-		
 		camera_ray_out = true
 	else:
 		camera_ray_out = false
@@ -107,7 +96,9 @@ func _physics_process(_delta: float) -> void:
 		target_marker.visible = !controlled_avatar.navigation_agent.is_target_reached()
 
 func _on_avatar_request_dialogue(avatar:CharacterAvatar, other:InteractableObject):
-	if avatar == controlled_avatar:
+	var source_cdata := Network.get_character_of(get_multiplayer_authority())
+	if source_cdata and avatar == controlled_avatar:
 		in_conversation = true
 		scrolling_dialogue.player_speaker = character_data.name
-		LouderContextGlobal.start_conversation_rpc.rpc(other.conversation_path, scrolling_dialogue.get_path())
+		LouderContextGlobal.start_conversation_rpc.rpc(other.conversation_path, scrolling_dialogue.get_path(), source_cdata.name)
+		
