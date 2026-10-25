@@ -12,7 +12,7 @@ class_name CharacterAvatar extends Node3D
 
 func _ready() -> void:
 	add_to_group(group)
-	
+	navigation_agent.path_changed.connect(_on_path_changed)
 	navigation_agent.target_reached.connect(_on_target_reached)
 
 var navigation_input := Vector3.ZERO
@@ -68,6 +68,7 @@ func navigate_to_position_rpc(to:Vector3):
 
 @rpc("call_local", "authority", "reliable")
 func _navigate_to_position(to:Vector3):
+	intent_to_interact = null
 	navigation_agent.target_position = to
 	nav_state = NavigationState.Navigating
 
@@ -86,10 +87,14 @@ var intent_to_interact:InteractableObject
 func _navigate_to_interactable(interactable_path:NodePath):
 	var i = get_node_or_null(interactable_path)
 	if !(i is InteractableObject):
+		intent_to_interact = null
 		return
 	
 	_navigate_to_position(i.get_interact_position())
 	intent_to_interact = i
+
+func _on_path_changed():
+	print("path changed")
 
 func _on_target_reached():
 	if intent_to_interact:

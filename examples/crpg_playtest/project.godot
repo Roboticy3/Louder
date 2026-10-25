@@ -35,6 +35,11 @@ c_click_move={
 ]
 }
 
+[layer_names]
+
+3d_physics/layer_1="Terrain"
+3d_physics/layer_2="Avatar"
+
 [physics]
 
 3d/physics_engine="Jolt Physics"

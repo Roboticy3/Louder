@@ -18,6 +18,8 @@ class_name CharacterAvatarControllerSingle extends Node
 @export var scrolling_dialogue:ScrollingDialogue
 @export var target_marker:Node3D
 
+@export_flags_3d_physics var raycast_collision_flags := 0b11111111_11111111_11111111_11111101
+
 var locate_timer:Timer
 signal controlled_avatar_changed(to: CharacterAvatar)
 var controlled_avatar: CharacterAvatar :
@@ -63,17 +65,28 @@ var camera_ray_out := false
 var in_conversation := false
 func _physics_process(_delta: float) -> void:
 	var result:Dictionary
-	if !in_conversation and controlled_avatar and Input.is_action_pressed("c_click_move"):
+	if !in_conversation and controlled_avatar and Input.is_action_just_pressed("c_click_move"):
 		var mouse_pos := camera_rig.camera.get_viewport().get_mouse_position()
 		var ray_o := camera_rig.camera.project_ray_origin(mouse_pos)
 		var ray_n := camera_rig.camera.project_ray_normal(mouse_pos)
 		DebugDraw3d.draw_ray(ray_o, ray_o + ray_n * 100, Color.RED)
-		var query := PhysicsRayQueryParameters3D.create(ray_o, ray_o + ray_n * 100, -1, [controlled_avatar.body])
+		var query := PhysicsRayQueryParameters3D.create(ray_o, ray_o + ray_n * 100, raycast_collision_flags)
 		
 		var space_state := camera_rig.camera.get_world_3d().direct_space_state
 		result = space_state.intersect_ray(query)
 		if result:
 			DebugDraw3d.draw_box(result.position, Quaternion.IDENTITY, Vector3.ONE, Color.BLUE)
+		
+			var occupation_query := PhysicsPointQueryParameters3D.new()
+			occupation_query.collision_mask = controlled_avatar.body.collision_mask
+			occupation_query.position = result.position + result.normal
+			
+			var occupation_result := space_state.intersect_point(occupation_query)
+			while !occupation_result.is_empty():
+				result.position += Vector3.FORWARD.rotated(Vector3.UP, randf_range(0.0, 2 * PI)) * 1.5
+				occupation_query.position = result.position + result.normal
+				occupation_result = space_state.intersect_point(occupation_query)
+				occupation_result = space_state.intersect_point(occupation_query)
 		
 		camera_ray_out = true
 	else:
