@@ -277,22 +277,22 @@ func _started(conversation: int, document_path: String, source: NodePath, source
 
 ## Copy of an actor added on the server, as this peer's own actors are added.
 ##
+## The actor only ever existed in the server's context, so everything the copy
+## needs - where it stands, its flags, and which speakers it speaks as and
+## listens to - arrives as data rather than being looked up here. speak_as and
+## listen_to cross as the server's interned ids and go into the engine as they
+## are: both peers read the same documents in the same order, so an id means
+## the same on both. That is also why this cannot go through _add_actor: that
+## interns, and these already are.
+##
 ## The copy answers what the original would answer on a peer that is not running
 ## the engine: which speakers it speaks as, and which choices it may take where
 ## it stands. Ids are the engine's own and are only meaningful to a peer holding
 ## the same actors in the same order, so the id the copy came out as is checked
 ## against the one it was told to be rather than assumed.
 @rpc("authority", "call_remote", "reliable")
-func _actor_added(conversation: int, actor: int) -> void:
-	var original: Actor = context.get_actor(conversation, actor)
-	if original == null:
-		push_error("No actor %d in conversation %d to copy." % [actor, conversation])
-		return
-
-	# speak_as and listen_to are already ids and go across as they are, which is
-	# also why this cannot go through _add_actor: that interns, and they are.
-	var copy: int = context.add_actor(conversation, original.get_position(), original.get_flags(),
-		original.speak_as(), original.listen_to())
+func _actor_added(conversation: int, actor: int, position: int, flags: int, speak_as: Array[int], listen_to: Array[int]) -> void:
+	var copy: int = context.add_actor(conversation, position, flags, speak_as, listen_to)
 
 	# A copy queues the same event the original did, and nothing on this peer is
 	# reading it: this peer was told, it did not work it out.
@@ -341,7 +341,12 @@ func _pass_motion(conversation: int, actor: int, target: int, background: bool, 
 
 func _pass_actor_added(conversation: int, actor: int) -> void:
 	actor_added.emit(conversation, actor)
-	_actor_added.rpc(conversation, actor)
+	# The actor only exists in this context, so everything a peer needs to keep
+	# its copy - where it stands, its flags, and the interned ids of the voices
+	# it speaks as and listens to - goes across as data, not as an id to look up.
+	var original: Actor = context.get_actor(conversation, actor)
+	_actor_added.rpc(conversation, actor, original.get_position(), original.get_flags(),
+		original.speak_as(), original.listen_to())
 
 
 func _pass_actor_removed(conversation: int, actor: int) -> void:

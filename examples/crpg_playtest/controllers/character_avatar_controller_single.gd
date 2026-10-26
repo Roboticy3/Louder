@@ -96,7 +96,7 @@ func _physics_process(_delta: float) -> void:
 		target_marker.visible = !controlled_avatar.navigation_agent.is_target_reached()
 
 func _on_avatar_request_dialogue(avatar:CharacterAvatar, other:InteractableObject):
-	var source_cdata := Network.get_character_of(get_multiplayer_authority())
+	var source_cdata := Network.get_character_of()
 	if source_cdata and avatar == controlled_avatar:
 		in_conversation = true
 		scrolling_dialogue.player_speaker = character_data.name

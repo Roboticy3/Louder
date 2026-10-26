@@ -66,7 +66,7 @@ func get_local_peer_id() -> int:
 func get_characters() -> Array[CharacterData]:
 	return _allocator.get_characters()
 
-func get_character_of(peer_id: int) -> CharacterData:
+func get_character_of(peer_id: int = get_local_peer_id()) -> CharacterData:
 	var character_id: StringName = _allocations.get(peer_id, &"")
 	if character_id == &"":
 		return null

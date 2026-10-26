@@ -86,7 +86,7 @@ func navigate_to_position_rpc(to:Vector3):
 
 @rpc("call_local", "authority", "reliable")
 func _navigate_to_position(to:Vector3):
-	to = avoid_occupied(to, body.global_basis.y, to.x + to.y + to.z)
+	to = avoid_occupied(to, body.global_basis.y, int(to.x + to.y + to.z))
 	intent_to_interact = null
 	navigation_agent.target_position = to
 	nav_state = NavigationState.Navigating
