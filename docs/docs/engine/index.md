@@ -98,7 +98,11 @@ This is not a spec for the code syntax of the engine. This is more of a mathemat
 
 Rules assume the presence of a context and a conversation.
 
-Rules are ordered. If rule R was stated after rule S, and there is a contradiction, rule R should be followed with a warning in the implementation that they conflict.
+Rules are ordered. If rule R was stated *before* rule S below, and there is a contradiction, rule R should be followed with a warning in the implementation that they conflict.
+
+Rules are exposed to the user as an enum, alongside a function that converts from rules to rule names.
+
+In implementation, this probably won't be realized as a big global list of rules, but this list should remove any ambiguity on the correct behavior for any given scenario.
 
 ## Meta Rules
 Rules about rules.
