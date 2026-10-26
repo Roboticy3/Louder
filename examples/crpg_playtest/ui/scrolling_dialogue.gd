@@ -15,14 +15,6 @@ class_name ScrollingDialogue extends Control
 var conversation := -1
 var player_actor := -1
 
-# The conversation this dialogue asked to join and has not been given an actor
-# for yet. actor_added announces every actor to everyone, and the speaker check
-# alone cannot tell "an actor in the conversation I joined, speaking as me"
-# from "somebody else's actor that happens to share the voice": before this
-# peer ever starts a conversation, player_speaker is still the scene default,
-# which is another player's character name.
-var _pending_conversation := -1
-
 # The engine choice index behind each button, in the order the buttons are shown.
 var _choice_indices: Array[int] = []
 var _revealed_anything := false
@@ -31,26 +23,26 @@ var _revealed_anything := false
 func _ready() -> void:
 	add_to_group(group)
 	
-	LouderContextGlobal.conversation_started.connect(_on_conversation_started)
 	LouderContextGlobal.actor_added.connect(_on_actor_added)
 	LouderContextGlobal.actor_removed.connect(_on_actor_removed)
 	LouderContextGlobal.motion.connect(_on_motion)
 	
 	visible = false
 
-func _on_conversation_started(c:int, source:NodePath, source_character:String):
-	var source_cdata := Network.get_character_of()
-	if source_cdata and source == get_path() and source_character == source_cdata.name:
-		_pending_conversation = c
-		LouderContextGlobal.connect_actor.rpc_id(1, c, ["start"], actor_flags, [player_speaker], [])
-
 func _on_actor_added(c:int, a:int):
-	if c != _pending_conversation:
+	# Only the actor that speaks in this dialogue's own voice, for the character
+	# this peer is actually playing, opens this UI. The host decides who joins a
+	# conversation and adds the actors; the UI only displays the result.
+	var local_character := Network.get_character_of()
+	if local_character == null or str(local_character.name) != str(player_speaker):
 		return
+
 	var speaker_name:int = LouderContextGlobal.context.make_name(player_speaker)
-	var speak_as:Array[int] = LouderContextGlobal.context.get_actor(c, a).speak_as()
+	var actor: Actor = LouderContextGlobal.context.get_actor(c, a)
+	if actor == null:
+		return
+	var speak_as:Array[int] = actor.speak_as()
 	if speaker_name in speak_as:
-		_pending_conversation = -1
 		player_actor = a
 		conversation = c
 		visible = true
@@ -58,6 +50,9 @@ func _on_actor_added(c:int, a:int):
 func _on_actor_removed(c:int, a:int):
 	if conversation == c and player_actor == a:
 		_on_conversation_finished()
+		player_actor = -1
+		conversation = -1
+		visible = false
 
 func _on_motion(c:int, a:int, target:int, background:int, speaker:String, _f: int):
 	if c == conversation and a == player_actor:

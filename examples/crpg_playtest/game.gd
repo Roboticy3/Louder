@@ -23,6 +23,8 @@ func _ready() -> void:
 	Network.connection_failed.connect(_on_connection_failed)
 	Network.server_disconnected.connect(_on_server_disconnected)
 
+	LouderContextGlobal.load_conversation_config_file("configs/config.json")
+
 	_show_main_menu("")
 
 func _on_host_requested(port: int, dedicated: bool) -> void:

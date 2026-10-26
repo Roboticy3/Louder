@@ -100,5 +100,4 @@ func _on_avatar_request_dialogue(avatar:CharacterAvatar, other:InteractableObjec
 	if source_cdata and avatar == controlled_avatar:
 		in_conversation = true
 		scrolling_dialogue.player_speaker = character_data.name
-		LouderContextGlobal.start_conversation_rpc.rpc(other.conversation_path, scrolling_dialogue.get_path(), source_cdata.name)
 		

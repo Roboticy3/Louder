@@ -116,16 +116,30 @@ func _on_path_changed():
 	print("path changed")
 
 func _on_target_reached():
-	if intent_to_interact:
+	var interactable := intent_to_interact
+	if interactable:
 		nav_state = NavigationState.Turning
 		
-		body.look_at.call_deferred(intent_to_interact.global_position, Vector3.UP, true)
-		DebugDraw3d.draw_arrow_line(intent_to_interact.get_interact_position(), intent_to_interact.global_position, Color.RED)
+		body.look_at.call_deferred(interactable.global_position, Vector3.UP, true)
+		DebugDraw3d.draw_arrow_line(interactable.get_interact_position(), interactable.global_position, Color.RED)
 		DebugDraw3d.draw_arrow(body.global_position, -body.global_basis.z * 3, Color.BLUE)
 		
-		#Start dialogue. Connected controller should see this and trigger dialogue UI
-		print("starting dialogue with ", intent_to_interact)
-		get_tree().call_group(character_controller_group, &"_on_avatar_request_dialogue", self, intent_to_interact)
+		# The client that controls this avatar opens its own dialogue UI; the
+		# host is the one that creates the conversation and adds the actors.
+		print("starting dialogue with ", interactable)
+		get_tree().call_group(character_controller_group, &"_on_avatar_request_dialogue", self, interactable)
+
+		if multiplayer.is_server():
+			var document_path := interactable.conversation_path
+			if document_path != "":
+				var conv: int
+				if interactable.conversation_id == -1:
+					conv = LouderContextGlobal.context.make_name(document_path)
+					interactable.conversation_id = conv
+					LouderContextGlobal.start_conversation_rpc(document_path, NodePath(""), character_data.name)
+				else:
+					conv = interactable.conversation_id
+					LouderContextGlobal.connect_actor(conv, ["start"], character_data.get_actor_flags(), character_data.get_speaker_names(), [])
 	
 	intent_to_interact = null
 	nav_state = NavigationState.Idle

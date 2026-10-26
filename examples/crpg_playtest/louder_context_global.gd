@@ -116,12 +116,29 @@ func load_conversation_config_file(file_path) -> int:
 ## lobby is addressing itself.
 @rpc("any_peer", "call_local", "reliable")
 func start_conversation_rpc(document_path: String, source: NodePath, source_character:String) -> void:
+	# Only the host processes dialogue logic: a client asking for a conversation
+	# is a request, and the host is the one that creates it and adds its actors.
+	if !multiplayer.is_server():
+		return
+
 	# The id is settled by whoever answers the call and handed to the others
 	# rather than made again on each peer, so that this is one conversation and
 	# not one per peer's interning order.
 	var conversation: int = context.make_name(document_path)
 	_started(conversation, document_path, source, source_character)
 	_started.rpc(conversation, document_path, source, source_character)
+
+	# Adding actors is the host's job too. The peer named by source_character is
+	# the one that walked up to the conversation, so it is the first actor in it.
+	if source_character != "":
+		var flags := 0
+		var speakers: Array = [source_character]
+		for character in Network.get_characters():
+			if str(character.name) == source_character:
+				flags = character.get_actor_flags()
+				speakers = character.get_speaker_names()
+				break
+		connect_actor(conversation, ["start"], flags, speakers, [])
 
 
 ## Put an actor into a conversation on the hub carrying any of `start_tags`, and
@@ -131,6 +148,8 @@ func start_conversation_rpc(document_path: String, source: NodePath, source_char
 ## ids, since the peer that answers the call is the one holding the ids.
 @rpc("any_peer", "call_local", "reliable")
 func connect_actor(conversation: int, start_tags: Array, flags: int, configured_speakers: Array, configured_listen_to: Array = []) -> int:
+	if !multiplayer.is_server():
+		return NO_ACTOR
 	var start: int = context.next_hub_from_tags(conversation, _intern(start_tags), false, BLANK_POSITION)
 	if start == BLANK_POSITION:
 		push_error("Conversation %d has no hub tagged %s." % [conversation, start_tags])
