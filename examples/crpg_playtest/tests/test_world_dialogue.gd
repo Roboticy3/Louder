@@ -19,6 +19,12 @@ func _ready() -> void:
 	var config_result: int = LouderContextGlobal.load_conversation_config_file(CONFIG)
 	_check(config_result == 0, "the speaker config loaded (got %d)" % config_result)
 
+	var benjamin: CharacterData = null
+	for character in Network.get_characters():
+		if character.name == "Benjamin":
+			benjamin = character
+	Network._apply_allocations({1: benjamin.get_id()})
+
 	var scene := load("res://ui/scrolling_dialogue.tscn") as PackedScene
 	_check(scene != null, "the dialogue scene loads")
 	if scene == null:
@@ -33,7 +39,7 @@ func _ready() -> void:
 
 	# What character_avatar_controller_single does when an avatar reaches the
 	# object it meant to talk to.
-	LouderContextGlobal.start_conversation_rpc(DOCUMENT, dialogue.get_path())
+	LouderContextGlobal.start_conversation_rpc(DOCUMENT, dialogue.get_path(), "Benjamin")
 	for frame in 6:
 		await get_tree().process_frame
 
@@ -80,7 +86,7 @@ func _walk_the_chain(dialogue: Control) -> void:
 	context.flush_events()
 
 
-func _on_motion(conversation: int, actor: int, target: int, background: int, speaker: String) -> void:
+func _on_motion(conversation: int, actor: int, target: int, background: int, speaker: String, _kind: int) -> void:
 	_motions.append([conversation, actor, target, background, speaker])
 
 

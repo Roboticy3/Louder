@@ -9,39 +9,76 @@ extends Node
 ##
 ## Offline, server and client share one autoload and one context, and the
 ## loopback masks the relay: a dialogue hears the server's own local emission
-## of actor_added. The client's half is therefore driven by hand: a second
-## LouderContext that knows exactly what a real client knows - the config and
-## the document, and no actors - and the real _actor_added handler is called
-## against it with the data the server relays, exactly as the server's rpc
-## would.
+## of actor_added, which is what lets it appear here at all. The client's half
+## is therefore also driven by hand: a second LouderContext that knows exactly
+## what a real client knows - the config and the document, and no actors - and
+## the real _actor_added handler is called against it with the data the server
+## relays, exactly as the server's rpc would.
 
 const DOCUMENT := "res://conversations/marrow.json"
 const CONFIG := "res://configs/config.json"
 const SCENE := "res://ui/scrolling_dialogue.tscn"
 
 var _failures := 0
-var _announced: Array[int] = []
 
 
 func _ready() -> void:
+	# Isolate from any context state left by earlier tests in the same process:
+	# both the server's context and the client's must start empty so the
+	# engine assigns the same actor id on both, which is what a real client
+	# relies on.
+	var saved_context := LouderContextGlobal.context
+	LouderContextGlobal.context = LouderContext.new()
+
+	var characters := Network.get_characters()
+	_check(characters.size() >= 1, "the catalog holds at least one character")
+	if characters.is_empty():
+		LouderContextGlobal.context = saved_context
+		_finish()
+		return
+	var client_character := characters[0]
+	Network._apply_allocations({1: client_character.get_id()})
+
 	var config_result: int = LouderContextGlobal.load_conversation_config_file(CONFIG)
 	_check(config_result == 0, "the speaker config loaded (got %d)" % config_result)
 
-	# -- the server's seat ---------------------------------------------------
-	# The client started a conversation and asked for an actor; this is what
-	# the server does when the client's connect_actor.rpc_id(1, ...) arrives.
-	var conversation: int = LouderContextGlobal.load_conversation_file(DOCUMENT)
-	_check(conversation != -1, "the conversation document loads")
-	if conversation == -1:
+	# The client's dialogue, wired the way its controller left it.
+	var scene := load(SCENE) as PackedScene
+	_check(scene != null, "the dialogue scene loads")
+	if scene == null:
+		_finish()
+		return
+	var dialogue := scene.instantiate() as ScrollingDialogue
+	dialogue.player_speaker = client_character.name
+	add_child(dialogue)
+	await get_tree().process_frame
+
+	# The request the client's controller sends: the gate passes and the
+	# server adds the actor, which loops back into this same context and lets
+	# the dialogue claim it.
+	LouderContextGlobal.start_conversation_rpc(DOCUMENT, dialogue.get_path(), client_character.name)
+	await _settle()
+
+	var actor: int = dialogue.player_actor
+	_check(actor != -1 and dialogue.visible,
+		"the client's dialogue appears (actor %d, visible %s)" % [dialogue.player_actor, dialogue.visible])
+	_check(dialogue.lines.get_child_count() >= 1,
+		"the client's dialogue shows the opening line (got %d)" % dialogue.lines.get_child_count())
+
+	var conversation: int = dialogue.conversation
+
+	# What a real client cannot hear that way is driven by hand: a context
+	# that knows exactly what a real client knows - the config and the
+	# document, and no actors - and the real relay handlers called against
+	# it with the data the server relays.
+	var original: Actor = LouderContextGlobal.context.get_actor(conversation, actor)
+	_check(original != null, "the server's context holds the actor to relay")
+	if original == null:
+		LouderContextGlobal.context = saved_context
+		dialogue.queue_free()
 		_finish()
 		return
 
-	var actor: int = LouderContextGlobal.connect_actor(conversation, ["start"], 0, ["Benjamin"], [])
-	_check(actor != -1, "the server added the client's actor (got %d)" % actor)
-
-	# -- the client's seat ---------------------------------------------------
-	# A real client's context knows the config and the document (loaded when
-	# _started arrived) and nothing else: actors live in the server's context.
 	var client_context := LouderContext.new()
 	var config_text := FileAccess.open(CONFIG, FileAccess.READ).get_as_text()
 	_check(client_context.load_conversation_config(config_text) == 0,
@@ -50,50 +87,32 @@ func _ready() -> void:
 	_check(client_context.load_conversation(conversation, document_text) == 0,
 		"the client's context loads the document")
 
-	# The client's dialogue, wired the way its controller left it. It is made
-	# only now, after the server-side add, so the server's local emission of
-	# actor_added cannot reach it: everything it gets arrives the way a real
-	# client's would, through the rpc handler.
-	var scene := load(SCENE) as PackedScene
-	_check(scene != null, "the dialogue scene loads")
-	if scene == null:
-		_finish()
-		return
-	var dialogue := scene.instantiate() as ScrollingDialogue
-	dialogue.player_speaker = &"Benjamin"
-	add_child(dialogue)
-	await get_tree().process_frame
-
-	LouderContextGlobal.actor_added.connect(_on_actor_added)
-
-	# What the server relays about the actor it added: the actor's data, not
-	# just its id, because the client's context never had the original.
-	var original: Actor = LouderContextGlobal.context.get_actor(conversation, actor)
-	_check(original != null, "the server's context holds the actor to relay")
-	if original == null:
-		_finish()
-		return
-
-	# What the server's _actor_added.rpc(...) runs on the client: the real
-	# handler, against the client's own context.
 	var server_context := LouderContextGlobal.context
 	LouderContextGlobal.context = client_context
 	LouderContextGlobal._actor_added(conversation, actor,
 		original.get_position(), original.get_flags(), original.speak_as(), original.listen_to())
 	LouderContextGlobal.context = server_context
 
-	_check(actor in _announced, "the client is told its actor was added")
 	_check(client_context.get_actor(conversation, actor) != null,
 		"the client's context holds a copy of the actor")
-	_check(dialogue.player_actor != -1 and dialogue.visible,
-		"the client's dialogue appears (actor %d, visible %s)" % [dialogue.player_actor, dialogue.visible])
 
+	var position: int = original.get_position()
+	LouderContextGlobal.context = client_context
+	LouderContextGlobal._motion(conversation, actor, position, 0, client_character.name, 3)
+	LouderContextGlobal.context = server_context
+
+	var copy: Actor = client_context.get_actor(conversation, actor)
+	_check(copy != null and copy.get_position() == position,
+		"the client's copy followed the motion")
+
+	LouderContextGlobal.context = saved_context
 	dialogue.queue_free()
 	_finish()
 
 
-func _on_actor_added(_conversation: int, actor: int) -> void:
-	_announced.append(actor)
+func _settle() -> void:
+	for frame in 6:
+		await get_tree().process_frame
 
 
 func _check(condition: bool, message: String) -> void:

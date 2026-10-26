@@ -15,6 +15,14 @@ class_name ScrollingDialogue extends Control
 var conversation := -1
 var player_actor := -1
 
+# The conversation this dialogue asked to join and has not been given an actor
+# for yet. actor_added announces every actor to everyone, and the speaker check
+# alone cannot tell "an actor in the conversation I joined, speaking as me"
+# from "somebody else's actor that happens to share the voice": before this
+# peer ever starts a conversation, player_speaker is still the scene default,
+# which is another player's character name.
+var _pending_conversation := -1
+
 # The engine choice index behind each button, in the order the buttons are shown.
 var _choice_indices: Array[int] = []
 var _revealed_anything := false
@@ -33,12 +41,16 @@ func _ready() -> void:
 func _on_conversation_started(c:int, source:NodePath, source_character:String):
 	var source_cdata := Network.get_character_of()
 	if source_cdata and source == get_path() and source_character == source_cdata.name:
+		_pending_conversation = c
 		LouderContextGlobal.connect_actor.rpc_id(1, c, ["start"], actor_flags, [player_speaker], [])
 
 func _on_actor_added(c:int, a:int):
+	if c != _pending_conversation:
+		return
 	var speaker_name:int = LouderContextGlobal.context.make_name(player_speaker)
 	var speak_as:Array[int] = LouderContextGlobal.context.get_actor(c, a).speak_as()
 	if speaker_name in speak_as:
+		_pending_conversation = -1
 		player_actor = a
 		conversation = c
 		visible = true

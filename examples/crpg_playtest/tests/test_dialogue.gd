@@ -3,12 +3,15 @@ extends Node
 ## Drives the real dialogue scene headlessly and checks that the engine's flow
 ## actually reaches the UI.
 ##
-## The scene starts its conversation in _ready, so adding it to the tree is most
-## of the work. What is checked here is that lines and choices come out the other
-## side, that the buttons on screen are the choices the engine is actually
-## offering, and that pressing one moves the conversation on.
+## The flow is the world's: the scene is added, a conversation is started
+## against it the way character_avatar_controller_single starts one, and lines
+## and choices come out the other side. What is checked here is that the buttons
+## on screen are the choices the engine is actually offering, and that pressing
+## one moves the conversation on.
 
 const SCENE := "res://ui/scrolling_dialogue.tscn"
+const DOCUMENT := "res://conversations/marrow.json"
+const CONFIG := "res://configs/config.json"
 const STEPS := 6
 
 var _dialogue: Control
@@ -18,17 +21,32 @@ var _failures := 0
 func _ready() -> void:
 	_check(has_node("/root/LouderContextGlobal"), "LouderContextGlobal is loaded as an autoload")
 
+	# The dialogue's gate asks who the local peer plays: rig the lobby so this
+	# process plays Benjamin, the speaker the scene is exported with.
+	var benjamin: CharacterData = null
+	for character in Network.get_characters():
+		if character.name == "Benjamin":
+			benjamin = character
+	_check(benjamin != null, "Benjamin is in the catalog")
+	if benjamin == null:
+		_finish()
+		return
+	Network._apply_allocations({1: benjamin.get_id()})
+
+	var config_result: int = LouderContextGlobal.load_conversation_config_file(CONFIG)
+	_check(config_result == 0, "the speaker config loaded (got %d)" % config_result)
+
 	var scene := load(SCENE) as PackedScene
 	_check(scene != null, "the dialogue scene loads")
 	if scene != null:
 		_dialogue = scene.instantiate() as Control
 		add_child(_dialogue)
-		# Two frames, because the scene asks the autoload to start its conversation
-		# as a deferred call: the scene has to be up and listening before the
-		# answer comes back, and a deferred call waits for the scene's own _ready
-		# to be over first.
 		await get_tree().process_frame
-		await get_tree().process_frame
+
+		# What the controller sends when the player's avatar reaches someone.
+		LouderContextGlobal.start_conversation_rpc(DOCUMENT, _dialogue.get_path(), benjamin.name)
+		for frame in 6:
+			await get_tree().process_frame
 
 		var conversation: int = _dialogue.conversation
 		var actor: int = _dialogue.player_actor
@@ -81,3 +99,8 @@ func _check(condition: bool, message: String) -> void:
 	print("%s %s" % ["PASS" if condition else "FAIL", message])
 	if !condition:
 		_failures += 1
+
+
+func _finish() -> void:
+	if _failures > 0:
+		get_tree().quit(1)

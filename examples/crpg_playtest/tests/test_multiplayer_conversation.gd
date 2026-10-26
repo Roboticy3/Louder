@@ -24,7 +24,7 @@ func _ready() -> void:
 	print("conversation load: ", load_result)
 
 	LouderContextGlobal.actor_added.connect(func(c: int, a: int) -> void: print("  signal actor_added c=%d a=%d" % [c, a]))
-	LouderContextGlobal.motion.connect(func(c: int, a: int, t: int, bg: int, s: String) -> void: print("  signal motion c=%d a=%d t=%d bg=%d s=%s" % [c, a, t, bg, s]))
+	LouderContextGlobal.motion.connect(func(c: int, a: int, t: int, bg: int, s: String, k: int) -> void: print("  signal motion c=%d a=%d t=%d bg=%d s=%s k=%d" % [c, a, t, bg, s, k]))
 	LouderContextGlobal.callback_raised.connect(func(cb: String) -> void: print("  signal callback %s" % cb))
 
 	var benjamin := CharacterData.new()
@@ -54,7 +54,7 @@ func _ready() -> void:
 		for index in LouderContextGlobal.get_available_choice_indices(conversation, actor):
 			print("     index %d -> hub %d text %s" % [
 				index,
-				LouderContextGlobal.get_choice_text(conversation, 0, actor, index),
-				LouderContextGlobal.context.get_hub_choice_link(conversation, 0, actor, index)])
+				LouderContextGlobal.context.get_hub_choice_link(conversation, 0, actor, index),
+				LouderContextGlobal.get_choice_text(conversation, 0, actor, index)])
 
 	print("--- probe end ---")

@@ -64,6 +64,28 @@ func _ready() -> void:
 			bystander_dialogue.player_actor, bystander_dialogue.visible])
 	bystander_dialogue.queue_free()
 
+	# A dialogue that never asked to join a conversation must not claim someone
+	# else's actor. Before its controller ever starts a conversation,
+	# player_speaker is still the scene default - and that default is the host's
+	# character's name, so the speaker check alone would claim the host's actor
+	# and open the client's UI for the host's conversation.
+	var idle_dialogue := scene.instantiate() as ScrollingDialogue
+	add_child(idle_dialogue)
+	await get_tree().process_frame
+	_check(idle_dialogue.player_speaker == StringName(host_character.name),
+		"setup: the idle dialogue still carries the scene default speaker (got %s)" % idle_dialogue.player_speaker)
+
+	# The server adding the host's actor, as the host's own request produces.
+	# actor_added announces it to every peer, including this idle client.
+	var conversation: int = LouderContextGlobal.load_conversation_file(DOCUMENT)
+	var host_actor: int = LouderContextGlobal.connect_actor(conversation, ["start"], 0, [host_character.name], [])
+	_check(host_actor != -1, "the server adds the host's actor (got %d)" % host_actor)
+	await _settle()
+	_check(idle_dialogue.player_actor == -1 and not idle_dialogue.visible,
+		"a dialogue that never joined stays closed when another player's actor is added (actor %d, visible %s)" % [
+			idle_dialogue.player_actor, idle_dialogue.visible])
+	idle_dialogue.queue_free()
+
 	# A conversation opened under the CLIENT's character is the client's own.
 	var client_dialogue := await _make_dialogue(scene, client_character.name)
 	LouderContextGlobal.start_conversation_rpc(DOCUMENT, client_dialogue.get_path(), client_character.name)

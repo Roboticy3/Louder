@@ -310,7 +310,7 @@
 	},
 	{
 		"conversation_id": "49",
-		"expressions": "%speaker != \"Geno\"",
+		"expressions": "speaker != Geno",
 		"flags": "5",
 		"position_offset:x": "2980.0",
 		"position_offset:y": "-2840.0",
@@ -416,9 +416,8 @@
 		"type": "hub"
 	},
 	{
-		"callbacks": "buy %speaker Marrow \"Leather Bag\" 10",
 		"conversation_id": "68",
-		"expressions": "bought_something = 1",
+		"expressions": "bought_something = 1\nbuy(speaker, \"Marrow\", \"Leather Bag\", 10)",
 		"flags": "1",
 		"position_offset:x": "5540.0",
 		"position_offset:y": "-1920.0",
@@ -553,7 +552,7 @@
 		"type": "hub"
 	},
 	{
-		"callbacks": "buy %speaker Marrow \"Waterskin\" 15",
+		"callbacks": "buy(speaker, \"Marrow\", \"Waterskin\", 15)",
 		"conversation_id": "95",
 		"expressions": "bought_something = 1",
 		"position_offset:x": "6080.0",
@@ -562,7 +561,7 @@
 		"type": "hub"
 	},
 	{
-		"callbacks": "buy %speaker Marrow \"Waterskin\" 25",
+		"callbacks": "buy(speaker, \"Marrow\", \"Waterskin\", 25)",
 		"conversation_id": "94",
 		"expressions": "bought_something = 1",
 		"position_offset:x": "6060.0",
@@ -618,8 +617,8 @@
 		"type": "hub"
 	},
 	{
-		"callbacks": "kick %speaker",
 		"conversation_id": "98",
+		"expressions": "kick(speaker)",
 		"flags": "1",
 		"position_offset:x": "1960.0",
 		"position_offset:y": "3920.0",
@@ -763,8 +762,8 @@
 		"type": "hub"
 	},
 	{
-		"callbacks": "kick %speaker",
 		"conversation_id": "111",
+		"expressions": "kick(speaker)",
 		"flags": "1",
 		"position_offset:x": "8340.0",
 		"position_offset:y": "-60.0",
@@ -828,9 +827,8 @@
 		"type": "hub"
 	},
 	{
-		"callbacks": "buy %speaker Marrow \"Vest\" 5",
 		"conversation_id": "119",
-		"expressions": "bought_something = 1",
+		"expressions": "bought_something = 1\nbuy(speaker, \"Marrow\", \"Vest\", 5)",
 		"position_offset:x": "6760.0",
 		"position_offset:y": "2780.0",
 		"text": "\"Deal\"",
@@ -970,15 +968,6 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "137",
-		"expressions": "marrow_argument_blocked = 1",
-		"position_offset:x": "3860.0",
-		"position_offset:y": "-2620.0",
-		"speaker": "Marrow",
-		"text": "\"Please.\"",
-		"type": "hub"
-	},
-	{
 		"conversation_id": "138",
 		"position_offset:x": "4280.0",
 		"position_offset:y": "-2620.0",
@@ -1067,11 +1056,50 @@
 		"type": "hub"
 	},
 	{
-		"callbacks": "kick %speaker",
 		"conversation_id": "147",
+		"expressions": "kick(speaker)",
 		"flags": "1",
 		"position_offset:x": "9940.0",
 		"position_offset:y": "2480.0",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "148",
+		"position_offset:x": "5200.0",
+		"position_offset:y": "-4440.0",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "149",
+		"expressions": "speaker != Geno",
+		"position_offset:x": "4919.41845703125",
+		"position_offset:y": "-3984.0888671875",
+		"text": "\"Can I use the shop please?\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "137",
+		"expressions": "marrow_argument_blocked = 1",
+		"position_offset:x": "3860.0",
+		"position_offset:y": "-2620.0",
+		"speaker": "Marrow",
+		"text": "\"Please.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "150",
+		"position_offset:x": "5320.0",
+		"position_offset:y": "-4000.0",
+		"speaker": "Marrow",
+		"text": "\"Please.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "151",
+		"position_offset:x": "9160.0",
+		"position_offset:y": "-60.0",
+		"speaker": "Note",
+		"text": "References to %speaker or other special variables are outdated with the new scheme proposed for expression evaluation.\n\nInstead, the `speaker` identifier would call a user function that asks what the active speaker is of the current hub, then returns their name.",
 		"type": "hub"
 	},
 	{
@@ -1411,6 +1439,18 @@
 		"type": "connection"
 	},
 	{
+		"from_id": "149",
+		"from_port": 0,
+		"to_id": "150",
+		"type": "connection"
+	},
+	{
+		"from_id": "150",
+		"from_port": 0,
+		"to_id": "6",
+		"type": "connection"
+	},
+	{
 		"from_id": "16",
 		"from_port": 1,
 		"to_id": "12",
@@ -1708,6 +1748,18 @@
 		"from_id": "52",
 		"from_port": 0,
 		"to_id": "53",
+		"type": "connection"
+	},
+	{
+		"from_id": "52",
+		"from_port": 1,
+		"to_id": "149",
+		"type": "connection"
+	},
+	{
+		"from_id": "53",
+		"from_port": 0,
+		"to_id": "148",
 		"type": "connection"
 	},
 	{
@@ -2065,9 +2117,9 @@
 		"type": "connection"
 	},
 	{
-		"position:x": "-159.75537109375",
-		"position:y": "-102.081909179688",
+		"position:x": "15042.4775390625",
+		"position:y": "3916.90380859375",
 		"type": "camera",
-		"zoom": "0.27799358963966"
+		"zoom": "1.54561877250671"
 	}
 ]

@@ -24,11 +24,18 @@ func _ready() -> void:
 		_finish()
 		return
 
+	var benjamin: CharacterData = null
+	for character in Network.get_characters():
+		if character.name == "Benjamin":
+			benjamin = character
+	Network._apply_allocations({1: benjamin.get_id()})
+
 	var dialogue := scene.instantiate() as ScrollingDialogue
+	dialogue.player_speaker = PLAYER_SPEAKER
 	add_child(dialogue)
 	await get_tree().process_frame
 
-	LouderContextGlobal.start_conversation_rpc(DOCUMENT, dialogue.get_path())
+	LouderContextGlobal.start_conversation_rpc(DOCUMENT, dialogue.get_path(), PLAYER_SPEAKER)
 	for frame in 6:
 		await get_tree().process_frame
 
