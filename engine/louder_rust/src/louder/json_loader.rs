@@ -25,16 +25,83 @@ pub const LOUDER_LOAD_NOT_AN_OBJECT: LoadError = 3;
 /// The conversation name was already occupied by a loaded conversation.
 pub const LOUDER_LOAD_ALREADY_LOADED: LoadError = 4;
 
-/// Read `bytes` as the text of a document.
-///
-/// JSON is text, so the engine has to know what the bytes say before it can
-/// parse them, and this is the one place where it does: UTF-8, because that is
-/// what the editor writes. This is a check on the input, not an encoding scheme
-/// the engine offers. Nothing here is converted, and a caller that holds bytes
-/// in some other encoding is expected to decode them on its own side rather than
-/// ask the engine to guess.
+/// Read `bytes` as the text of a document in UTF-8.
 pub fn decode(bytes: &[u8]) -> Result<&str, LoadError> {
   std::str::from_utf8(bytes).map_err(|_| LOUDER_LOAD_MALFORMED_JSON)
+}
+
+/// Read `bytes` as the text of a document in the named encoding.
+///
+/// The encoding is named by a short string such as "utf-8", "utf-16",
+/// "utf-16le", "utf-16be", or "latin1". The bytes are decoded into a freshly
+/// allocated string, so the caller does not have to keep them alive.
+pub fn decode_with_encoding(bytes: &[u8], encoding: &str) -> Result<String, LoadError> {
+  let encoding = encoding.to_ascii_lowercase();
+  match encoding.as_str() {
+    "utf-8" | "utf8" => std::str::from_utf8(bytes)
+      .map(|s| s.to_owned())
+      .map_err(|_| LOUDER_LOAD_MALFORMED_JSON),
+    "utf-16" | "utf-16le" | "utf16" | "utf16le" => decode_utf16(bytes, true),
+    "utf-16be" | "utf16be" => decode_utf16(bytes, false),
+    "latin1" | "latin-1" | "iso-8859-1" | "iso8859-1" => {
+      Ok(bytes.iter().map(|&b| b as char).collect())
+    }
+    _ => Err(LOUDER_LOAD_MALFORMED_JSON),
+  }
+}
+
+fn decode_utf16(bytes: &[u8], little_endian: bool) -> Result<String, LoadError> {
+  if bytes.len() % 2 != 0 {
+    return Err(LOUDER_LOAD_MALFORMED_JSON);
+  }
+
+  // A leading BOM overrides the requested endianness.
+  let (endian_little, start) = if bytes.len() >= 2 {
+    match (bytes[0], bytes[1]) {
+      (0xFF, 0xFE) => (true, 2),
+      (0xFE, 0xFF) => (false, 2),
+      _ => (little_endian, 0),
+    }
+  } else {
+    (little_endian, 0)
+  };
+
+  let mut units: Vec<u16> = Vec::with_capacity((bytes.len() - start) / 2);
+  for chunk in bytes[start..].chunks_exact(2) {
+    let unit = if endian_little {
+      u16::from_le_bytes([chunk[0], chunk[1]])
+    } else {
+      u16::from_be_bytes([chunk[0], chunk[1]])
+    };
+    units.push(unit);
+  }
+
+  String::from_utf16(&units).map_err(|_| LOUDER_LOAD_MALFORMED_JSON)
+}
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  #[test]
+  fn utf8_decode() {
+    assert_eq!(decode(b"hello").unwrap(), "hello");
+  }
+
+  #[test]
+  fn latin1_decode() {
+    let decoded = decode_with_encoding(&[0xE9], "latin1").unwrap();
+    assert_eq!(decoded, "é");
+  }
+
+  #[test]
+  fn utf16_decode() {
+    let mut bytes = Vec::new();
+    for unit in "hi".encode_utf16() {
+      bytes.extend_from_slice(&unit.to_le_bytes());
+    }
+    assert_eq!(decode_with_encoding(&bytes, "utf-16le").unwrap(), "hi");
+  }
 }
 
 /// The keys of a hub record that are part of the schema. Anything else is

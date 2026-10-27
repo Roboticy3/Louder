@@ -56,6 +56,18 @@ pub enum SimError {
   Suspended,
 }
 
+/// The rule that decided a choice's availability.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(C)]
+pub enum ChoiceRule {
+  Standard,
+  Skill,
+  Spoke,
+  Debug,
+  Invisible,
+  Held,
+}
+
 /// Whether a choice was visible. If not, this code provides the reason the
 /// choice was not available
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -559,6 +571,72 @@ impl Simulator {
     }
 
     ChoiceAvailableError::NoError
+  }
+
+  /// The rule behind a choice's availability.
+  pub fn choice_rule(
+    context: &LouderContext,
+    conversation: LouderName,
+    actor: LouderActor,
+    hub_position: LouderPosition,
+    choice_index: usize,
+  ) -> ChoiceRule {
+    let Some(conversation_ref) = context.get_conversation(conversation) else {
+      return ChoiceRule::Invisible;
+    };
+    let Some(hub) = conversation_ref.hub(hub_position) else {
+      return ChoiceRule::Invisible;
+    };
+    let Some(choice) = hub.choice(choice_index) else {
+      return ChoiceRule::Invisible;
+    };
+    let Some(target) = conversation_ref.hub(choice.position()) else {
+      return ChoiceRule::Invisible;
+    };
+    let Some(entry) = context.get_actor(conversation, actor) else {
+      return ChoiceRule::Invisible;
+    };
+
+    if entry.is_debug() {
+      return ChoiceRule::Debug;
+    }
+    if entry.is_spectator() {
+      return ChoiceRule::Invisible;
+    }
+    if !hub.is_auto() && !Self::hub_appears(context, conversation, actor, hub_position) {
+      return ChoiceRule::Invisible;
+    }
+    if target.is_auto() {
+      if !Self::conditions_hold(context, conversation, actor, target.position(), target.expressions()) {
+        return ChoiceRule::Invisible;
+      }
+    } else if !Self::hub_appears(context, conversation, actor, target.position()) {
+      return ChoiceRule::Invisible;
+    }
+
+    let owners = Owned::of(target);
+    let heard = Self::speakers_heard_by(context, conversation, actor);
+    if !owners.reaches(context, &heard) {
+      return ChoiceRule::Invisible;
+    }
+
+    if owners.spoken_by(entry.speak_as()) {
+      return ChoiceRule::Standard;
+    }
+    if !owners.held_by_other(context, conversation, actor) {
+      // heard but not held: if the actor does not speak as an owner, it is
+      // leading through listening (the skill rule).
+      if owners.spoken_by(entry.speak_as()) {
+        return ChoiceRule::Standard;
+      }
+      return ChoiceRule::Skill;
+    }
+
+    if context.rules().contains(DialogueRules::SPOKE) && hub.choice_count() == 1 {
+      return ChoiceRule::Spoke;
+    }
+
+    ChoiceRule::Held
   }
 
   /// The indices of the choices available to `actor` from `hub_position`.

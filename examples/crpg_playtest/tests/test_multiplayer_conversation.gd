@@ -23,7 +23,7 @@ func _ready() -> void:
 	var load_result: int = LouderContextGlobal.context.load_conversation(conversation, document)
 	print("conversation load: ", load_result)
 
-	LouderContextGlobal.actor_added.connect(func(c: int, a: int) -> void: print("  signal actor_added c=%d a=%d" % [c, a]))
+	LouderContextGlobal.actor_added.connect(func(c: int, a: int, _s: Array) -> void: print("  signal actor_added c=%d a=%d" % [c, a]))
 	LouderContextGlobal.motion.connect(func(c: int, a: int, t: int, bg: int, s: String, k: int) -> void: print("  signal motion c=%d a=%d t=%d bg=%d s=%s k=%d" % [c, a, t, bg, s, k]))
 	LouderContextGlobal.callback_raised.connect(func(cb: String) -> void: print("  signal callback %s" % cb))
 

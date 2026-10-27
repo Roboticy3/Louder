@@ -118,6 +118,13 @@ func port_out_to_choice(port:int) -> String:
 func port_in() -> int:
 	return 0
 
+var is_end := false
+func set_end(_new_is_end:bool) -> void:
+	is_end = _new_is_end
+	if is_end:
+		spin_box.value = 0
+	hub.set_slot_enabled_right.call_deferred(spoke_child_index, !is_end)
+
 func _ready() -> void:
 	if is_instance_valid(spin_box):
 		spin_box.value = choices.size()

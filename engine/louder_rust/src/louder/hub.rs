@@ -11,8 +11,12 @@ bitflags::bitflags! {
     /// The hub picks its own path instead of showing to actors, resolving to
     /// the first choice available to whoever entered it.
     const AUTO = 0b00000001;
-    /// The hub's expressions are expected to raise asks.
-    const ASK = 0b00000010;
+    /// This is a link node pointing to another hub.
+    const LINK = 0b00000010;
+    /// This is a hub that should only be accessible once per conversation
+    const ONCE = 0b00000100;
+    /// This is a hub that should have its recipients populated
+    const PRIVATE = 0b00001000;
   }
 }
 

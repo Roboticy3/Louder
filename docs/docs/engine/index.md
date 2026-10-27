@@ -282,6 +282,23 @@ evaluate(x, A, i) can equal _, interrupt (see Expressions)
 evaluate(x, A, i) can equal 1, parse_error
 (see Expressions)
 
+### Link Hubs
+A hub x can be tagged as a link hub. In this case, tag(x) | LINK
+
+link(x) is an id for another hub.
+
+### Default Rule
+Every property of a hub x, or voice v has a default value defined in the (schema)[../editor/schema.md].
+
+### Domination Rule
+For two hubs x, y, x * y is a hub in the position of y, however, every property
+for which x has a non-default value replaces the same property of y.
+
+For example, if tag(x) | PRIVATE, and recipients(x), tag(x * y) | PRIVATE and recipients(x * y) = recipients(x)
+
+### Link Rule
+If tag(x) | LINK, x = x * y.
+
 ## Event Rules
 Rules for observing dialogue
 

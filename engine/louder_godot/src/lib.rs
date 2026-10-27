@@ -52,6 +52,7 @@ pub(crate) mod engine {
     ChoiceAppearance,
     ConditionOutcome,
     EventData,
+    Interrupt,
     LoadFailure,
     LouderAsk,
     LouderEvent,
@@ -123,6 +124,9 @@ pub mod status;
 /// method, because a variant belongs to the engine and Rust does not allow an
 /// `impl` block for a type outside the crate that defines it.
 pub mod variant;
+
+// Generated wrappers (placeholder).
+include!(concat!(env!("OUT_DIR"), "/generated.rs"));
 
 /// The entry point Godot loads.
 ///

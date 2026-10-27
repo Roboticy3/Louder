@@ -25,27 +25,26 @@ func _ready() -> void:
 	
 	LouderContextGlobal.actor_added.connect(_on_actor_added)
 	LouderContextGlobal.actor_removed.connect(_on_actor_removed)
-	LouderContextGlobal.motion.connect(_on_motion)
+	LouderContextGlobal.event_received.connect(_on_event)
 	
 	visible = false
 
-func _on_actor_added(c:int, a:int):
-	# Only the actor that speaks in this dialogue's own voice, for the character
-	# this peer is actually playing, opens this UI. The host decides who joins a
-	# conversation and adds the actors; the UI only displays the result.
+func _on_actor_added(c:int, a:int, speak_as: Array):
 	var local_character := Network.get_character_of()
 	if local_character == null or str(local_character.name) != str(player_speaker):
 		return
 
-	var speaker_name:int = LouderContextGlobal.context.make_name(player_speaker)
-	var actor: Actor = LouderContextGlobal.context.get_actor(c, a)
-	if actor == null:
+	var is_mine := false
+	for name in speak_as:
+		if str(LouderContextGlobal.resolve_name(int(name))) == str(player_speaker):
+			is_mine = true
+			break
+	if not is_mine:
 		return
-	var speak_as:Array[int] = actor.speak_as()
-	if speaker_name in speak_as:
-		player_actor = a
-		conversation = c
-		visible = true
+
+	player_actor = a
+	conversation = c
+	visible = true
 
 func _on_actor_removed(c:int, a:int):
 	if conversation == c and player_actor == a:
@@ -54,19 +53,36 @@ func _on_actor_removed(c:int, a:int):
 		conversation = -1
 		visible = false
 
-func _on_motion(c:int, a:int, target:int, background:int, speaker:String, _f: int):
-	if c == conversation and a == player_actor:
-		# The speaker comes with the move rather than from the hub: a hub without
-		# a speaker of its own is spoken in the voice of whoever walked onto it,
-		# and the move is where that voice is said out loud.
-		var text_name:int = LouderContextGlobal.context.get_hub_text(c, target)
-		var is_background:bool = background != 0
-		_on_line_revealed(speaker, LouderContextGlobal.context.make_string_name(text_name), is_background)
-		_refresh_choices()
+func _on_event(event: Dictionary):
+	var kind := int(event.get("kind", -1))
+	if kind not in [1, 2, 3]:
+		return
+	var c := int(event.get("conversation", -1))
+	var a := int(event.get("actor", -1))
+	if c != conversation or a != player_actor:
+		return
+	var motion_dict: Dictionary = event.get("motion", {})
+	var target := int(motion_dict.get("target_position", -1))
+	var speaker := str(motion_dict.get("speaker_text", ""))
+	var text := str(motion_dict.get("text", ""))
+	var is_background: bool = bool(motion_dict.get("background", false))
+	_on_line_revealed(speaker, text, is_background)
+
+	var choice_indices: Array = motion_dict.get("choice_indices", [])
+	var choice_texts: PackedStringArray = motion_dict.get("choice_texts", PackedStringArray())
+	_choice_indices = []
+	for idx in choice_indices:
+		_choice_indices.append(int(idx))
+	_on_choices_revealed(choice_texts)
+
+	if choice_texts.is_empty() and _revealed_anything:
+		_on_conversation_finished()
 
 ## Which hub the player is standing on. Not named get_position: Control already
 ## has one of those, and it answers a different question.
 func get_hub_position() -> int:
+	if conversation == -1 or player_actor == -1:
+		return -1
 	return LouderContextGlobal.get_actor_position(conversation, player_actor)
 
 ## Take the choice behind row `row`.

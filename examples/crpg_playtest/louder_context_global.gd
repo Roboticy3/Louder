@@ -6,9 +6,7 @@ extends Node
 ## one peer may do: two peers running the same actor against the same choices
 ## come apart the moment the engine decides anything. So this singleton is
 ## server-authoritative. The server loads conversations, owns the actors and
-## takes their choices. Every other peer loads the same documents, keeps a copy
-## of each actor so its own context can answer questions about it, and is told
-## what the server decided.
+## takes their choices. Every other peer only recieves events.
 ##
 ## The engine names things with integers it hands out as it interns them, so an id
 ## on one peer means the same as that id on another only if both peers read the
@@ -16,15 +14,14 @@ extends Node
 ## peer instead of being shipped across, and actors are added in the order the
 ## server hands them out, which is what keeps them numbered the same everywhere.
 ##
-## What a listener needs arrives as a signal, and every signal is local: a peer
-## gets its own copy of them whether it is the server or was told by one.
+## What a listener needs arrives as a signal, containing data from events in the engine
 ##
 ## A lone peer with no lobby is a server. Godot still has its offline multiplayer
 ## peer in place, and that peer answers as id 1, so the playtest and the headless
 ## tests go down the same path a hosted session does.
 
 signal conversation_started(conversation: int, source: NodePath, source_character:String)
-signal actor_added(conversation: int, actor: int)
+signal actor_added(conversation: int, actor: int, speak_as: Array)
 signal actor_removed(conversation: int, actor: int)
 ## A move, as the engine announced it.
 ##
@@ -39,6 +36,7 @@ signal actor_removed(conversation: int, actor: int)
 ## was carried along has not chosen anything, which is what tells one apart
 ## from the other.
 signal motion(conversation: int, actor: int, target: int, background: int, speaker: String, kind: int)
+signal event_received(event: Dictionary)
 signal callback_raised(callback: String)
 
 const SERVER_ID := 1
@@ -270,10 +268,7 @@ func _drain() -> void:
 	for event in queued:
 		match event.get_kind():
 			_EVENT_REGULAR_MOTION, _EVENT_WARP, _EVENT_FORCE_MOTION:
-				var travel: Motion = event.get_motion()
-				_pass_motion(event.get_conversation(), event.get_actor(),
-					travel.get_target_position(), travel.is_background(),
-					resolve_name(travel.get_speaker()), event.get_kind())
+				_pass_motion(event)
 			_EVENT_CALLBACK:
 				_pass_callback(event.get_name())
 			_EVENT_ACTOR_ADDED:
@@ -286,52 +281,21 @@ func _drain() -> void:
 
 @rpc("authority", "call_remote", "reliable")
 func _started(conversation: int, document_path: String, source: NodePath, source_character:String) -> void:
-	if !_load_conversation(conversation, document_path):
-		return
-	# Every peer read the document itself, so every peer is the one that knows
-	# which records in it could not be read.
-	_report_load_failures()
+	if multiplayer.is_server():
+		if !_load_conversation(conversation, document_path):
+			return
+		_report_load_failures()
 	conversation_started.emit(conversation, source, source_character)
 
 
-## Copy of an actor added on the server, as this peer's own actors are added.
-##
-## The actor only ever existed in the server's context, so everything the copy
-## needs - where it stands, its flags, and which speakers it speaks as and
-## listens to - arrives as data rather than being looked up here. speak_as and
-## listen_to cross as the server's interned ids and go into the engine as they
-## are: both peers read the same documents in the same order, so an id means
-## the same on both. That is also why this cannot go through _add_actor: that
-## interns, and these already are.
-##
-## The copy answers what the original would answer on a peer that is not running
-## the engine: which speakers it speaks as, and which choices it may take where
-## it stands. Ids are the engine's own and are only meaningful to a peer holding
-## the same actors in the same order, so the id the copy came out as is checked
-## against the one it was told to be rather than assumed.
+## Relay an actor added on the server
 @rpc("authority", "call_remote", "reliable")
 func _actor_added(conversation: int, actor: int, position: int, flags: int, speak_as: Array[int], listen_to: Array[int]) -> void:
-	var copy: int = context.add_actor(conversation, position, flags, speak_as, listen_to)
-
-	# A copy queues the same event the original did, and nothing on this peer is
-	# reading it: this peer was told, it did not work it out.
-	context.flush_events()
-
-	if copy != actor:
-		push_error("Copy of actor %d in conversation %d came out as %d. Peers only agree on actor ids while every peer adds actors in the same order." % [actor, conversation, copy])
-		return
-
-	actor_added.emit(conversation, actor)
+	actor_added.emit(conversation, actor, speak_as)
 
 
 @rpc("authority", "call_remote", "reliable")
 func _actor_removed(conversation: int, actor: int) -> void:
-	# The copy goes when the actor it stands in for goes, so this peer's context
-	# is left holding only the actors that are still in the conversation. Nothing
-	# is said about a copy that was never made: a peer that joined late never had
-	# one, and that is not a failure.
-	context.remove_actor(conversation, actor)
-	context.flush_events()
 	actor_removed.emit(conversation, actor)
 
 
@@ -341,29 +305,44 @@ func _callback(callback: int) -> void:
 
 
 @rpc("authority", "call_remote", "reliable")
-func _motion(conversation: int, actor: int, target: int, background: int, speaker: String, kind: int) -> void:
-	# Only a peer that is not running the engine gets here, so the actor is this
-	# peer's copy of one the server owns, and the copy is still standing where it
-	# stood when it was copied. Putting it where the server put it is what keeps
-	# the choices this peer offers the choices of the hub the actor is on.
-	_follow_motion(conversation, actor, target)
-	motion.emit(conversation, actor, target, background, speaker, kind)
+func _motion(event_dict: Dictionary) -> void:
+	# The event arrived as a whole, so unpack it here rather than as separate
+	# parameters. The rule that produced it is in event_dict["kind"].
+	var conversation := int(event_dict["conversation"])
+	var actor := int(event_dict["actor"])
+	var motion_dict: Dictionary = event_dict["motion"]
+	var target := int(motion_dict["target_position"])
+	var background := bool(motion_dict["background"])
+	var speaker := resolve_name(int(motion_dict["speaker"]))
+	var kind := int(event_dict["kind"])
+	motion.emit(conversation, actor, target, 1 if background else 0, speaker, kind)
+	event_received.emit(event_dict)
 
 
-func _pass_motion(conversation: int, actor: int, target: int, background: bool, speaker: String, kind: int) -> void:
-	# The flag travels as an int: a listener reads it as `!= 0`, which is what it
-	# has to do to read one that crossed a network boundary anyway.
+func _pass_motion(event: LouderEvent) -> void:
+	var event_dict := event.to_dictionary()
+	var motion_dict: Dictionary = event_dict["motion"]
+	var background := bool(motion_dict["background"])
+	var speaker := resolve_name(int(motion_dict["speaker"]))
+	var text := resolve_name(context.get_hub_text(int(event_dict["conversation"]), int(motion_dict["target_position"])))
+	motion_dict["speaker_text"] = speaker
+	motion_dict["text"] = text
+	var choice_indices := get_available_choice_indices(int(event_dict["conversation"]), int(event_dict["actor"]))
+	var choice_texts := PackedStringArray()
+	for idx in choice_indices:
+		choice_texts.append(get_choice_text(int(event_dict["conversation"]), int(motion_dict["target_position"]), int(event_dict["actor"]), idx))
+	motion_dict["choice_indices"] = choice_indices
+	motion_dict["choice_texts"] = choice_texts
+	var kind := int(event_dict["kind"])
 	var background_flag := 1 if background else 0
-	motion.emit(conversation, actor, target, background_flag, speaker, kind)
-	_motion.rpc(conversation, actor, target, background_flag, speaker, kind)
+	motion.emit(int(event_dict["conversation"]), int(event_dict["actor"]), int(motion_dict["target_position"]), background_flag, speaker, kind)
+	event_received.emit(event_dict)
+	_motion.rpc(event_dict)
 
 
 func _pass_actor_added(conversation: int, actor: int) -> void:
-	actor_added.emit(conversation, actor)
-	# The actor only exists in this context, so everything a peer needs to keep
-	# its copy - where it stands, its flags, and the interned ids of the voices
-	# it speaks as and listens to - goes across as data, not as an id to look up.
 	var original: Actor = context.get_actor(conversation, actor)
+	actor_added.emit(conversation, actor, original.speak_as())
 	_actor_added.rpc(conversation, actor, original.get_position(), original.get_flags(),
 		original.speak_as(), original.listen_to())
 
@@ -379,17 +358,6 @@ func _pass_actor_removed(conversation: int, actor: int) -> void:
 func _pass_callback(callback: int) -> void:
 	callback_raised.emit(resolve_name(callback))
 	_callback.rpc(callback)
-
-
-## Move this peer's copy of an actor to where the server moved it.
-##
-## force_position is the only thing in the engine that puts an actor somewhere,
-## and it queues a motion for having done it, so the queue is emptied again
-## right after: this peer is keeping up, not deciding.
-func _follow_motion(conversation: int, actor: int, target: int) -> void:
-	if !context.force_position(conversation, actor, target, NO_NAME, 0):
-		push_error("Copy of actor %d in conversation %d could not follow to hub %d." % [actor, conversation, target])
-	context.flush_events()
 
 
 ## Say what in the queue was a document that could not be read.

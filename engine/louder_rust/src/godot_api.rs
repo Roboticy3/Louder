@@ -28,7 +28,7 @@
 //! attributes the compiler and the derive macro can both see. Writing the two
 //! attributes out is therefore not a workaround but the only way to say it:
 //!
-//! ```
+//! ```ignore
 //! #[derive(Clone)]
 //! #[derive(::godot::prelude::GodotClass)]
 //! #[class(init, tool)]
