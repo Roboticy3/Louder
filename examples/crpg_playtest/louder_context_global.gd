@@ -360,17 +360,6 @@ func _pass_callback(callback: int) -> void:
 	_callback.rpc(callback)
 
 
-## Move this peer's copy of an actor to where the server moved it.
-##
-## force_position is the only thing in the engine that puts an actor somewhere,
-## and it queues a motion for having done it, so the queue is emptied again
-## right after: this peer is keeping up, not deciding.
-func _follow_motion(conversation: int, actor: int, target: int) -> void:
-	if !context.force_position(conversation, actor, target, NO_NAME, 0):
-		push_error("Copy of actor %d in conversation %d could not follow to hub %d." % [actor, conversation, target])
-	context.flush_events()
-
-
 ## Say what in the queue was a document that could not be read.
 ##
 ## One unreadable record costs the caller that record and not the conversation,
