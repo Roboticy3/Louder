@@ -1,15 +1,12 @@
 # Adapters
 
 The [engine](../index.md) functionality is exposed through a variety of
-"adapters": language wrappers and compilation systems around the engine that
-allow it to be used in different contexts.
-
-An adapter is a crate that depends on `louder_rust` and declares the engine's
-types as classes of its own. The engine knows nothing about any of them, so
-adding an adapter never changes the engine, and two adapters never have to agree
-about anything.
+"adapters": language bindings that also serve the purpose of automatically handling encoding, and
+converting strings so the user doesn't have to interact with name ids directly.
 
 # Rust Library
+This is not an adapter, this is just the name of the central engine codebase.
+
 `louder_rust` is the source code of the engine, and exposes many useful data
 types. The docstrings in this code also serve as the authoritative documentation
 on the function of the engine.
