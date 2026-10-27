@@ -21,7 +21,7 @@ extends Node
 ## tests go down the same path a hosted session does.
 
 signal conversation_started(conversation: int, source: NodePath, source_character:String)
-signal actor_added(conversation: int, actor: int)
+signal actor_added(conversation: int, actor: int, speak_as: Array)
 signal actor_removed(conversation: int, actor: int)
 ## A move, as the engine announced it.
 ##
@@ -291,7 +291,7 @@ func _started(conversation: int, document_path: String, source: NodePath, source
 ## Relay an actor added on the server
 @rpc("authority", "call_remote", "reliable")
 func _actor_added(conversation: int, actor: int, position: int, flags: int, speak_as: Array[int], listen_to: Array[int]) -> void:
-	actor_added.emit(conversation, actor)
+	actor_added.emit(conversation, actor, speak_as)
 
 
 @rpc("authority", "call_remote", "reliable")
@@ -327,6 +327,12 @@ func _pass_motion(event: LouderEvent) -> void:
 	var text := resolve_name(context.get_hub_text(int(event_dict["conversation"]), int(motion_dict["target_position"])))
 	motion_dict["speaker_text"] = speaker
 	motion_dict["text"] = text
+	var choice_indices := get_available_choice_indices(int(event_dict["conversation"]), int(event_dict["actor"]))
+	var choice_texts := PackedStringArray()
+	for idx in choice_indices:
+		choice_texts.append(get_choice_text(int(event_dict["conversation"]), int(motion_dict["target_position"]), int(event_dict["actor"]), idx))
+	motion_dict["choice_indices"] = choice_indices
+	motion_dict["choice_texts"] = choice_texts
 	var kind := int(event_dict["kind"])
 	var background_flag := 1 if background else 0
 	motion.emit(int(event_dict["conversation"]), int(event_dict["actor"]), int(motion_dict["target_position"]), background_flag, speaker, kind)
@@ -335,8 +341,8 @@ func _pass_motion(event: LouderEvent) -> void:
 
 
 func _pass_actor_added(conversation: int, actor: int) -> void:
-	actor_added.emit(conversation, actor)
 	var original: Actor = context.get_actor(conversation, actor)
+	actor_added.emit(conversation, actor, original.speak_as())
 	_actor_added.rpc(conversation, actor, original.get_position(), original.get_flags(),
 		original.speak_as(), original.listen_to())
 

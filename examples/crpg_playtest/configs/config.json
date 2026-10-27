@@ -1,152 +1,373 @@
 [
 	{
-		"flags": 0,
-		"listening": "",
-		"name": "Heart",
-		"type": "speaker"
-	},
-	{
-		"flags": 0,
-		"listening": "",
-		"name": "Stars",
-		"type": "speaker"
-	},
-	{
-		"flags": 0,
-		"listening": "",
-		"name": "Planets",
-		"type": "speaker"
-	},
-	{
-		"flags": 0,
-		"listening": "",
-		"name": "Memory",
-		"type": "speaker"
-	},
-	{
-		"flags": 0,
-		"listening": "",
-		"name": "Rhythm",
-		"type": "speaker"
-	},
-	{
-		"flags": 1,
-		"listening": "",
-		"name": "Fosser",
-		"type": "speaker"
-	},
-	{
-		"flags": 0,
-		"listening": "",
-		"name": "Note",
-		"type": "speaker"
-	},
-	{
-		"flags": 0,
-		"listening": "",
-		"name": "Life",
-		"type": "speaker"
-	},
-	{
-		"flags": 0,
-		"listening": "",
-		"name": "Strategy",
-		"type": "speaker"
-	},
-	{
-		"flags": 0,
-		"listening": "",
-		"name": "Sight",
-		"type": "speaker"
-	},
-	{
-		"flags": 0,
-		"listening": "",
-		"name": "Structure",
-		"type": "speaker"
-	},
-	{
-		"flags": 0,
-		"listening": "",
-		"name": "Volition",
-		"type": "speaker"
-	},
-	{
-		"flags": 0,
-		"listening": "",
-		"name": "Future",
-		"type": "speaker"
-	},
-	{
-		"flags": 0,
-		"listening": "",
-		"name": "Death",
-		"type": "speaker"
-	},
-	{
-		"flags": 0,
-		"listening": "Cage\nInspiration\nGood\nRhetoric\nSpeed\nEvil",
-		"name": "Geno",
-		"type": "speaker"
-	},
-	{
-		"flags": 1,
-		"listening": "Volition\nStructure\nSight\nStrategy\nLife\nDeath",
-		"name": "Freya",
-		"type": "speaker"
-	},
-	{
-		"flags": 1,
-		"listening": "Power\nSoul\nBody\nNervous System\nIntegumetary System\nSkeletal System",
-		"name": "Reka",
-		"type": "speaker"
-	},
-	{
-		"flags": 0,
-		"listening": "",
-		"name": "Power",
-		"type": "speaker"
-	},
-	{
-		"flags": 0,
-		"listening": "",
-		"name": "Soul",
-		"type": "speaker"
-	},
-	{
-		"flags": 0,
-		"listening": "",
-		"name": "Body",
-		"type": "speaker"
-	},
-	{
-		"flags": 0,
-		"listening": "",
-		"name": "Nervous System",
-		"type": "speaker"
-	},
-	{
-		"flags": 0,
-		"listening": "",
-		"name": "Integumetary System",
-		"type": "speaker"
-	},
-	{
-		"flags": 0,
+		"color": "ffffffff",
+		"conversation_id": "22",
+		"description": "",
 		"listening": "",
 		"name": "Skeletal System",
-		"type": "speaker"
+		"position_offset:x": "-340.0",
+		"position_offset:y": "340.0",
+		"relationships": "0",
+		"type": "speaker",
+		"voice": ""
 	},
 	{
-		"flags": 0,
+		"color": "ffffffff",
+		"conversation_id": "21",
+		"description": "",
+		"listening": "",
+		"name": "Integumetary System",
+		"position_offset:x": "-700.0",
+		"position_offset:y": "340.0",
+		"relationships": "0",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "20",
+		"description": "",
+		"listening": "",
+		"name": "Nervous System",
+		"position_offset:x": "-1040.0",
+		"position_offset:y": "340.0",
+		"relationships": "0",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "19",
+		"description": "",
+		"listening": "",
+		"name": "Body",
+		"position_offset:x": "-1380.0",
+		"position_offset:y": "340.0",
+		"relationships": "0",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "18",
+		"description": "",
+		"listening": "",
+		"name": "Soul",
+		"position_offset:x": "-1720.0",
+		"position_offset:y": "340.0",
+		"relationships": "0",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "17",
+		"description": "",
+		"listening": "",
+		"name": "Power",
+		"position_offset:x": "-2060.0",
+		"position_offset:y": "340.0",
+		"relationships": "0",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "16",
+		"description": "",
+		"flags": "1",
+		"listening": "Power\nSoul\nBody\nNervous System\nIntegumetary System\nSkeletal System",
+		"name": "Reka",
+		"position_offset:x": "0.0",
+		"position_offset:y": "340.0",
+		"relationships": "0",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "15",
+		"description": "",
+		"flags": "1",
+		"listening": "Volition\nStructure\nSight\nStrategy\nLife\nDeath",
+		"name": "Freya",
+		"position_offset:x": "0.0",
+		"position_offset:y": "740.0",
+		"relationships": "0",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "13",
+		"description": "",
+		"listening": "",
+		"name": "Death",
+		"position_offset:x": "-340.0",
+		"position_offset:y": "740.0",
+		"relationships": "0",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "11",
+		"description": "",
+		"listening": "",
+		"name": "Volition",
+		"position_offset:x": "-1060.0",
+		"position_offset:y": "740.0",
+		"relationships": "0",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "10",
+		"description": "",
+		"listening": "",
+		"name": "Structure",
+		"position_offset:x": "-700.0",
+		"position_offset:y": "740.0",
+		"relationships": "0",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "9",
+		"description": "",
+		"listening": "",
+		"name": "Sight",
+		"position_offset:x": "-1400.0",
+		"position_offset:y": "740.0",
+		"relationships": "0",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "8",
+		"description": "",
+		"listening": "",
+		"name": "Strategy",
+		"position_offset:x": "-1740.0",
+		"position_offset:y": "740.0",
+		"relationships": "0",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "7",
+		"description": "",
+		"listening": "",
+		"name": "Life",
+		"position_offset:x": "-2080.0",
+		"position_offset:y": "740.0",
+		"relationships": "0",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "14",
+		"description": "",
+		"flags": "5",
+		"listening": "Cage\nInspiration\nGood\nRhetoric\nSpeed\nEvil",
+		"name": "Geno",
+		"position_offset:x": "0.0",
+		"position_offset:y": "1140.0",
+		"relationships": "0",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "23",
+		"description": "",
 		"listening": "",
 		"name": "Cage",
-		"type": "speaker"
+		"position_offset:x": "-340.0",
+		"position_offset:y": "1140.0",
+		"relationships": "0",
+		"type": "speaker",
+		"voice": ""
 	},
 	{
-		"flags": 1,
+		"color": "ffffffff",
+		"conversation_id": "24",
+		"description": "",
+		"flags": "1",
 		"listening": "Heart\nStars\nPlanets\nMemory\nRhythm\nFuture",
 		"name": "Benjamin",
-		"type": "speaker"
+		"position_offset:x": "0.0",
+		"position_offset:y": "1540.0",
+		"relationships": "0",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "12",
+		"description": "",
+		"listening": "",
+		"name": "Future",
+		"position_offset:x": "-340.0",
+		"position_offset:y": "1540.0",
+		"relationships": "0",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "6",
+		"description": "",
+		"listening": "",
+		"name": "Note",
+		"position_offset:x": "560.0",
+		"position_offset:y": "280.0",
+		"relationships": "0",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "5",
+		"description": "",
+		"flags": "1",
+		"listening": "",
+		"name": "Fosser",
+		"position_offset:x": "680.0",
+		"position_offset:y": "700.0",
+		"relationships": "0",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "4",
+		"description": "",
+		"listening": "",
+		"name": "Rhythm",
+		"position_offset:x": "-700.0",
+		"position_offset:y": "1540.0",
+		"relationships": "0",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "3",
+		"description": "",
+		"listening": "",
+		"name": "Memory",
+		"position_offset:x": "-1040.0",
+		"position_offset:y": "1540.0",
+		"relationships": "0",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "2",
+		"description": "",
+		"listening": "",
+		"name": "Planets",
+		"position_offset:x": "-1380.0",
+		"position_offset:y": "1540.0",
+		"relationships": "0",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "0",
+		"description": "",
+		"listening": "",
+		"name": "Heart",
+		"position_offset:x": "-2080.0",
+		"position_offset:y": "1540.0",
+		"relationships": "0",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "1",
+		"description": "",
+		"listening": "",
+		"name": "Stars",
+		"position_offset:x": "-1740.0",
+		"position_offset:y": "1540.0",
+		"relationships": "0",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "25",
+		"description": "",
+		"listening": "",
+		"name": "Inspiration",
+		"position_offset:x": "-700.0",
+		"position_offset:y": "1140.0",
+		"relationships": "0",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "26",
+		"description": "",
+		"listening": "",
+		"name": "Good",
+		"position_offset:x": "-1040.0",
+		"position_offset:y": "1140.0",
+		"relationships": "0",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "27",
+		"description": "",
+		"listening": "",
+		"name": "Rhetoric",
+		"position_offset:x": "-1400.0",
+		"position_offset:y": "1140.0",
+		"relationships": "0",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "28",
+		"description": "",
+		"listening": "",
+		"name": "Speed",
+		"position_offset:x": "-1740.0",
+		"position_offset:y": "1140.0",
+		"relationships": "0",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "29",
+		"description": "",
+		"listening": "",
+		"name": "Evil",
+		"position_offset:x": "-2100.0",
+		"position_offset:y": "1140.0",
+		"relationships": "0",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"position:x": "-1991.78845214844",
+		"position:y": "736.950378417969",
+		"type": "camera",
+		"zoom": "0.75131446123123"
 	}
 ]

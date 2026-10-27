@@ -29,9 +29,17 @@ func _ready() -> void:
 	
 	visible = false
 
-func _on_actor_added(c:int, a:int):
+func _on_actor_added(c:int, a:int, speak_as: Array):
 	var local_character := Network.get_character_of()
 	if local_character == null or str(local_character.name) != str(player_speaker):
+		return
+
+	var is_mine := false
+	for name in speak_as:
+		if str(LouderContextGlobal.resolve_name(int(name))) == str(player_speaker):
+			is_mine = true
+			break
+	if not is_mine:
 		return
 
 	player_actor = a
@@ -59,7 +67,16 @@ func _on_event(event: Dictionary):
 	var text := str(motion_dict.get("text", ""))
 	var is_background: bool = bool(motion_dict.get("background", false))
 	_on_line_revealed(speaker, text, is_background)
-	_refresh_choices()
+
+	var choice_indices: Array = motion_dict.get("choice_indices", [])
+	var choice_texts: PackedStringArray = motion_dict.get("choice_texts", PackedStringArray())
+	_choice_indices = []
+	for idx in choice_indices:
+		_choice_indices.append(int(idx))
+	_on_choices_revealed(choice_texts)
+
+	if choice_texts.is_empty() and _revealed_anything:
+		_on_conversation_finished()
 
 ## Which hub the player is standing on. Not named get_position: Control already
 ## has one of those, and it answers a different question.
