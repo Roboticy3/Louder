@@ -1,61 +1,93 @@
 use std::fs;
 use std::path::PathBuf;
 
-use syn::{File, Item, Type};
-
 fn main() {
     let manifest_dir = std::env::var("CARGO_MANIFEST_DIR").unwrap();
-    let src_root = PathBuf::from(manifest_dir).join("..").join("louder_rust").join("src");
+    let manifest_dir_path = PathBuf::from(&manifest_dir);
+    let src_root = manifest_dir_path.join("..").join("louder_rust").join("src");
 
-    // Collect all pub structs from louder_rust.
     let mut structs: Vec<(String, Vec<(String, String)>)> = Vec::new();
     for path in walkdir(&src_root) {
         let content = fs::read_to_string(&path).unwrap();
-        if let Ok(file) = syn::parse_str::<File>(&content) {
-            for item in &file.items {
-                if let Item::Struct(s) = item {
-                    if matches!(s.vis, syn::Visibility::Public(_)) {
-                        let mut fields = Vec::new();
-                        if let syn::Fields::Named(named) = &s.fields {
-                            for f in &named.named {
-                                if matches!(f.vis, syn::Visibility::Public(_)) {
-                                    if let Some(ident) = &f.ident {
-                                        let ty = quote_type(&f.ty);
-                                        fields.push((ident.to_string(), ty));
-                                    }
-                                }
-                            }
-                        }
-                        structs.push((s.ident.to_string(), fields));
-                    }
+        // simple regex extraction of pub struct fields
+        // We'll just collect names; fields are handled per-type below.
+        for line in content.lines() {
+            let line = line.trim();
+            if line.starts_with("pub struct ") {
+                let rest = &line["pub struct ".len()..];
+                let name = rest.split_whitespace().next().unwrap_or("");
+                let name = name.trim_end_matches('{').trim_end_matches('<').trim();
+                if !name.is_empty() {
+                    structs.push((name.to_string(), Vec::new()));
                 }
             }
         }
     }
+    structs.sort();
+    structs.dedup_by(|a, b| a.0 == b.0);
 
-    // Generate wrappers for types with public fields.
     let targets = ["Motion", "AdditionalDataChange", "LoadFailure", "ChoiceAppearance", "ConditionOutcome", "Interrupt"];
+
     let mut generated = String::new();
     generated.push_str("use louder_rust::godot_api;\n");
-    generated.push_str("use godot::prelude::*;\n");
-    generated.push_str("use engine::*;\n\n");
+    generated.push_str("use godot::prelude::*;\n\n");
 
-    for (name, fields) in &structs {
-        if !targets.contains(&name.as_str()) || fields.is_empty() {
+    // We need field info; parse manually for these types.
+    for name in &targets {
+        // find struct in louder_rust
+        let mut fields: Vec<(String, String)> = Vec::new();
+        for path in walkdir(&src_root) {
+            let content = fs::read_to_string(&path).unwrap();
+            // find "pub struct Name {" ... "}"
+            let marker = format!("pub struct {} ", name);
+            if let Some(idx) = content.find(&marker) {
+                // find opening brace
+                let brace = content[idx..].find('{').unwrap() + idx;
+                // find matching closing brace
+                let mut depth = 0;
+                let mut end = brace;
+                for (i, c) in content[brace..].char_indices() {
+                    if c == '{' { depth += 1; }
+                    else if c == '}' { depth -= 1; if depth == 0 { end = brace + i; break; } }
+                }
+                let body = &content[brace+1..end];
+                for line in body.lines() {
+                    let line = line.trim();
+                    if line.starts_with("pub ") {
+                        // pub field: type,
+                        let line = line.trim_end_matches(',').trim();
+                        let parts: Vec<&str> = line.splitn(2, ':').collect();
+                        if parts.len() == 2 {
+                            let fname = parts[0].trim().trim_start_matches("pub ").trim();
+                            let ftype = parts[1].trim();
+                            if fname.chars().all(|c| c.is_alphanumeric() || c == '_') {
+                                fields.push((fname.to_string(), ftype.to_string()));
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+        }
+
+        if fields.is_empty() {
             continue;
         }
+
         generated.push_str(&format!(
             "#[derive(Clone, Default)]\n#[derive(GodotClass)]\n#[class(init, tool)]\npub struct {name} {{\n    pub(crate) inner: engine::{name},\n}}\n\n",
             name = name
         ));
         generated.push_str("godot_api! {\n");
         generated.push_str(&format!("    impl {name} {{\n", name = name));
-        let allowed = ["i32","i64","u32","u64","f32","f64","bool","usize","isize","engine::LouderName","engine::LouderPosition","engine::LouderActor","engine::LouderName"];
-        for (field, ty) in fields {
-            if !allowed.contains(&ty.as_str()) { continue; }
+        for (field, ty) in &fields {
+            // only generate for simple types
+            let simple = ty == "i32" || ty == "i64" || ty == "u32" || ty == "u64" || ty == "f32" || ty == "f64" || ty == "bool" || ty == "usize" || ty == "isize" || ty == "LouderPosition" || ty == "LouderName" || ty == "LouderActor";
+            if !simple { continue; }
+            let ty = if ty.starts_with("Louder") { format!("engine::{}", ty) } else { ty.clone() };
             let method = format!("get_{}", field);
             generated.push_str(&format!(
-                "        #[func]\n        pub fn {method}(&self) -> {ty} {{\n            self.inner.{field}\n        }}\n\n",
+                "        #[func]\n        pub fn {method}(&self) -> {ty} {{\n            self.inner.{field}.clone()\n        }}\n\n",
                 method = method,
                 ty = ty,
                 field = field
@@ -66,12 +98,11 @@ fn main() {
 
     let out_dir = std::env::var("OUT_DIR").unwrap();
     let dest = PathBuf::from(out_dir).join("generated.rs");
-    fs::write(dest, generated).unwrap();
+    fs::write(dest, &generated).unwrap();
+    // Also write a tracked copy for inspection.
+    let inspect = manifest_dir_path.join("generated_bindings.rs");
+    fs::write(inspect, &generated).unwrap();
     println!("cargo:rerun-if-changed=../louder_rust/src");
-}
-
-fn quote_type(ty: &Type) -> String {
-    quote::quote!(#ty).to_string().replace(" ", "")
 }
 
 fn walkdir(root: &PathBuf) -> Vec<PathBuf> {

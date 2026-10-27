@@ -6,69 +6,6 @@ use louder_rust::godot_api;
 
 use godot::prelude::*;
 
-/// A choice becoming available on a hub.
-#[derive(Clone, Default)]
-#[derive(GodotClass)]
-#[class(init, tool)]
-pub struct ChoiceAppearance {
-  pub(crate) inner: engine::ChoiceAppearance,
-}
-
-godot_api! {
-  impl ChoiceAppearance {
-    /// The hub the choice appeared on.
-    #[func]
-    pub fn get_position(&self) -> engine::LouderPosition {
-      self.inner.position
-    }
-
-    /// Which choice appeared.
-    #[func]
-    pub fn get_choice_index(&self) -> i32 {
-      self.inner.choice_index
-    }
-  }
-}
-
-/// What a condition on a hub came to, when an actor landed on it.
-#[derive(Clone, Default)]
-#[derive(GodotClass)]
-#[class(init, tool)]
-pub struct ConditionOutcome {
-  pub(crate) inner: engine::ConditionOutcome,
-}
-
-godot_api! {
-  impl ConditionOutcome {
-    /// The condition that was evaluated.
-    #[func]
-    pub fn get_condition(&self) -> engine::LouderName {
-      self.inner.condition
-    }
-
-    /// What the condition came to, read as an integer.
-    #[func]
-    pub fn get_value_int(&self) -> i32 {
-      self.inner.outcome.as_int()
-    }
-
-    /// What the condition came to, read as a float.
-    #[func]
-    pub fn get_value_float(&self) -> f64 {
-      self.inner.outcome.as_float() as f64
-    }
-
-    /// What the condition came to, read as a name.
-    #[func]
-    pub fn get_value_name(&self) -> engine::LouderName {
-      match &self.inner.outcome {
-        engine::LouderVariant::String(name) => *name,
-        _ => engine::LOUDER_NAME_NONE,
-      }
-    }
-  }
-}
-
 /// One entry in the event queue.
 ///
 /// The queue is polled from index 0 upwards and emptied with
@@ -120,10 +57,10 @@ godot_api! {
 
     /// The choice that became available, if one did.
     #[func]
-    pub fn get_choice_appearance(&self) -> Option<Gd<ChoiceAppearance>> {
+    pub fn get_choice_appearance(&self) -> Option<Gd<crate::ChoiceAppearance>> {
       match &self.inner.data {
         engine::EventData::ChoiceAppearance(appearance) => {
-          Some(Gd::from_object(ChoiceAppearance { inner: appearance.clone() }))
+          Some(Gd::from_object(crate::ChoiceAppearance { inner: appearance.clone() }))
         }
         _ => None,
       }
@@ -142,10 +79,10 @@ godot_api! {
 
     /// The condition that came to something, if one did.
     #[func]
-    pub fn get_condition(&self) -> Option<Gd<ConditionOutcome>> {
+    pub fn get_condition(&self) -> Option<Gd<crate::ConditionOutcome>> {
       match &self.inner.data {
         engine::EventData::Condition(outcome) => {
-          Some(Gd::from_object(ConditionOutcome { inner: outcome.clone() }))
+          Some(Gd::from_object(crate::ConditionOutcome { inner: outcome.clone() }))
         }
         _ => None,
       }
