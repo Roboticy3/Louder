@@ -37,7 +37,7 @@ func _physics_process(delta: float) -> void:
 			if error.length() > 0.1:
 				body.velocity = navigation_input
 				
-				body.look_at(body.global_position + body.velocity, Vector3.UP, true)
+				body.look_at(body.global_position + body.velocity * Vector3(1, 0, 1), Vector3.UP, true)
 				DebugDraw3d.draw_arrow(body.global_position, -body.global_basis.z, Color.BLUE)
 			else:
 				body.velocity = Vector3.ZERO
