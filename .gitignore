@@ -18,6 +18,7 @@ docs/docs/rustdoc/**
 **louder_godot.dll
 **louder_godot.so
 **louder_godot.dylib
+**generated.rs
 
 # Staged engine binaries, assembled by build_engine.sh for the publish job
 /site/

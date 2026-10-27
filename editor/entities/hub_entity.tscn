@@ -142,7 +142,7 @@ size_flags_vertical = 4
 theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
 text = "Once"
 
-[node name="_private" type="CheckBox" parent="TextSectionWrapper/TextSection/flags" unique_id=1575580911 node_paths=PackedStringArray("mutual_inclusive")]
+[node name="private" type="CheckBox" parent="TextSectionWrapper/TextSection/flags" unique_id=1575580911 node_paths=PackedStringArray("mutual_inclusive")]
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")

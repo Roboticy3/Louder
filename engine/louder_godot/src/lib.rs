@@ -125,6 +125,9 @@ pub mod status;
 /// `impl` block for a type outside the crate that defines it.
 pub mod variant;
 
+// Generated wrappers (placeholder).
+include!(concat!(env!("OUT_DIR"), "/generated.rs"));
+
 /// The entry point Godot loads.
 ///
 /// Every `#[derive(GodotClass)]` below registers itself through the shard

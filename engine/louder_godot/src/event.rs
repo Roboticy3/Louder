@@ -80,24 +80,6 @@ godot_api! {
   }
 }
 
-/// A key of an actor's additional data being replaced.
-#[derive(Clone, Default)]
-#[derive(GodotClass)]
-#[class(init, tool)]
-pub struct AdditionalDataChange {
-  pub(crate) inner: engine::AdditionalDataChange,
-}
-
-godot_api! {
-  impl AdditionalDataChange {
-    /// The key whose value was replaced.
-    #[func]
-    pub fn get_key(&self) -> engine::LouderName {
-      self.inner.key
-    }
-  }
-}
-
 /// What a condition on a hub came to, when an actor landed on it.
 #[derive(Clone, Default)]
 #[derive(GodotClass)]
@@ -226,10 +208,10 @@ godot_api! {
 
     /// The additional data key that changed, if one did.
     #[func]
-    pub fn get_additional_data_change(&self) -> Option<Gd<AdditionalDataChange>> {
+    pub fn get_additional_data_change(&self) -> Option<Gd<crate::AdditionalDataChange>> {
       match &self.inner.data {
         engine::EventData::AdditionalDataChange(change) => {
-          Some(Gd::from_object(AdditionalDataChange { inner: change.clone() }))
+          Some(Gd::from_object(crate::AdditionalDataChange { inner: change.clone() }))
         }
         _ => None,
       }
@@ -358,27 +340,6 @@ godot_api! {
     #[func]
     pub fn get_ask(&self) -> engine::LouderCallback {
       self.inner.ask
-    }
-  }
-}
-/// An interrupt: an actor and the expression it is waiting on.
-#[derive(Clone, Default)]
-#[derive(GodotClass)]
-#[class(init, tool)]
-pub struct Interrupt {
-  pub(crate) inner: engine::Interrupt,
-}
-
-godot_api! {
-  impl Interrupt {
-    #[func]
-    pub fn get_actor(&self) -> engine::LouderActor {
-      self.inner.actor
-    }
-
-    #[func]
-    pub fn get_expression(&self) -> engine::LouderName {
-      self.inner.expression
     }
   }
 }
