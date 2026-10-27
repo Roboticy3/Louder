@@ -126,6 +126,7 @@ std::vector<Choice> available_choices(LouderContext* ctx, LouderName conversatio
       continue;
     }
     choices.push_back(Choice{index, link,
+                             get_hub_choice_rule(ctx, conversation, position, actor, index),
                              text_of(ctx, get_hub_choice_text(ctx, conversation, position,
                                                               actor, index))});
   }
@@ -175,7 +176,32 @@ std::vector<Row> column_rows(const Column& column, const Column& other, int widt
       keys += std::string(" or ") + column.continue_key_name;
     }
     const std::string prefix = "[" + keys + "] ";
-    const std::string body = lone ? kContinueLabel : column.choices[i].text;
+    std::string body = lone ? kContinueLabel : column.choices[i].text;
+
+    // The rule that opened this choice, as reported by the engine. Shown in
+    // brackets so it is visible which rule let the choice through.
+    const char* rule_name = "unknown";
+    switch (static_cast<ChoiceRule>(column.choices[i].rule)) {
+      case ChoiceRule::Standard:
+        rule_name = "standard";
+        break;
+      case ChoiceRule::Skill:
+        rule_name = "skill";
+        break;
+      case ChoiceRule::Spoke:
+        rule_name = "spoke";
+        break;
+      case ChoiceRule::Debug:
+        rule_name = "debug";
+        break;
+      case ChoiceRule::Invisible:
+        rule_name = "invisible";
+        break;
+      case ChoiceRule::Held:
+        rule_name = "held";
+        break;
+    }
+    body += "  (" + std::string(rule_name) + ")";
 
     const std::vector<std::string> lines = wrap(prefix + body, width);
     for (size_t row = 0; row < lines.size(); ++row) {

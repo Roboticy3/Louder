@@ -53,6 +53,9 @@ struct Choice {
   // The hub behind the choice.
   LouderPosition link = -1;
 
+  // The rule that made this choice available, as a ChoiceRule value.
+  int32_t rule = 0;
+
   std::string text;
 };
 

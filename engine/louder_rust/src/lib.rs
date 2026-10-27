@@ -728,6 +728,20 @@ unsafe {
 }
 }
 
+/// Get the rule behind a choice's availability.
+///
+/// Returns 0 for an available choice's rule mapping, or -1 for an unknown
+/// choice. The value is a [`ChoiceRule`].
+#[unsafe(no_mangle)]
+pub extern "C" fn get_hub_choice_rule(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition, actor_perspective: LouderActor, choice_index: i32) -> i32 {
+  if ctx.is_null() || choice_index < 0 {
+    return -1;
+  }
+  unsafe {
+    Simulator::choice_rule(&*ctx, conversation, actor_perspective, position, choice_index as usize) as i32
+  }
+}
+
 /// Get the text of a choice on a hub as a name.
 ///
 /// A choice has no text of its own, so this is the text of the hub it links to.

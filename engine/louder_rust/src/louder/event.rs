@@ -101,7 +101,8 @@ pub enum EventData {
 }
 
 impl EventData {
-  /// Which variant this is, as an `int`.
+
+/// Which variant this is, as an `int`.
   ///
   /// Written out rather than left to the compiler so that the numbering is part
   /// of the engine's vocabulary and not a property of the declaration order.
@@ -220,3 +221,11 @@ pub enum EventPosition {
 
 
 
+
+/// An interrupt: an actor and the expression it is waiting on.
+#[derive(Debug, Clone, Default)]
+#[repr(C)]
+pub struct Interrupt {
+  pub actor: LouderActor,
+  pub expression: LouderName,
+}

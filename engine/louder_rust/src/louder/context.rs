@@ -6,6 +6,7 @@ use super::speaker::*;
 use super::actor::{Actor, LouderActor, LOUDER_ACTOR_NONE};
 use super::conversation::{Conversation, VariableMap, VariableScope, classify_variable};
 use super::event::*;
+use super::event::Interrupt;
 use super::hub::{Hub, LouderPosition};
 use super::object::LouderVariant;
 use super::rules::DialogueRules;
@@ -83,6 +84,9 @@ pub struct LouderContext {
   shared_unsaved: VariableMap,
   events: Vec<LouderEvent>,
   asks: VecDeque<PendingAsk>,
+  interrupts: Vec<Interrupt>,
+  removal_tag: Option<LouderName>,
+  removal_text: Option<LouderName>,
 }
 
 
@@ -105,6 +109,9 @@ impl LouderContext {
       shared_unsaved: Map::new(),
       events: Vec::new(),
       asks: VecDeque::new(),
+      interrupts: Vec::new(),
+      removal_tag: None,
+      removal_text: None,
     }
   }
 
@@ -140,6 +147,60 @@ impl LouderContext {
 
   pub fn clear_events(&mut self) {
     self.events.clear();
+  }
+
+  // -- interrupts ---------------------------------------------------------
+
+  /// The interrupts currently recorded.
+  pub fn interrupts(&self) -> &[Interrupt] {
+    &self.interrupts
+  }
+
+  /// Record an interrupt.
+  pub fn push_interrupt(&mut self, interrupt: Interrupt) {
+    self.interrupts.push(interrupt);
+  }
+
+  /// Clear every recorded interrupt.
+  pub fn clear_interrupts(&mut self) {
+    self.interrupts.clear();
+  }
+
+  // -- config -------------------------------------------------------------
+
+  /// The removal tag, if one is configured.
+  pub fn removal_tag(&self) -> Option<LouderName> {
+    self.removal_tag
+  }
+
+  /// Configure the removal tag.
+  pub fn set_removal_tag(&mut self, tag: Option<LouderName>) {
+    self.removal_tag = tag;
+  }
+
+  /// The removal text, if one is configured.
+  pub fn removal_text(&self) -> Option<LouderName> {
+    self.removal_text
+  }
+
+  /// Configure the removal text.
+  pub fn set_removal_text(&mut self, text: Option<LouderName>) {
+    self.removal_text = text;
+  }
+
+  /// Enable a rule.
+  pub fn enable_rule(&mut self, rule: DialogueRules) {
+    self.rules |= rule;
+  }
+
+  /// Disable a rule.
+  pub fn disable_rule(&mut self, rule: DialogueRules) {
+    self.rules &= !rule;
+  }
+
+  /// Whether a rule is enabled.
+  pub fn rule_enabled(&self, rule: DialogueRules) -> bool {
+    self.rules.contains(rule)
   }
 
   pub fn push_ask(&mut self, ask: LouderAsk) -> usize {
@@ -417,6 +478,40 @@ impl LouderContext {
     keys.sort_unstable();
     keys.dedup();
     keys
+  }
+}
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  #[test]
+  fn rules_can_be_toggled() {
+    let mut ctx = LouderContext::new();
+    assert!(ctx.rule_enabled(DialogueRules::all()));
+    ctx.disable_rule(DialogueRules::SPOKE);
+    assert!(!ctx.rule_enabled(DialogueRules::SPOKE));
+    ctx.enable_rule(DialogueRules::SPOKE);
+    assert!(ctx.rule_enabled(DialogueRules::SPOKE));
+  }
+
+  #[test]
+  fn removal_config_round_trips() {
+    let mut ctx = LouderContext::new();
+    assert!(ctx.removal_tag().is_none());
+    ctx.set_removal_tag(Some(7));
+    assert_eq!(ctx.removal_tag(), Some(7));
+    ctx.set_removal_text(Some(9));
+    assert_eq!(ctx.removal_text(), Some(9));
+  }
+
+  #[test]
+  fn interrupts_are_tracked() {
+    let mut ctx = LouderContext::new();
+    ctx.push_interrupt(Interrupt { actor: 1, expression: 2 });
+    assert_eq!(ctx.interrupts().len(), 1);
+    ctx.clear_interrupts();
+    assert!(ctx.interrupts().is_empty());
   }
 }
 

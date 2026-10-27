@@ -56,7 +56,7 @@ usize_is_size_t = true
 
 
 [export]
-include = []
+include = ["Hub", "Actor", "Interrupt", "ChoiceRule", "ChoiceAvailableError"]
 exclude = []
 # prefix = "CAPI_"
 item_types = []
