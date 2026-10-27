@@ -6,56 +6,6 @@ use louder_rust::godot_api;
 
 use godot::prelude::*;
 
-/// One move of an actor from one hub to another.
-///
-/// Every event a move produces carries the same motion, which is how a host
-/// reads where an actor came from and where it went.
-#[derive(Clone, Default)]
-#[derive(GodotClass)]
-#[class(init, tool)]
-pub struct Motion {
-  pub(crate) inner: engine::Motion,
-}
-
-godot_api! {
-  impl Motion {
-    /// Where the actor came from.
-    #[func]
-    pub fn get_source_position(&self) -> engine::LouderPosition {
-      self.inner.source_position
-    }
-
-    /// Where the actor went.
-    #[func]
-    pub fn get_target_position(&self) -> engine::LouderPosition {
-      self.inner.target_position
-    }
-
-    /// The choice the actor picked, or -1 if it did not pick anything.
-    #[func]
-    pub fn get_choice_index(&self) -> i32 {
-      self.inner.choice_index
-    }
-
-    /// The speaker the hub appears to have, for this move.
-    ///
-    /// A hub with a speaker of its own speaks as that speaker. A hub without one
-    /// is anonymous, and the voice of the actor making the move is projected
-    /// onto it for the length of the move, so the same hub carries a different
-    /// speaker for each actor that walks onto it.
-    #[func]
-    pub fn get_speaker(&self) -> engine::LouderName {
-      self.inner.speaker
-    }
-
-    /// Whether the actor saw this hub without moving onto it.
-    #[func]
-    pub fn is_background(&self) -> bool {
-      self.inner.background
-    }
-  }
-}
-
 /// A choice becoming available on a hub.
 #[derive(Clone, Default)]
 #[derive(GodotClass)]
@@ -119,33 +69,6 @@ godot_api! {
   }
 }
 
-/// A record in a document the engine could not read.
-///
-/// Carries the position of the record that was at fault, or -1 when the problem
-/// was with the document as a whole.
-#[derive(Clone, Default)]
-#[derive(GodotClass)]
-#[class(init, tool)]
-pub struct LoadFailure {
-  pub(crate) inner: engine::LoadFailure,
-}
-
-godot_api! {
-  impl LoadFailure {
-    /// The record at fault, or -1 if the document was.
-    #[func]
-    pub fn get_position(&self) -> engine::LouderPosition {
-      self.inner.position
-    }
-
-    /// The [`LoadError`](crate::loader::LouderLoader) code.
-    #[func]
-    pub fn get_error(&self) -> i32 {
-      self.inner.error
-    }
-  }
-}
-
 /// One entry in the event queue.
 ///
 /// The queue is polled from index 0 upwards and emptied with
@@ -187,12 +110,12 @@ godot_api! {
 
     /// The move this event describes, if it describes one.
     #[func]
-    pub fn get_motion(&self) -> Option<Gd<Motion>> {
+    pub fn get_motion(&self) -> Option<Gd<crate::Motion>> {
       self
         .inner
         .data
         .motion()
-        .map(|motion| Gd::from_object(Motion { inner: motion.clone() }))
+        .map(|motion| Gd::from_object(crate::Motion { inner: motion.clone() }))
     }
 
     /// The choice that became available, if one did.
@@ -230,9 +153,9 @@ godot_api! {
 
     /// The record of a loaded document the engine could not read, if one failed.
     #[func]
-    pub fn get_load_failure(&self) -> Option<Gd<LoadFailure>> {
+    pub fn get_load_failure(&self) -> Option<Gd<crate::LoadFailure>> {
       match &self.inner.data {
-        engine::EventData::LoadError(failure) => Some(Gd::from_object(LoadFailure { inner: failure.clone() })),
+        engine::EventData::LoadError(failure) => Some(Gd::from_object(crate::LoadFailure { inner: failure.clone() })),
         _ => None,
       }
     }
@@ -332,8 +255,8 @@ godot_api! {
 
     /// The move the ask interrupted.
     #[func]
-    pub fn get_motion(&self) -> Gd<Motion> {
-      Gd::from_object(Motion { inner: self.inner.motion.clone() })
+    pub fn get_motion(&self) -> Gd<crate::Motion> {
+      Gd::from_object(crate::Motion { inner: self.inner.motion.clone() })
     }
 
     /// The callback to call to answer, and the text of its arguments.
@@ -343,3 +266,4 @@ godot_api! {
     }
   }
 }
+

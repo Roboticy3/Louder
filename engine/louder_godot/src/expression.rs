@@ -2,7 +2,7 @@
 
 use crate::context::LouderContext;
 use crate::engine;
-use crate::event::Motion;
+use crate::Motion;
 use louder_rust::godot_api;
 
 use godot::prelude::*;

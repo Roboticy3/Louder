@@ -129,12 +129,13 @@ layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
 text = "Auto"
 
-[node name="link" type="CheckBox" parent="TextSectionWrapper/TextSection/flags" unique_id=1709962505 node_paths=PackedStringArray("mutual_exclusive")]
+[node name="link" type="CheckBox" parent="TextSectionWrapper/TextSection/flags" unique_id=1709962505 node_paths=PackedStringArray("mutual_exclusive", "mutual_inclusive")]
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
 text = "Link"
 script = ExtResource("2_6jgyt")
 mutual_exclusive = [NodePath("../../../../ChoicesSection")]
+mutual_inclusive = [NodePath("../../LinkContainer")]
 
 [node name="once" type="CheckBox" parent="TextSectionWrapper/TextSection/flags" unique_id=1795645920]
 layout_mode = 2
@@ -149,6 +150,23 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
 text = "Private"
 script = ExtResource("2_6jgyt")
 mutual_inclusive = [NodePath("../../recipients")]
+
+[node name="LinkContainer" type="HBoxContainer" parent="TextSectionWrapper/TextSection" unique_id=690340141]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="TextSectionWrapper/TextSection/LinkContainer" unique_id=1357364176]
+layout_mode = 2
+text = "Link To: "
+
+[node name="Control" type="Control" parent="TextSectionWrapper/TextSection/LinkContainer" unique_id=334075024]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="link" type="SpinBox" parent="TextSectionWrapper/TextSection/LinkContainer" unique_id=1911959344 groups=["hub_component"]]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+script = ExtResource("6_vwbjy")
 
 [node name="speaker" parent="TextSectionWrapper/TextSection" unique_id=42355890 groups=["autocomplete_speaker", "hub_component"] instance=ExtResource("3_f5yrs")]
 layout_mode = 2

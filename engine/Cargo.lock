@@ -118,6 +118,8 @@ version = "0.1.0"
 dependencies = [
  "godot",
  "louder_rust",
+ "quote",
+ "syn 2.0.119",
 ]
 
 [[package]]
