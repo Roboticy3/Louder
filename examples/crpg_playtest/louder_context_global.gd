@@ -270,10 +270,7 @@ func _drain() -> void:
 	for event in queued:
 		match event.get_kind():
 			_EVENT_REGULAR_MOTION, _EVENT_WARP, _EVENT_FORCE_MOTION:
-				var travel: Motion = event.get_motion()
-				_pass_motion(event.get_conversation(), event.get_actor(),
-					travel.get_target_position(), travel.is_background(),
-					resolve_name(travel.get_speaker()), event.get_kind())
+				_pass_motion(event)
 			_EVENT_CALLBACK:
 				_pass_callback(event.get_name())
 			_EVENT_ACTOR_ADDED:
@@ -341,21 +338,29 @@ func _callback(callback: int) -> void:
 
 
 @rpc("authority", "call_remote", "reliable")
-func _motion(conversation: int, actor: int, target: int, background: int, speaker: String, kind: int) -> void:
-	# Only a peer that is not running the engine gets here, so the actor is this
-	# peer's copy of one the server owns, and the copy is still standing where it
-	# stood when it was copied. Putting it where the server put it is what keeps
-	# the choices this peer offers the choices of the hub the actor is on.
+func _motion(event_dict: Dictionary) -> void:
+	# The event arrived as a whole, so unpack it here rather than as separate
+	# parameters. The rule that produced it is in event_dict["kind"].
+	var conversation := int(event_dict["conversation"])
+	var actor := int(event_dict["actor"])
+	var motion_dict: Dictionary = event_dict["motion"]
+	var target := int(motion_dict["target_position"])
 	_follow_motion(conversation, actor, target)
-	motion.emit(conversation, actor, target, background, speaker, kind)
+	var background := bool(motion_dict["background"])
+	var speaker := resolve_name(int(motion_dict["speaker"]))
+	var kind := int(event_dict["kind"])
+	motion.emit(conversation, actor, target, 1 if background else 0, speaker, kind)
 
 
-func _pass_motion(conversation: int, actor: int, target: int, background: bool, speaker: String, kind: int) -> void:
-	# The flag travels as an int: a listener reads it as `!= 0`, which is what it
-	# has to do to read one that crossed a network boundary anyway.
+func _pass_motion(event: LouderEvent) -> void:
+	var event_dict := event.to_dictionary()
+	var motion_dict: Dictionary = event_dict["motion"]
+	var background := bool(motion_dict["background"])
+	var speaker := resolve_name(int(motion_dict["speaker"]))
+	var kind := int(event_dict["kind"])
 	var background_flag := 1 if background else 0
-	motion.emit(conversation, actor, target, background_flag, speaker, kind)
-	_motion.rpc(conversation, actor, target, background_flag, speaker, kind)
+	motion.emit(int(event_dict["conversation"]), int(event_dict["actor"]), int(motion_dict["target_position"]), background_flag, speaker, kind)
+	_motion.rpc(event_dict)
 
 
 func _pass_actor_added(conversation: int, actor: int) -> void:

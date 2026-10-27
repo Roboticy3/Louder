@@ -52,6 +52,7 @@ pub(crate) mod engine {
     ChoiceAppearance,
     ConditionOutcome,
     EventData,
+    Interrupt,
     LoadFailure,
     LouderAsk,
     LouderEvent,

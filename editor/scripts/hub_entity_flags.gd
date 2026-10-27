@@ -18,7 +18,7 @@ func _ready() -> void:
 			print("deserializing checkbox ", c, " with flag ", i)
 			checkboxes.append(c)
 			c.button_pressed = bool(flags & 1 << i)
-			c.toggled.connect(_on_checkbox_toggled.bind(c))
+			c.connect("toggled", _on_checkbox_toggled.bind(c))
 			i += 1
 
 func _on_checkbox_toggled(pressed: bool, checkbox: CheckBox) -> void:
@@ -31,3 +31,13 @@ func _on_checkbox_toggled(pressed: bool, checkbox: CheckBox) -> void:
 					flags |= 1 << i
 				else:
 					flags &= ~(1 << i)
+
+func force_buttons():
+	var i := 0
+	for c in get_children():
+		if c is CheckBox:
+			print("deserializing checkbox ", c, " with flag ", i)
+			checkboxes.append(c)
+			var new_value := bool(flags & 1 << i)
+			c.button_pressed = new_value
+			i += 1

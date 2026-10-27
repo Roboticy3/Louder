@@ -261,6 +261,59 @@ godot_api! {
     pub fn get_name(&self) -> engine::LouderName {
       self.inner.data.name()
     }
+
+    /// The whole event as a dictionary, so it can cross a network boundary
+    /// without being taken apart field by field.
+    #[func]
+    pub fn to_dictionary(&self) -> Dictionary<Variant, Variant> {
+      let mut dict = Dictionary::<Variant, Variant>::new();
+      dict.set("conversation", self.inner.conversation);
+      dict.set("channel", self.inner.channel);
+      dict.set("actor", self.inner.actor);
+      dict.set("kind", self.inner.data.kind());
+
+      if let Some(motion) = self.inner.data.motion() {
+        let mut motion_dict = Dictionary::<Variant, Variant>::new();
+        motion_dict.set("source_position", motion.source_position);
+        motion_dict.set("target_position", motion.target_position);
+        motion_dict.set("choice_index", motion.choice_index);
+        motion_dict.set("speaker", motion.speaker);
+        motion_dict.set("background", motion.background);
+        dict.set("motion", &motion_dict);
+      }
+
+      dict.set("name", self.inner.data.name());
+
+      match &self.inner.data {
+        engine::EventData::ChoiceAppearance(appearance) => {
+          let mut appearance_dict = Dictionary::<Variant, Variant>::new();
+          appearance_dict.set("position", appearance.position);
+          appearance_dict.set("choice_index", appearance.choice_index);
+          dict.set("choice_appearance", &appearance_dict);
+        }
+        engine::EventData::AdditionalDataChange(change) => {
+          dict.set("additional_data_key", change.key);
+        }
+        engine::EventData::Condition(outcome) => {
+          let mut condition_dict = Dictionary::<Variant, Variant>::new();
+          condition_dict.set("condition", outcome.condition);
+          condition_dict.set("outcome_int", match &outcome.outcome {
+            engine::LouderVariant::Int(value) => *value,
+            _ => 0,
+          });
+          dict.set("condition", &condition_dict);
+        }
+        engine::EventData::LoadError(failure) => {
+          let mut failure_dict = Dictionary::<Variant, Variant>::new();
+          failure_dict.set("position", failure.position);
+          failure_dict.set("error", failure.error);
+          dict.set("load_failure", &failure_dict);
+        }
+        _ => {}
+      }
+
+      dict
+    }
   }
 }
 
@@ -305,6 +358,27 @@ godot_api! {
     #[func]
     pub fn get_ask(&self) -> engine::LouderCallback {
       self.inner.ask
+    }
+  }
+}
+/// An interrupt: an actor and the expression it is waiting on.
+#[derive(Clone, Default)]
+#[derive(GodotClass)]
+#[class(init, tool)]
+pub struct Interrupt {
+  pub(crate) inner: engine::Interrupt,
+}
+
+godot_api! {
+  impl Interrupt {
+    #[func]
+    pub fn get_actor(&self) -> engine::LouderActor {
+      self.inner.actor
+    }
+
+    #[func]
+    pub fn get_expression(&self) -> engine::LouderName {
+      self.inner.expression
     }
   }
 }

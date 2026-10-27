@@ -77,10 +77,7 @@ slot/3/right_icon = null
 slot/3/draw_stylebox = true
 script = ExtResource("1_so4sa")
 grabber = NodePath("TextSectionWrapper/TextSection/speaker")
-component_group = null
-default_source = null
 choices_section_logic = NodePath("ChoicesSection/choices")
-hub_data = null
 
 [node name="TextSectionWrapper" type="VBoxContainer" parent="." unique_id=175791466]
 layout_mode = 2
@@ -132,20 +129,26 @@ layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
 text = "Auto"
 
+[node name="link" type="CheckBox" parent="TextSectionWrapper/TextSection/flags" unique_id=1709962505 node_paths=PackedStringArray("mutual_exclusive")]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
+text = "Link"
+script = ExtResource("2_6jgyt")
+mutual_exclusive = [NodePath("../../../../ChoicesSection")]
+
 [node name="once" type="CheckBox" parent="TextSectionWrapper/TextSection/flags" unique_id=1795645920]
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
 text = "Once"
 
-[node name="_private" type="CheckBox" parent="TextSectionWrapper/TextSection/flags" unique_id=1575580911 node_paths=PackedStringArray("mutual_exclusive")]
+[node name="_private" type="CheckBox" parent="TextSectionWrapper/TextSection/flags" unique_id=1575580911 node_paths=PackedStringArray("mutual_inclusive")]
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_styles/normal = SubResource("StyleBoxFlat_2sc04")
 text = "Private"
 script = ExtResource("2_6jgyt")
-mutual_exclusive = [NodePath("../../recipients")]
-inverted = true
+mutual_inclusive = [NodePath("../../recipients")]
 
 [node name="speaker" parent="TextSectionWrapper/TextSection" unique_id=42355890 groups=["autocomplete_speaker", "hub_component"] instance=ExtResource("3_f5yrs")]
 layout_mode = 2
@@ -231,7 +234,6 @@ Callback 2
 [node name="additional_data" parent="OtherSection/VBoxContainer" unique_id=37265135 groups=["hub_component"] instance=ExtResource("3_f5yrs")]
 layout_mode = 2
 placeholder_text = "additional_data_field: value"
-delimiter_strings = Array[String](["\" \"", "' '"])
 
 [node name="ChoicesSection" type="HBoxContainer" parent="." unique_id=356226356]
 layout_mode = 2
@@ -256,5 +258,6 @@ hub = NodePath("../..")
 spin_box = NodePath("../ChoicesSpinBox")
 spoke_child_index = 1
 
+[connection signal="toggled" from="TextSectionWrapper/TextSection/flags/link" to="ChoicesSection/choices" method="set_end"]
 [connection signal="folding_changed" from="OtherSection" to="." method="reset_size" flags=3 unbinds=1]
 [connection signal="choices_changed" from="ChoicesSection/choices" to="." method="reset_size" flags=3]

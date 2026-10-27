@@ -1043,5 +1043,17 @@ godot_api! {
       let gstring = PackedByteArray::from(buffer).get_string_from_utf8();
       StringName::from(&gstring)
     }
+
+    /// Convert a Godot `StringName` to an engine name, assigning one if needed.
+    #[func]
+    pub fn to_name(&mut self, text: StringName) -> engine::LouderName {
+      self.make_name(text)
+    }
+
+    /// Convert an engine name back to a Godot `StringName`.
+    #[func]
+    pub fn to_string_name(&self, name: engine::LouderName) -> StringName {
+      self.make_string_name(name)
+    }
   }
 }

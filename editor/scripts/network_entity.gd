@@ -75,6 +75,7 @@ func _import_node(node: Node, value: Variant) -> void:
 	elif node is HubEntityFlags:
 		print("importing flags ", value)
 		node.flags = int(value)
+		node.force_buttons()
 	elif node is CodeEdit:
 		node.text = value
 	elif node is ColorPickerButton:
