@@ -15,26 +15,178 @@ The engine never displays anything, so it has no opinion about what a byte
 means. Strings cross its boundary as bytes and come back as the same bytes: a
 host that hands over text in some encoding reads back that same encoding, and is
 responsible for both halves of that. The one place the engine has to know is a
-JSON document, since JSON is text and cannot be parsed otherwise; those bytes
-have to be UTF-8, and a document that is not returns
-`LOUDER_LOAD_MALFORMED_JSON`.
+JSON document, since JSON is text and cannot be parsed otherwise. The encoding must be passed along with the json string in this case.
 
 # Goals of Dialogue Rules
-The rules below essentially split dialogue into 3 non-mutually exclusive scenarios which may happen all at once in parallel.
+These three core values are what all structures and rules below exist to serve.
+ - The engine should store and drive dialogue trees.
+ - The engine should manage multiple users and dialogue trees easily.
+ - The engine should be extensible in two aspects. First, it should be easy to extend single user trees to multi user trees using the structures provided. For example, introducing a new playable character or making an npc into a playable character should both be as simple as adding choices to a tree. Second, it should be simple to hook custom scripting behavior into the engine without compromising its existing structure.
 
-The goal is to make a dialogue system that is friendly to multiple players.
+# Structures
+Structures are the objects managed by the engine.
 
-The 3 scenarios are the following:
- - Synchronous dialogue. 1 or more actors moves through a dialogue tree synchronously in a single channel. Story priority and appearance rules drive who is "leading" the conversation at any given time and lower-priority sections are intended to be displayed on the side of the "main" flow, where the leading actor is making decisions. The leading actor can change freely.
- - Spoke dialogue/spoke rule. Subset of synchronous dialogue where the leading actor cannot change for the portion of time where no meaningful choices can be made. This makes it so the leading actor decides when dialogue proceeds, but still can't make any meaningful choices on behalf of other actors who may be in the scene.
- - Asynchronous dialogue. 2 or more actors split into multiple channels to explore different parts of a conversation independenlty.
+"Names" are integers mapped to strings provided by the user. When the engine is just as a core library, names must be declared explicitly, but when the engine is wrapped in a framework that takes care of encoding, the user should be able to pass strings wherever a name can be passed. The context is responsible for avoiding name collisions. The "NONE" name is -1, and the "ZERO" name is 0. Both have no string mapping and are used as special codes.
 
-The consequence of these scenarios is that dialogue is:
- - Visible. Synchronous dialogue is mostly centered on the rules which make dialogue appear/not appear to different actors.
- - Extensible. Choices can be added to break the spoke rule. Actors can then be assigned to speakers not previously intended to be possessed by players to "bring them to life." Choices can also be removed and the spoke rule would "fix" the flow of a complex section, turning it into a simple one.
- - Concurrent. Like in real conversations, channels allow for actors to "break out" into separate flows which can be explored independently. This allows more actors to be in control at the same time. Priority rules allow these flows to cleanly merge with each other, too, without interrupting any one channel's flow unless absolutely necessary.
+"Sets" should be represented as lists of objects. And the engine should generally be tolerant of duplicate items in these lists.
 
-# Dialogue Rules
+"Positions" are integer ids that refer to nodes in a conversation (dialogue tree), paired with a channel, a name describing which "flow" this position belongs to. The default channel is ZERO. The id part of the position is unique within a conversation, and considered equivalent to POSITION_NONE -1 if it is invalid.
+
+"Variants" are values that may be integers, floats, or names.
+
+"Additional Data" are maps between names and Variants. 
+
+"Flags" are 32 bit integers interpreted bitwise with named booleans for some or all 32 bits.
+
+"Unrecognized Objects" objects that are not recognized by the engine may be produced by the editor. A conversation created by the editor may have hubs, voices, and other objects that are discarded when the stream is loaded.
+
+"Optionals" are objects which may or may not be present.
+
+"Unions" are special variants with different possible types depending on context.
+
+To see how the objects of dialogue are encoded by the editor, see [schema](/editor/schema.md)
+
+## Context
+A context is a set of actors, voices (previously called speakers), conversations, events, interrupts, and a config.
+
+## Actors
+An actor represents a user and is composed of an integer uniquely identifying this actor within a conversation, the name of their parent conversation, 2 disjoint sets of voices, one which they "speak as" and another which they "listen to", flags, an set of positions called their "history", with the last position just being called their "position", and additional data.
+
+## Voices
+A voice represents a voice which a user can use to interact with a conversation. Voices are composed of a name uniquely identifying this voice within the context, a set of voices which they "listen to", flags, and additional data.
+
+## Conversations
+The conversation represents a dialogue tree and is composed of a name uniquely identifying this conversation within the context, a set of hubs and a set of connections
+
+## Hubs
+A hub represents a position in a conversation and is composed of the integer id of a position (unique within the set of hubs of a conversation), optional channel, an integer "priority", optional voice, a set of voices called "recipients", flags, a name "text", a number of choices, a set of names "expressions", a set of names "tags", and additonal data.
+
+## Connections
+Connections are composed of two integer ids of positions in a conversation "from" and "to", as well as an integer "port" into the number or choices available at the "from" hub.
+
+## Choices
+In the presence of an Actor, the word "choice" is used to describe a hub for which there exists a connection from the actor's position to that hub.
+
+For example, if connections from 0 to 10, 0 to 20, 0 to 30 exist, then "choice 1" for an actor at position 0 describes hub 20.
+
+## Events
+Events are unions of Motion events, Actor added events, Actor removed events, Voice added events, Voice removed events, Conversation added events, and Conversation removed events.
+
+### Motion events
+Motion events are composed of a start position, end position, and actor.
+
+### Added/removed events for Actors
+Actors emit events when they are added/removed *to conversations*, not to the context. Event is comprised of actor id, conversation name, Position where actor was added/removed, and a copy of the actor object.
+
+### Added/removed events for Voices and Conversations
+Added/removed events of type X are composed of X's name, as well as a copy of the object itself.
+
+## Interrupts
+Interrupts are composed of an actor and the name of an expression at the hub of the actor's current position.
+
+## Configs
+The config adjusts the rules of the engine.
+
+# Rules
+Rules are named interactions for the structures described in Structures. As per the first goal, the primary goal of the engine is to provide an action of an actor making a choice. Making a choice describes updating an actor's position using one of its choices. If multiple rules say "an actor can make a choice if", they will exhibit OR logic on a choice being available. If rules say "an actor cannot make a choice if", they will exhibit NAND logic on a choice being available. For example, actors can make a choice if rules A or B or C apply, and not if D or E or F apply, so if rules A B D apply for a particular choice, that choice is not available with reason D. 
+
+When asked what choices are available for a given actor (choices(x, A) for choices at hub x or choices(A)), the engine should return a list of booleans and Unions, one for each choice at the actor's current position. If the choice is available, the first rule that made it available is the value of the union. if the choice is unavailable, the first rule that made it unavailable is the value of the union. the boolean stores availability. The philosophy here is transparency, the user always knows why a choice is available or not.
+
+The same is true for other interactions introduced in the rules section. For example, with visibility, "visible to actor" rules would exhibit OR behavior and "not visible to actor" rules would exhibit NAND behavior.
+
+This is not a spec for the code syntax of the engine. This is more of a mathematical formal syntax to strongly describe behaviors so engine implementation is more straightforward.
+
+Rules assume the presence of a context and a conversation.
+
+Rules are ordered. If rule R was stated *before* rule S below, and there is a contradiction, rule R should be followed with a warning in the implementation that they conflict.
+
+Rules are exposed to the user as an enum, alongside a function that converts from rules to rule names.
+
+In implementation, this probably won't be realized as a big global list of rules, but this list should remove any ambiguity on the correct behavior for any given scenario.
+
+## Meta Rules
+Rules about rules.
+
+### Copy Rule
+A rule R can be copied as a new rule S. All behaviors are copied under a new name, then other properties are overridden as described.
+
+### Experiment Rule
+All rules can be enabled/disabled via a flag in the config.
+
+## Visibility Rules
+Determines whether hubs should appear to actors.
+
+### Public Voice
+Voice v can be flagged as PUBLIC. In this case, flag(v) | PUBLIC
+
+### Private Hub
+Hub x can be flagged as PRIVATE. In this case, flag(x) | PRIVATE
+
+### Visible Hub
+Hub x can be "visible" to actor A. In this case, visible(x, A)
+
+### Priority
+Hub x has priority(x). An actor A positioned at hub x has priority(A) = priority(x)
+
+### Hub Voice
+voice(x, A) = voice(x) if voice(x) is present, the first element of speak_as(A) if speak_as(A) is not empty, and an empty optional otherwise.
+
+### Visible Speaker
+Voice v can be "visible" to actor A. In this case, visible(v, A)
+
+### Visibility rule 1
+if voice(x, A) in speak_as(A), visible(x, A)
+
+### Visibility rule 2
+if voice(x, A) in listen_to(A), visible(x, A).
+
+### Visibility rule 3
+if flag(voice(x, A)) | PUBLIC, visible(x, A) for all actors A.
+
+### Visibility counter 1
+if flag(x) | PRIVATE and recipients(x) \cap speak_as(A) is empty, !visible(x, A)
+
+### Spectator Rule
+An actor A can be a "spectator". In this case, tag(A) | SPECTATOR.
+
+### Spectator Visibility
+If tag(A) | SPECTATOR, visible(x, A)
+
+This rule is stronger than visibility counters. Even if another rule says !visible(x, A), tag(A) | SPECTATOR overrides that decision.
+
+## Choice Rules
+Rules that determine whether choices are or are not available.
+
+### Choice Hub
+choice(x, A) is defined if there exists a connection c from position_id(A) to x, and may be "available", but by default is unavailable
+
+### Choice Text
+If choice(x, A) is defined, choice_text(x, A) returns text(x)
+
+### Standard Rule
+if voice(x, A) in speak_as(x, A), then choice(x, A) = available, standard
+
+### Skill Rule
+if voice(x, A) in listen_to(x, A) and voice(x, A) not in speak_as(x, B) for all B != A, choice(x, B) = available, skill
+
+### Visibility Check
+if !visible(x, A), choice(x, A) = unavailable, invisible
+
+### Removal Rule
+configurable with optional removal tag and optional removal text.
+
+if choice(x, A) is not available for all choices x, choice(POSITION_NONE, A) = available, removal and has the effect of removing A from the conversation.
+
+if removal tag is configured, rule only applies if the removal tag is in tag(x)
+
+if removal text is configured, and choice(POSITION_NONE, A) = available, removal, choice_text(POSITION_NONE, A) is removal text
+
+### Meaningful choice rule
+if choices(x, A) had more than 1 element, meaningful(x, A). if choices(A) has more than one element, meaningful(A). Otherwise, !meaningful(A)
+
+### Softlock Rule
+Copy of removal rule. If the rule applies, choice(POSITION_NONE, A) is undefined and choice(x, A) is defined if and only if x is the most recent hub in A's history where meaningful(x, A)
+
 Conversations are made up of hubs connected by choices. 
 
 Conversations are interfaced with via Conversation Actors, entities which can speak as
@@ -42,282 +194,166 @@ and listen to different speakers.
 
 As actors make dialogue choices, hubs "appear" to them.
 
-To see how the objects of dialogue are encoded by the editor, see [schema](/editor/schema.md)
+### Spoke Rule
+If choice(x, A) is defined, visible(x, A), choice(x, B) and !meaningful(B) for all B != A, choice(x, A) = available, spoke. 
 
-# Hubs
-Hubs have a position, tags, speakers,
-text content, choices, expressions, callbacks, flags, recipients, channels, priority, and user-defined properties.
+Basically, if A is in a spot where other actors can move, but don't have meaningful choices, and A could move in their place without breaking visibility rules, A can.\
 
-## Position
-A number uniquely identifying each hub in a conversation.
+### Debug Actors
+Actors can be "debug actors", in this case, tag(A) | DEBUG
 
-## Tags
-Tags are lists of short strings attached to each hub that can be used to query the conversation as a whole.
+### Debug Rule
+if choice(x, A) and tag(A) | DEBUG, choice(x, A) = available, debug
 
-Good for finding the "start" node, or filtering for start candidates and picking a specific starting point based on game state.
+This rule is more powerful than rules that would make choice(x, A) unavailable.
 
-## Speakers
-Speakers are single names on each hub. If present, they determine who the hub is visible to.
+## Control Rules
+Rules for controlling dialogue
 
-Speakers are themselves defined by their own name, flags, "listening" and additional data:
- - Name: The name used to reference this speaker in hubs and by actors.
- - Flags: Speakers can be flagged "public". If a speaker is not defined,
- they are assumed to be public. 
-   - Public speakers. Hubs with public speakers appear to all conversation actors. Non-public speakers 
-   only appear to actors who are explicitly "listening" to them. See section on "Listening"
- - Listening: Speakers can reference other speakers as "listening." If an actor is speaking
- as a speaker, they implicitly listen to these speakers as well.
- - see Homogeneous Objects.
+### Auto Hubs
+Hub x can be flagged AUTO. In this case, tag(x) | AUTO. 
 
-When this guide says that a hub "appears" to a speaker, it's referring to
-appearing to an actor that is either speaking as or listening to this speakers.
+### Auto Traces
+Let y be the first element of choices(x, A), ordered by port of the associated connection.
 
-## Text Content
-Arbitrary text content of the hub. Typically this is what you would want to
-display as the content of your dialogue, along with the Speaker.
+if not tag(x) | AUTO, auto(x, A) = x
 
-## Choices
-Choices have some text content describing how the choice should appear when this
-hub appears. Each choice references another hub by its position.
+If tag(x) | AUTO, and not tag(y) | AUTO, auto(x, A) = y.
 
-Actors traverse through dialogue by "making choices" or "selecting choices",
-which changes their position and all relevant information to match the linked
-hub under an available choice.
+If tag(y) | AUTO, y = the first element of choices(y, A). Repeat until not tag(y) | AUTO or choices(y, A) is empty. If choices(y, A) becomes empty, auto(x) is undefined. Otherwise, auto(x, A) = y after repetition.
 
-Choices should only appear to an actor if their linked hub would appear, and the
-speaker of the linked hub matches one of the four cases:
-1. The speaker is in the actor's "speak as" list
-2. The speaker is in the actor's "listen to" list and no other actor has that speaker in it's "speak as" list.
-3. The speaker is public and no other actor has that speaker in it's "speak as" list.
-4. The speaker is in the actor's "speak as" list, "listen to" list, or is public, and that choice is the only choice on this hub. This is called the "spoke rule" and it prevents linear dialogue from switching "leading" actors too frequently. 
+### Auto Trap Rule
+If choice(x, a) and auto(x, A) is undefined, choice(x, A) = unavailable, auto_trap
 
-If the hub has "recipients", these checks are done on the recipient speakers instead of the hub's speaker.
+### Standard Choose
+If choice(x, A) is available, choose(x, A) = standard, x, moving A to x and returning the rule which caused it. The expression "If choose(x, A)" means "if actor A makes choice x".
 
-## Expressions
-Snippets of code sent to the engine's expression parser. Can directly manipulate
-story state.
+### Auto Choose
+if choose(x, A) and auto(x), choose(x, a) = auto, auto(x).
 
-Expressions are either classified as "conditions"- those which check story state,
-or Statements- those which modify story state.
+### Auto Visible Rule
+If tag(x) | AUTO, visible(x, A) for all A.
 
-Conditions are checked every time a hub is checked for whether it should appear,
-if any condition on a hub evaluates to 0, false, or an empty string (see Variants),
-the hub will not appear.
+### Singleplayer Rule 1
+If choose(x, A) != singleplayer, visible(x, A), and !visible(x, B) for all B != A, choose(y, A) = singleplayer
 
-Statements will only run if the hub has not been 
-traveled to before. The data of which hubs have been "covered" is stored in the
-story state along with variables.
+The "!= singleplayer" clause prevents recursion of this rule.
 
-## Callbacks
-can be caught as events when this hub is traveled to.
-Space-separated commands that are exposed to the program using the engine and
+### Singleplayer Rule 2
+If choose(x, A), !visible(x, A), and !visible(x, B) for all B != A, choose(y, A) = singleplayer_2
 
-Callbacks are assumed to be mutable and only run once unless flagged as "repeating."
+This is singleplayer rule 1, but with recursion allowed for the special case where there are nodes nobody can see.
 
-## Asks
-Expressions can contain callbacks using the syntax `$(<callback>)`. For example:
-`$(get hero money)`. These callbacks are called "asks." The engine provides an
-interface for getting queued asks and replying to them. When evaluating an
-expression, the engine will _wait_ until all contained asks are replied to.
+### Warp Rule
+If choose(x, A), visible(x, B) and priority(x) >= priority(B), choose(x, B) = warp
 
-Asks happen as a result of choices in dialogue, like other events. However,
-the engine will keep track of which tasks are being held up by which ask routines.
-When matching verdicts are returned, the task is completed, emitting regular
-events and completing the dialogue action.
+Here we have an emergent behavior with Auto Rule and Auto Visible Rule. if tag(x) | AUTO, then visible(x, B) and choose(x, B) = warp, then choose(y, B) = auto
 
-This is good for complex logic or if the user does not want to use variable
-naming rules. See Story State for variable naming rules.
+### Non-warp Rule
+If choose(x, A), visible(x, B) and priority(x) < priority(B), do nothing
 
-## Flags
-Checkboxes that hubs can have checked:
- - Auto. Auto hubs automatically select the first choice available from the
- perspective of the actor that entered them. Auto nodes never appear. If no
- choices are available, this is considered an error. 
+This rule is named for the purpose of event calling via other rules.
 
-Hubs can also be implicitly auto under very specific conditions. This is called
-the "singleplayer rule". If hub A was reached from a hub B that had multiple
-choices, and A is only visible to the actor that made the choice, it should
-behave as an auto node temporariliy with all the implications that follow from
-that. In this case, hub A behaves like a "player choice" node in a more traditional
-singleplayer system, which the user may want to have progress automatically.
+### Force Position Rule
+if force(x, A), choose(x, A) = force
 
-## Recipients
-List of names, like tags. If not empty, the hub may only appear to actors
-speaking as or listening to speakers in this list.
+### Evaluation Rule
+evaluate(x, A) is the result of evaluating all expressions on x from the perspective of A, a boolean paired with a rule. evaluate(x, A, i) is the result of evaluating the i'th expression, starting from 0, and is a Variant paired with a rule.
 
-## Channels and Priority
-Channels and priority allow for multiple dialogue flows to be balanced at once.
+See Expressions for more about how evaluation works.
 
-Channels are strings, like tags, and work like they would in a normal messaging service. If a hub has a channel, it changes
-the channel an actor is "in" when it appears to them, and the actor stays in that channel until another
-hub changes it again.
+### Standard Evaluation
+If choose(x, A), evaluate(y, A) for all y in choices(x, A)
 
-By default, the channel is "main."
+### Evaluation Andedness
+If evaluate(x, A, i) is not 0 and evaluate(x, A, i) is not an empty name and evaluate(x, A, i) is not NONE for all i, evaluate(x, A)
 
-Actors in different channels do not see hubs that appear from
-choices made by actors in other channels. Thinking in terms of the Private flag, 
-channels act like a "privacy group" around the actors inside them.
+### Evaluation visibility counter
+if !evaluate(x, A), !visible(x, A)
 
-Priority is a number, and takes care of what happens when multiple actors
-are in the same channel, but different parts of the conversation. 
+This is a control rule and not a visibility rule because evaluate(x, A) describes an action, which can have side effects, rather than a getter.
 
-By default, the priority of every hub is 0. "The priority of the hub at an actor's position" below is shortened to "the priority of the actor."
+A second crucial emergent behavior, since choice(x, A) is unavailable if invisible, evaluating an expression can hide a choice.
 
-When an actor, the "leader", makes a choice, and there are other actors who 1. are in the same channel as the leader before or after their choice, 2. are actors who the hub at the new position of the leader may appear to, and 3. have a priority less than or equal to the leader's after their choice, these actors "warp" to the leader.
+### Interrupt Rule
+evaluate(x, A, i) can equal _, interrupt (see Expressions)
 
-When an actor makes a choice, and there are other actors in the same channel to whom the new hub may appear, but won't follow the leading actor because of priority rules, the hub will appear to these actors in the "background" (see Events and Interface), without choices. Again, thinking of a messaging service, this is like separating an actor's "thread" from the rest of the channel- still visible to them.
+### Parse Error Rule
+evaluate(x, A, i) can equal 1, parse_error
+(see Expressions)
 
-Finally, when a choice is made, the resulting hub appears to all spectator actors regardless of their channel, and do not appear in the background. Spectators are treated as not having a channel or priority.
+## Event Rules
+Rules for observing dialogue
 
-## Warping
-When one actor, the "source," warps to another, the "target," they will change their position to match theirs,
-and change all information they have that depends on the hub at their position
-to match the hub under the target.
+### Appearance Rule
+appear(x, A) is an event where hub x appears to actor B. A hub "appearing" contains information about the hub, and the choices that should be available to B from that hub. results of this function are of the form appear(x, A) = e, rule (though the user should generally be able to access the rule that caused an event from the event object itself)
 
-If the warping is happening due to the target leaving an Auto hub, the source is warped instead to the result of the source actor making passing through the same Auto hub. This special "emulation" warp choice can be made regardless of whether the Auto hub should be available to the source actor. This is the main mechanism by which splitting happens between actors, since the replayed choice can end up going down different paths through Auto logic.
+### Standard Appearance Rule
+If choose(x, A) = rule, appear(x, A) = e, rule, where e is the event of x appearing to A.
 
-An emulating actor is not deciding anything, so the first branch available to
-it may be none: every branch may be a voice someone else is playing, which is
-exactly the case where the Auto hub is meant to send the two actors apart. The
-source then takes the first branch that would *appear* to it, and only if no
-branch appears either does it end up where the target did. The source is
-therefore gated on its own landing rather than the target's, since the two are
-the whole point of the split.
+### Background Rule
+if B has position y != x, appear(x, A), and priority(y) > priority(x), appear(x, B) = e, background
 
-## Changing position
-Simply changing the position of an actor is relatively simple. If the actor lands
-in a hub flagged as Auto, the logic of Auto nodes will proceed as normal and the 
-actor will land somewhere else. If the hub at the new position may not appear to
-the actor, this is treated as an error.
+### Ask Rule
+ask(y, A, i) is an event that asks the user to resolve the i'th expression on y from A's perspective 
 
-# Actors
-Actors have a list of speakers they "speak as", "listen to", flags, current
-position, current channel and priority, and additional data.
+if evaluate(y, A, i) = n, interrupt, n is the name of the expression that is being deferred to the user. hang and ask(n) = e, ask
 
-## Speak as and Listening
-See Speakers, and then Choices to see how these settings interact with the engine.
+"hanging" means not exiting the execution stack. If evaluate(y, A, i) is being called because of evaluate(y, A) (Evaluation Andedness), the program hangs by not exiting from this call stack. The opposite of hang is resume.
 
-## Flags
- - Spectate. All non-auto hubs appear to this actor, choices do not appear to
- this actor unless Debug is flagged.
- - Debug. Auto hubs and all choices appear to this actor.
-Debug and Spectate actors cannot belong to channels.
+### Answer Rule
+answer(n, r) is a user-made event to unhang the program.
 
-## Current channel
-The channel of the last hub that appeared to this actor with a channel. See Channels and Priority.
+if hang, ask(n, i), and answer(n, r), then evaluate(y, A, i) = answer(n, r) = r, answer and resume 
 
-## Additional data
-Additional data behaves like channels. When a hub appears to an actor with
-additional data, that additional data changes the actor's additional data. The
-actor then keeps this data until another hub changes it.
+### Warp Event Rule
+warp(x, A) is an event indicating A has (or has not) warped to x. results are of the form e, rule
 
-# Homogeneous Objects
-A homogeneous object that contains a mapping between string names and Variants.
+### Do Nothing Rule
+if a rule said "do nothing" about a warp, warp(x, A) = e, warp_failed
 
-The "additional properties" of hubs are homogeneous objects.
+### Do Something Rule
+if a rule said choose(x, A) = something about warping, warp(x, A) = e, warp_success
 
-# Story State
-The story state is the memory where variables are mapped to values. It is
-composed of homogeneous objects.
+## Channel Rules
+Rules about channels
 
-Variable names starting with `/_+[A-Z]/` (`_A` or `__Shared`) are shared across conversations and not saved.
+### Channel Rule
+channel(A) is the name of the current channel of A. ZERO by default
 
-Variable names starting with `/_+[a-z0-9]?/` (`_a` or `__1`) are local to each conversation and
-not saved.
+channel(x) is the name of the channel set by x, if any. NONE by default
 
-Variable names starting with `/[A-Z]/` are shared and saved.
+### Channel Change
+if choose(x, A), channel(x) != NONE and channel(A) != channel(X), channel(A) = channel(x)
 
-Variable names starting with `/[a-z0-9]?/` are local and saved.
+### Channel Change Warp
+if B was at position x and channel(B) = channel(A), choose(y, B), and visible(y, A), channel(A) = channel(B) and choose(y, A) = channel_warp
 
-The user can also specify their own naming rules, like variables "Inventory_..."
-can be items in the player's inventory. However, naming rules can cause conflicts
-and become hard to manage and synchronize. If this becomes the case, use Asks
-instead.
+### Channel Separation
+if B was at position x and channel(B) != channel(A), choose(y, B) and channel(B) != channel(A) still, do nothing
 
-## Variants
-Variants are integers, floats, booleans, or strings.
+# Expressions
+By default, expressions are parsed using an internal parser with the following syntax:
 
-In expressions, variants can be operated on with the standard array of
-arithmetic and logic operators, plus concatenation logic for strings.
+Expressions are made up of identifiers, literals and operators. Each identifier represents a function.
 
-Variants can always be treated as integers. Floats truncate, strings go to zero,
-and booleans become 1 or 0 for true and false respectively.
+Operators are the same as C, without pointers, offsets, or precompiler declarations, with the same precedence rules.
 
-# Motion
-A source position, target position, an actor, and parent conversation associated with a choice selected. In the events
-section below, the "associated motion" is the action on the conversation that
-caused the event to be emitted.
+Identifiers are any string beginning with an alphabetical character or an underscore, and consisting entirely of alphanumeric characters and underscores. 
 
-# Events and Interface
-Events are emitted when:
- - A hub is revealed to an actor. Provides identification for the actor, whether the hub is in the "background" or not, associated motion
- - A choice is revealed to an actor. Provides identification for the actor, choice text, choice index, linked position, associated motion
- - A callback should be executed. Provides the callback to execute, associated motion
- - The story state changed. Provides the source statement (if available), changed variable, new value and associated motion.
- - A condition evaluates. Provides the condition evaluated, resulting value, and associated motion.
- - A warp happens. Provides whether it was an "emulation" warp or not, the channel, the source actor, the resulting position, and associated motion.
- - An actor's channel changes. Provides the actor, channel and associated motion.
- - An actor's priority changes. Provides the actor, channel and associated motion.
- - An actor's additonal data changes. Provides the actor, additional data and associated motion.
-  - An actor is added. Provides the actor, speak as and listen to speakers.
-  - An actor is removed. Provides the actor.
+There are also special identifiers, which begin with $.
 
-One event is not about a conversation running: a record of a loaded document that
-the engine could not read is reported as a load error event, carrying the
-position of the record at fault, or -1 when the document as a whole was the
-problem. A load reports these through events rather than failing outright, so one
-malformed record does not cost the caller the rest of the conversation.
+Finally, there are literals for integers, floats, and strings.
 
+Whitespace is used to separate symbols. Any character not caught by the above categories, such as $ in the middle of an identifier or #, is treated as invalid.
 
-Finally, the engine exposes an interface to see the following:
+The expression `identifier` asks the user for the value of the function "identifier" with no arguments, using an interrupt. Then, `identifier` is replaced with the literal for that value.
 
-Constant accessors. Channels are optional and default to "main".
- - From an actor and conversation, get the current channel and position
- - From a actor and conversation, get choices currently appearing to this actor
- - From a channel, get current actors in channel
- - From a channel and position, get current actors in channel at that position
- - From a hub position and conversation, get any hub property, including object properties
- - From an actor and conversation, get any actor property including additional properties
- - From a speaker, get any speaker property including additional properties
- - From a conversation, get any Variant from the story state
- - From tags, get hub positions
- - From flags, get hub positions
- - From channels, get hub positions
- - From priority constraints, get hub positions
- - From a speaker, get actors speaking as that speaker
- - From a speaker, get actors listening to that speaker
- - Get spectators
- - Get debug actors
+An expression made up of literals and operators alone has a known value.
 
-Getters that return multiple of something should generally be in the form of
-an iterator, taking a blank object as the starting argument and returning a
-blank object when all objects have been iterated through. Since objects in the
-conversation, actors, and so on are generally registered via integers, there is
-always a canonical ordering with which to iterate through these sets without
-having to expose complex collections to the user.
+The expression `a(b, c)` first evaluates b and c. If b is only made up of literals and operators, the value is known already. If not, the user is asked the value of b. Same with c. Once b, c are resolved, the user is asked the value of a, which must be an identifier in this expression, with arguments equal to the literals that b and c resolved to. If a is not an identifier, the expression is invalid. 
 
-Modifiers
- - Load a conversation from a file created from the editor
- - Unload a conversation
- - Load actors and speakers from a speaker config created from the editor and add them to a conversation
- - Add an actor with speak as, listen to config to a conversation
- - Add a spectator to a conversation
- - Add a debug actor to a conversation
- - Remove an debug, spectator, or regular actor.
- - Select a choice from an actor, choice index and conversation
- - Force a warp from an actor, target, optional target choice index, and conversation
- - Force a change of position from an actor, position, and conversation.
- - Force a change of position from a channel, position, and conversation.
- - Force a channel change with an actor, channel, and conversation
- - Change the story state with a variable, variant and conversation
-
-All functions that take a conversation, actor, or position should return errors
-for when any of those objects are invalid. Story state variables, however, 
-cannot be invalid, and default to 0 if they haven't been initialized.
-
-# Configuration
-The spoke rule and singleplayer rule can be configured by making calls to the
-engine.
+Again, we have to make an exception to the aspiration about encoding-free implementation, since the encoding of expressions must be known to parse them. The encoding used by expressions can be set in the context config.
 
 # Example Flows
 !!!WARNING Extremely boring technical program flow ahead! Not really practical? More to help me implement and test the code. Lol.
