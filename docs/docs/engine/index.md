@@ -98,7 +98,7 @@ This is not a spec for the code syntax of the engine. This is more of a mathemat
 
 Rules assume the presence of a context and a conversation.
 
-Rules are ordered. If rule R was stated *before* rule S below, and there is a contradiction, rule R should be followed with a warning in the implementation that they conflict.
+Rules are ordered. If rule R was stated *before* rule S below, and there is a contradiction, rule R should be followed with a warning in the implementation that they conflict. The second consequence of this is that if rule R changes the value of f(), but also depends on f(), the value of f() it depends on is determined by previous rules.
 
 Rules are exposed to the user as an enum, alongside a function that converts from rules to rule names.
 
@@ -231,8 +231,12 @@ If choice(x, A) is available, choose(x, A) = standard, x, moving A to x and retu
 ### Auto Choose
 if choose(x, A) and auto(x), choose(x, a) = auto, auto(x).
 
+Note that the debug rule takes priority over this rule by precedence. So choose(x, A) on an auto hub, debug actor will move to x, not auto(x), with rule "debug".
+
 ### Auto Visible Rule
 If tag(x) | AUTO, visible(x, A) for all A.
+
+The Auto Choose rule prevents auto hubs from actually appearing, despite being "visible". Unless tag(A) | DEBUG, this rule serves the purpose of making sure auto hubs are generally available as choices unless later rules about expressions and such change that.
 
 ### Singleplayer Rule 1
 If choose(x, A) != singleplayer, visible(x, A), and !visible(x, B) for all B != A, choose(y, A) = singleplayer

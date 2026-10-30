@@ -541,8 +541,13 @@ impl Simulator {
     // it come apart: a recipient may lead another character's speech.
     let owners = Owned::of(target);
 
-    // Speaking as an owner is an outright claim.
-    if owners.spoken_by(entry.speak_as()) {
+    // Standard uses the target's voice as this actor hears it. An anonymous hub
+    // takes the actor's first voice, which ownership alone cannot represent.
+    // Private recipients are also owners, even when the speaker is somebody else.
+    let voice = Self::hub_speaker_for(context, conversation, actor, target.position());
+    if (voice != LOUDER_NAME_NONE && entry.speak_as().contains(&voice))
+      || owners.spoken_by(entry.speak_as())
+    {
       return ChoiceAvailableError::NoError;
     }
 
@@ -620,14 +625,21 @@ impl Simulator {
       return ChoiceRule::Invisible;
     }
 
-    if owners.spoken_by(entry.speak_as()) {
+    let voice = Self::hub_speaker_for(context, conversation, actor, target.position());
+    if (voice != LOUDER_NAME_NONE && entry.speak_as().contains(&voice))
+      || owners.spoken_by(entry.speak_as())
+    {
       return ChoiceRule::Standard;
     }
     if !owners.held_by_other(context, conversation, actor) {
-      // heard but not held: if the actor does not speak as an owner, it is
-      // leading through listening (the skill rule).
-      if owners.spoken_by(entry.speak_as()) {
-        return ChoiceRule::Standard;
+      // Public speech can be visible without being listened to. That is the
+      // spoke rule, not a skill the actor has; an explicitly heard public
+      // speaker still takes the skill branch.
+      if let Owned::Spoken(speaker) = owners
+        && context.is_speaker_public(speaker)
+        && !heard.contains(&speaker)
+      {
+        return ChoiceRule::Spoke;
       }
       return ChoiceRule::Skill;
     }

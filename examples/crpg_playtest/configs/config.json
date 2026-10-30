@@ -81,19 +81,7 @@
 		"position_offset:x": "0.0",
 		"position_offset:y": "340.0",
 		"relationships": "0",
-		"type": "speaker",
-		"voice": ""
-	},
-	{
-		"color": "ffffffff",
-		"conversation_id": "15",
-		"description": "",
-		"flags": "1",
-		"listening": "Volition\nStructure\nSight\nStrategy\nLife\nDeath",
-		"name": "Freya",
-		"position_offset:x": "0.0",
-		"position_offset:y": "740.0",
-		"relationships": "0",
+		"tags": "player_character",
 		"type": "speaker",
 		"voice": ""
 	},
@@ -179,6 +167,7 @@
 		"position_offset:x": "0.0",
 		"position_offset:y": "1140.0",
 		"relationships": "0",
+		"tags": "player_character",
 		"type": "speaker",
 		"voice": ""
 	},
@@ -190,19 +179,6 @@
 		"name": "Cage",
 		"position_offset:x": "-340.0",
 		"position_offset:y": "1140.0",
-		"relationships": "0",
-		"type": "speaker",
-		"voice": ""
-	},
-	{
-		"color": "ffffffff",
-		"conversation_id": "24",
-		"description": "",
-		"flags": "1",
-		"listening": "Heart\nStars\nPlanets\nMemory\nRhythm\nFuture",
-		"name": "Benjamin",
-		"position_offset:x": "0.0",
-		"position_offset:y": "1540.0",
 		"relationships": "0",
 		"type": "speaker",
 		"voice": ""
@@ -228,19 +204,7 @@
 		"position_offset:x": "560.0",
 		"position_offset:y": "280.0",
 		"relationships": "0",
-		"type": "speaker",
-		"voice": ""
-	},
-	{
-		"color": "ffffffff",
-		"conversation_id": "5",
-		"description": "",
-		"flags": "1",
-		"listening": "",
-		"name": "Fosser",
-		"position_offset:x": "680.0",
-		"position_offset:y": "700.0",
-		"relationships": "0",
+		"tags": "player_character",
 		"type": "speaker",
 		"voice": ""
 	},
@@ -365,9 +329,45 @@
 		"voice": ""
 	},
 	{
-		"position:x": "-1991.78845214844",
-		"position:y": "736.950378417969",
+		"color": "ffffffff",
+		"conversation_id": "24",
+		"description": "",
+		"flags": "1",
+		"listening": "Heart\nStars\nPlanets\nMemory\nRhythm\nFuture",
+		"name": "Benjamin",
+		"position_offset:x": "340.0",
+		"position_offset:y": "1520.0",
+		"relationships": "0",
+		"tags": "player_character",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"color": "ffffffff",
+		"conversation_id": "15",
+		"description": "",
+		"flags": "1",
+		"listening": "Volition\nStructure\nSight\nStrategy\nLife\nDeath",
+		"name": "Freya",
+		"position_offset:x": "340.0",
+		"position_offset:y": "720.0",
+		"relationships": "0",
+		"tags": "player_character",
+		"type": "speaker",
+		"voice": ""
+	},
+	{
+		"conversation_id": "30",
+		"position_offset:x": "782.497741699219",
+		"position_offset:y": "777.605590820313",
+		"speaker": "Note",
+		"text": "the \"player_character\" tag is not special to the engine, it's just used by this demo to identify player characters and load actors which speak as them at startup.",
+		"type": "hub"
+	},
+	{
+		"position:x": "42.0556640625",
+		"position:y": "350.648986816406",
 		"type": "camera",
-		"zoom": "0.75131446123123"
+		"zoom": "0.82644593715668"
 	}
 ]

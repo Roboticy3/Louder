@@ -79,7 +79,11 @@ metadata/_custom_type_script = "uid://cpdekulpatyo0"
 [node name="TextSectionWrapper" type="VBoxContainer" parent="." unique_id=175791466]
 layout_mode = 2
 
-[node name="name" parent="TextSectionWrapper" unique_id=42355890 groups=["autocomplete_speaker", "hub_component"] instance=ExtResource("2_kglcw")]
+[node name="tags" parent="TextSectionWrapper" unique_id=42355890 groups=["autocomplete_expression", "hub_component"] instance=ExtResource("2_kglcw")]
+layout_mode = 2
+placeholder_text = "tag1, tag2, ..."
+
+[node name="name" parent="TextSectionWrapper" unique_id=178278940 groups=["autocomplete_speaker", "hub_component"] instance=ExtResource("2_kglcw")]
 layout_mode = 2
 size_flags_vertical = 0
 placeholder_text = "Name"

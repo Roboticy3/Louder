@@ -94,6 +94,9 @@ func load_conversation_file(file_path) -> int:
 ## Load the speaker config, which the engine holds once for every conversation
 ## rather than once per document.
 func load_conversation_config_file(file_path) -> int:
+	if !multiplayer.is_server():
+		return -1
+	
 	var file := FileAccess.open(file_path, FileAccess.READ)
 	if FileAccess.get_open_error() != OK:
 		push_error("Failed to open config %s." % file_path)

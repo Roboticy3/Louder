@@ -25,6 +25,15 @@ func _ready() -> void:
 	_check(LouderContextGlobal.get_choice_rule(conversation, 0, benjamin, 0) == "spoke",
 		"one player advancing Marrow's public line uses spoke")
 
+	# The main hub's anonymous choices inherit Benjamin's voice, so Standard
+	# takes priority over Skill and Spoke. Its explicit Geno choice remains Spoke.
+	var main_benjamin := _add_actor(context, conversation, "Benjamin", 6)
+	var main_rules: Array[String] = []
+	for choice_index in 4:
+		main_rules.append(LouderContextGlobal.get_choice_rule(conversation, 6, main_benjamin, choice_index))
+	_check(main_rules == ["spoke", "standard", "standard", "standard"],
+		"the main hub labels anonymous Benjamin choices standard (got %s)" % str(main_rules))
+
 	# Case B: adding other players does not make Marrow a played voice or add her
 	# to anyone's listening lists, so every player's classification stays spoke.
 	var reka := _add_actor(context, conversation, "Reka")
@@ -51,9 +60,9 @@ func _ready() -> void:
 	_finish()
 
 
-func _add_actor(context: LouderContext, conversation: int, speaker: String) -> int:
+func _add_actor(context: LouderContext, conversation: int, speaker: String, position: int = 0) -> int:
 	var speak_as: Array[int] = [context.make_name(speaker)]
-	return context.add_actor(conversation, 0, 0, speak_as, [])
+	return context.add_actor(conversation, position, 0, speak_as, [])
 
 
 func _check(condition: bool, message: String) -> void:

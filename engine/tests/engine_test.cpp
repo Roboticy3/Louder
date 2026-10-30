@@ -2038,6 +2038,13 @@ void TestAnAnonymousHubSpeaksAsWhoeverWalksOntoIt() {
         "and as B for the second, saw %s",
         ReadName(get_hub_speaker_for_actor(g_ctx, conversation, 5, actor_b)).c_str());
 
+  // Standard is the first matching choice rule: each actor is taking a hub
+  // projected into its own voice, not exercising a skill or speaking for nobody.
+  CHECK(get_hub_choice_rule(g_ctx, conversation, 0, actor_a, 0) == static_cast<int32_t>(ChoiceRule::Standard),
+        "A's anonymous choice should use the standard rule");
+  CHECK(get_hub_choice_rule(g_ctx, conversation, 0, actor_b, 0) == static_cast<int32_t>(ChoiceRule::Standard),
+        "B's anonymous choice should use the standard rule");
+
   // The first actor walks onto the hub, which speaks in that actor's voice.
   CHECK(select_choice(g_ctx, conversation, actor_a, 0) == 0,
         "the first actor should be able to walk onto the anonymous hub");

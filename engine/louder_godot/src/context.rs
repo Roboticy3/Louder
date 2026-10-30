@@ -554,6 +554,30 @@ godot_api! {
         .collect()
     }
 
+    /// The rule behind a choice's availability, as a `ChoiceRule` value.
+    ///
+    /// Returns -1 for a negative choice index. Other values are the engine's
+    /// `ChoiceRule` discriminants, including `Invisible` and `Held`.
+    #[func]
+    pub fn get_hub_choice_rule(
+      &self,
+      conversation: engine::LouderName,
+      position: engine::LouderPosition,
+      actor_perspective: engine::LouderActor,
+      choice_index: i32,
+    ) -> i32 {
+      if choice_index < 0 {
+        return -1;
+      }
+      engine::Simulator::choice_rule(
+        &self.inner,
+        conversation,
+        actor_perspective,
+        position,
+        choice_index as usize,
+      ) as i32
+    }
+
     /// The text of a choice on a hub as a name, or
     /// [`LOUDER_NAME_NONE`](engine::LOUDER_NAME_NONE).
     ///
