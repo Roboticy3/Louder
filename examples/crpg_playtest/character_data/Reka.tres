@@ -5,6 +5,7 @@
 [resource]
 script = ExtResource("1_ied1f")
 name = "Reka"
+color = Color(0.47905946, 0.7833624, 0.37371203, 1)
 description = "Once each year, the coming-of-age cohorts of Saturnio, Brunils, and Extrimitas follow the unique tradition of travelling East, across Lanmar, to East Breach, an ancient holy site in some Roulite practices. And it's awesome. Parties, couples, discoveries, and magic all follow the trails like rainbow fish in a stream.
 
 You set out a year late, at 19, since you were helping your parents with their cartography business. You have an impeccable sense of direction, and believe that you can guide your soul as well. That's what saw in them, your new friends. You were \"directed\" towards them. Their names are Gabir and Stella. You didn't know them before, but all three of you are from [[Extrimitas]]. You like the same plays, and know the same dances. Summer is your favorite season, and theirs' too. 

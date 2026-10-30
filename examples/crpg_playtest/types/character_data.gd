@@ -3,6 +3,7 @@ class_name CharacterData extends Resource
 const ACTOR_FLAG_DEBUG := 0x2
 
 @export var name: String
+@export var color: Color
 @export_multiline var description: String
 @export var is_debug := false
 

@@ -5,6 +5,7 @@
 [resource]
 script = ExtResource("1_gmsw2")
 name = "Geno"
+color = Color(0.3487968, 0.76684225, 0.8760628, 1)
 description = "RESUME
 
 Geno Krasimir, 32. CEC Inc. 2nd Street, East Breach, Lanmar.

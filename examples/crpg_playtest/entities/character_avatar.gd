@@ -10,10 +10,29 @@ class_name CharacterAvatar extends Node3D
 @export var group := &"character_avatar"
 @export var character_controller_group := &"character_controller"
 
+func propogate_color(c:Color):
+	if !is_inside_tree():
+		return
+	var mat := ORMMaterial3D.new()
+	mat.albedo_color = c
+	for n in find_children("*"):
+		if !is_instance_valid(n):
+			continue
+		if n is GeometryInstance3D:
+			n.material_overlay = mat
+		n.set("color", c)
+		n.set("modulate", c)
+
 func _ready() -> void:
+	if !character_data:
+		push_error("CharacterData at ", self, " is null!")
+		return
+	
 	add_to_group(group)
 	navigation_agent.path_changed.connect(_on_path_changed)
 	navigation_agent.target_reached.connect(_on_target_reached)
+	
+	propogate_color.call_deferred(character_data.color)
 
 var navigation_input := Vector3.ZERO
 
