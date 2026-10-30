@@ -1,15 +1,2 @@
 # Project Update
-
-<<<<<<< HEAD
-# MVP:
- - [x] basic interface
- - [x] serialization
- - [x] simulation
- - [x] documentation
- - [ ] portability
- - [x] multiplayer
-=======
-This project is going undercover at least until I finish some strong examples to push the engine with. I'm going to archive this repo and work on the engine privately, then replace the repo when things are ready.
->>>>>>> main
-
-I don't think anybody is following this project, but I've been trying to work in a robust enough way that someone could anyway. It was a lot of pressure and it clouded where I wanted to place my priorities.
+I set up a private forge server and I'll be working from there from now. I'll set up a personal webpage soon to report on progress for this project.
