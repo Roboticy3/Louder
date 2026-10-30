@@ -12,6 +12,8 @@ class_name ScrollingDialogue extends Control
 ## shown every hub and offered none of them, which is the wrong shape for a player.
 @export_flags("Spectator", "Debug") var actor_flags := 0
 
+@export var show_rules := true
+
 var conversation := -1
 var player_actor := -1
 
@@ -69,13 +71,13 @@ func _on_event(event: Dictionary):
 	_on_line_revealed(speaker, text, is_background)
 
 	var choice_indices: Array = motion_dict.get("choice_indices", [])
-	var choice_texts: PackedStringArray = motion_dict.get("choice_texts", PackedStringArray())
+	var revealed_choices: Array = motion_dict.get("choices", [])
 	_choice_indices = []
 	for idx in choice_indices:
 		_choice_indices.append(int(idx))
-	_on_choices_revealed(choice_texts)
+	_on_choices_revealed(revealed_choices)
 
-	if choice_texts.is_empty() and _revealed_anything:
+	if revealed_choices.is_empty() and _revealed_anything:
 		_on_conversation_finished()
 
 ## Which hub the player is standing on. Not named get_position: Control already
@@ -106,17 +108,20 @@ func _refresh_choices() -> void:
 	print("position: ", LouderContextGlobal.context.get_actor_position(conversation, player_actor))
 	_choice_indices = LouderContextGlobal.get_available_choice_indices(conversation, player_actor)
 	
-	var hub := LouderContextGlobal.context.get_hub(conversation, 6)
-	var texts := PackedStringArray()
+	var revealed_choices: Array[Dictionary] = []
 	for index in _choice_indices.size():
-		texts.append(LouderContextGlobal.get_choice_text(conversation, get_hub_position(), player_actor, _choice_indices[index]))
+		var choice_index := _choice_indices[index]
+		revealed_choices.append({
+			"rule": LouderContextGlobal.get_choice_rule(conversation, get_hub_position(), player_actor, choice_index),
+			"text": LouderContextGlobal.get_choice_text(conversation, get_hub_position(), player_actor, choice_index),
+		})
 
-	_on_choices_revealed(texts)
+	_on_choices_revealed(revealed_choices)
 
 	# One actor means nobody else is going to move the flow along, so a hub that
 	# offers nothing is the end of the conversation. More than one actor will need
 	# a better test than that.
-	if texts.is_empty() and _revealed_anything:
+	if revealed_choices.is_empty() and _revealed_anything:
 		_on_conversation_finished()
 
 var scrolling_to_bottom := false
@@ -125,18 +130,25 @@ func _on_line_revealed(speaker: String, text: String, background: bool) -> void:
 	line.setup(speaker, text, background)
 	lines.add_child(line)
 
-func _on_choices_revealed(texts: PackedStringArray) -> void:
+func _on_choices_revealed(revealed_choices: Array) -> void:
 	for child in choices.get_children():
 		choices.remove_child(child)
 		child.queue_free()
 
-	for row in texts.size():
+	for row in revealed_choices.size():
+		var choice_data: Dictionary = revealed_choices[row]
+		var text := str(choice_data.get("text", ""))
+		var rule :=str(choice_data.get("rule", ""))
+		if rule == "spoke" or rule == "skill":
+			text = "CONTINUE."
+		if show_rules:
+			text = "(%s): %s" % [choice_data.get("rule", "RULE MISSING!"), text]
 		var choice := choice_scene.instantiate() as DialogueChoice
-		choice.setup(row, texts[row])
+		choice.setup(row, text)
 		choice.chosen.connect(_on_choice_chosen)
 		choices.add_child(choice)
 	
-	if texts.is_empty():
+	if revealed_choices.is_empty():
 		choices.custom_minimum_size.y = 0.0
 	else:
 		choices.custom_minimum_size.y = scroll_container.size.y * .3

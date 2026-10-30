@@ -61,6 +61,9 @@ const _EVENT_ACTOR_ADDED := 12
 const _EVENT_ACTOR_REMOVED := 13
 const _EVENT_LOAD_ERROR := 18
 
+# LouderContext.get_hub_choice_rule returns the engine's ChoiceRule discriminant.
+const _CHOICE_RULE_NAMES := ["standard", "skill", "spoke", "debug", "invisible", "held"]
+
 ## The engine. Every question about a conversation is answered out of it, and on
 ## every peer it is that peer's own context rather than the server's.
 var context := LouderContext.new()
@@ -204,6 +207,14 @@ func get_choice_text(conversation: int, position: int, actor: int, choice_index:
 	return resolve_name(context.get_hub_choice_text(conversation, position, actor, choice_index))
 
 
+## The rule that made a choice available, as the engine's lower-case rule name.
+func get_choice_rule(conversation: int, position: int, actor: int, choice_index: int) -> String:
+	var rule: int = context.get_hub_choice_rule(conversation, position, actor, choice_index)
+	if rule < 0 or rule >= _CHOICE_RULE_NAMES.size():
+		return "unknown"
+	return _CHOICE_RULE_NAMES[rule]
+
+
 ## The speaker of a hub, already as text, as the actor in hand would hear it.
 ##
 ## A hub with no speaker of its own is anonymous: it speaks in the voice of
@@ -328,11 +339,14 @@ func _pass_motion(event: LouderEvent) -> void:
 	motion_dict["speaker_text"] = speaker
 	motion_dict["text"] = text
 	var choice_indices := get_available_choice_indices(int(event_dict["conversation"]), int(event_dict["actor"]))
-	var choice_texts := PackedStringArray()
+	var choices: Array[Dictionary] = []
 	for idx in choice_indices:
-		choice_texts.append(get_choice_text(int(event_dict["conversation"]), int(motion_dict["target_position"]), int(event_dict["actor"]), idx))
+		choices.append({
+			"rule": get_choice_rule(int(event_dict["conversation"]), int(motion_dict["target_position"]), int(event_dict["actor"]), idx),
+			"text": get_choice_text(int(event_dict["conversation"]), int(motion_dict["target_position"]), int(event_dict["actor"]), idx),
+		})
 	motion_dict["choice_indices"] = choice_indices
-	motion_dict["choice_texts"] = choice_texts
+	motion_dict["choices"] = choices
 	var kind := int(event_dict["kind"])
 	var background_flag := 1 if background else 0
 	motion.emit(int(event_dict["conversation"]), int(event_dict["actor"]), int(motion_dict["target_position"]), background_flag, speaker, kind)
