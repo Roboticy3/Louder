@@ -32,6 +32,7 @@ func _ready() -> void:
 	_check(loaded == 0, "the two-actor conversation loads (code %d)" % loaded)
 
 	var dialogue := (load(SCENE) as PackedScene).instantiate() as ScrollingDialogue
+	dialogue.show_rules = false
 	add_child(dialogue)
 	await get_tree().process_frame
 	LouderContextGlobal.event_received.connect(_on_event)

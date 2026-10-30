@@ -82,7 +82,9 @@ func _walk(conversation: int, actor: int) -> void:
 			"step %d: one button per offered choice (%d offered, %d on screen)" % [step, indices.size(), choices.get_child_count()])
 		for row in mini(indices.size(), choices.get_child_count()):
 			var rule := LouderContextGlobal.get_choice_rule(conversation, position, actor, indices[row])
-			var wanted := "CONTINUE." if rule == "spoke" else LouderContextGlobal.get_choice_text(conversation, position, actor, indices[row])
+			var wanted := "CONTINUE." if rule in ["spoke", "skill"] else LouderContextGlobal.get_choice_text(conversation, position, actor, indices[row])
+			if _dialogue.show_rules:
+				wanted = "(%s): %s" % [rule, wanted]
 			_check((choices.get_child(row) as Button).text == wanted,
 				"step %d: row %d renders engine choice %d according to its %s rule" % [step, row, indices[row], rule])
 
