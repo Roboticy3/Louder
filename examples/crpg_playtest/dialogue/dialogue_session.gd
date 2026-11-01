@@ -79,8 +79,15 @@ func join(conversation_id: int, peer_id: int, character: CharacterData) -> int:
 	if !_is_authority():
 		return NO_ACTOR
 
-	var actor: int = LouderContextGlobal.connect_actor(
-		conversation_id, [start_tag], character.get_actor_flags(), character.get_speaker_names())
+	# A started conversation already has an actor for every player character, so
+	# joining is looking the peer's actor up rather than adding a second one.
+	# The connect call is only for conversations that were loaded without being
+	# started, which is how the engine-level tests drive one.
+	var speaker := get_speaker(peer_id)
+	var actor: int = LouderContextGlobal.get_actor_for_speaker(conversation_id, speaker)
+	if actor == NO_ACTOR:
+		actor = LouderContextGlobal.connect_actor(
+			conversation_id, [start_tag], character.get_actor_flags(), character.get_speaker_names())
 	_bind(peer_id, actor)
 	peer_joined.emit(peer_id, actor)
 	return actor
@@ -150,7 +157,7 @@ func select_choice(peer_id: int, row: int) -> bool:
 		push_error("Peer %d has no dialogue choice in row %d." % [peer_id, row])
 		return false
 
-	return LouderContextGlobal.select_choice(conversation, actor, indices[row])
+	return LouderContextGlobal.select_choice(conversation, get_speaker(peer_id), indices[row])
 
 
 ## The engine's choice index behind a row, which is what the engine is handed.
@@ -164,7 +171,7 @@ func get_choice_index(peer_id: int, row: int) -> int:
 # -- what the engine did ------------------------------------------------
 
 ## An actor was added somewhere, which may be this session's peer.
-func _on_actor_added(conversation_id: int, actor: int) -> void:
+func _on_actor_added(conversation_id: int, actor: int, _speak_as: Array) -> void:
 	if conversation_id != conversation:
 		return
 

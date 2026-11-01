@@ -70,14 +70,11 @@ func _ready() -> void:
 	# What a real client cannot hear that way is driven by hand: a context
 	# that knows exactly what a real client knows - the config and the
 	# document, and no actors - and the real relay handlers called against
-	# it with the data the server relays.
-	var original: Actor = LouderContextGlobal.context.get_actor(conversation, actor)
-	_check(original != null, "the server's context holds the actor to relay")
-	if original == null:
-		LouderContextGlobal.context = saved_context
-		dialogue.queue_free()
-		_finish()
-		return
+	# it with the data the server relays. Every actor is relayed in the order
+	# the server numbered them, which is what makes the client's ids match.
+	var server_context := LouderContextGlobal.context
+	var actors: Array = server_context.get_actor_ids(conversation)
+	_check(not actors.is_empty(), "the server's context holds actors to relay")
 
 	var client_context := LouderContext.new()
 	var config_text := FileAccess.open(CONFIG, FileAccess.READ).get_as_text()
@@ -87,23 +84,34 @@ func _ready() -> void:
 	_check(client_context.load_conversation(conversation, document_text) == 0,
 		"the client's context loads the document")
 
-	var server_context := LouderContextGlobal.context
 	LouderContextGlobal.context = client_context
-	LouderContextGlobal._actor_added(conversation, actor,
-		original.get_position(), original.get_flags(), original.speak_as(), original.listen_to())
+	for actor_id in actors:
+		var original: Actor = server_context.get_actor(conversation, int(actor_id))
+		LouderContextGlobal._actor_added(conversation, int(actor_id),
+			original.get_position(), original.get_flags(), original.speak_as(), original.listen_to())
 	LouderContextGlobal.context = server_context
 
 	_check(client_context.get_actor(conversation, actor) != null,
 		"the client's context holds a copy of the actor")
 
-	var position: int = original.get_position()
+	var target: int = 6
 	LouderContextGlobal.context = client_context
-	LouderContextGlobal._motion(conversation, actor, position, 0, client_character.name, 3)
+	LouderContextGlobal._motion({
+		"conversation": conversation,
+		"actor": actor,
+		"kind": 3,
+		"motion": {
+			"target_position": target,
+			"background": false,
+			"speaker": client_context.make_name(client_character.name),
+		},
+	})
 	LouderContextGlobal.context = server_context
 
 	var copy: Actor = client_context.get_actor(conversation, actor)
-	_check(copy != null and copy.get_position() == position,
-		"the client's copy followed the motion")
+	_check(copy != null and copy.get_position() == target,
+		"the client's copy followed the motion to hub %d (got %d)" % [
+			target, copy.get_position() if copy != null else -1])
 
 	LouderContextGlobal.context = saved_context
 	dialogue.queue_free()

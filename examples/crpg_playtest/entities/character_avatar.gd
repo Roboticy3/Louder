@@ -143,22 +143,12 @@ func _on_target_reached():
 		DebugDraw3d.draw_arrow_line(interactable.get_interact_position(), interactable.global_position, Color.RED)
 		DebugDraw3d.draw_arrow(body.global_position, -body.global_basis.z * 3, Color.BLUE)
 		
-		# The client that controls this avatar opens its own dialogue UI; the
-		# host is the one that creates the conversation and adds the actors.
+		# The controller of the peer that plays this avatar asks for the
+		# conversation. The server creates the actors for every player
+		# character as part of that request, so the host does not start the
+		# conversation on the avatar's behalf here.
 		print("starting dialogue with ", interactable)
 		get_tree().call_group(character_controller_group, &"_on_avatar_request_dialogue", self, interactable)
-
-		if multiplayer.is_server():
-			var document_path := interactable.conversation_path
-			if document_path != "":
-				var conv: int
-				if interactable.conversation_id == -1:
-					conv = LouderContextGlobal.context.make_name(document_path)
-					interactable.conversation_id = conv
-					LouderContextGlobal.start_conversation_rpc(document_path, NodePath(""), character_data.name)
-				else:
-					conv = interactable.conversation_id
-					LouderContextGlobal.connect_actor(conv, ["start"], character_data.get_actor_flags(), character_data.get_speaker_names(), [])
 	
 	intent_to_interact = null
 	nav_state = NavigationState.Idle

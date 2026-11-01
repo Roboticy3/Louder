@@ -41,6 +41,14 @@ signal callback_raised(callback: String)
 
 const SERVER_ID := 1
 
+## The speaker tag this demo uses to mark the characters a player may control.
+## The tag is not special to the engine; it is read out of the speaker config and
+## every speaker carrying it gets an actor when a conversation starts.
+const PLAYER_CHARACTER_TAG := "player_character"
+
+# Where a player character's actor enters a conversation.
+const PLAYER_CHARACTER_START_TAGS := ["start"]
+
 # The engine writes plain integers across the boundary, and its blanks are all
 # minus one, so the caller of a Louder function gets them back as ints.
 const NO_NAME := -1
@@ -68,6 +76,12 @@ const _CHOICE_RULE_NAMES := ["standard", "skill", "spoke", "debug", "invisible",
 ## every peer it is that peer's own context rather than the server's.
 var context := LouderContext.new()
 
+## The speakers the loaded config tagged as player characters, in config order.
+## Starting a conversation creates one actor for each of them, so that a
+## conversation always holds the same actors regardless of which interfaces are
+## open or which peers have asked to join.
+var player_character_speakers: Array[String] = []
+
 
 func _process(_delta: float) -> void:
 	# Only the server has anything to read here. Every other peer is told what
@@ -93,23 +107,67 @@ func load_conversation_file(file_path) -> int:
 
 ## Load the speaker config, which the engine holds once for every conversation
 ## rather than once per document.
+##
+## Every peer loads it, not just the server: the config decides the order the
+## engine interns speaker names, and that order has to be the same everywhere
+## for the ids in relayed events to mean the same thing.
 func load_conversation_config_file(file_path) -> int:
-	if !multiplayer.is_server():
-		return -1
-	
 	var file := FileAccess.open(file_path, FileAccess.READ)
 	if FileAccess.get_open_error() != OK:
 		push_error("Failed to open config %s." % file_path)
 		return -1
 
-	var failure: int = context.load_conversation_config(file.get_as_text())
+	var text := file.get_as_text()
+	var failure: int = context.load_conversation_config(text)
 	if failure != LOAD_OK:
 		push_error("Failed to load config %s: %s" % [file_path, LouderLoader.error_name(failure)])
 		return -1
+
+	player_character_speakers = _read_player_character_speakers(text)
 	return 0
 
 
+## The speakers carrying `player_character` in a config document, in file order.
+##
+## The config is read here rather than asked of the engine because the engine
+## has no query for "every speaker with a tag": it can only answer that question
+## once a speaker is named.
+func _read_player_character_speakers(text: String) -> Array[String]:
+	var speakers: Array[String] = []
+	var records = JSON.parse_string(text)
+	if not records is Array:
+		return speakers
+
+	for record in records:
+		if not record is Dictionary:
+			continue
+		if str(record.get("type", "")) != "speaker":
+			continue
+		var tags := str(record.get("tags", "")).replace(",", " ").replace("\t", " ").replace("\n", " ").split(" ", false)
+		if PLAYER_CHARACTER_TAG not in tags:
+			continue
+		var speaker := str(record.get("name", ""))
+		if speaker != "":
+			speakers.append(speaker)
+	return speakers
+
+
+
 # -- starting and joining ----------------------------------------------
+
+## Ask the server to start a conversation.
+##
+## The player's interface calls this, in practice through
+## `ScrollingDialogue.start_conversation`. Nothing else is needed afterwards:
+## the server creates an actor for every player character as part of starting
+## the conversation, so the caller's actor is already there when the
+## conversation is announced.
+func start_conversation(document_path: String, source: NodePath, source_character: String) -> void:
+	if _is_authority():
+		start_conversation_rpc(document_path, source, source_character)
+	else:
+		start_conversation_rpc.rpc_id(SERVER_ID, document_path, source, source_character)
+
 
 ## Start a conversation document and announce it, `source` being the node that
 ## asked, which is how the nodes that wanted it tell each other apart.
@@ -129,24 +187,69 @@ func start_conversation_rpc(document_path: String, source: NodePath, source_char
 	# rather than made again on each peer, so that this is one conversation and
 	# not one per peer's interning order.
 	var conversation: int = context.make_name(document_path)
-	_started(conversation, document_path, source, source_character)
+	if !_load_conversation(conversation, document_path):
+		return
+	_report_load_failures()
+
+	# Tell the other peers which document to load before any actor copies are
+	# relayed to them, so their contexts know the conversation first.
 	_started.rpc(conversation, document_path, source, source_character)
 
-	# Adding actors is the host's job too. The peer named by source_character is
-	# the one that walked up to the conversation, so it is the first actor in it.
-	if source_character != "":
-		var flags := 0
-		var speakers: Array = [source_character]
-		for character in Network.get_characters():
-			if str(character.name) == source_character:
-				flags = character.get_actor_flags()
-				speakers = character.get_speaker_names()
-				break
-		connect_actor(conversation, ["start"], flags, speakers, [])
+	# Every player character gets an actor now, whether or not a UI has joined.
+	# This is the whole of a UI's setup: it asked for the conversation and its
+	# actor exists before the conversation is announced to it.
+	_add_player_character_actors(conversation, source_character)
+
+	conversation_started.emit(conversation, source, source_character)
+	# Announce the actors and their opening hubs afterwards. By then the UI has
+	# been told which conversation it asked for, so it can claim its actor.
+	_drain()
+
+
+## Give every player character in the config an actor on the conversation's
+## opening hub, adding only the ones that are missing.
+##
+## Adding an actor already puts it on the hub, so the only one that needs to be
+## announced is the actor of the peer that asked: that announcement is what puts
+## the opening line on its screen. Announcing every actor would replay every one
+## of their opening motions and leave the requesting UI holding several copies of
+## the same line.
+func _add_player_character_actors(conversation: int, source_character: String) -> void:
+	var start: int = context.next_hub_from_tags(conversation, _intern(PLAYER_CHARACTER_START_TAGS), false, BLANK_POSITION)
+	if start == BLANK_POSITION:
+		push_error("Conversation %d has no hub tagged %s." % [conversation, PLAYER_CHARACTER_START_TAGS])
+		return
+
+	for speaker in player_character_speakers:
+		if get_actor_for_speaker(conversation, speaker) != NO_ACTOR:
+			continue
+		_add_actor(conversation, start, _actor_flags_for(speaker), [speaker], [])
+
+	if source_character == "":
+		return
+	var source_actor := get_actor_for_speaker(conversation, source_character)
+	if source_actor != NO_ACTOR:
+		announce_position(conversation, source_actor)
+
+
+## The actor flags for a player character, taken from its character data when
+## the catalog knows it. The speaker flags in the config are about visibility,
+## not about how an actor takes part, so they are not used here.
+func _actor_flags_for(speaker: String) -> int:
+	for character in Network.get_characters():
+		if str(character.name) == speaker:
+			return character.get_actor_flags()
+	return 0
+
 
 
 ## Put an actor into a conversation on the hub carrying any of `start_tags`, and
 ## announce both.
+##
+## This is the low-level way in, for tools, tests, and actors that are not
+## player characters. A conversation started through [method start_conversation]
+## already holds an actor for every player character, so an interface never
+## needs this: its actor is there before the conversation is announced.
 ##
 ## The tags and the speakers cross the wire as themselves rather than as interned
 ## ids, since the peer that answers the call is the one holding the ids.
@@ -196,6 +299,17 @@ func get_actor_position(conversation: int, actor: int) -> int:
 	return context.get_actor_position(conversation, actor)
 
 
+## The actor speaking as `speaker` in a conversation, or NO_ACTOR.
+##
+## The server keeps actor ids to itself: the interface knows which speaker it
+## plays and asks for the actor by name. The same lookup runs on every peer,
+## where the relayed copies make the answer agree.
+func get_actor_for_speaker(conversation: int, speaker: String) -> int:
+	if speaker == "":
+		return NO_ACTOR
+	return context.next_actor_speaking_as(conversation, context.make_name(StringName(speaker)), NO_ACTOR)
+
+
 ## The choices this actor may take where it stands, as engine choice indices.
 ##
 ## These are not positions in a list of anything the caller has built: the engine
@@ -238,21 +352,30 @@ func resolve_name(name: int) -> String:
 	return "" if name == NO_NAME else LouderNameContent.resolve(context, name)
 
 
-## Take an engine choice index from get_available_choice_indices.
+## Take an engine choice index from get_available_choice_indices, as the speaker
+## whose interface is asking.
 ##
 ## Only the server runs the engine, so a peer asks for the choice rather than
 ## taking it, and what it is told is that the request went out, not that the
 ## engine took it. A choice that was taken arrives as the motion it produces; a
 ## choice the engine refused arrives as nothing at all.
-func select_choice(conversation: int, actor: int, choice_index: int) -> bool:
+##
+## The peer sends the speaker it plays, not an actor id. Actor ids are the
+## server's bookkeeping and differ nowhere only because every peer adds actors
+## in the same order; the speaker is what the interface actually knows.
+func select_choice(conversation: int, speaker: String, choice_index: int) -> bool:
 	if _is_authority():
-		return _take_choice(conversation, actor, choice_index)
-	_take_choice.rpc_id(SERVER_ID, conversation, actor, choice_index)
+		return _take_choice(conversation, speaker, choice_index)
+	_take_choice.rpc_id(SERVER_ID, conversation, speaker, choice_index)
 	return true
 
 
 @rpc("any_peer", "call_remote", "reliable")
-func _take_choice(conversation: int, actor: int, choice_index: int) -> bool:
+func _take_choice(conversation: int, speaker: String, choice_index: int) -> bool:
+	var actor := get_actor_for_speaker(conversation, speaker)
+	if actor == NO_ACTOR:
+		push_error("No actor speaks as '%s' in conversation %d." % [speaker, conversation])
+		return false
 	if !context.select_choice(conversation, actor, choice_index):
 		push_error("The engine refused choice %d at hub %d." % [choice_index, context.get_actor_position(conversation, actor)])
 		return false
@@ -295,21 +418,32 @@ func _drain() -> void:
 
 @rpc("authority", "call_remote", "reliable")
 func _started(conversation: int, document_path: String, source: NodePath, source_character:String) -> void:
-	if multiplayer.is_server():
-		if !_load_conversation(conversation, document_path):
-			return
-		_report_load_failures()
+	if !_load_conversation(conversation, document_path):
+		return
+	_report_load_failures()
 	conversation_started.emit(conversation, source, source_character)
 
 
-## Relay an actor added on the server
+## Relay an actor added on the server.
+##
+## The copy is added here, in the order the server handed actors out, so that the
+## peer's own context can answer the UI's questions and so that later choices
+## asked for by speaker resolve to the same actor.
 @rpc("authority", "call_remote", "reliable")
 func _actor_added(conversation: int, actor: int, position: int, flags: int, speak_as: Array[int], listen_to: Array[int]) -> void:
+	if context.get_actor(conversation, actor) == null:
+		context.add_actor(conversation, position, flags, speak_as, listen_to)
+		# The copy's own actor-added event is bookkeeping; the event that
+		# matters has already been relayed from the server.
+		context.flush_events()
 	actor_added.emit(conversation, actor, speak_as)
 
 
 @rpc("authority", "call_remote", "reliable")
 func _actor_removed(conversation: int, actor: int) -> void:
+	if context.get_actor(conversation, actor) != null:
+		context.remove_actor(conversation, actor)
+		context.flush_events()
 	actor_removed.emit(conversation, actor)
 
 
@@ -329,6 +463,17 @@ func _motion(event_dict: Dictionary) -> void:
 	var background := bool(motion_dict["background"])
 	var speaker := resolve_name(int(motion_dict["speaker"]))
 	var kind := int(event_dict["kind"])
+
+	# Keep this peer's copy where the server put it. The move is replayed as a
+	# forced move rather than by taking the choice again, so the copy follows
+	# the server exactly without this peer running the engine.
+	if context.get_actor(conversation, actor) != null:
+		if kind == _EVENT_WARP:
+			context.force_warp(conversation, actor, target, NO_NAME, 0)
+		else:
+			context.force_position(conversation, actor, target, NO_NAME, 0)
+		context.flush_events()
+
 	motion.emit(conversation, actor, target, 1 if background else 0, speaker, kind)
 	event_received.emit(event_dict)
 

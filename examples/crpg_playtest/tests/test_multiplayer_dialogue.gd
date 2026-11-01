@@ -82,10 +82,12 @@ func _ready() -> void:
 	_check(LouderContextGlobal.get_line_speaker(conversation, 1, actor_benjamin) == "Benjamin",
 		"hub 1 is spoken by Benjamin")
 
-	# Taking a choice moves the actor and emits a motion through the multiplayer layer.
+	# Taking a choice moves the actor and emits a motion through the multiplayer
+	# layer. The caller names the speaker, not the actor: the server looks the
+	# actor up itself.
 	var motions_before := _motions.size()
-	var took: bool = LouderContextGlobal.select_choice(conversation, actor_benjamin, 0)
-	_check(took, "Benjamin's choice is accepted")
+	var took: bool = LouderContextGlobal.select_choice(conversation, "Benjamin", 0)
+	_check(took, "Benjamin's choice is accepted by speaker name")
 
 	# The peer that moved is now on hub 1.
 	_check(LouderContextGlobal.get_actor_position(conversation, actor_benjamin) == 1,

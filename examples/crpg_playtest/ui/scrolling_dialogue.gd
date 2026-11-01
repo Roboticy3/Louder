@@ -25,28 +25,53 @@ var _revealed_anything := false
 func _ready() -> void:
 	add_to_group(group)
 	
+	LouderContextGlobal.conversation_started.connect(_on_conversation_started)
 	LouderContextGlobal.actor_added.connect(_on_actor_added)
 	LouderContextGlobal.actor_removed.connect(_on_actor_removed)
 	LouderContextGlobal.event_received.connect(_on_event)
 	
 	visible = false
 
-func _on_actor_added(c:int, a:int, speak_as: Array):
-	var local_character := Network.get_character_of()
-	if local_character == null or str(local_character.name) != str(player_speaker):
+
+## Ask the server to start `document_path` for this dialogue's speaker.
+##
+## This is the only request the interface makes. The server creates an actor for
+## every player character as part of starting the conversation, so there is no
+## separate add-an-actor step to wait for: when `conversation_started` comes back
+## this dialogue's actor is already in the conversation.
+func start_conversation(document_path: String) -> void:
+	LouderContextGlobal.start_conversation(document_path, get_path(), str(player_speaker))
+
+
+func _on_conversation_started(c: int, source: NodePath, source_character: String) -> void:
+	# Only the dialogue that asked for this conversation claims it, and only in
+	# the speaker its own controller asked for. Other player characters have
+	# actors in every conversation now, so the speaker alone is not enough.
+	if source != get_path() or str(source_character) != str(player_speaker):
 		return
 
-	var is_mine := false
-	for name in speak_as:
-		if str(LouderContextGlobal.resolve_name(int(name))) == str(player_speaker):
-			is_mine = true
-			break
-	if not is_mine:
+	conversation = c
+	player_actor = LouderContextGlobal.get_actor_for_speaker(c, str(player_speaker))
+	visible = player_actor != -1
+
+
+func _on_actor_added(c: int, a: int, speak_as: Array) -> void:
+	# The actor of the conversation this dialogue started may arrive after the
+	# conversation was announced, since a client learns about it by relay.
+	if conversation != c or player_actor != -1:
+		return
+	if not _speaks_as(speak_as, player_speaker):
 		return
 
 	player_actor = a
-	conversation = c
 	visible = true
+
+
+func _speaks_as(speak_as: Array, speaker: StringName) -> bool:
+	for name in speak_as:
+		if str(LouderContextGlobal.resolve_name(int(name))) == str(speaker):
+			return true
+	return false
 
 func _on_actor_removed(c:int, a:int):
 	if conversation == c and player_actor == a:
@@ -100,7 +125,7 @@ func choose(row: int) -> void:
 		return
 
 	var choice_index := _choice_indices[row]
-	if !LouderContextGlobal.select_choice(conversation, player_actor, choice_index):
+	if !LouderContextGlobal.select_choice(conversation, str(player_speaker), choice_index):
 		push_error("The engine refused choice %d at hub %d." % [choice_index, get_hub_position()])
 		return
 

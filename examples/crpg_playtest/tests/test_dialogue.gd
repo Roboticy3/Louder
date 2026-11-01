@@ -13,6 +13,7 @@ const SCENE := "res://ui/scrolling_dialogue.tscn"
 const DOCUMENT := "res://conversations/marrow.json"
 const CONFIG := "res://configs/config.json"
 const STEPS := 6
+const HUB_FLAG_AUTO := 0b1
 
 var _dialogue: Control
 var _failures := 0
@@ -89,10 +90,23 @@ func _walk(conversation: int, actor: int) -> void:
 				"step %d: row %d renders engine choice %d according to its %s rule" % [step, row, indices[row], rule])
 
 		var before := lines.get_child_count()
-		(choices.get_child(0) as Button).emit_signal("pressed")
+		# Prefer a choice that leads straight to a hub. With other player
+		# characters in the conversation, a branch through an auto hub can
+		# dead-end for one actor even though this hub offered the choice.
+		var row_to_press := 0
+		for row in mini(indices.size(), choices.get_child_count()):
+			var target: int = LouderContextGlobal.context.get_hub_choice_link(
+				conversation, position, actor, int(indices[row]))
+			if target != -1 and (LouderContextGlobal.context.get_hub_flags(conversation, target) & HUB_FLAG_AUTO) == 0:
+				row_to_press = row
+				break
+		(choices.get_child(row_to_press) as Button).emit_signal("pressed")
 		await get_tree().process_frame
 		_check(lines.get_child_count() > before,
-			"step %d: pressing a choice moved the conversation on (%d lines became %d)" % [step, before, lines.get_child_count()])
+			"step %d: pressing choice %d moved the conversation on (%d lines became %d)" % [
+				step, indices[row_to_press], before, lines.get_child_count()])
+		if lines.get_child_count() <= before:
+			break
 		walked += 1
 
 	_check(walked > 0, "the loop ran for at least one choice")

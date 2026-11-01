@@ -33,6 +33,10 @@ func _ready() -> void:
 
 	var dialogue := (load(SCENE) as PackedScene).instantiate() as ScrollingDialogue
 	dialogue.show_rules = false
+	# The UI normally learns its conversation from conversation_started. This
+	# test drives the actors directly, so it tells the dialogue which
+	# conversation it is looking at first.
+	dialogue.conversation = _conversation
 	add_child(dialogue)
 	await get_tree().process_frame
 	LouderContextGlobal.event_received.connect(_on_event)

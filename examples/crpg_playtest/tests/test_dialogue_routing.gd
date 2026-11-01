@@ -10,10 +10,10 @@ extends Node
 ## of the flow resolved "my character" through get_multiplayer_authority(),
 ## which is the server (peer 1) on every peer.
 ##
-## Offline the local peer is also the server, so connect_actor loops back into
-## the same context and the actor is heard through the server's local emission.
-## What a real client can never receive that way - the actor copy its own
-## context needs - is covered by test_client_actor_copy.gd.
+## Starting a conversation now adds an actor for every player character, so the
+## test watches the whole cast arrive rather than one actor added by hand. What
+## a real client can never receive offline - the actor copies its own context
+## needs - is covered by test_client_actor_copy.gd.
 
 const DOCUMENT := "res://conversations/marrow.json"
 const CONFIG := "res://configs/config.json"
@@ -55,35 +55,27 @@ func _ready() -> void:
 	_check(broadcast_name == client_character.name,
 		"the client's request names the client's character (got %s)" % broadcast_name)
 
-	# A conversation opened under the HOST's character is not the client's.
+	# A conversation opened under the HOST's character is not the client's. An
+	# idle dialogue that never asked for anything is watching too; its scene
+	# default speaker happens to be the host's character, so the speaker check
+	# alone would claim the host's actor and open the client's UI for a
+	# conversation it never requested.
 	var bystander_dialogue := await _make_dialogue(scene, client_character.name)
-	LouderContextGlobal.start_conversation_rpc(DOCUMENT, bystander_dialogue.get_path(), host_character.name)
-	await _settle()
-	_check(bystander_dialogue.player_actor == -1 and not bystander_dialogue.visible,
-		"the client's dialogue stays out of the host's conversation (actor %d, visible %s)" % [
-			bystander_dialogue.player_actor, bystander_dialogue.visible])
-	bystander_dialogue.queue_free()
-
-	# A dialogue that never asked to join a conversation must not claim someone
-	# else's actor. Before its controller ever starts a conversation,
-	# player_speaker is still the scene default - and that default is the host's
-	# character's name, so the speaker check alone would claim the host's actor
-	# and open the client's UI for the host's conversation.
 	var idle_dialogue := scene.instantiate() as ScrollingDialogue
 	add_child(idle_dialogue)
 	await get_tree().process_frame
 	_check(idle_dialogue.player_speaker == StringName(host_character.name),
 		"setup: the idle dialogue still carries the scene default speaker (got %s)" % idle_dialogue.player_speaker)
 
-	# The server adding the host's actor, as the host's own request produces.
-	# actor_added announces it to every peer, including this idle client.
-	var conversation: int = LouderContextGlobal.load_conversation_file(DOCUMENT)
-	var host_actor: int = LouderContextGlobal.connect_actor(conversation, ["start"], 0, [host_character.name], [])
-	_check(host_actor != -1, "the server adds the host's actor (got %d)" % host_actor)
+	LouderContextGlobal.start_conversation_rpc(DOCUMENT, bystander_dialogue.get_path(), host_character.name)
 	await _settle()
+	_check(bystander_dialogue.player_actor == -1 and not bystander_dialogue.visible,
+		"the client's dialogue stays out of the host's conversation (actor %d, visible %s)" % [
+			bystander_dialogue.player_actor, bystander_dialogue.visible])
 	_check(idle_dialogue.player_actor == -1 and not idle_dialogue.visible,
-		"a dialogue that never joined stays closed when another player's actor is added (actor %d, visible %s)" % [
+		"a dialogue that never asked stays closed when another player's actors are added (actor %d, visible %s)" % [
 			idle_dialogue.player_actor, idle_dialogue.visible])
+	bystander_dialogue.queue_free()
 	idle_dialogue.queue_free()
 
 	# A conversation opened under the CLIENT's character is the client's own.
@@ -109,8 +101,8 @@ func _make_dialogue(scene: PackedScene, speaker: String) -> ScrollingDialogue:
 	return dialogue
 
 
-## Give the signal chain - conversation_started, the connect_actor RPC
-## loopback, and the actor_added that follows it - a few frames to land.
+## Give the signal chain - conversation_started and the actor_added that follow
+## it - a few frames to land.
 func _settle() -> void:
 	for frame in 6:
 		await get_tree().process_frame
