@@ -43,8 +43,8 @@ func _ready():
 	load_dialog.file_selected.connect(load_project_from_file)
 	
 	var cc :=  CustomConversationLayer.conversation_path
-	if FileAccess.file_exists(cc):
 		load_project_from_file(cc)
+	if FileAccess.file_exists(cc):
 
 func _make_dialog(dialog_name:String, for_open:=false) -> FileDialog:
 	var dialog := FileDialog.new()

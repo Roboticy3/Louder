@@ -84,6 +84,8 @@ pub struct LouderContext {
   shared_unsaved: VariableMap,
   events: Vec<LouderEvent>,
   asks: VecDeque<PendingAsk>,
+  traced_events: Vec<LouderEvent>,
+  traced_asks: Vec<LouderAsk>,
   interrupts: Vec<Interrupt>,
   removal_tag: Option<LouderName>,
   removal_text: Option<LouderName>,
@@ -109,6 +111,8 @@ impl LouderContext {
       shared_unsaved: Map::new(),
       events: Vec::new(),
       asks: VecDeque::new(),
+      traced_events: Vec::new(),
+      traced_asks: Vec::new(),
       interrupts: Vec::new(),
       removal_tag: None,
       removal_text: None,
@@ -131,6 +135,9 @@ impl LouderContext {
   }
 
   pub fn push_event(&mut self, event: LouderEvent) -> usize {
+    // The trace keeps a copy of the event as it was created, so that flushing
+    // the queue does not erase the history a host may still want to read.
+    self.traced_events.push(event.clone());
     self.events.push(event);
     self.events.len() - 1
   }
@@ -204,6 +211,9 @@ impl LouderContext {
   }
 
   pub fn push_ask(&mut self, ask: LouderAsk) -> usize {
+    // As with events, the trace keeps the ask as it was created rather than
+    // following it as answering moves it around the cache.
+    self.traced_asks.push(ask.clone());
     self.asks.push_back(PendingAsk { ask, verdict: None });
     self.asks.len() - 1
   }
@@ -238,6 +248,61 @@ impl LouderContext {
     let answered = self.asks.remove(index).expect("the index was just found");
     self.asks.push_back(answered);
     true
+  }
+
+  // -- traces -------------------------------------------------------------
+
+  /// Every event the engine has created, in the order it was created.
+  ///
+  /// Unlike the event queue, the trace is not emptied by
+  /// [`LouderContext::clear_events`]. Flushing the queue therefore leaves this
+  /// behind as a complete history of what happened.
+  pub fn traced_events(&self) -> &[LouderEvent] {
+    &self.traced_events
+  }
+
+  /// The traced event at `index`, if there is one.
+  pub fn traced_event(&self, index: usize) -> Option<&LouderEvent> {
+    self.traced_events.get(index)
+  }
+
+  /// How many events the trace holds.
+  pub fn traced_event_count(&self) -> usize {
+    self.traced_events.len()
+  }
+
+  /// Empty the event trace.
+  pub fn clear_traced_events(&mut self) {
+    self.traced_events.clear();
+  }
+
+  /// Every ask the engine has created, in the order it was created.
+  ///
+  /// Answering an ask does not change its traced copy, and answering does not
+  /// remove it from the trace.
+  pub fn traced_asks(&self) -> &[LouderAsk] {
+    &self.traced_asks
+  }
+
+  /// The traced ask at `index`, if there is one.
+  pub fn traced_ask(&self, index: usize) -> Option<&LouderAsk> {
+    self.traced_asks.get(index)
+  }
+
+  /// How many asks the trace holds.
+  pub fn traced_ask_count(&self) -> usize {
+    self.traced_asks.len()
+  }
+
+  /// Empty the ask trace.
+  pub fn clear_traced_asks(&mut self) {
+    self.traced_asks.clear();
+  }
+
+  /// Empty both traces.
+  pub fn clear_trace(&mut self) {
+    self.clear_traced_events();
+    self.clear_traced_asks();
   }
 
   // -- conversations ------------------------------------------------------
@@ -512,6 +577,51 @@ mod tests {
     assert_eq!(ctx.interrupts().len(), 1);
     ctx.clear_interrupts();
     assert!(ctx.interrupts().is_empty());
+  }
+
+  #[test]
+  fn clearing_events_keeps_the_trace() {
+    let mut ctx = LouderContext::new();
+    ctx.push_event(LouderEvent {
+      conversation: 1,
+      channel: 2,
+      actor: 3,
+      data: EventData::ActorAdded,
+    });
+
+    ctx.clear_events();
+
+    assert_eq!(ctx.event_count(), 0);
+    assert_eq!(ctx.traced_event_count(), 1);
+    assert_eq!(ctx.traced_event(0).unwrap().actor, 3);
+    assert!(ctx.traced_event(1).is_none());
+  }
+
+  #[test]
+  fn answering_an_ask_keeps_the_trace() {
+    let mut ctx = LouderContext::new();
+    ctx.push_ask(LouderAsk::default());
+
+    assert!(ctx.answer_ask(0, 1));
+
+    assert_eq!(ctx.traced_ask_count(), 1);
+    assert!(ctx.traced_ask(0).is_some());
+    assert!(ctx.traced_ask(1).is_none());
+  }
+
+  #[test]
+  fn clearing_the_trace_empties_both_halves() {
+    let mut ctx = LouderContext::new();
+    ctx.push_event(LouderEvent::default());
+    ctx.push_ask(LouderAsk::default());
+
+    ctx.clear_traced_events();
+    assert_eq!(ctx.traced_event_count(), 0);
+    assert_eq!(ctx.traced_ask_count(), 1);
+
+    ctx.clear_trace();
+    assert_eq!(ctx.traced_event_count(), 0);
+    assert_eq!(ctx.traced_ask_count(), 0);
   }
 }
 

@@ -2220,6 +2220,74 @@ void TestAsks() {
   CHECK(answer_ask(g_ctx, 99, 0) == LouderError::Missing, "answering out of range should fail");
 }
 
+void TestTraces() {
+  std::printf("traces\n");
+
+  flush_traced_events(g_ctx);
+  flush_traced_asks(g_ctx);
+
+  CHECK(get_traced_event(g_ctx, 0).tag == LouderOption<LouderEvent>::Tag::None,
+        "the event trace should start empty");
+  CHECK(get_traced_ask(g_ctx, 0).tag == LouderOption<LouderAsk>::Tag::None,
+        "the ask trace should start empty");
+
+  LouderEvent event = BareEvent(make_event_data_actor_added());
+  event.actor = 7;
+  CHECK(test_push_event(g_ctx, &event) == LouderError::Ok, "pushing a built event should succeed");
+
+  // Flushing the queue is what processing an event looks like, and the trace is
+  // the history of that event rather than a second view of the queue.
+  flush_events(g_ctx);
+  LouderOption<LouderEvent> traced = get_traced_event(g_ctx, 0);
+  CHECK(traced.tag == LouderOption<LouderEvent>::Tag::Some, "flushing events should leave the event trace");
+  CHECK(traced.some._0.actor == 7, "the traced event should be a copy of the event that was pushed");
+  CHECK(traced.some._0.data.tag == EventData::Tag::ActorAdded,
+        "the traced event should keep its kind");
+
+  LouderAsk ask{};
+  ask.ask = Declare("traced callback");
+  size_t ask_index = 0;
+  while (get_ask(g_ctx, ask_index).tag == LouderOption<LouderAsk>::Tag::Some) {
+    ++ask_index;
+  }
+  CHECK(push_ask(g_ctx, &ask) == LouderError::Ok, "pushing an ask should succeed");
+  CHECK(answer_ask(g_ctx, ask_index, 1) == LouderError::Ok, "answering an ask should succeed");
+
+  LouderOption<LouderAsk> traced_ask = get_traced_ask(g_ctx, 0);
+  CHECK(traced_ask.tag == LouderOption<LouderAsk>::Tag::Some, "answering should leave the ask trace");
+  CHECK(ReadName(traced_ask.some._0.ask) == "traced callback",
+        "the traced ask should keep its callback name, saw %s",
+        ReadName(traced_ask.some._0.ask).c_str());
+
+  std::vector<uint8_t> buffer(65536, 0);
+  int32_t written = read_trace_json(g_ctx, buffer.data(), buffer.size() - 1);
+  CHECK(written > 0, "the trace JSON should be written");
+  std::string json(reinterpret_cast<char*>(buffer.data()), written > 0 ? written : 0);
+  CHECK(json.find("\"events\":[") != std::string::npos, "the trace should carry events, got %s", json.c_str());
+  CHECK(json.find("\"asks\":[") != std::string::npos, "the trace should carry asks, got %s", json.c_str());
+  CHECK(json.find("\"kind\":12") != std::string::npos, "the trace should describe the traced event, got %s",
+        json.c_str());
+
+  flush_traced_events(g_ctx);
+  CHECK(get_traced_event(g_ctx, 0).tag == LouderOption<LouderEvent>::Tag::None,
+        "flushing the event trace should empty it");
+  CHECK(get_traced_ask(g_ctx, 0).tag == LouderOption<LouderAsk>::Tag::Some,
+        "flushing the event trace should leave the ask trace alone");
+
+  flush_traced_asks(g_ctx);
+  CHECK(get_traced_ask(g_ctx, 0).tag == LouderOption<LouderAsk>::Tag::None,
+        "flushing the ask trace should empty it");
+
+  CHECK(get_traced_event(nullptr, 0).tag == LouderOption<LouderEvent>::Tag::None,
+        "get_traced_event should reject null");
+  CHECK(get_traced_ask(nullptr, 0).tag == LouderOption<LouderAsk>::Tag::None,
+        "get_traced_ask should reject null");
+  CHECK(read_trace_json(nullptr, buffer.data(), buffer.size() - 1) == -1,
+        "read_trace_json should reject null");
+  flush_traced_events(nullptr);
+  flush_traced_asks(nullptr);
+}
+
 void TestSerialization() {
   std::printf("serialization\n");
 
@@ -2334,6 +2402,7 @@ int main(int argc, char** argv) {
   TestLoadErrorsAreReportedAsEvents();
   TestConfigLoadErrorsAreReportedAsEvents();
   TestAsks();
+  TestTraces();
   TestSerialization();
   TestBuiltEvents();
   TestNullSafety();

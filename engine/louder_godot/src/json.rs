@@ -38,5 +38,15 @@ godot_api! {
         None => GString::from(""),
       }
     }
+
+    /// Every event and ask the engine has created, as one JSON document with
+    /// `events` and `asks` arrays.
+    ///
+    /// This is the trace rather than the current queue and cache, so it is not
+    /// changed by flushing events or answering asks.
+    #[func]
+    pub fn trace(context: Gd<LouderContext>) -> GString {
+      GString::from(engine::json::trace(&context.bind().inner).as_str())
+    }
   }
 }

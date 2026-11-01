@@ -316,6 +316,36 @@ if ctx.is_null() {
 unsafe { (*ctx).clear_events() };
 }
 
+/// Get the traced event at `index`.
+///
+/// The trace is every event the engine has created, in creation order, and is
+/// not emptied by [`flush_events`]. Returns [`LouderOption::None`] once `index`
+/// is past the end of the trace, or if `ctx` is null.
+#[unsafe(no_mangle)]
+pub extern "C" fn get_traced_event(ctx: *const LouderContext, index: usize) -> LouderOption<LouderEvent> {
+if ctx.is_null() {
+  return LouderOption::None
+}
+
+match unsafe { (*ctx).traced_event(index) } {
+  Some(event) => LouderOption::Some(event.clone()),
+  None => LouderOption::None,
+}
+}
+
+/// Remove every traced event.
+///
+/// The event queue is untouched, so this discards the history without changing
+/// what the host still has to process.
+#[unsafe(no_mangle)]
+pub extern "C" fn flush_traced_events(ctx: *mut LouderContext) {
+if ctx.is_null() {
+  return;
+}
+
+unsafe { (*ctx).clear_traced_events() };
+}
+
 /// Push an event onto the event queue, used for testing.
 ///
 /// The caller fills in the event themselves, so nothing about `code` is
@@ -353,6 +383,37 @@ match a {
   Some(a) => LouderOption::Some(a),
   None => LouderOption::None
 }
+}
+
+/// Get the traced ask at `index`.
+///
+/// The trace is every ask the engine has created, in creation order. Answering
+/// an ask moves it around the cache but leaves its traced copy where it was.
+/// Returns [`LouderOption::None`] once `index` is past the end of the trace, or
+/// if `ctx` is null.
+#[unsafe(no_mangle)]
+pub extern "C" fn get_traced_ask(ctx: *const LouderContext, index: usize) -> LouderOption<LouderAsk> {
+if ctx.is_null() {
+  return LouderOption::None
+}
+
+match unsafe { (*ctx).traced_ask(index) } {
+  Some(ask) => LouderOption::Some(ask.clone()),
+  None => LouderOption::None,
+}
+}
+
+/// Remove every traced ask.
+///
+/// The ask cache is untouched, so unanswered asks can still be answered after
+/// this.
+#[unsafe(no_mangle)]
+pub extern "C" fn flush_traced_asks(ctx: *mut LouderContext) {
+if ctx.is_null() {
+  return;
+}
+
+unsafe { (*ctx).clear_traced_asks() };
 }
 
 /// Push an ask onto the ask cache, used for testing.
@@ -1072,6 +1133,26 @@ unsafe {
     Some(document) => write_bytes(buffer, max_size, document.as_bytes()) as i32,
     None => -1,
   }
+}
+}
+
+/// Serialize the event and ask traces in JSON into `buffer`.
+///
+/// The document has an `events` array and an `asks` array, both in creation
+/// order. Unlike the event queue and ask cache, the traces are not affected by
+/// [`flush_events`] or by answering an ask, so this is a complete history of
+/// what the engine has done.
+///
+/// The document is written as UTF-8. Returns the number of bytes written
+/// excluding the terminator.
+#[unsafe(no_mangle)]
+pub extern "C" fn read_trace_json(ctx: *const LouderContext, buffer: *mut u8, max_size: usize) -> i32 {
+if ctx.is_null() {
+  return -1;
+}
+
+unsafe {
+  write_bytes(buffer, max_size, json::trace(&*ctx).as_bytes()) as i32
 }
 }
 

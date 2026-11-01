@@ -143,6 +143,69 @@ godot_api! {
       self.inner.answer_ask(index as usize, verdict)
     }
 
+    // -- traces ----------------------------------------------------------
+
+    /// The traced event at `index`, if there is one.
+    ///
+    /// The trace is every event the engine has created, in creation order.
+    /// Unlike the event queue it is not emptied by
+    /// [`LouderContext::flush_events`], so it survives being processed.
+    #[func]
+    pub fn get_traced_event(&self, index: i32) -> Option<Gd<LouderEvent>> {
+      if index < 0 {
+        return None;
+      }
+      self
+        .inner
+        .traced_event(index as usize)
+        .map(|event| Gd::from_object(LouderEvent { inner: event.clone() }))
+    }
+
+    /// How many events the trace holds.
+    #[func]
+    pub fn get_traced_event_count(&self) -> i32 {
+      self.inner.traced_event_count() as i32
+    }
+
+    /// Empty the event trace.
+    #[func]
+    pub fn clear_traced_events(&mut self) {
+      self.inner.clear_traced_events();
+    }
+
+    /// The traced ask at `index`, if there is one.
+    ///
+    /// The trace is every ask the engine has created, in creation order.
+    /// Answering an ask does not move or remove its traced copy.
+    #[func]
+    pub fn get_traced_ask(&self, index: i32) -> Option<Gd<LouderAsk>> {
+      if index < 0 {
+        return None;
+      }
+      self
+        .inner
+        .traced_ask(index as usize)
+        .map(|ask| Gd::from_object(LouderAsk { inner: ask.clone() }))
+    }
+
+    /// How many asks the trace holds.
+    #[func]
+    pub fn get_traced_ask_count(&self) -> i32 {
+      self.inner.traced_ask_count() as i32
+    }
+
+    /// Empty the ask trace.
+    #[func]
+    pub fn clear_traced_asks(&mut self) {
+      self.inner.clear_traced_asks();
+    }
+
+    /// Empty both the event trace and the ask trace.
+    #[func]
+    pub fn clear_trace(&mut self) {
+      self.inner.clear_trace();
+    }
+
     // -- speakers --------------------------------------------------------
 
     /// A speaker from the config, as a copy of what the engine holds.

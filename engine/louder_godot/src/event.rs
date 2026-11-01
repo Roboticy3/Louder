@@ -201,6 +201,27 @@ godot_api! {
     pub fn get_ask(&self) -> engine::LouderCallback {
       self.inner.ask
     }
+
+    /// The whole ask as a dictionary, so it can be printed or cross a network
+    /// boundary without being taken apart field by field.
+    #[func]
+    pub fn to_dictionary(&self) -> Dictionary<Variant, Variant> {
+      let mut dict = Dictionary::<Variant, Variant>::new();
+      dict.set("conversation", self.inner.conversation);
+      dict.set("channel", self.inner.channel);
+      dict.set("actor", self.inner.actor);
+
+      let mut motion_dict = Dictionary::<Variant, Variant>::new();
+      motion_dict.set("source_position", self.inner.motion.source_position);
+      motion_dict.set("target_position", self.inner.motion.target_position);
+      motion_dict.set("choice_index", self.inner.motion.choice_index);
+      motion_dict.set("speaker", self.inner.motion.speaker);
+      motion_dict.set("background", self.inner.motion.background);
+      dict.set("motion", &motion_dict);
+
+      dict.set("ask", self.inner.ask);
+      dict
+    }
   }
 }
 

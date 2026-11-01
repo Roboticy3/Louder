@@ -12,3 +12,4 @@ func _ready() -> void:
 	for a in args:
 		if a.begins_with(ARGS[0]):
 			conversation_path = a.substr(ARGS[0].length())
+			pass

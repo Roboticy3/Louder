@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://80pa7ycnodps"]
+
+[ext_resource type="Script" uid="uid://m86y0de6t2i8" path="res://ui/louder_event_log.gd" id="1_75ncs"]
+
+[node name="LouderEventLog" type="MarginContainer" unique_id=196174450 node_paths=PackedStringArray("container")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_75ncs")
+container = NodePath("VBoxContainer")
+
+[node name="Background" type="ColorRect" parent="." unique_id=288182925]
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.086, 0.098, 0.129, 0.92)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=2040001588]
+layout_mode = 2
+alignment = 2

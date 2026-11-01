@@ -7,7 +7,8 @@
 //! asking twice gives the same bytes.
 
 use super::context::LouderContext;
-use super::name::{LouderInternContext, LouderName};
+use super::event::{EventData, LouderAsk, LouderEvent, Motion};
+use super::name::{LouderInternContext, LouderName, LOUDER_NAME_NONE};
 use super::object::LouderVariant;
 
 /// Escape `text` as a JSON string, quotes included.
@@ -139,5 +140,151 @@ pub fn snapshot(context: &LouderContext, conversation: LouderName) -> Option<Str
   actors.push(']');
 
   Some(format!("{{\"state\":{},\"actors\":{}}}", state, actors))
+}
+
+/// Render a name as a JSON string, or null when it names nothing.
+fn name_value(context: &LouderContext, name: LouderName) -> String {
+  match context.resolve_name(name) {
+    Some(text) => quote(text),
+    None => "null".to_string(),
+  }
+}
+
+/// Render a motion as a JSON object.
+fn motion(context: &LouderContext, motion: &Motion) -> String {
+  format!(
+    "{{\"source_position\":{},\"target_position\":{},\"choice_index\":{},\"speaker\":{},\"background\":{}}}",
+    motion.source_position,
+    motion.target_position,
+    motion.choice_index,
+    name_value(context, motion.speaker),
+    motion.background
+  )
+}
+
+/// Render one traced event as a JSON object.
+fn event(context: &LouderContext, event: &LouderEvent) -> String {
+  let mut out = String::from("{");
+  out.push_str(&format!(
+    "\"conversation\":{},\"channel\":{},\"actor\":{},\"kind\":{}",
+    name_value(context, event.conversation),
+    name_value(context, event.channel),
+    event.actor,
+    event.data.kind()
+  ));
+
+  if event.data.name() != LOUDER_NAME_NONE {
+    out.push_str(&format!(",\"name\":{}", name_value(context, event.data.name())));
+  }
+
+  match &event.data {
+    EventData::RegularMotion(entry) | EventData::Warp(entry) | EventData::ForceMotion(entry) => {
+      out.push_str(&format!(",\"motion\":{}", motion(context, entry)));
+    }
+    EventData::ChoiceAppearance(appearance) => {
+      out.push_str(&format!(
+        ",\"choice_appearance\":{{\"position\":{},\"choice_index\":{}}}",
+        appearance.position, appearance.choice_index
+      ));
+    }
+    EventData::AdditionalDataChange(change) => {
+      out.push_str(&format!(",\"additional_data_key\":{}", name_value(context, change.key)));
+    }
+    EventData::Condition(outcome) => {
+      out.push_str(&format!(
+        ",\"condition\":{{\"condition\":{},\"outcome\":{}}}",
+        name_value(context, outcome.condition),
+        variant(context, &outcome.outcome)
+      ));
+    }
+    EventData::LoadError(failure) => {
+      out.push_str(&format!(
+        ",\"load_failure\":{{\"position\":{},\"error\":{}}}",
+        failure.position, failure.error
+      ));
+    }
+    _ => {}
+  }
+
+  out.push('}');
+  out
+}
+
+/// Render one traced ask as a JSON object.
+fn ask(context: &LouderContext, ask: &LouderAsk) -> String {
+  format!(
+    "{{\"conversation\":{},\"channel\":{},\"actor\":{},\"motion\":{},\"ask\":{}}}",
+    name_value(context, ask.conversation),
+    name_value(context, ask.channel),
+    ask.actor,
+    motion(context, &ask.motion),
+    name_value(context, ask.ask)
+  )
+}
+
+/// Every event and ask the engine has created, as one JSON document.
+///
+/// The event queue and ask cache are works in progress that a host drains as it
+/// handles them; this is the complete history instead, so flushing either one
+/// leaves this intact. `events` and `asks` are both arrays in creation order.
+pub fn trace(context: &LouderContext) -> String {
+  let mut events = String::from("[");
+  for (index, entry) in context.traced_events().iter().enumerate() {
+    if index > 0 {
+      events.push(',');
+    }
+    events.push_str(&event(context, entry));
+  }
+  events.push(']');
+
+  let mut asks = String::from("[");
+  for (index, entry) in context.traced_asks().iter().enumerate() {
+    if index > 0 {
+      asks.push(',');
+    }
+    asks.push_str(&ask(context, entry));
+  }
+  asks.push(']');
+
+  format!("{{\"events\":{},\"asks\":{}}}", events, asks)
+}
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  #[test]
+  fn trace_serializes_events_and_asks() {
+    let mut context = LouderContext::new();
+    let conversation = context.intern_name("conversation");
+    let callback = context.intern_name("callback");
+
+    context.push_event(LouderEvent {
+      conversation,
+      channel: LOUDER_NAME_NONE,
+      actor: 4,
+      data: EventData::ActorAdded,
+    });
+    context.push_ask(LouderAsk {
+      conversation,
+      channel: LOUDER_NAME_NONE,
+      actor: 4,
+      motion: Motion::default(),
+      ask: callback,
+    });
+
+    let document = trace(&context);
+    let parsed: serde_json::Value = serde_json::from_str(&document).expect("the trace should be JSON");
+
+    let events = parsed["events"].as_array().expect("events should be an array");
+    assert_eq!(events.len(), 1);
+    assert_eq!(events[0]["conversation"], "conversation");
+    assert_eq!(events[0]["actor"], 4);
+    assert_eq!(events[0]["kind"], 12);
+
+    let asks = parsed["asks"].as_array().expect("asks should be an array");
+    assert_eq!(asks.len(), 1);
+    assert_eq!(asks[0]["ask"], "callback");
+  }
 }
 

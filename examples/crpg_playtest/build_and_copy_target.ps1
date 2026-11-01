@@ -1,5 +1,4 @@
 cd ../../engine
-cargo clean -p louder_godot
 cargo build -p louder_godot
 cd ../examples/crpg_playtest
 

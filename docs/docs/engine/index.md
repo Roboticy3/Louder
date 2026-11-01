@@ -81,6 +81,9 @@ Actors emit events when they are added/removed *to conversations*, not to the co
 ### Added/removed events for Voices and Conversations
 Added/removed events of type X are composed of X's name, as well as a copy of the object itself.
 
+### Traces
+The engine keeps a trace of every event and ask it creates. The event queue and the ask cache are works in progress that a host drains as it handles them; the trace is the history instead, holding a copy of each event and ask as it was created. Flushing events or answering asks therefore leaves the trace intact, and a host can print the whole history of a dialogue after the fact. The trace is cleared only on request, and is rendered as a JSON document with `events` and `asks` arrays.
+
 ## Interrupts
 Interrupts are composed of an actor and the name of an expression at the hub of the actor's current position.
 
@@ -185,7 +188,7 @@ if removal text is configured, and choice(POSITION_NONE, A) = available, removal
 if choices(x, A) had more than 1 element, meaningful(x, A). if choices(A) has more than one element, meaningful(A). Otherwise, !meaningful(A)
 
 ### Softlock Rule
-Copy of removal rule. If the rule applies, choice(POSITION_NONE, A) is undefined and choice(x, A) is defined if and only if x is the most recent hub in A's history where meaningful(x, A)
+Copy of removal rule. If the rule applies, choice(POSITION_NONE, A) is undefined and choice(x, A) = available, softlock if and only if x is the most recent hub in A's history where meaningful(x, A)
 
 Conversations are made up of hubs connected by choices. 
 
