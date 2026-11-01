@@ -94,6 +94,7 @@ pub(crate) mod engine {
   };
   pub use louder_rust::louder::object::{HomogeneousObject, LouderVariant};
   pub use louder_rust::louder::query;
+  pub use louder_rust::louder::rule::{LouderRule, get_rule_string};
   pub use louder_rust::louder::rules::DialogueRules;
   pub use louder_rust::louder::simulator::{MotionKind, Simulator};
   pub use louder_rust::louder::speaker::{Speaker, SpeakerFlags, SpeakerMap};

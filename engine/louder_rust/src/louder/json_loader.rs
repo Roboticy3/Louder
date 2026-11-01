@@ -372,6 +372,7 @@ fn report(context: &mut LouderContext, conversation: LouderName, error: LoadErro
     conversation,
     channel: LOUDER_NAME_NONE,
     actor: super::actor::LOUDER_ACTOR_NONE,
+    rule: super::rule::LouderRule::PARSE_ERROR,
     data: EventData::LoadError(LoadFailure { position, error }),
   });
 }

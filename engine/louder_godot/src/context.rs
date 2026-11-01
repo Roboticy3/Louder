@@ -641,6 +641,27 @@ godot_api! {
       ) as i32
     }
 
+    /// The rule behind a choice's availability, as its lower-case name.
+    #[func]
+    pub fn get_hub_choice_rule_name(
+      &self,
+      conversation: engine::LouderName,
+      position: engine::LouderPosition,
+      actor_perspective: engine::LouderActor,
+      choice_index: i32,
+    ) -> GString {
+      if choice_index < 0 {
+        return GString::from("unknown");
+      }
+      GString::from(engine::get_rule_string(engine::Simulator::choice_rule(
+        &self.inner,
+        conversation,
+        actor_perspective,
+        position,
+        choice_index as usize,
+      )).as_str())
+    }
+
     /// The text of a choice on a hub as a name, or
     /// [`LOUDER_NAME_NONE`](engine::LOUDER_NAME_NONE).
     ///

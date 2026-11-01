@@ -3,6 +3,7 @@ use super::event::*;
 use super::name::*;
 use super::actor::LouderActor;
 use super::hub::LouderPosition;
+use super::rule::LouderRule;
 use super::object::{ArithOp, CmpOp, LouderVariant, VariantKind};
 
 /// A snippet of code, identified by the interned copy of its own source text.
@@ -540,6 +541,9 @@ pub struct EvaluationScope {
   pub hub: LouderPosition,
   /// The motion that triggered this evaluation, if any.
   pub motion: Option<Motion>,
+
+  /// The rule tagging events produced by this evaluation.
+  pub rule: LouderRule,
 }
 
 impl EvaluationScope {
@@ -550,6 +554,7 @@ impl EvaluationScope {
       channel,
       hub: super::hub::BLANK_POSITION,
       motion: None,
+      rule: LouderRule::NONE,
     }
   }
 
@@ -558,6 +563,7 @@ impl EvaluationScope {
       conversation: self.conversation,
       channel: self.channel,
       actor: self.actor,
+      rule: self.rule,
       data,
     }
   }
@@ -755,12 +761,14 @@ impl Evaluator {
           choice_index: -1,
           speaker: LOUDER_NAME_NONE,
           background: false,
+          rule: LouderRule::NONE,
         });
 
         context.push_ask(LouderAsk {
           conversation: self.scope.conversation,
           channel: self.scope.channel,
           actor: self.scope.actor,
+          rule: LouderRule::ASK,
           motion,
           ask: callback,
         });

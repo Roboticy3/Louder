@@ -8,6 +8,7 @@ use super::conversation::{Conversation, VariableMap, VariableScope, classify_var
 use super::event::*;
 use super::event::Interrupt;
 use super::hub::{Hub, LouderPosition};
+use super::rule::LouderRule;
 use super::object::LouderVariant;
 use super::rules::DialogueRules;
 
@@ -345,6 +346,7 @@ impl LouderContext {
       conversation: name,
       channel: LOUDER_NAME_NONE,
       actor: LOUDER_ACTOR_NONE,
+      rule: LouderRule::REMOVAL,
       data: EventData::ConversationRemoved(name),
     });
 
@@ -391,6 +393,7 @@ impl LouderContext {
       conversation,
       channel,
       actor: id,
+      rule: LouderRule::NONE,
       data: EventData::ActorAdded,
     });
 
@@ -413,6 +416,7 @@ impl LouderContext {
         conversation,
         channel: LOUDER_NAME_NONE,
         actor,
+        rule: LouderRule::REMOVAL,
         data: EventData::ActorRemoved,
       });
     }
@@ -586,6 +590,7 @@ mod tests {
       conversation: 1,
       channel: 2,
       actor: 3,
+      rule: LouderRule::NONE,
       data: EventData::ActorAdded,
     });
 

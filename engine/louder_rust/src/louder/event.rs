@@ -6,6 +6,7 @@ use super::expression::LouderExpression;
 use super::actor::LouderActor;
 use super::name::LouderName;
 use super::hub::LouderPosition;
+use super::rule::LouderRule;
 
 /// One move of an actor from one hub to another.
 ///
@@ -27,6 +28,8 @@ pub struct Motion {
   pub speaker: LouderName,
 
   pub background: bool,
+
+  pub rule: LouderRule,
 }
 
 /// A choice becoming available on a hub.
@@ -34,7 +37,8 @@ pub struct Motion {
 #[repr(C)]
 pub struct ChoiceAppearance {
   pub position: LouderPosition,
-  pub choice_index: i32
+  pub choice_index: i32,
+  pub rule: LouderRule,
 }
 
 /// A key of an actor's additional data being replaced.
@@ -42,6 +46,7 @@ pub struct ChoiceAppearance {
 #[repr(C)]
 pub struct AdditionalDataChange {
   pub key: LouderName,
+  pub rule: LouderRule,
 }
 
 /// What a condition on a hub came to, when an actor landed on it.
@@ -177,6 +182,7 @@ pub struct LouderEvent {
   pub conversation: LouderName,
   pub channel: LouderName,
   pub actor: LouderActor,
+  pub rule: LouderRule,
   pub data: EventData,
 }
 
@@ -190,6 +196,7 @@ pub struct LouderAsk {
   pub conversation: LouderName,
   pub channel: LouderName,
   pub actor: LouderActor,
+  pub rule: LouderRule,
   pub motion: Motion,
   pub ask: LouderCallback,
 }

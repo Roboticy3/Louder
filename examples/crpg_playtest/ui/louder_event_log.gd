@@ -45,7 +45,7 @@ func _process(_delta: float) -> void:
 		_next_trace_index += 1
 		if event == null:
 			continue
-		_add_label(event.to_dictionary())
+		_add_label(event.to_dictionary_resolved(LouderContextGlobal.context))
 
 	while container.get_child_count() > max_logs:
 		var oldest := container.get_child(0)

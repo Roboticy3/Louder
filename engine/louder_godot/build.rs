@@ -82,15 +82,20 @@ fn main() {
         generated.push_str(&format!("    impl {name} {{\n", name = name));
         for (field, ty) in &fields {
             // only generate for simple types
-            let simple = ty == "i32" || ty == "i64" || ty == "u32" || ty == "u64" || ty == "f32" || ty == "f64" || ty == "bool" || ty == "usize" || ty == "isize" || ty == "LouderPosition" || ty == "LouderName" || ty == "LouderActor";
+            let simple = ty == "i32" || ty == "i64" || ty == "u32" || ty == "u64" || ty == "f32" || ty == "f64" || ty == "bool" || ty == "usize" || ty == "isize" || ty == "LouderPosition" || ty == "LouderName" || ty == "LouderActor" || ty == "LouderRule";
             if !simple { continue; }
-            let ty = if ty.starts_with("Louder") { format!("engine::{}", ty) } else { ty.clone() };
+            let (out_ty, body) = if ty == "LouderRule" {
+              ("i32".to_string(), format!("self.inner.{}.clone() as i32", field))
+            } else {
+              let mapped = if ty.starts_with("Louder") { format!("engine::{}", ty) } else { ty.clone() };
+              (mapped, format!("self.inner.{}.clone()", field))
+            };
             let method = format!("get_{}", field);
             generated.push_str(&format!(
-                "        #[func]\n        pub fn {method}(&self) -> {ty} {{\n            self.inner.{field}.clone()\n        }}\n\n",
+                "        #[func]\n        pub fn {method}(&self) -> {out_ty} {{\n            {body}\n        }}\n\n",
                 method = method,
-                ty = ty,
-                field = field
+                out_ty = out_ty,
+                body = body
             ));
         }
         generated.push_str("    }\n}\n\n");

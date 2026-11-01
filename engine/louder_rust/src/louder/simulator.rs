@@ -5,6 +5,7 @@ use super::object::LouderVariant;
 use super::expression::{Evaluation, Evaluator, EvaluationScope, LouderExpression};
 use super::actor::LouderActor;
 use super::hub::{Hub, LouderPosition};
+use super::rule::LouderRule;
 use super::rules::DialogueRules;
 use super::speaker::SpeakerMap;
 
@@ -54,18 +55,6 @@ pub enum SimError {
   DeadEnd,
   /// An ask was raised and the move is waiting on the host.
   Suspended,
-}
-
-/// The rule that decided a choice's availability.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[repr(C)]
-pub enum ChoiceRule {
-  Standard,
-  Skill,
-  Spoke,
-  Debug,
-  Invisible,
-  Held,
 }
 
 /// Whether a choice was visible. If not, this code provides the reason the
@@ -421,6 +410,7 @@ impl Simulator {
     let mut scope = EvaluationScope::new(conversation, actor, channel);
     scope.hub = motion.target_position;
     scope.motion = Some(motion.clone());
+    scope.rule = motion.rule;
     let evaluator = Evaluator::new(scope);
 
     for (expression, source) in sources {
@@ -442,6 +432,7 @@ impl Simulator {
         conversation,
         channel,
         actor,
+        rule: LouderRule::STANDARD_EVALUATION,
         data: condition,
       };
       context.push_event(event);
@@ -585,51 +576,51 @@ impl Simulator {
     actor: LouderActor,
     hub_position: LouderPosition,
     choice_index: usize,
-  ) -> ChoiceRule {
+  ) -> LouderRule {
     let Some(conversation_ref) = context.get_conversation(conversation) else {
-      return ChoiceRule::Invisible;
+      return LouderRule::VISIBILITY_CHECK;
     };
     let Some(hub) = conversation_ref.hub(hub_position) else {
-      return ChoiceRule::Invisible;
+      return LouderRule::VISIBILITY_CHECK;
     };
     let Some(choice) = hub.choice(choice_index) else {
-      return ChoiceRule::Invisible;
+      return LouderRule::VISIBILITY_CHECK;
     };
     let Some(target) = conversation_ref.hub(choice.position()) else {
-      return ChoiceRule::Invisible;
+      return LouderRule::VISIBILITY_CHECK;
     };
     let Some(entry) = context.get_actor(conversation, actor) else {
-      return ChoiceRule::Invisible;
+      return LouderRule::VISIBILITY_CHECK;
     };
 
     if entry.is_debug() {
-      return ChoiceRule::Debug;
+      return LouderRule::DEBUG;
     }
     if entry.is_spectator() {
-      return ChoiceRule::Invisible;
+      return LouderRule::SPECTATOR;
     }
     if !hub.is_auto() && !Self::hub_appears(context, conversation, actor, hub_position) {
-      return ChoiceRule::Invisible;
+      return LouderRule::VISIBILITY_CHECK;
     }
     if target.is_auto() {
       if !Self::conditions_hold(context, conversation, actor, target.position(), target.expressions()) {
-        return ChoiceRule::Invisible;
+        return LouderRule::VISIBILITY_CHECK;
       }
     } else if !Self::hub_appears(context, conversation, actor, target.position()) {
-      return ChoiceRule::Invisible;
+      return LouderRule::VISIBILITY_CHECK;
     }
 
     let owners = Owned::of(target);
     let heard = Self::speakers_heard_by(context, conversation, actor);
     if !owners.reaches(context, &heard) {
-      return ChoiceRule::Invisible;
+      return LouderRule::VISIBILITY_CHECK;
     }
 
     let voice = Self::hub_speaker_for(context, conversation, actor, target.position());
     if (voice != LOUDER_NAME_NONE && entry.speak_as().contains(&voice))
       || owners.spoken_by(entry.speak_as())
     {
-      return ChoiceRule::Standard;
+      return LouderRule::STANDARD;
     }
     if !owners.held_by_other(context, conversation, actor) {
       // Public speech can be visible without being listened to. That is the
@@ -639,16 +630,16 @@ impl Simulator {
         && context.is_speaker_public(speaker)
         && !heard.contains(&speaker)
       {
-        return ChoiceRule::Spoke;
+        return LouderRule::SPOKE;
       }
-      return ChoiceRule::Skill;
+      return LouderRule::SKILL_RULE;
     }
 
     if context.rules().contains(DialogueRules::SPOKE) && hub.choice_count() == 1 {
-      return ChoiceRule::Spoke;
+      return LouderRule::SPOKE;
     }
 
-    ChoiceRule::Held
+    LouderRule::HELD
   }
 
   /// The indices of the choices available to `actor` from `hub_position`.
@@ -696,11 +687,13 @@ impl Simulator {
         choice_index: -1,
         speaker: Self::hub_speaker_for(context, conversation, actor, auto_hub),
         background: false,
+        rule: LouderRule::AUTO_HUBS,
       };
       let event = LouderEvent {
         conversation,
         channel: LOUDER_NAME_NONE,
         actor,
+        rule: LouderRule::AUTO_HUBS,
         data: EventData::RegularMotion(motion),
       };
       context.push_event(event);
@@ -822,12 +815,35 @@ impl Simulator {
       Self::announce_auto_to_debug(context, conversation, entered);
     }
 
+    // The rule that produced this move. Auto resolution overrides the
+    // underlying choice, since the actor actually travels through the auto hub.
+    let move_rule = if kind == MotionKind::Regular && auto_hub.is_some() {
+      if implicit_auto.is_some() {
+        LouderRule::SINGLEPLAYER_RULE_1
+      } else {
+        LouderRule::AUTO_CHOOSE
+      }
+    } else {
+      match kind {
+        MotionKind::Regular => {
+          if chosen >= 0 {
+            Self::choice_rule(context, conversation, actor, source, chosen as usize)
+          } else {
+            LouderRule::STANDARD_CHOOSE
+          }
+        }
+        MotionKind::Warp => LouderRule::WARP,
+        MotionKind::Force => LouderRule::FORCE_POSITION,
+      }
+    };
+
     let motion = Motion {
       source_position: source,
       target_position: destination,
       choice_index: chosen,
       speaker: Self::apparent_speaker(context, conversation, actor, destination),
       background: false,
+      rule: move_rule,
     };
 
     Self::apply_travel(
@@ -912,6 +928,7 @@ impl Simulator {
         conversation,
         channel: channel_now,
         actor,
+        rule: LouderRule::CHANNEL_CHANGE,
         data: EventData::ChannelChange,
       };
       context.push_event(event);
@@ -932,7 +949,8 @@ impl Simulator {
           conversation,
           channel: channel_now,
           actor,
-          data: EventData::AdditionalDataChange(AdditionalDataChange { key }),
+          rule: LouderRule::NONE,
+          data: EventData::AdditionalDataChange(AdditionalDataChange { key, rule: LouderRule::NONE }),
         };
         context.push_event(event);
       }
@@ -986,19 +1004,23 @@ impl Simulator {
       conversation,
       channel,
       actor,
+      rule: motion.rule,
       data: kind.data(motion.clone()),
     };
     context.push_event(event);
 
     for index in Self::available_choices(context, conversation, actor, motion.target_position) {
+      let appearance_rule = Self::choice_rule(context, conversation, actor, motion.target_position, index);
       let appearance = ChoiceAppearance {
         position: motion.target_position,
         choice_index: index as i32,
+        rule: appearance_rule,
       };
       let event = LouderEvent {
         conversation,
         channel,
         actor,
+        rule: appearance_rule,
         data: EventData::ChoiceAppearance(appearance),
       };
       context.push_event(event);
@@ -1017,6 +1039,7 @@ impl Simulator {
     let mut scope = EvaluationScope::new(conversation, actor, channel);
     scope.hub = motion.target_position;
     scope.motion = Some(motion.clone());
+    scope.rule = motion.rule;
     let evaluator = Evaluator::new(scope);
 
     // The source text is copied out because evaluating it needs mutable access to
@@ -1042,6 +1065,7 @@ impl Simulator {
         conversation,
         channel,
         actor,
+        rule: LouderRule::NONE,
         data: EventData::Callback(*callback),
       };
       context.push_event(event);
@@ -1208,6 +1232,7 @@ impl Simulator {
             choice_index: Self::NO_CHOICE,
             speaker: Self::hub_speaker_for(context, conversation, follower, motion.target_position),
             background: true,
+            rule: LouderRule::BACKGROUND,
           };
           let event = LouderEvent {
             conversation,
@@ -1215,6 +1240,7 @@ impl Simulator {
             // with the leader.
             channel: from_channel,
             actor: follower,
+            rule: LouderRule::BACKGROUND,
             data: EventData::RegularMotion(background),
           };
           context.push_event(event);

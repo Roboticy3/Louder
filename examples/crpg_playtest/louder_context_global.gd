@@ -326,10 +326,7 @@ func get_choice_text(conversation: int, position: int, actor: int, choice_index:
 
 ## The rule that made a choice available, as the engine's lower-case rule name.
 func get_choice_rule(conversation: int, position: int, actor: int, choice_index: int) -> String:
-	var rule: int = context.get_hub_choice_rule(conversation, position, actor, choice_index)
-	if rule < 0 or rule >= _CHOICE_RULE_NAMES.size():
-		return "unknown"
-	return _CHOICE_RULE_NAMES[rule]
+	return context.get_hub_choice_rule_name(conversation, position, actor, choice_index)
 
 
 ## The speaker of a hub, already as text, as the actor in hand would hear it.

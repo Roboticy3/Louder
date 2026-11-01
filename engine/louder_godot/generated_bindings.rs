@@ -35,6 +35,11 @@ godot_api! {
             self.inner.background.clone()
         }
 
+        #[func]
+        pub fn get_rule(&self) -> i32 {
+            self.inner.rule.clone() as i32
+        }
+
     }
 }
 
@@ -50,6 +55,11 @@ godot_api! {
         #[func]
         pub fn get_key(&self) -> engine::LouderName {
             self.inner.key.clone()
+        }
+
+        #[func]
+        pub fn get_rule(&self) -> i32 {
+            self.inner.rule.clone() as i32
         }
 
     }
@@ -94,6 +104,11 @@ godot_api! {
         #[func]
         pub fn get_choice_index(&self) -> i32 {
             self.inner.choice_index.clone()
+        }
+
+        #[func]
+        pub fn get_rule(&self) -> i32 {
+            self.inner.rule.clone() as i32
         }
 
     }

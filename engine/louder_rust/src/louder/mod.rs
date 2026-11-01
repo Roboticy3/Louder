@@ -26,6 +26,7 @@ pub mod json_loader;
 pub mod name;
 pub mod object;
 pub mod query;
+pub mod rule;
 pub mod rules;
 pub mod simulator;
 pub mod speaker;

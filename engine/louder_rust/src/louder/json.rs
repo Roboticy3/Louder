@@ -9,6 +9,7 @@
 use super::context::LouderContext;
 use super::event::{EventData, LouderAsk, LouderEvent, Motion};
 use super::name::{LouderInternContext, LouderName, LOUDER_NAME_NONE};
+use super::rule::get_rule_string;
 use super::object::LouderVariant;
 
 /// Escape `text` as a JSON string, quotes included.
@@ -153,12 +154,13 @@ fn name_value(context: &LouderContext, name: LouderName) -> String {
 /// Render a motion as a JSON object.
 fn motion(context: &LouderContext, motion: &Motion) -> String {
   format!(
-    "{{\"source_position\":{},\"target_position\":{},\"choice_index\":{},\"speaker\":{},\"background\":{}}}",
+    "{{\"source_position\":{},\"target_position\":{},\"choice_index\":{},\"speaker\":{},\"background\":{},\"rule\":\"{}\"}}",
     motion.source_position,
     motion.target_position,
     motion.choice_index,
     name_value(context, motion.speaker),
-    motion.background
+    motion.background,
+    get_rule_string(motion.rule)
   )
 }
 
@@ -166,10 +168,11 @@ fn motion(context: &LouderContext, motion: &Motion) -> String {
 fn event(context: &LouderContext, event: &LouderEvent) -> String {
   let mut out = String::from("{");
   out.push_str(&format!(
-    "\"conversation\":{},\"channel\":{},\"actor\":{},\"kind\":{}",
+    "\"conversation\":{},\"channel\":{},\"actor\":{},\"rule\":\"{}\",\"kind\":{}",
     name_value(context, event.conversation),
     name_value(context, event.channel),
     event.actor,
+    get_rule_string(event.rule),
     event.data.kind()
   ));
 
@@ -183,12 +186,12 @@ fn event(context: &LouderContext, event: &LouderEvent) -> String {
     }
     EventData::ChoiceAppearance(appearance) => {
       out.push_str(&format!(
-        ",\"choice_appearance\":{{\"position\":{},\"choice_index\":{}}}",
-        appearance.position, appearance.choice_index
+        ",\"choice_appearance\":{{\"position\":{},\"choice_index\":{},\"rule\":\"{}\"}}",
+        appearance.position, appearance.choice_index, get_rule_string(appearance.rule)
       ));
     }
     EventData::AdditionalDataChange(change) => {
-      out.push_str(&format!(",\"additional_data_key\":{}", name_value(context, change.key)));
+      out.push_str(&format!(",\"additional_data_key\":{},\"additional_data_rule\":\"{}\"", name_value(context, change.key), get_rule_string(change.rule)));
     }
     EventData::Condition(outcome) => {
       out.push_str(&format!(
@@ -213,10 +216,11 @@ fn event(context: &LouderContext, event: &LouderEvent) -> String {
 /// Render one traced ask as a JSON object.
 fn ask(context: &LouderContext, ask: &LouderAsk) -> String {
   format!(
-    "{{\"conversation\":{},\"channel\":{},\"actor\":{},\"motion\":{},\"ask\":{}}}",
+    "{{\"conversation\":{},\"channel\":{},\"actor\":{},\"rule\":\"{}\",\"motion\":{},\"ask\":{}}}",
     name_value(context, ask.conversation),
     name_value(context, ask.channel),
     ask.actor,
+    get_rule_string(ask.rule),
     motion(context, &ask.motion),
     name_value(context, ask.ask)
   )
@@ -263,12 +267,14 @@ mod tests {
       conversation,
       channel: LOUDER_NAME_NONE,
       actor: 4,
+      rule: super::super::rule::LouderRule::NONE,
       data: EventData::ActorAdded,
     });
     context.push_ask(LouderAsk {
       conversation,
       channel: LOUDER_NAME_NONE,
       actor: 4,
+      rule: super::super::rule::LouderRule::NONE,
       motion: Motion::default(),
       ask: callback,
     });

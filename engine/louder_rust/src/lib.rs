@@ -31,6 +31,7 @@ use louder::json;
 use louder::json_loader::*;
 use louder::object::*;
 use louder::query;
+pub use louder::rule::*;
 use louder::rules::DialogueRules;
 use louder::name::*;
 use louder::simulator::*;
