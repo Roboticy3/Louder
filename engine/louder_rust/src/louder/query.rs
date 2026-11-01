@@ -109,6 +109,11 @@ pub fn next_speaker_listen_to(context: &LouderContext, speaker: LouderName, star
   }
 }
 
+/// The tags of a speaker, one after another.
+pub fn next_speaker_tag(context: &LouderContext, speaker: LouderName, start: LouderName) -> LouderName {
+  next_name_after(context.get_speaker_tags(speaker), start)
+}
+
 /// The speakers an actor speaks as, one after another.
 pub fn next_actor_speak_as(context: &LouderContext, conversation: LouderName, actor: LouderActor, start: LouderName) -> LouderName {
   match context.get_actor(conversation, actor) {

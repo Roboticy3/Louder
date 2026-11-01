@@ -28,6 +28,7 @@ godot_api! {
       name: engine::LouderName,
       flags: i32,
       listening: Array<i64>,
+      tags: Array<i64>,
       additional: Gd<HomogeneousObject>,
     ) -> Gd<Speaker> {
       Gd::from_object(Speaker {
@@ -35,6 +36,7 @@ godot_api! {
           name,
           engine::SpeakerFlags::from_bits_truncate(flags),
           listening.iter_shared().map(|name| name as engine::LouderName).collect(),
+          tags.iter_shared().map(|name| name as engine::LouderName).collect(),
           additional.bind().inner.clone(),
         ),
       })
@@ -50,6 +52,12 @@ godot_api! {
     #[func]
     pub fn get_flags(&self) -> i32 {
       self.inner.flags().bits()
+    }
+
+    /// The tags of this speaker.
+    #[func]
+    pub fn get_tags(&self) -> Array<i64> {
+      self.inner.tags().iter().map(|name| *name as i64).collect()
     }
 
     /// Whether hubs with this speaker appear to every actor.

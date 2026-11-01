@@ -25,6 +25,7 @@ pub struct Speaker {
   name: LouderName,
   flags: SpeakerFlags,
   listening: Vec<LouderName>,
+  tags: Vec<LouderName>,
   additional_data: HomogeneousObject,
 }
 
@@ -33,12 +34,14 @@ impl Speaker {
     name: LouderName,
     flags: SpeakerFlags,
     listening: Vec<LouderName>,
+    tags: Vec<LouderName>,
     additional_data: HomogeneousObject,
   ) -> Speaker {
     Speaker {
       name,
       flags,
       listening,
+      tags,
       additional_data,
     }
   }
@@ -53,6 +56,11 @@ impl Speaker {
 
   pub fn is_public(&self) -> bool {
     self.flags.contains(SpeakerFlags::PUBLIC)
+  }
+
+  /// The tags of this speaker, or an empty list if the speaker is undefined.
+  pub fn tags(&self) -> &[LouderName] {
+    &self.tags
   }
 
   /// Speakers an actor speaking as this speaker implicitly listens to.
@@ -76,6 +84,8 @@ impl Speaker {
 
 pub trait SpeakerMap {
   fn get_speaker(&self, speaker_name: LouderName) -> Option<&Speaker>;
+
+  fn get_speaker_tags(&self, speaker_name: LouderName) -> &[LouderName];
 
   /// Whether hubs with this speaker are visible to actors who are not
   /// listening to it.

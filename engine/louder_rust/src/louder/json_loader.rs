@@ -122,7 +122,7 @@ const HUB_KEYS: &[&str] = &[
 ];
 
 /// The keys of a speaker record that are part of the schema.
-const SPEAKER_KEYS: &[&str] = &["type", "name", "flags", "listening"];
+const SPEAKER_KEYS: &[&str] = &["type", "name", "flags", "listening", "tags"];
 
 /// Load a conversation from a JSON document.
 ///
@@ -241,8 +241,8 @@ pub fn load_config(context: &mut LouderContext, document: &str) -> LoadError {
     let flags = SpeakerFlags::from_bits_truncate(int_field(object, "flags"));
     let listening = context.intern_list(&split_lines(&string_field(object, "listening")));
     let additional = read_additional(context, object, SPEAKER_KEYS);
-
-    context.set_speaker(Speaker::new(name, flags, listening, additional));
+    let tags = context.intern_list(&split_inline(&string_field(object, "tags")));
+    context.set_speaker(Speaker::new(name, flags, listening, tags, additional));
   }
 
   LOUDER_LOAD_OK

@@ -641,16 +641,35 @@ if ctx.is_null() {
 unsafe { query::next_actor_from_flags(&*ctx, conversation, include, exact, start) }
 }
 
-/// Iterate the tags of a position.
+/// Iterate the tags of a speaker.
 ///
-/// Pass [`LOUDER_NAME_NONE`] as `start` to begin.
+/// Pass [`LOUDER_NAME_NONE`] as `start` to begin, then pass the previous result
+/// until [`LOUDER_NAME_NONE`] comes back. Returns [`LOUDER_NAME_NONE`] for an
+/// unknown speaker.
 #[unsafe(no_mangle)]
-pub extern "C" fn next_hub_tag(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition, start: LouderName) -> LouderName {
+pub extern "C" fn get_speaker_tags(ctx: *const LouderContext, speaker: LouderName) -> *const LouderName {
+if ctx.is_null() {
+  return std::ptr::null();
+}
+
+unsafe {
+  let tags = (*ctx).get_speaker_tags(speaker);
+  tags.as_ptr()
+}
+}
+
+/// Iterate the tags of a speaker.
+///
+/// Pass [`LOUDER_NAME_NONE`] as `start` to begin, then pass the previous result
+/// until [`LOUDER_NAME_NONE`] comes back. Returns [`LOUDER_NAME_NONE`] for an
+/// unknown speaker.
+#[unsafe(no_mangle)]
+pub extern "C" fn next_speaker_tag(ctx: *const LouderContext, speaker: LouderName, start: LouderName) -> LouderName {
 if ctx.is_null() {
   return LOUDER_NAME_NONE;
 }
 
-unsafe { query::next_hub_tag(&*ctx, conversation, position, start) }
+unsafe { query::next_speaker_tag(&*ctx, speaker, start) }
 }
 
 /// Get the speaker of a hub.

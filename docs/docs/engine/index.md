@@ -53,7 +53,7 @@ A context is a set of actors, voices (previously called speakers), conversations
 An actor represents a user and is composed of an integer uniquely identifying this actor within a conversation, the name of their parent conversation, 2 disjoint sets of voices, one which they "speak as" and another which they "listen to", flags, an set of positions called their "history", with the last position just being called their "position", and additional data.
 
 ## Voices
-A voice represents a voice which a user can use to interact with a conversation. Voices are composed of a name uniquely identifying this voice within the context, a set of voices which they "listen to", flags, and additional data.
+A voice represents a voice which a user can use to interact with a conversation. Voices are composed of a name uniquely identifying this voice within the context, a set of voices which they "listen to", flags, a set of names "tags" and additional data.
 
 ## Conversations
 The conversation represents a dialogue tree and is composed of a name uniquely identifying this conversation within the context, a set of hubs and a set of connections

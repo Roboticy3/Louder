@@ -26,7 +26,7 @@ fn main() {
     structs.sort();
     structs.dedup_by(|a, b| a.0 == b.0);
 
-    let targets = ["Motion", "AdditionalDataChange", "LoadFailure", "ChoiceAppearance", "ConditionOutcome", "Interrupt"];
+    let targets = ["Motion", "AdditionalDataChange", "LoadFailure", "ChoiceAppearance", "ConditionOutcome", "Interrupt", "Speaker"];
 
     let mut generated = String::new();
     generated.push_str("use louder_rust::godot_api;\n");

@@ -25,6 +25,7 @@ A connection between two hubs.
 
 # Speaker
  - name: the unique name of this speaker.
+ - tags: tags that can be used to search for this hub. Separated by commas or whitespace. Default ""
  - flags: flags of this speaker. Affects how players using this speaker can interact with a conversation. Default 0.
  - listening: newline separated list of speakers players using this speaker are considered as "listening to", in addition to the speakers they are already listening to.
 

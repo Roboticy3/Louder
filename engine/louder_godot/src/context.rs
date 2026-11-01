@@ -852,6 +852,19 @@ godot_api! {
       )
     }
 
+    /// The tags of a speaker, one after another.
+    ///
+    /// Pass [`LOUDER_NAME_NONE`](engine::LOUDER_NAME_NONE) as `start` to begin,
+    /// then pass the previous result until [`LOUDER_NAME_NONE`] comes back.
+    #[func]
+    pub fn next_speaker_tag(
+      &self,
+      speaker: engine::LouderName,
+      start: engine::LouderName,
+    ) -> engine::LouderName {
+      engine::query::next_speaker_tag(&self.inner, speaker, start)
+    }
+
     // -- story state -----------------------------------------------------
 
     /// A story state value.

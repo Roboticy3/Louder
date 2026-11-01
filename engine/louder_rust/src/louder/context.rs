@@ -549,5 +549,12 @@ impl SpeakerMap for LouderContext {
   fn get_speaker(&self, speaker_name: LouderName) -> Option<&Speaker> {
     self.speakers.get(&speaker_name)
   }
+
+  fn get_speaker_tags(&self, speaker_name: LouderName) -> &[LouderName] {
+    match self.speakers.get(&speaker_name) {
+        Some(speaker) => speaker.tags(),
+        None => &[],
+    }
+  }
 }
 
