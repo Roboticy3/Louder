@@ -4,6 +4,7 @@ class_name CharacterAvatar extends Node3D
 @export var body:CharacterBody3D
 @export var navigation_agent:NavigationAgent3D
 @export var animation_tree:CharacterAvatarAnimationTree
+@export var navigation_target_body:PhysicsBody3D
 
 @export var walk_speed := 3.0
 
@@ -33,6 +34,8 @@ func _ready() -> void:
 	navigation_agent.target_reached.connect(_on_target_reached)
 	
 	propogate_color.call_deferred(character_data.color)
+	
+	navigation_target_body.visible = false
 
 var navigation_input := Vector3.ZERO
 
@@ -77,15 +80,19 @@ func _process(_delta: float) -> void:
 			animation_tree.walk_speed = body.velocity.length()
 
 var avoid_rng := RandomNumberGenerator.new()
-func avoid_occupied(pos:Vector3, offset:Vector3, seed:int) -> Vector3:
-	avoid_rng.seed = seed
+func avoid_occupied(pos:Vector3, offset:Vector3, s:int) -> Vector3:
+	avoid_rng.seed = s
 	var space_state = get_world_3d().direct_space_state
 	var occupation_query := PhysicsPointQueryParameters3D.new()
-	occupation_query.collision_mask = body.collision_mask
+	occupation_query.collision_mask = body.collision_mask | navigation_target_body.collision_layer
 	occupation_query.position = pos + offset
 	
 	var occupation_result := space_state.intersect_point(occupation_query)
 	while !occupation_result.is_empty():
+		
+		if occupation_result.size() == 1 and occupation_result[0].collider == navigation_target_body:
+			break
+		
 		pos += Vector3.FORWARD.rotated(Vector3.UP, avoid_rng.randf_range(0.0, 2 * PI)) * 1.5
 		occupation_query.position = pos + offset
 		occupation_result = space_state.intersect_point(occupation_query)

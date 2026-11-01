@@ -39,6 +39,8 @@ c_click_move={
 
 3d_physics/layer_1="Terrain"
 3d_physics/layer_2="Avatar"
+3d_physics/layer_3="Interactable Objects"
+3d_physics/layer_4="Pathfinding Targets"
 
 [physics]
 

@@ -3,16 +3,13 @@
 [ext_resource type="Script" uid="uid://bnjjg0egulg4p" path="res://controllers/character_avatar_controller_single.gd" id="1_urk7i"]
 [ext_resource type="PackedScene" uid="uid://stb5khrpt47" path="res://ui/scrolling_dialogue.tscn" id="2_q3e5s"]
 [ext_resource type="PackedScene" uid="uid://d0ddo344ly56v" path="res://entities/camera_rig_simple.tscn" id="2_sn444"]
-[ext_resource type="PackedScene" uid="uid://diuoqkb3kjjwc" path="res://entities/navigation_target_indicator.tscn" id="3_4qcdu"]
 
-[node name="CharacterAvatarControllerSingle" type="Node" unique_id=2127838277 node_paths=PackedStringArray("camera_rig", "scrolling_dialogue", "target_marker")]
+[node name="CharacterAvatarControllerSingle" type="Node" unique_id=2127838277 node_paths=PackedStringArray("camera_rig", "scrolling_dialogue")]
 script = ExtResource("1_urk7i")
 camera_rig = NodePath("CameraRig")
 scrolling_dialogue = NodePath("ScrollingDialogue")
-target_marker = NodePath("NavigationTargetIndicator")
+raycast_collision_flags = 4294967285
 
 [node name="ScrollingDialogue" parent="." unique_id=527292302 instance=ExtResource("2_q3e5s")]
 
 [node name="CameraRig" parent="." unique_id=167589696 instance=ExtResource("2_sn444")]
-
-[node name="NavigationTargetIndicator" parent="." unique_id=956122953 instance=ExtResource("3_4qcdu")]

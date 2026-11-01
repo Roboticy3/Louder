@@ -3,8 +3,23 @@
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nunj6"]
 albedo_color = Color(0.9633989, 0.8790815, 0.36126953, 1)
 
-[node name="NavigationTargetIndicator" type="Node3D" unique_id=956122953]
+[sub_resource type="BoxShape3D" id="BoxShape3D_nunj6"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_k5xmu"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 2
+
+[node name="NavigationTargetIndicator" type="StaticBody3D" unique_id=591068174]
+collision_layer = 8
 
 [node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=1093567414]
 size = Vector3(0.3, 0.3, 0.3)
 material = SubResource("StandardMaterial3D_nunj6")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=141111472]
+shape = SubResource("BoxShape3D_nunj6")
+debug_color = Color(0, 0.620891, 0.5613939, 0.41960785)
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=352505937]
+replication_config = SubResource("SceneReplicationConfig_k5xmu")

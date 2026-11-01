@@ -17,12 +17,12 @@ extends Control
 # How far into the trace the next label comes from. The trace only ever grows,
 # so this is all that is needed to avoid printing the same event twice.
 var _next_trace_index := 0
+var _previous_event: Dictionary = {}
 
 
 func _ready() -> void:
 	if not multiplayer.is_server():
-		visible = false
-		set_process(false)
+		queue_free()
 		return
 
 	if container == null:
@@ -39,6 +39,7 @@ func _process(_delta: float) -> void:
 	if traced < _next_trace_index:
 		_clear_labels()
 		_next_trace_index = 0
+		_previous_event = {}
 
 	while _next_trace_index < traced:
 		var event: LouderEvent = LouderContextGlobal.context.get_traced_event(_next_trace_index)
@@ -55,15 +56,45 @@ func _process(_delta: float) -> void:
 	#size.y = container.size.y
 
 
+func _flatten(event: Dictionary, prefix: String = "") -> Dictionary:
+	var out := {}
+	for key in event.keys():
+		var path := str(key) if prefix == "" else prefix + "." + str(key)
+		var value = event[key]
+		if value is Dictionary:
+			var nested := _flatten(value, path)
+			for nested_key in nested.keys():
+				out[nested_key] = nested[nested_key]
+		else:
+			out[path] = value
+	return out
+
+
 func _add_label(event: Dictionary) -> void:
+	var current := _flatten(event)
+	var previous := {}
+	if not _previous_event.is_empty():
+		previous = _flatten(_previous_event)
+
+	var lines := []
+	for key in current.keys():
+		if not previous.has(key) or str(previous[key]) != str(current[key]):
+			lines.append("%s: %s" % [key, current[key]])
+
+	if lines.is_empty():
+		lines.append("(no changes)")
+
 	var label := Label.new()
-	label.text = str(event)
+	label.text = "\n".join(lines)
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	container.add_child(label)
+
+	_previous_event = event.duplicate(true)
 
 
 func _clear_labels() -> void:
 	for child in container.get_children():
 		container.remove_child(child)
 		child.queue_free()
+	_previous_event = {}

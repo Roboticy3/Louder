@@ -16,7 +16,6 @@ class_name CharacterAvatarControllerSingle extends Node
 
 @export var camera_rig:CameraRigSimple 
 @export var scrolling_dialogue:ScrollingDialogue
-@export var target_marker:Node3D
 
 @export_flags_3d_physics var raycast_collision_flags := 0b11111111_11111111_11111111_11111101
 
@@ -25,13 +24,13 @@ signal controlled_avatar_changed(to: CharacterAvatar)
 var controlled_avatar: CharacterAvatar :
 	set(new_controlled_avatar):
 		if new_controlled_avatar != controlled_avatar:
-			controlled_avatar = new_controlled_avatar
-			
 			if controlled_avatar:
-				camera_rig.target = controlled_avatar.body
+				controlled_avatar.navigation_target_body.visible = false
+			if new_controlled_avatar:
+				camera_rig.target = new_controlled_avatar.body
 				print("located character avatar ", controlled_avatar)
 			
-			
+			controlled_avatar = new_controlled_avatar
 			controlled_avatar_changed.emit(new_controlled_avatar)
 
 func locate_character() -> void:
@@ -58,8 +57,6 @@ func _ready() -> void:
 	add_child(locate_timer)
 	
 	locate_character()
-	
-	target_marker.visible = false
 
 var camera_ray_out := false
 var in_conversation := false
@@ -90,10 +87,10 @@ func _physics_process(_delta: float) -> void:
 		else:
 			controlled_avatar.navigate_to_position_rpc.rpc_id(1, position)
 		
-		target_marker.position = position
+		controlled_avatar.navigation_target_body.global_position = position
 	
 	if controlled_avatar:
-		target_marker.visible = !controlled_avatar.navigation_agent.is_target_reached()
+		controlled_avatar.navigation_target_body.visible = !controlled_avatar.navigation_agent.is_target_reached()
 
 func _on_avatar_request_dialogue(avatar:CharacterAvatar, other:InteractableObject):
 	var source_cdata := Network.get_character_of()
