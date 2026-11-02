@@ -302,13 +302,6 @@
 		"type": "hub"
 	},
 	{
-		"callbacks": "check Good 10",
-		"conversation_id": "35",
-		"position_offset:x": "3440.0",
-		"position_offset:y": "-3940.0",
-		"type": "hub"
-	},
-	{
 		"conversation_id": "49",
 		"expressions": "speaker != Geno",
 		"flags": "5",
@@ -347,23 +340,6 @@
 		"position_offset:y": "-4440.0",
 		"speaker": "Marrow",
 		"text": "\"Don't understand? Don't understand what. Your spreadsheet? Those are for department stores, not popup shops.\"",
-		"type": "hub"
-	},
-	{
-		"choices": "2",
-		"conversation_id": "52",
-		"position_offset:x": "4380.0",
-		"position_offset:y": "-4440.0",
-		"speaker": "Geno",
-		"text": "\"You don't understand the long game.\"",
-		"type": "hub"
-	},
-	{
-		"conversation_id": "53",
-		"position_offset:x": "4780.0",
-		"position_offset:y": "-4440.0",
-		"speaker": "Rhetoric",
-		"text": "Immediate regret. She's like 500 times older than me.",
 		"type": "hub"
 	},
 	{
@@ -1053,32 +1029,10 @@
 		"type": "hub"
 	},
 	{
-		"conversation_id": "148",
-		"position_offset:x": "5200.0",
-		"position_offset:y": "-4440.0",
-		"type": "hub"
-	},
-	{
-		"conversation_id": "149",
-		"expressions": "speaker != Geno",
-		"position_offset:x": "4919.41845703125",
-		"position_offset:y": "-3984.0888671875",
-		"text": "\"Can I use the shop please?\"",
-		"type": "hub"
-	},
-	{
 		"conversation_id": "137",
 		"expressions": "marrow_argument_blocked = 1",
 		"position_offset:x": "3860.0",
 		"position_offset:y": "-2620.0",
-		"speaker": "Marrow",
-		"text": "\"Please.\"",
-		"type": "hub"
-	},
-	{
-		"conversation_id": "150",
-		"position_offset:x": "5320.0",
-		"position_offset:y": "-4000.0",
 		"speaker": "Marrow",
 		"text": "\"Please.\"",
 		"type": "hub"
@@ -1121,6 +1075,30 @@
 		"flags": "17",
 		"position_offset:x": "3140.0",
 		"position_offset:y": "2100.0",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "155",
+		"position_offset:x": "4240.0",
+		"position_offset:y": "-4460.0",
+		"speaker": "Marrow",
+		"text": "\"Go back to your stand and don't come back until you've learned to respect your elders.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "156",
+		"expressions": "kick(Geno)",
+		"flags": "1",
+		"position_offset:x": "4800.0",
+		"position_offset:y": "-4500.0",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "35",
+		"expressions": "check(Good, 10)",
+		"flags": "3",
+		"position_offset:x": "3440.0",
+		"position_offset:y": "-3940.0",
 		"type": "hub"
 	},
 	{
@@ -1460,18 +1438,6 @@
 		"type": "connection"
 	},
 	{
-		"from_id": "149",
-		"from_port": 0,
-		"to_id": "150",
-		"type": "connection"
-	},
-	{
-		"from_id": "150",
-		"from_port": 0,
-		"to_id": "6",
-		"type": "connection"
-	},
-	{
 		"from_id": "152",
 		"from_port": 0,
 		"to_id": "153",
@@ -1487,6 +1453,18 @@
 		"from_id": "154",
 		"from_port": 0,
 		"to_id": "57",
+		"type": "connection"
+	},
+	{
+		"from_id": "155",
+		"from_port": 0,
+		"to_id": "156",
+		"type": "connection"
+	},
+	{
+		"from_id": "156",
+		"from_port": 0,
+		"to_id": "2",
 		"type": "connection"
 	},
 	{
@@ -1780,25 +1758,7 @@
 	{
 		"from_id": "51",
 		"from_port": 0,
-		"to_id": "52",
-		"type": "connection"
-	},
-	{
-		"from_id": "52",
-		"from_port": 0,
-		"to_id": "53",
-		"type": "connection"
-	},
-	{
-		"from_id": "52",
-		"from_port": 1,
-		"to_id": "149",
-		"type": "connection"
-	},
-	{
-		"from_id": "53",
-		"from_port": 0,
-		"to_id": "148",
+		"to_id": "155",
 		"type": "connection"
 	},
 	{
@@ -2126,6 +2086,12 @@
 		"type": "connection"
 	},
 	{
+		"from_id": "96",
+		"from_port": 0,
+		"to_id": "6",
+		"type": "connection"
+	},
+	{
 		"from_id": "97",
 		"from_port": 0,
 		"to_id": "98",
@@ -2150,9 +2116,9 @@
 		"type": "connection"
 	},
 	{
-		"position:x": "1412.41186523438",
-		"position:y": "1177.0546875",
+		"position:x": "2739.52905273438",
+		"position:y": "-3472.89697265625",
 		"type": "camera",
-		"zoom": "0.65549284219742"
+		"zoom": "0.87245965003967"
 	}
 ]
