@@ -36,6 +36,12 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
+	# Re-check on every frame: a peer can start as an offline host and join a
+	# lobby later, and a client never has a trace of its own.
+	if not (not Network.is_in_lobby() or Network.is_host()):
+		queue_free()
+		return
+
 	var traced := LouderContextGlobal.context.get_traced_event_count()
 
 	# A trace that got shorter was cleared, so what is on screen is stale.
