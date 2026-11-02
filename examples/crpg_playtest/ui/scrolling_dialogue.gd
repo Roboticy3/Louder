@@ -7,7 +7,6 @@ class_name ScrollingDialogue extends Control
 @export var line_scene: PackedScene
 @export var choice_scene: PackedScene
 @export var start_tag := &"start"
-@export var player_speaker := &"Benjamin"
 ## Off by default: an actor needs no flags to make choices, and a spectator is
 ## shown every hub and offered none of them, which is the wrong shape for a player.
 @export_flags("Spectator", "Debug") var actor_flags := 0
@@ -40,27 +39,34 @@ func _ready() -> void:
 ## separate add-an-actor step to wait for: when `conversation_started` comes back
 ## this dialogue's actor is already in the conversation.
 func start_conversation(document_path: String) -> void:
-	LouderContextGlobal.start_conversation(document_path, get_path(), str(player_speaker))
+	LouderContextGlobal.start_conversation(document_path, get_path(), Network.get_character_of().name)
 
 
 func _on_conversation_started(c: int, source: NodePath, source_character: String) -> void:
 	# Only the dialogue that asked for this conversation claims it, and only in
 	# the speaker its own controller asked for. Other player characters have
 	# actors in every conversation now, so the speaker alone is not enough.
-	if source != get_path() or str(source_character) != str(player_speaker):
+	var c_data := Network.get_character_of()
+	if !c_data:
+		return
+	
+	if source != get_path() or str(source_character) != c_data.name:
 		return
 
 	conversation = c
-	player_actor = LouderContextGlobal.get_actor_for_speaker(c, str(player_speaker))
+	player_actor = LouderContextGlobal.get_actor_for_speaker(c, c_data.name)
 	visible = player_actor != -1
 
 
 func _on_actor_added(c: int, a: int, speak_as: Array) -> void:
 	# The actor of the conversation this dialogue started may arrive after the
 	# conversation was announced, since a client learns about it by relay.
+	var c_data := Network.get_character_of()
+	if !c_data:
+		return
 	if conversation != c or player_actor != -1:
 		return
-	if not _speaks_as(speak_as, player_speaker):
+	if not _speaks_as(speak_as, c_data.name):
 		return
 
 	player_actor = a
@@ -118,6 +124,9 @@ func get_hub_position() -> int:
 ## index: the engine only offers some of the choices on a hub and its indices
 ## skip the rest, so the row has to be looked up rather than passed on.
 func choose(row: int) -> void:
+	var c_data := Network.get_character_of()
+	if !c_data:
+		return
 	if conversation == -1 or player_actor == -1:
 		return
 	if row < 0 or row >= _choice_indices.size():
@@ -125,7 +134,7 @@ func choose(row: int) -> void:
 		return
 
 	var choice_index := _choice_indices[row]
-	if !LouderContextGlobal.select_choice(conversation, str(player_speaker), choice_index):
+	if !LouderContextGlobal.select_choice(conversation, c_data.name, choice_index):
 		push_error("The engine refused choice %d at hub %d." % [choice_index, get_hub_position()])
 		return
 

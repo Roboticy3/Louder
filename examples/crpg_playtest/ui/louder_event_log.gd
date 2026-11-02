@@ -21,7 +21,10 @@ var _previous_event: Dictionary = {}
 
 
 func _ready() -> void:
-	if not multiplayer.is_server():
+	# Only the peer that actually runs the engine should keep this node: the
+	# host of a lobby, or a lone offline peer. A client in a lobby has no trace
+	# of its own, and `multiplayer.is_server()` alone is true even with no peer.
+	if not (not Network.is_in_lobby() or Network.is_host()):
 		queue_free()
 		return
 

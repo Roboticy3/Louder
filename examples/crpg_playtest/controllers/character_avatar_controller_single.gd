@@ -96,6 +96,5 @@ func _on_avatar_request_dialogue(avatar:CharacterAvatar, other:InteractableObjec
 	var source_cdata := Network.get_character_of()
 	if source_cdata and avatar == controlled_avatar and other.conversation_path != "":
 		in_conversation = true
-		scrolling_dialogue.player_speaker = character_data.name
 		scrolling_dialogue.start_conversation(other.conversation_path)
 		
