@@ -710,17 +710,6 @@
 		"type": "hub"
 	},
 	{
-		"additional_data": "\"hover_item\": \"Duster\"",
-		"callbacks": "has_item Marrow \"Duster\"",
-		"choices": "4",
-		"conversation_id": "57",
-		"flags": "1",
-		"position_offset:x": "3140.0",
-		"position_offset:y": "2100.0",
-		"text": "(Inspect the vest)",
-		"type": "hub"
-	},
-	{
 		"choices": "2",
 		"conversation_id": "99",
 		"position_offset:x": "3720.0",
@@ -787,7 +776,7 @@
 	},
 	{
 		"conversation_id": "96",
-		"flags": "7",
+		"flags": "39",
 		"position_offset:x": "5120.0",
 		"position_offset:y": "2520.0",
 		"text": "(Leave it alone.)",
@@ -1100,6 +1089,38 @@
 		"position_offset:y": "-60.0",
 		"speaker": "Note",
 		"text": "References to %speaker or other special variables are outdated with the new scheme proposed for expression evaluation.\n\nInstead, the `speaker` identifier would call a user function that asks what the active speaker is of the current hub, then returns their name.",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "152",
+		"position_offset:x": "2400.0",
+		"position_offset:y": "1880.0",
+		"text": "(Inspect the vest)",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "153",
+		"position_offset:x": "2760.0",
+		"position_offset:y": "1900.0",
+		"text": "\"That vest.\"",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "154",
+		"position_offset:x": "2760.0",
+		"position_offset:y": "2300.0",
+		"speaker": "Marrow",
+		"text": "A leather vest is laid out on the table.",
+		"type": "hub"
+	},
+	{
+		"additional_data": "\"hover_item\": \"Duster\"",
+		"callbacks": "has_item Marrow \"Duster\"",
+		"choices": "4",
+		"conversation_id": "57",
+		"flags": "17",
+		"position_offset:x": "3140.0",
+		"position_offset:y": "2100.0",
 		"type": "hub"
 	},
 	{
@@ -1451,6 +1472,24 @@
 		"type": "connection"
 	},
 	{
+		"from_id": "152",
+		"from_port": 0,
+		"to_id": "153",
+		"type": "connection"
+	},
+	{
+		"from_id": "153",
+		"from_port": 0,
+		"to_id": "154",
+		"type": "connection"
+	},
+	{
+		"from_id": "154",
+		"from_port": 0,
+		"to_id": "57",
+		"type": "connection"
+	},
+	{
 		"from_id": "16",
 		"from_port": 1,
 		"to_id": "12",
@@ -1657,7 +1696,7 @@
 	{
 		"from_id": "37",
 		"from_port": 2,
-		"to_id": "57",
+		"to_id": "152",
 		"type": "connection"
 	},
 	{
@@ -2087,12 +2126,6 @@
 		"type": "connection"
 	},
 	{
-		"from_id": "96",
-		"from_port": 0,
-		"to_id": "115",
-		"type": "connection"
-	},
-	{
 		"from_id": "97",
 		"from_port": 0,
 		"to_id": "98",
@@ -2117,9 +2150,9 @@
 		"type": "connection"
 	},
 	{
-		"position:x": "15042.4775390625",
-		"position:y": "3916.90380859375",
+		"position:x": "1412.41186523438",
+		"position:y": "1177.0546875",
 		"type": "camera",
-		"zoom": "1.54561877250671"
+		"zoom": "0.65549284219742"
 	}
 ]

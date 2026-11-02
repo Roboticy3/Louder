@@ -832,7 +832,13 @@ impl Simulator {
             LouderRule::STANDARD_CHOOSE
           }
         }
-        MotionKind::Warp => LouderRule::WARP,
+        MotionKind::Warp => {
+          if forced_auto.is_some() {
+            LouderRule::AUTO_WARP
+          } else {
+            LouderRule::WARP
+          }
+        }
         MotionKind::Force => LouderRule::FORCE_POSITION,
       }
     };
@@ -1187,7 +1193,7 @@ impl Simulator {
     conversation: LouderName,
     actor: LouderActor,
     motion: Motion,
-    kind: MotionKind,
+    _kind: MotionKind,
     auto_hub: Option<LouderPosition>,
     from_channel: LouderName,
     moved: &mut Vec<LouderActor>,
@@ -1280,45 +1286,10 @@ impl Simulator {
         continue;
       }
 
-      let destination = if kind == MotionKind::Regular && motion.choice_index >= 0 {
-        Self::replayed_destination(context, conversation, follower, from, &motion)
-      } else {
-        motion.target_position
-      };
+      let destination = motion.target_position;
 
       Self::drag_along(context, conversation, follower, destination, None, moved);
     }
-  }
-
-  /// Where a follower ends up when it replays the leader's choice.
-  ///
-  /// The follower prefers the choice the leader took, and falls back to whatever
-  /// it can actually see from where it stands, which is what lets the two end up
-  /// on different branches of the same hub.
-  fn replayed_destination(
-    context: &LouderContext,
-    conversation: LouderName,
-    follower: LouderActor,
-    from: LouderPosition,
-    motion: &Motion,
-  ) -> LouderPosition {
-    let Some(hub) = context.get_conversation(conversation).and_then(|c| c.hub(from)) else {
-      return motion.target_position;
-    };
-
-    let replay = Self::available_choices(context, conversation, follower, from);
-    let leader_choice = motion.choice_index as usize;
-    let index = match replay.iter().find(|index| **index == leader_choice) {
-      Some(index) => *index,
-      None => match replay.first() {
-        Some(index) => *index,
-        None => return motion.target_position,
-      },
-    };
-
-    hub.choice(index)
-      .map(|choice| choice.position())
-      .unwrap_or(motion.target_position)
   }
 
   /// Warp a follower to `destination`, leaving it where it is if it cannot be

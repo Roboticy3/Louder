@@ -252,9 +252,10 @@ If choose(x, A), !visible(x, A), and !visible(x, B) for all B != A, choose(y, A)
 This is singleplayer rule 1, but with recursion allowed for the special case where there are nodes nobody can see.
 
 ### Warp Rule
-If choose(x, A), visible(x, B) and priority(x) >= priority(B), choose(x, B) = warp
+If choose(x, A) = r, y, visible(y, B) and priority(y) >= priority(B), choose(y, B) = warp, y
 
-Here we have an emergent behavior with Auto Rule and Auto Visible Rule. if tag(x) | AUTO, then visible(x, B) and choose(x, B) = warp, then choose(y, B) = auto
+### Auto Warp Rule
+If choice(x, A) = available, r, choice(x, B) = available, s, tag(x) | AUTO, and choose(x, A), choose(x, B)
 
 ### Non-warp Rule
 If choose(x, A), visible(x, B) and priority(x) < priority(B), do nothing

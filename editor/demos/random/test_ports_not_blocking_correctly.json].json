@@ -1,0 +1,27 @@
+[
+	{
+		"choices": "1",
+		"conversation_id": "0",
+		"position_offset:x": "-1.0",
+		"position_offset:y": "139.0",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "2",
+		"position_offset:x": "547.0",
+		"position_offset:y": "197.0",
+		"type": "hub"
+	},
+	{
+		"from_id": "0",
+		"from_port": 0,
+		"to_id": "2",
+		"type": "connection"
+	},
+	{
+		"position:x": "0.0",
+		"position:y": "0.0",
+		"type": "camera",
+		"zoom": "1.0"
+	}
+]

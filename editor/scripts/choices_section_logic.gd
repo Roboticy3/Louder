@@ -65,7 +65,7 @@ func remove_choice(index:int):
 	choices.remove_at(index)
 
 func update_default_choices():
-	hub.set_slot(
+	hub.set_slot.call_deferred(
 		spoke_child_index,
 		true,
 		1,
