@@ -466,7 +466,7 @@
 		"position_offset:x": "3520.0",
 		"position_offset:y": "-420.0",
 		"speaker": "Marrow",
-		"text": "\"Ah. This particular artifact was carried by my sister on the north-south pilgrimmage over 30 years ago.\"",
+		"text": "\"Ah. This one was carried by my sister on the north-south pilgrimmage over 30 years ago.\"",
 		"type": "hub"
 	},
 	{
@@ -552,17 +552,6 @@
 		"position_offset:y": "860.0",
 		"speaker": "Marrow",
 		"text": "\"Oh. Not much today.\" She slowly pulls an ancient drawer off its rails and places it on the counter.",
-		"type": "hub"
-	},
-	{
-		"additional_data": "\"hover_item\": \"Waterskin\"",
-		"callbacks": "has_item Marrow \"Waterskin\"",
-		"choices": "1",
-		"conversation_id": "56",
-		"flags": "1",
-		"position_offset:x": "2860.0",
-		"position_offset:y": "-340.0",
-		"text": "(Inspect the waterskin)",
 		"type": "hub"
 	},
 	{
@@ -1047,6 +1036,7 @@
 	},
 	{
 		"conversation_id": "152",
+		"flags": "1",
 		"position_offset:x": "2400.0",
 		"position_offset:y": "1880.0",
 		"text": "(Inspect the vest)",
@@ -1096,9 +1086,27 @@
 	{
 		"conversation_id": "35",
 		"expressions": "check(Good, 10)",
-		"flags": "3",
+		"flags": "35",
 		"position_offset:x": "3440.0",
 		"position_offset:y": "-3940.0",
+		"type": "hub"
+	},
+	{
+		"additional_data": "\"hover_item\": \"Waterskin\"",
+		"callbacks": "has_item Marrow \"Waterskin\"",
+		"choices": "1",
+		"conversation_id": "56",
+		"flags": "1",
+		"position_offset:x": "2580.0",
+		"position_offset:y": "-420.0",
+		"text": "(Inspect the waterskin)",
+		"type": "hub"
+	},
+	{
+		"conversation_id": "157",
+		"position_offset:x": "3087.984375",
+		"position_offset:y": "-360.654663085938",
+		"text": "\"The waterskin.\"",
 		"type": "hub"
 	},
 	{
@@ -1468,6 +1476,12 @@
 		"type": "connection"
 	},
 	{
+		"from_id": "157",
+		"from_port": 0,
+		"to_id": "75",
+		"type": "connection"
+	},
+	{
 		"from_id": "16",
 		"from_port": 1,
 		"to_id": "12",
@@ -1776,7 +1790,7 @@
 	{
 		"from_id": "56",
 		"from_port": 0,
-		"to_id": "75",
+		"to_id": "157",
 		"type": "connection"
 	},
 	{
@@ -2116,9 +2130,9 @@
 		"type": "connection"
 	},
 	{
-		"position:x": "2739.52905273438",
-		"position:y": "-3472.89697265625",
+		"position:x": "3506.08251953125",
+		"position:y": "-600.386840820313",
 		"type": "camera",
-		"zoom": "0.87245965003967"
+		"zoom": "1.16125857830048"
 	}
 ]

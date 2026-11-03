@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="CharacterData" format=3 uid="uid://6eojiwjog36v"]
+
+[ext_resource type="Script" uid="uid://bn1o1gx3ydww3" path="res://types/character_data.gd" id="1_rwwrk"]
+
+[resource]
+script = ExtResource("1_rwwrk")
+name = "Freya"
+color = Color(0.82573545, 0.83176637, 0.10449917, 1)
+metadata/_custom_type_script = "uid://bn1o1gx3ydww3"

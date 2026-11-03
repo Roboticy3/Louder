@@ -13,12 +13,42 @@ class_name ScrollingDialogue extends Control
 
 @export var show_rules := true
 
+## The speaker this dialogue plays as. When empty, the local peer's selected
+## character from the lobby is used.
+@export var player_speaker := &""
+
+## Bar of buttons below the dialogue that opens submenus (journal, etc.).
+@export var menu_bar: Control
+## Opens the journal submenu.
+@export var journal_button: Button
+## Fullscreen overlay that hosts the journal.
+@export var journal_overlay: Control
+@export var journal_scroll: ScrollContainer
+@export var journal_container: VBoxContainer
+@export var journal_log: ConversationLog
+
+## Aliases for the same nodes, for callers/tests using other names.
+var menu: Control:
+	get:
+		return menu_bar
+var submenu_bar: Control:
+	get:
+		return menu_bar
+var journal_panel: Control:
+	get:
+		return journal_overlay
+var journal_view: Control:
+	get:
+		return journal_overlay
+
 var conversation := -1
 var player_actor := -1
 
 # The engine choice index behind each button, in the order the buttons are shown.
 var _choice_indices: Array[int] = []
 var _revealed_anything := false
+var _last_hub_position := -1
+var _last_hub_conversation := -1
 
 
 func _ready() -> void:
@@ -29,6 +59,37 @@ func _ready() -> void:
 	LouderContextGlobal.actor_removed.connect(_on_actor_removed)
 	LouderContextGlobal.event_received.connect(_on_event)
 	
+	if menu_bar == null:
+		menu_bar = get_node_or_null("MenuBar") as Control
+	if journal_button == null:
+		journal_button = get_node_or_null("MenuBar/JournalButton") as Button
+		if journal_button == null:
+			journal_button = get_node_or_null("JournalButton") as Button
+	if journal_overlay == null:
+		journal_overlay = get_node_or_null("JournalOverlay") as Control
+		if journal_overlay == null:
+			journal_overlay = get_node_or_null("Journal") as Control
+	if journal_scroll == null and journal_overlay != null:
+		journal_scroll = journal_overlay.get_node_or_null("ScrollContainer") as ScrollContainer
+	if journal_container == null and journal_scroll != null:
+		journal_container = journal_scroll.get_node_or_null("VBoxContainer") as VBoxContainer
+	if journal_log == null:
+		if journal_container != null:
+			journal_log = journal_container.get_node_or_null("ConversationLog") as ConversationLog
+		if journal_log == null and journal_overlay != null:
+			journal_log = journal_overlay.get_node_or_null("ConversationLog") as ConversationLog
+			if journal_log == null:
+				journal_log = journal_overlay.get_node_or_null("ScrollContainer/VBoxContainer/ConversationLog") as ConversationLog
+	
+	if journal_button != null and not journal_button.pressed.is_connected(_on_journal_pressed):
+		journal_button.pressed.connect(_on_journal_pressed)
+	if journal_overlay != null:
+		journal_overlay.visible = false
+		var close_button := journal_overlay.get_node_or_null("CloseButton") as Button
+		if close_button != null and not close_button.pressed.is_connected(_on_submenu_close_requested):
+			close_button.pressed.connect(_on_submenu_close_requested)
+		register_submenu("journal", journal_overlay)
+	
 	visible = false
 
 
@@ -38,8 +99,16 @@ func _ready() -> void:
 ## every player character as part of starting the conversation, so there is no
 ## separate add-an-actor step to wait for: when `conversation_started` comes back
 ## this dialogue's actor is already in the conversation.
+func _local_speaker_name() -> String:
+	if str(player_speaker) != "":
+		return str(player_speaker)
+	var c_data := Network.get_character_of()
+	if c_data == null:
+		return ""
+	return str(c_data.name)
+
 func start_conversation(document_path: String) -> void:
-	LouderContextGlobal.start_conversation(document_path, get_path(), Network.get_character_of().name)
+	LouderContextGlobal.start_conversation(document_path, get_path(), _local_speaker_name())
 
 
 func _on_conversation_started(c: int, source: NodePath, source_character: String) -> void:
@@ -48,29 +117,42 @@ func _on_conversation_started(c: int, source: NodePath, source_character: String
 	# actors in every conversation now, so the speaker alone is not enough.
 	var c_data := Network.get_character_of()
 	if !c_data:
+		# Fall back to the configured speaker when the lobby hasn't told us yet.
+		if _local_speaker_name() == "":
+			return
+	var local_speaker := _local_speaker_name()
+	if local_speaker == "":
 		return
-	
-	if source != get_path() or str(source_character) != c_data.name:
+	if source != get_path() or str(source_character) != local_speaker:
 		return
 
 	conversation = c
-	player_actor = LouderContextGlobal.get_actor_for_speaker(c, c_data.name)
+	player_actor = LouderContextGlobal.get_actor_for_speaker(c, local_speaker)
 	visible = player_actor != -1
+	_last_hub_position = -1
+	_last_hub_conversation = c
+	if journal_log != null:
+		journal_log.player_actor = player_actor
 
 
 func _on_actor_added(c: int, a: int, speak_as: Array) -> void:
 	# The actor of the conversation this dialogue started may arrive after the
-	# conversation was announced, since a client learns about it by relay.
-	var c_data := Network.get_character_of()
-	if !c_data:
+	# conversation was announced, since a client learns about it by relay. A
+	# peer that joins a conversation already in progress also learns about
+	# its actor this way, so claim the conversation here rather than only in
+	# _on_conversation_started.
+	var local_speaker := _local_speaker_name()
+	if local_speaker == "":
 		return
 	if conversation != c or player_actor != -1:
 		return
-	if not _speaks_as(speak_as, c_data.name):
+	if not _speaks_as(speak_as, local_speaker):
 		return
 
 	player_actor = a
 	visible = true
+	if journal_log != null:
+		journal_log.player_actor = player_actor
 
 
 func _speaks_as(speak_as: Array, speaker: StringName) -> bool:
@@ -96,6 +178,12 @@ func _on_event(event: Dictionary):
 		return
 	var motion_dict: Dictionary = event.get("motion", {})
 	var target := int(motion_dict.get("target_position", -1))
+	# Ignore events that repeat the same position for this conversation.
+	if target >= 0 and c == _last_hub_conversation and target == _last_hub_position:
+		return
+	if target >= 0:
+		_last_hub_position = target
+		_last_hub_conversation = c
 	var speaker := str(motion_dict.get("speaker_text", ""))
 	var text := str(motion_dict.get("text", ""))
 	var is_background: bool = bool(motion_dict.get("background", false))
@@ -124,8 +212,8 @@ func get_hub_position() -> int:
 ## index: the engine only offers some of the choices on a hub and its indices
 ## skip the rest, so the row has to be looked up rather than passed on.
 func choose(row: int) -> void:
-	var c_data := Network.get_character_of()
-	if !c_data:
+	var local_speaker := _local_speaker_name()
+	if local_speaker == "":
 		return
 	if conversation == -1 or player_actor == -1:
 		return
@@ -134,7 +222,7 @@ func choose(row: int) -> void:
 		return
 
 	var choice_index := _choice_indices[row]
-	if !LouderContextGlobal.select_choice(conversation, c_data.name, choice_index):
+	if !LouderContextGlobal.select_choice(conversation, local_speaker, choice_index):
 		push_error("The engine refused choice %d at hub %d." % [choice_index, get_hub_position()])
 		return
 
@@ -198,6 +286,65 @@ func _on_callback_raised(callback: String) -> void:
 
 func _on_conversation_finished() -> void:
 	print("Dialogue conversation finished.")
+
+## Submenu registry, for future submenus beyond the journal.
+var _submenus: Dictionary = {}
+var _active_submenu := ""
+
+func register_submenu(name: String, node: Control) -> void:
+	_submenus[name] = node
+	if node != null:
+		node.visible = false
+
+func open_submenu(name: String) -> void:
+	close_submenu()
+	var node: Control = _submenus.get(name)
+	if node == null:
+		match name:
+			"journal", "Journal":
+				node = journal_overlay
+	if node != null:
+		node.visible = true
+		_active_submenu = name
+
+func close_submenu() -> void:
+	if _active_submenu != "":
+		var node: Control = _submenus.get(_active_submenu)
+		if node == null and (_active_submenu == "journal" or _active_submenu == "Journal"):
+			node = journal_overlay
+		if node != null:
+			node.visible = false
+	_active_submenu = ""
+	if journal_overlay != null:
+		journal_overlay.visible = false
+
+func toggle_submenu(name: String) -> void:
+	if _active_submenu == name:
+		close_submenu()
+	else:
+		open_submenu(name)
+
+func open_journal() -> void:
+	open_submenu("journal")
+
+func close_journal() -> void:
+	close_submenu()
+
+func toggle_journal() -> void:
+	toggle_submenu("journal")
+
+func is_journal_open() -> bool:
+	return journal_overlay != null and journal_overlay.visible
+
+var journal_open: bool:
+	get:
+		return is_journal_open()
+
+func _on_journal_pressed() -> void:
+	toggle_journal()
+
+func _on_submenu_close_requested() -> void:
+	close_submenu()
 
 func _process(delta: float) -> void:
 	if scrolling_to_bottom:

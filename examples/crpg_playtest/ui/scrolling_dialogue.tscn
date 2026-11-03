@@ -3,8 +3,9 @@
 [ext_resource type="Script" uid="uid://cjjkwvrv3lhxw" path="res://ui/scrolling_dialogue.gd" id="1_scrolling_dialogue"]
 [ext_resource type="PackedScene" path="res://ui/dialogue_line.tscn" id="2_dialogue_line"]
 [ext_resource type="PackedScene" path="res://ui/dialogue_choice.tscn" id="3_dialogue_choice"]
+[ext_resource type="PackedScene" path="res://ui/conversation_log.tscn" id="4_conversation_log"]
 
-[node name="ScrollingDialogue" type="Control" unique_id=527292302 node_paths=PackedStringArray("scroll_container", "lines", "choices")]
+[node name="ScrollingDialogue" type="Control" unique_id=527292302 node_paths=PackedStringArray("scroll_container", "lines", "choices", "menu_bar", "journal_button", "journal_overlay", "journal_scroll", "journal_container", "journal_log")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -18,6 +19,12 @@ lines = NodePath("VSplitContainer/ScrollContainer/VBoxContainer/Lines")
 choices = NodePath("VSplitContainer/ScrollContainer/VBoxContainer/Choices")
 line_scene = ExtResource("2_dialogue_line")
 choice_scene = ExtResource("3_dialogue_choice")
+menu_bar = NodePath("VSplitContainer/MenuBar")
+journal_button = NodePath("VSplitContainer/MenuBar/JournalButton")
+journal_overlay = NodePath("JournalOverlay")
+journal_scroll = NodePath("JournalOverlay/ScrollContainer")
+journal_container = NodePath("JournalOverlay/ScrollContainer/VBoxContainer")
+journal_log = NodePath("JournalOverlay/ScrollContainer/VBoxContainer/ConversationLog")
 
 [node name="Background" type="ColorRect" parent="." unique_id=1183746520]
 layout_mode = 1
@@ -59,3 +66,64 @@ theme_override_constants/separation = 6
 [node name="Control" type="Control" parent="VSplitContainer" unique_id=1027195600]
 layout_mode = 2
 size_flags_vertical = 3
+
+[node name="MenuBar" type="HBoxContainer" parent="VSplitContainer" unique_id=7000000001]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="JournalButton" type="Button" parent="VSplitContainer/MenuBar" unique_id=7000000002]
+layout_mode = 2
+text = "Journal"
+
+[node name="JournalOverlay" type="Control" parent="." unique_id=7000000003]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+visible = false
+
+[node name="Background" type="ColorRect" parent="JournalOverlay" unique_id=7000000004]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.086, 0.098, 0.129, 0.98)
+
+[node name="Title" type="Label" parent="JournalOverlay" unique_id=7000000005]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 32.0
+grow_horizontal = 2
+text = "Journal"
+horizontal_alignment = 1
+
+[node name="CloseButton" type="Button" parent="JournalOverlay" unique_id=7000000006]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -60.0
+offset_bottom = 32.0
+grow_horizontal = 0
+text = "Close"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="JournalOverlay" unique_id=7000000007]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 40.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="JournalOverlay/ScrollContainer" unique_id=7000000008]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ConversationLog" parent="JournalOverlay/ScrollContainer/VBoxContainer" unique_id=7000000009 instance=ExtResource("4_conversation_log")]
+layout_mode = 2
