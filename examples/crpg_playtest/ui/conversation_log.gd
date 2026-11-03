@@ -77,12 +77,6 @@ var _last_targets: Dictionary = {}
 
 
 func _ready() -> void:
-	# Only the peer that actually runs the engine has a trace to read, mirroring
-	# the event log. A client in a lobby has no trace of its own.
-	if not (not Network.is_in_lobby() or Network.is_host()):
-		queue_free()
-		return
-
 	if container == null:
 		container = get_node_or_null("VBoxContainer") as VBoxContainer
 		if container == null:
@@ -91,85 +85,71 @@ func _ready() -> void:
 		push_error("A ConversationLog has no container to put labels in.")
 		set_process(false)
 
+	if not LouderContextGlobal.event_received.is_connected(_on_event):
+		LouderContextGlobal.event_received.connect(_on_event)
+
 
 func _process(_delta: float) -> void:
-	if not (not Network.is_in_lobby() or Network.is_host()):
-		queue_free()
-		return
-
-	var traced := LouderContextGlobal.context.get_traced_event_count()
-
-	# A trace that got shorter was cleared, so what is on screen is stale.
-	if traced < _next_trace_index:
-		_clear()
-		_next_trace_index = 0
-
-	while _next_trace_index < traced:
-		var event: LouderEvent = LouderContextGlobal.context.get_traced_event(_next_trace_index)
-		_next_trace_index += 1
-		if event == null:
-			continue
-		var kind := event.get_kind()
-		# Only hub appearance events (motions) are part of the conversation log.
-		if kind < 1 or kind > 3:
-			continue
-		var actor := event.get_actor()
-		# Be aware of the client's perspective: only the selected character's
-		# hub appearances belong in this log.
-		if player_actor >= 0 and actor != player_actor:
-			continue
-		var motion = event.get_motion()
-		var target := -1
-		if motion != null:
-			target = motion.get_target_position()
-		var key := "%d:%d" % [event.get_conversation(), actor]
-		# Ignore events that repeat the same position for this actor.
-		if target >= 0 and _last_targets.get(key, -999999) == target:
-			continue
-		if target >= 0:
-			_last_targets[key] = target
-		var entry := _make_entry(event)
-		entries.append(entry)
-		_add_label(entry)
-		entry_added.emit(entry)
-
+	# Collection now happens through the event_received signal, so peers that
+	# have no engine trace of their own (clients) still get their journal.
 	while container != null and container.get_child_count() > max_entries:
 		var oldest := container.get_child(0)
 		container.remove_child(oldest)
 		oldest.queue_free()
 
 
-func _make_entry(event: LouderEvent) -> Dictionary:
-	var context := LouderContextGlobal.context
-	var conversation := event.get_conversation()
-	var actor := event.get_actor()
-	var channel := event.get_channel()
-	var kind := event.get_kind()
+func _on_event(event: Dictionary) -> void:
+	var kind := int(event.get("kind", -1))
+	# Only hub appearance events (motions) are part of the conversation log.
+	if kind < 1 or kind > 3:
+		return
+	var c := int(event.get("conversation", -1))
+	var a := int(event.get("actor", -1))
+	# Be aware of the client's perspective: only the selected character's hub
+	# appearances belong in this journal.
+	if player_actor >= 0 and a != player_actor:
+		return
 
-	var motion = event.get_motion()
-	var source_position := -1
-	var target_position := -1
-	var choice_index := -1
-	var speaker_id := -1
-	var background := false
-	if motion != null:
-		source_position = motion.get_source_position()
-		target_position = motion.get_target_position()
-		choice_index = motion.get_choice_index()
-		speaker_id = motion.get_speaker()
-		background = motion.get_background()
+	var motion: Dictionary = event.get("motion", {})
+	var target := int(motion.get("target_position", -1))
+	var key := "%d:%d" % [c, a]
+	# Ignore events that repeat the same position for this actor.
+	if target >= 0 and _last_targets.get(key, -999999) == target:
+		return
+	if target >= 0:
+		_last_targets[key] = target
 
-	var speaker := LouderContextGlobal.resolve_name(speaker_id)
-	var text := ""
-	if target_position >= 0:
+	var entry := _make_entry_from_event(event)
+	entries.append(entry)
+	_add_label(entry)
+	entry_added.emit(entry)
+
+
+func _make_entry_from_event(event: Dictionary) -> Dictionary:
+	var conversation := int(event.get("conversation", -1))
+	var actor := int(event.get("actor", -1))
+	var channel := int(event.get("channel", -1))
+	var kind := int(event.get("kind", -1))
+
+	var motion: Dictionary = event.get("motion", {})
+	var source_position := int(motion.get("source_position", -1))
+	var target_position := int(motion.get("target_position", -1))
+	var choice_index := int(motion.get("choice_index", -1))
+	var background := bool(motion.get("background", false))
+
+	var speaker := str(motion.get("speaker_text", ""))
+	if speaker == "":
+		speaker = str(motion.get("speaker", ""))
+	var text := str(motion.get("text", ""))
+	if text == "" and target_position >= 0:
 		text = LouderContextGlobal.get_line_text(conversation, target_position)
 
 	var choice_text := ""
 	if source_position >= 0 and choice_index >= 0:
 		choice_text = LouderContextGlobal.get_choice_text(conversation, source_position, actor, choice_index)
 
-	var available_choices: Array[Dictionary] = []
-	if target_position >= 0 and actor >= 0:
+	var available_choices: Array = motion.get("choices", [])
+	if available_choices.is_empty() and target_position >= 0 and actor >= 0:
 		var indices := LouderContextGlobal.get_available_choice_indices(conversation, actor)
 		for idx in indices:
 			available_choices.append({
@@ -181,7 +161,7 @@ func _make_entry(event: LouderEvent) -> Dictionary:
 	return {
 		"conversation": conversation,
 		"conversation_id": conversation,
-		"conversation_name": LouderContextGlobal.resolve_name(conversation),
+		"conversation_name": LouderContextGlobal.resolve_name(conversation) if conversation >= 0 else "",
 		"channel": channel,
 		"actor": actor,
 		"character": speaker,

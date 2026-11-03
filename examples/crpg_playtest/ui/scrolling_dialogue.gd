@@ -151,6 +151,8 @@ func _on_actor_added(c: int, a: int, speak_as: Array) -> void:
 
 	player_actor = a
 	visible = true
+	if journal_log != null:
+		journal_log.player_actor = player_actor
 
 
 func _speaks_as(speak_as: Array, speaker: StringName) -> bool:
