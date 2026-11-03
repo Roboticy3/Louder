@@ -87,6 +87,8 @@ func avoid_occupied(pos:Vector3, offset:Vector3, s:int) -> Vector3:
 	occupation_query.collision_mask = body.collision_mask | navigation_target_body.collision_layer
 	occupation_query.position = pos + offset
 	
+	print(occupation_query.collision_mask, offset)
+	
 	var occupation_result := space_state.intersect_point(occupation_query)
 	while !occupation_result.is_empty():
 		
@@ -112,7 +114,7 @@ func navigate_to_position_rpc(to:Vector3):
 
 @rpc("call_local", "authority", "reliable")
 func _navigate_to_position(to:Vector3):
-	to = avoid_occupied(to, body.global_basis.y, int(to.x + to.y + to.z))
+	to = avoid_occupied(to, body.global_basis.y * 0.5, int(to.x + to.y + to.z))
 	intent_to_interact = null
 	navigation_agent.target_position = to
 	nav_state = NavigationState.Navigating

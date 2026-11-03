@@ -3,8 +3,6 @@
 [ext_resource type="Script" uid="uid://c2pbeinw5hxxf" path="res://controllers/dialogue_debug_controller.gd" id="1_sthdx"]
 [ext_resource type="PackedScene" uid="uid://80pa7ycnodps" path="res://ui/louder_event_log.tscn" id="2_xgxsi"]
 
-[ext_resource type="PackedScene" uid="uid://convlog000001" path="res://ui/conversation_log.tscn" id="3_convlog"]
-
 [node name="DialogueDebugController" type="Node" unique_id=1355120518]
 script = ExtResource("1_sthdx")
 
@@ -12,11 +10,4 @@ script = ExtResource("1_sthdx")
 anchors_preset = -1
 anchor_top = 1.0
 anchor_right = 0.35700002
-offset_right = -0.2640381
-
-[node name="ConversationLog" parent="." unique_id=987654321 instance=ExtResource("3_convlog")]
-anchors_preset = -1
-anchor_left = 0.36
-anchor_top = 1.0
-anchor_right = 0.72
 offset_right = -0.2640381
