@@ -13,6 +13,10 @@ class_name ScrollingDialogue extends Control
 
 @export var show_rules := true
 
+## The speaker this dialogue plays as. When empty, the local peer's selected
+## character from the lobby is used.
+@export var player_speaker := &""
+
 ## Bar of buttons below the dialogue that opens submenus (journal, etc.).
 @export var menu_bar: Control
 ## Opens the journal submenu.
@@ -95,8 +99,16 @@ func _ready() -> void:
 ## every player character as part of starting the conversation, so there is no
 ## separate add-an-actor step to wait for: when `conversation_started` comes back
 ## this dialogue's actor is already in the conversation.
+func _local_speaker_name() -> String:
+	if str(player_speaker) != "":
+		return str(player_speaker)
+	var c_data := Network.get_character_of()
+	if c_data == null:
+		return ""
+	return str(c_data.name)
+
 func start_conversation(document_path: String) -> void:
-	LouderContextGlobal.start_conversation(document_path, get_path(), Network.get_character_of().name)
+	LouderContextGlobal.start_conversation(document_path, get_path(), _local_speaker_name())
 
 
 func _on_conversation_started(c: int, source: NodePath, source_character: String) -> void:
@@ -105,13 +117,17 @@ func _on_conversation_started(c: int, source: NodePath, source_character: String
 	# actors in every conversation now, so the speaker alone is not enough.
 	var c_data := Network.get_character_of()
 	if !c_data:
+		# Fall back to the configured speaker when the lobby hasn't told us yet.
+		if _local_speaker_name() == "":
+			return
+	var local_speaker := _local_speaker_name()
+	if local_speaker == "":
 		return
-	
-	if source != get_path() or str(source_character) != c_data.name:
+	if source != get_path() or str(source_character) != local_speaker:
 		return
 
 	conversation = c
-	player_actor = LouderContextGlobal.get_actor_for_speaker(c, c_data.name)
+	player_actor = LouderContextGlobal.get_actor_for_speaker(c, local_speaker)
 	visible = player_actor != -1
 	_last_hub_position = -1
 	_last_hub_conversation = c
@@ -121,13 +137,16 @@ func _on_conversation_started(c: int, source: NodePath, source_character: String
 
 func _on_actor_added(c: int, a: int, speak_as: Array) -> void:
 	# The actor of the conversation this dialogue started may arrive after the
-	# conversation was announced, since a client learns about it by relay.
-	var c_data := Network.get_character_of()
-	if !c_data:
+	# conversation was announced, since a client learns about it by relay. A
+	# peer that joins a conversation already in progress also learns about
+	# its actor this way, so claim the conversation here rather than only in
+	# _on_conversation_started.
+	var local_speaker := _local_speaker_name()
+	if local_speaker == "":
 		return
 	if conversation != c or player_actor != -1:
 		return
-	if not _speaks_as(speak_as, c_data.name):
+	if not _speaks_as(speak_as, local_speaker):
 		return
 
 	player_actor = a
@@ -191,8 +210,8 @@ func get_hub_position() -> int:
 ## index: the engine only offers some of the choices on a hub and its indices
 ## skip the rest, so the row has to be looked up rather than passed on.
 func choose(row: int) -> void:
-	var c_data := Network.get_character_of()
-	if !c_data:
+	var local_speaker := _local_speaker_name()
+	if local_speaker == "":
 		return
 	if conversation == -1 or player_actor == -1:
 		return
@@ -201,7 +220,7 @@ func choose(row: int) -> void:
 		return
 
 	var choice_index := _choice_indices[row]
-	if !LouderContextGlobal.select_choice(conversation, c_data.name, choice_index):
+	if !LouderContextGlobal.select_choice(conversation, local_speaker, choice_index):
 		push_error("The engine refused choice %d at hub %d." % [choice_index, get_hub_position()])
 		return
 

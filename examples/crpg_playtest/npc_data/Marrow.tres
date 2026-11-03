@@ -1,9 +1,9 @@
-[gd_resource type="Resource" script_class="CharacterData" format=3 uid="uid://6eojiwjog36v"]
+[gd_resource type="Resource" script_class="CharacterData" format=3 uid="uid://2u3d7yx5qncv"]
 
 [ext_resource type="Script" uid="uid://bn1o1gx3ydww3" path="res://types/character_data.gd" id="1_3bwm2"]
 
 [resource]
 script = ExtResource("1_3bwm2")
 name = "Marrow"
-color = Color(0.85676247, 0.6073701, 0.0015263223, 1)
+color = Color(0.9542671, 0.77430975, 0.22387928, 1)
 metadata/_custom_type_script = "uid://bn1o1gx3ydww3"
