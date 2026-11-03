@@ -195,8 +195,10 @@ impl Simulator {
     conversation: LouderName,
     actor: LouderActor,
     position: LouderPosition,
+    voice_actor: Option<LouderActor>,
   ) -> LouderName {
-    let speaker = Self::hub_speaker_for(context, conversation, actor, position);
+    let speaker_actor = voice_actor.unwrap_or(actor);
+    let speaker = Self::hub_speaker_for(context, conversation, speaker_actor, position);
 
     let Some(hub) = context.get_conversation(conversation).and_then(|c| c.hub(position)) else {
       return speaker;
@@ -726,6 +728,7 @@ impl Simulator {
       false,
       Self::NO_CHOICE,
       &mut Vec::new(),
+      None,
     )
   }
 
@@ -766,6 +769,7 @@ impl Simulator {
     emulating: bool,
     chosen: i32,
     moved: &mut Vec<LouderActor>,
+    voice_actor: Option<LouderActor>,
   ) -> Result<LouderPosition, SimError> {
     // Already placed in this cascade, either as its leader or as someone it
     // pulled along, so the actor stays exactly where it is. This is checked
@@ -847,7 +851,7 @@ impl Simulator {
       source_position: source,
       target_position: destination,
       choice_index: chosen,
-      speaker: Self::apparent_speaker(context, conversation, actor, destination),
+      speaker: Self::apparent_speaker(context, conversation, actor, destination, voice_actor),
       background: false,
       rule: move_rule,
     };
@@ -1278,7 +1282,7 @@ impl Simulator {
           continue;
         };
 
-        Self::drag_along(context, conversation, follower, destination, Some(hub), moved);
+        Self::drag_along(context, conversation, follower, destination, Some(hub), moved, actor);
         continue;
       }
 
@@ -1288,7 +1292,7 @@ impl Simulator {
 
       let destination = motion.target_position;
 
-      Self::drag_along(context, conversation, follower, destination, None, moved);
+      Self::drag_along(context, conversation, follower, destination, None, moved, actor);
     }
   }
 
@@ -1310,6 +1314,7 @@ impl Simulator {
     destination: LouderPosition,
     forced_auto: Option<LouderPosition>,
     moved: &mut Vec<LouderActor>,
+    leader: LouderActor,
   ) {
     let _ = Self::travel_within(
       context,
@@ -1323,6 +1328,7 @@ impl Simulator {
       true,
       Self::NO_CHOICE,
       moved,
+      Some(leader),
     );
   }
 
@@ -1368,6 +1374,7 @@ impl Simulator {
       false,
       choice_index as i32,
       &mut Vec::new(),
+      None,
     )
   }
 
