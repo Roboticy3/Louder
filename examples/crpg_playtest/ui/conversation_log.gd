@@ -23,6 +23,26 @@ signal log_cleared
 @export var container: VBoxContainer
 @export var max_entries := 1000
 
+## The actor whose perspective this log follows. -1 means "all actors" (server/debug).
+var player_actor := -1
+
+## Aliases for the same filter.
+var player_character_actor: int:
+	get:
+		return player_actor
+	set(value):
+		player_actor = value
+var selected_actor: int:
+	get:
+		return player_actor
+	set(value):
+		player_actor = value
+var actor_filter: int:
+	get:
+		return player_actor
+	set(value):
+		player_actor = value
+
 ## Aliases kept for compatibility with the event log's naming and future callers.
 var max_logs: int:
 	get:
@@ -53,6 +73,7 @@ var items: Array[Dictionary]:
 		return entries
 
 var _next_trace_index := 0
+var _last_targets: Dictionary = {}
 
 
 func _ready() -> void:
@@ -92,6 +113,21 @@ func _process(_delta: float) -> void:
 		# Only hub appearance events (motions) are part of the conversation log.
 		if kind < 1 or kind > 3:
 			continue
+		var actor := event.get_actor()
+		# Be aware of the client's perspective: only the selected character's
+		# hub appearances belong in this log.
+		if player_actor >= 0 and actor != player_actor:
+			continue
+		var motion = event.get_motion()
+		var target := -1
+		if motion != null:
+			target = motion.get_target_position()
+		var key := "%d:%d" % [event.get_conversation(), actor]
+		# Ignore events that repeat the same position for this actor.
+		if target >= 0 and _last_targets.get(key, -999999) == target:
+			continue
+		if target >= 0:
+			_last_targets[key] = target
 		var entry := _make_entry(event)
 		entries.append(entry)
 		_add_label(entry)
@@ -183,6 +219,7 @@ func _clear() -> void:
 			container.remove_child(child)
 			child.queue_free()
 	entries.clear()
+	_last_targets.clear()
 	log_cleared.emit()
 
 

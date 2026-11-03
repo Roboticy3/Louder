@@ -43,6 +43,8 @@ var player_actor := -1
 # The engine choice index behind each button, in the order the buttons are shown.
 var _choice_indices: Array[int] = []
 var _revealed_anything := false
+var _last_hub_position := -1
+var _last_hub_conversation := -1
 
 
 func _ready() -> void:
@@ -111,6 +113,10 @@ func _on_conversation_started(c: int, source: NodePath, source_character: String
 	conversation = c
 	player_actor = LouderContextGlobal.get_actor_for_speaker(c, c_data.name)
 	visible = player_actor != -1
+	_last_hub_position = -1
+	_last_hub_conversation = c
+	if journal_log != null:
+		journal_log.player_actor = player_actor
 
 
 func _on_actor_added(c: int, a: int, speak_as: Array) -> void:
@@ -151,6 +157,12 @@ func _on_event(event: Dictionary):
 		return
 	var motion_dict: Dictionary = event.get("motion", {})
 	var target := int(motion_dict.get("target_position", -1))
+	# Ignore events that repeat the same position for this conversation.
+	if target >= 0 and c == _last_hub_conversation and target == _last_hub_position:
+		return
+	if target >= 0:
+		_last_hub_position = target
+		_last_hub_conversation = c
 	var speaker := str(motion_dict.get("speaker_text", ""))
 	var text := str(motion_dict.get("text", ""))
 	var is_background: bool = bool(motion_dict.get("background", false))
