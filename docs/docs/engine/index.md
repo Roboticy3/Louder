@@ -216,7 +216,7 @@ Rules for controlling dialogue
 ### Auto Hubs
 Hub x can be flagged AUTO. In this case, tag(x) | AUTO. 
 
-### Auto Traces
+### Auto Travels
 Let y be the first element of choices(x, A), ordered by port of the associated connection.
 
 if not tag(x) | AUTO, auto(x, A) = x
@@ -224,6 +224,8 @@ if not tag(x) | AUTO, auto(x, A) = x
 If tag(x) | AUTO, and not tag(y) | AUTO, auto(x, A) = y.
 
 If tag(y) | AUTO, y = the first element of choices(y, A). Repeat until not tag(y) | AUTO or choices(y, A) is empty. If choices(y, A) becomes empty, auto(x) is undefined. Otherwise, auto(x, A) = y after repetition.
+
+path(x, A) is the set of hubs covered by this algorithm, or just x if not tag(x) | AUTO
 
 ### Auto Trap Rule
 If choice(x, a) and auto(x, A) is undefined, choice(x, A) = unavailable, auto_trap
@@ -271,7 +273,7 @@ evaluate(x, A) is the result of evaluating all expressions on x from the perspec
 See Expressions for more about how evaluation works.
 
 ### Standard Evaluation
-If choose(x, A), evaluate(y, A) for all y in choices(x, A)
+If choose(x, A), evaluate(z, A) for all z in choices(y, A), for all y in travel(x)
 
 ### Evaluation Andedness
 If evaluate(x, A, i) is not 0 and evaluate(x, A, i) is not an empty name and evaluate(x, A, i) is not NONE for all i, evaluate(x, A)
@@ -289,6 +291,18 @@ evaluate(x, A, i) can equal _, interrupt (see Expressions)
 ### Parse Error Rule
 evaluate(x, A, i) can equal 1, parse_error
 (see Expressions)
+
+### Assignment Rule
+evaluate(x, A, i) can equal _, assignment (see Expressions)
+
+### Increment Rule
+evaluate(x, A, i) can equal _, increment (see Expressions)
+
+### Travel Evaluation Rule
+travel_evaluate(x, A, i) behaves like evaluate, except it will not return assignment or increment. Instead it will evaluate expressions of these kinds. See Expressions.
+
+### Travel Evaluation
+if evaluate(x, A, i) = _, increment or _, assignment, and choose(x, A), then travel_evaluate(y, A, i) = _, interrupt for all y in travel(x)
 
 ### Link Hubs
 A hub x can be tagged as a link hub. In this case, tag(x) | LINK
@@ -360,6 +374,7 @@ if B was at position x and channel(B) != channel(A), choose(y, B) and channel(B)
 # Expressions
 By default, expressions are parsed using an internal parser with the following syntax:
 
+## Syntax Elements
 Expressions are made up of identifiers, literals and operators. Each identifier represents a function.
 
 Operators are the same as C, without pointers, offsets, or precompiler declarations, with the same precedence rules.
@@ -372,11 +387,25 @@ Finally, there are literals for integers, floats, and strings.
 
 Whitespace is used to separate symbols. Any character not caught by the above categories, such as $ in the middle of an identifier or #, is treated as invalid.
 
+## Interpretation: Identifiers
 The expression `identifier` asks the user for the value of the function "identifier" with no arguments, using an interrupt. Then, `identifier` is replaced with the literal for that value.
 
 An expression made up of literals and operators alone has a known value.
 
 The expression `a(b, c)` first evaluates b and c. If b is only made up of literals and operators, the value is known already. If not, the user is asked the value of b. Same with c. Once b, c are resolved, the user is asked the value of a, which must be an identifier in this expression, with arguments equal to the literals that b and c resolved to. If a is not an identifier, the expression is invalid. 
+
+## Interpretation: Operators
+For non-assignment operators, the interpretation is fairly straight-forward. For `a + b`, resolve a, b to literals, then the value of a + b is known.
+
+For assignment operators, interrupts need a way to pass values. Assignment operators in C are either binary or unary. In binary operators, the assignee is on the left, but this is not the case necessarily for unary operators For example, `a = b`, `a++`, and `++a` all assign a value to a.
+
+Once the expression being assigned to is selected, if that element is an identifer, an interrupt is raised for that identifier, with the assignment value provided in the interrupt. 
+
+For example, in `a = b`, b is resolved to a value, then an interrupt is raised for a with data saying what a has been assigned to.
+
+If the assignee is not an identifer, the syntax is invalid.
+
+The incremental operators, ++, -- (left and right variants), +=, -=, %= etc, should be calculated once, and only when a hub appears to an actor, not for computing choices.
 
 Again, we have to make an exception to the aspiration about encoding-free implementation, since the encoding of expressions must be known to parse them. The encoding used by expressions can be set in the context config.
 
