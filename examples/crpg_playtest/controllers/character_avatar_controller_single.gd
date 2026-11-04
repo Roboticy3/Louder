@@ -33,6 +33,21 @@ var controlled_avatar: CharacterAvatar :
 			controlled_avatar = new_controlled_avatar
 			controlled_avatar_changed.emit(new_controlled_avatar)
 
+# Overlay to draw between the game camera and UI elements. 
+# Used to show black screen and images.
+@export var overlay:Node :
+	set(new_overlay):
+		if new_overlay != overlay:
+			if is_instance_valid(overlay):
+				overlay.queue_free()
+		
+			if is_instance_valid(new_overlay):
+				overlay_slot.add_child(new_overlay)
+			
+			overlay = new_overlay
+
+@export var overlay_slot:CanvasLayer
+
 func locate_character() -> void:
 	if !is_inside_tree():
 		return

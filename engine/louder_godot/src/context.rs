@@ -130,6 +130,12 @@ godot_api! {
       self.inner.push_ask(ask.bind().inner.clone());
     }
 
+    /// How many asks are currently cached, answered or not.
+    #[func]
+    pub fn get_ask_count(&self) -> i32 {
+      self.inner.ask_count() as i32
+    }
+
     /// Answer the ask at `index` with `verdict`.
     ///
     /// Answering marks the ask complete and moves it to the back of the cache,

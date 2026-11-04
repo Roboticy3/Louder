@@ -224,6 +224,11 @@ impl LouderContext {
     self.asks.get(index).map(|entry| &entry.ask)
   }
 
+  /// The verdict recorded for the ask at `index`, if it has been answered.
+  pub fn ask_verdict(&self, index: usize) -> Option<i32> {
+    self.asks.get(index).and_then(|entry| entry.verdict)
+  }
+
   /// How many asks are cached, answered or not.
   pub fn ask_count(&self) -> usize {
     self.asks.len()

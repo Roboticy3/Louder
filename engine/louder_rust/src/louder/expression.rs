@@ -46,14 +46,14 @@ pub enum Expr {
 }
 
 /// The name of the special variable that says who speaks a hub.
-pub const SPEAKER_VARIABLE: &str = "%speaker";
+pub const SPEAKER_VARIABLE: &str = "$speaker";
 
 /// Whether a name is a special variable rather than a story state one.
 ///
 /// Special variables are written with a `%` in front, and that is what tells
 /// them apart from the variables an author defines.
 pub fn is_special(name: &str) -> bool {
-  name.starts_with('%')
+  name.starts_with('%') || name.starts_with('$')
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -126,14 +126,21 @@ pub fn tokenize(source: &str) -> Result<Vec<Token>, ParseError> {
       continue;
     }
 
-    // A `$` immediately followed by `(` opens an ask.
+    // A `$` opens a special identifier, as the engine guide describes.
+    // The old `$(...)` ask syntax is out of date and no longer supported.
     if c == '$' {
-      if i + 1 < bytes.len() && bytes[i + 1] == '(' {
-        tokens.push(Token::Ask);
-        i += 2;
-        continue;
+      let start = i;
+      i += 1;
+      if i >= bytes.len() || !(bytes[i] == '_' || bytes[i].is_alphabetic()) {
+        return Err(ParseError::new("expected an identifier after `$`", start));
       }
-      return Err(ParseError::new("expected `(` after `$`", i));
+      let name_start = i;
+      while i < bytes.len() && (bytes[i] == '_' || bytes[i].is_alphanumeric()) {
+        i += 1;
+      }
+      let name: String = bytes[name_start..i].iter().collect();
+      tokens.push(Token::Special(format!("${name}")));
+      continue;
     }
 
     if c.is_ascii_digit() {
@@ -208,25 +215,6 @@ pub fn tokenize(source: &str) -> Result<Vec<Token>, ParseError> {
       continue;
     }
 
-    // A `%` that follows an operand is the modulo operator. One that does not
-    // opens a special variable, which is how an expression can ask the engine
-    // about itself without the two spellings colliding. A compound assignment
-    // is a modulo that happens to be followed by an `=`, so it is left to the
-    // operator table below.
-    if c == '%' && !ends_operand(tokens.last()) {
-      let start = i;
-      i += 1;
-      if i >= bytes.len() || !(bytes[i] == '_' || bytes[i].is_alphabetic()) {
-        return Err(ParseError::new("expected a variable name after `%`", start));
-      }
-      let name_start = i;
-      while i < bytes.len() && (bytes[i] == '_' || bytes[i].is_alphanumeric()) {
-        i += 1;
-      }
-      let name: String = bytes[name_start..i].iter().collect();
-      tokens.push(Token::Special(format!("%{name}")));
-      continue;
-    }
 
     let rest: String = bytes[i..].iter().collect();
     match OPERATORS.iter().find(|op| rest.starts_with(**op)) {
@@ -452,7 +440,7 @@ impl Parser {
           return Ok(Expr::Call(name, args));
         }
 
-        Ok(Expr::Var(name))
+        Ok(Expr::Call(name, Vec::new()))
       }
       Token::Special(name) => {
         // A special variable may turn out to be a write to it.
@@ -496,7 +484,10 @@ pub fn parse(source: &str) -> Result<Expr, ParseError> {
 /// statements: a condition is re-run every time a hub is checked, while a
 /// statement runs once when the hub is first covered.
 pub fn reads_only(expr: &Expr) -> bool {
-  !matches!(expr, Expr::Assign(..) | Expr::PreInc(..) | Expr::PostInc(..))
+  !matches!(
+    expr,
+    Expr::Assign(..) | Expr::PreInc(..) | Expr::PostInc(..) | Expr::Call(..) | Expr::Ask(..)
+  )
 }
 
 /// Which operations an expression performs.
@@ -734,15 +725,60 @@ impl Evaluator {
           }
         }
 
-        let resolved: Vec<LouderVariant> = values;
-        match context.call(name, &resolved) {
-          Some(value) => Ok(Evaluation::Value(value)),
-          None => {
-            // An unknown function evaluates to 0 rather than aborting the whole
-            // conversation, matching how unset variables behave.
-            Ok(Evaluation::Value(LouderVariant::Int(0)))
+        // An identifier is resolved by the host through an interrupt. The
+        // callback carries the function name and the literals its arguments
+        // resolved to.
+        let callback_text = if values.is_empty() {
+          name.clone()
+        } else {
+          format!(
+            "{}({})",
+            name,
+            values
+              .iter()
+              .map(|value| variant_literal(context, value))
+              .collect::<Vec<String>>()
+              .join(", ")
+          )
+        };
+        let callback = context.intern_name(&callback_text);
+
+        for index in 0..context.ask_count() {
+          let Some(existing) = context.ask(index) else {
+            continue;
+          };
+          if existing.ask != callback
+            || existing.conversation != self.scope.conversation
+            || existing.actor != self.scope.actor
+            || existing.channel != self.scope.channel
+          {
+            continue;
           }
+          if let Some(verdict) = context.ask_verdict(index) {
+            return Ok(Evaluation::Value(LouderVariant::Int(verdict)));
+          }
+          return Ok(Evaluation::Suspended);
         }
+
+        let motion = self.scope.motion.clone().unwrap_or(Motion {
+          source_position: super::hub::LouderPosition::MIN,
+          target_position: super::hub::LouderPosition::MIN,
+          choice_index: -1,
+          speaker: LOUDER_NAME_NONE,
+          background: false,
+          rule: LouderRule::NONE,
+        });
+
+        context.push_ask(LouderAsk {
+          conversation: self.scope.conversation,
+          channel: self.scope.channel,
+          actor: self.scope.actor,
+          rule: LouderRule::ASK,
+          motion,
+          ask: callback,
+        });
+
+        Ok(Evaluation::Suspended)
       }
 
       Expr::Ask(args) => {
@@ -755,6 +791,27 @@ impl Evaluator {
         }
 
         let callback = context.intern_name(&args_to_text(args));
+
+        // If this ask has already been answered, use the verdict instead of
+        // suspending again. An unanswered copy of the same ask means we are
+        // still waiting on the host.
+        for index in 0..context.ask_count() {
+          let Some(existing) = context.ask(index) else {
+            continue;
+          };
+          if existing.ask != callback
+            || existing.conversation != self.scope.conversation
+            || existing.actor != self.scope.actor
+            || existing.channel != self.scope.channel
+          {
+            continue;
+          }
+          if let Some(verdict) = context.ask_verdict(index) {
+            return Ok(Evaluation::Value(LouderVariant::Int(verdict)));
+          }
+          return Ok(Evaluation::Suspended);
+        }
+
         let motion = self.scope.motion.clone().unwrap_or(Motion {
           source_position: super::hub::LouderPosition::MIN,
           target_position: super::hub::LouderPosition::MIN,
@@ -1042,7 +1099,7 @@ fn string_id(value: &LouderVariant) -> LouderName {
 /// twice: once there, and once when the hub's own statements run.
 fn has_side_effects(expr: &Expr) -> bool {
   match expr {
-    Expr::Assign(..) | Expr::PreInc(..) | Expr::PostInc(..) | Expr::Ask(_) => true,
+    Expr::Assign(..) | Expr::PreInc(..) | Expr::PostInc(..) | Expr::Ask(_) | Expr::Call(..) => true,
     Expr::Neg(inner) | Expr::Not(inner) => has_side_effects(inner),
     Expr::Binary(_, lhs, rhs) => has_side_effects(lhs) || has_side_effects(rhs),
     Expr::Call(_, args) => args.iter().any(has_side_effects),
@@ -1076,6 +1133,16 @@ pub fn special_write(
   match evaluator.evaluate_expr(context, value) {
     Ok(Evaluation::Value(value)) => Some((name.clone(), value)),
     _ => None,
+  }
+}
+
+/// Render a resolved value as the literal the host sees in an ask's callback.
+fn variant_literal(context: &LouderContext, value: &LouderVariant) -> String {
+  match value {
+    LouderVariant::Int(value) => value.to_string(),
+    LouderVariant::Float(value) => value.to_string(),
+    LouderVariant::String(name) => context.resolve_name(*name).unwrap_or("").to_string(),
+    other => other.as_int().to_string(),
   }
 }
 
