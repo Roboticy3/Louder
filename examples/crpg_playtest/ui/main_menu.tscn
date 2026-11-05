@@ -2,13 +2,7 @@
 
 [ext_resource type="Script" uid="uid://djdbv10huovjm" path="res://ui/main_menu.gd" id="1_main_menu"]
 
-[node name="MainMenu" type="Control" unique_id=693359571 node_paths=PackedStringArray("address_edit", "port_edit", "host_button", "join_button", "dedicated_button", "status_label")]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="MainMenu" type="CanvasLayer" unique_id=2061848788 node_paths=PackedStringArray("address_edit", "port_edit", "host_button", "join_button", "dedicated_button", "status_label")]
 script = ExtResource("1_main_menu")
 address_edit = NodePath("Center/Box/AddressEdit")
 port_edit = NodePath("Center/Box/PortEdit")
@@ -18,7 +12,7 @@ dedicated_button = NodePath("Center/Box/Buttons/Dedicated")
 status_label = NodePath("Center/Box/Status")
 
 [node name="Background" type="ColorRect" parent="." unique_id=1171220922]
-layout_mode = 0
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
@@ -27,7 +21,7 @@ mouse_filter = 2
 color = Color(0.086, 0.098, 0.129, 1)
 
 [node name="Center" type="CenterContainer" parent="." unique_id=357916404]
-layout_mode = 0
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2

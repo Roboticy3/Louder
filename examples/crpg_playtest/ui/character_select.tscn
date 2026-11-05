@@ -1,13 +1,8 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3 uid="uid://bk8r3cwdm7kut"]
 
-[ext_resource type="Script" path="res://ui/character_select.gd" id="1_character_select"]
+[ext_resource type="Script" uid="uid://dua6wcm8tkok1" path="res://ui/character_select.gd" id="1_character_select"]
 
-[node name="CharacterSelect" type="Control" node_paths=PackedStringArray("title_label", "status_label", "character_list", "deselect_button", "close_button", "leave_button", "player_list")]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="CharacterSelect" type="CanvasLayer" unique_id=2129227499 node_paths=PackedStringArray("title_label", "status_label", "character_list", "deselect_button", "close_button", "leave_button", "player_list")]
 script = ExtResource("1_character_select")
 title_label = NodePath("Layout/Box/Title")
 status_label = NodePath("Layout/Box/Status")
@@ -17,7 +12,7 @@ close_button = NodePath("Layout/Box/Buttons/Close")
 leave_button = NodePath("Layout/Box/Buttons/Leave")
 player_list = NodePath("Layout/Box/Players/PlayerList")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=83440523]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -26,7 +21,7 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.086, 0.098, 0.129, 1)
 
-[node name="Layout" type="MarginContainer" parent="."]
+[node name="Layout" type="MarginContainer" parent="." unique_id=1320589420]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -38,56 +33,56 @@ theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 24
 theme_override_constants/margin_bottom = 20
 
-[node name="Box" type="VBoxContainer" parent="Layout"]
+[node name="Box" type="VBoxContainer" parent="Layout" unique_id=1052440294]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="Title" type="Label" parent="Layout/Box"]
+[node name="Title" type="Label" parent="Layout/Box" unique_id=2068015775]
 layout_mode = 2
 theme_override_font_sizes/font_size = 26
 horizontal_alignment = 1
 
-[node name="Status" type="Label" parent="Layout/Box"]
+[node name="Status" type="Label" parent="Layout/Box" unique_id=188750819]
 layout_mode = 2
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="Characters" type="VBoxContainer" parent="Layout/Box"]
+[node name="Characters" type="VBoxContainer" parent="Layout/Box" unique_id=1870566976]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 6
 
-[node name="CharacterList" type="VBoxContainer" parent="Layout/Box/Characters"]
+[node name="CharacterList" type="VBoxContainer" parent="Layout/Box/Characters" unique_id=764818305]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 6
 
-[node name="Deselect" type="Button" parent="Layout/Box/Characters"]
+[node name="Deselect" type="Button" parent="Layout/Box/Characters" unique_id=852765613]
 layout_mode = 2
 text = "Deselect character"
 
-[node name="Players" type="VBoxContainer" parent="Layout/Box"]
+[node name="Players" type="VBoxContainer" parent="Layout/Box" unique_id=1518355221]
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="Title" type="Label" parent="Layout/Box/Players"]
+[node name="Title" type="Label" parent="Layout/Box/Players" unique_id=974060586]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "Players"
 
-[node name="PlayerList" type="VBoxContainer" parent="Layout/Box/Players"]
+[node name="PlayerList" type="VBoxContainer" parent="Layout/Box/Players" unique_id=801210354]
 layout_mode = 2
 
-[node name="Buttons" type="HBoxContainer" parent="Layout/Box"]
+[node name="Buttons" type="HBoxContainer" parent="Layout/Box" unique_id=1745498295]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="Close" type="Button" parent="Layout/Box/Buttons"]
+[node name="Close" type="Button" parent="Layout/Box/Buttons" unique_id=2079222903]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Back to game"
 
-[node name="Leave" type="Button" parent="Layout/Box/Buttons"]
+[node name="Leave" type="Button" parent="Layout/Box/Buttons" unique_id=662122755]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Leave lobby"
