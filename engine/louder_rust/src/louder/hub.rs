@@ -107,6 +107,14 @@ pub struct Hub {
   callbacks_joined: LouderCallback,
   flags: HubFlags,
 
+  /// The hub this link node points at, or [`BLANK_POSITION`] when it is not a
+  /// link node or has no target.
+  link: LouderPosition,
+
+  /// Whether domination has already been applied to this hub, so that a link
+  /// chain is resolved only once.
+  dominated: bool,
+
   additional_data: HomogeneousObject,
 }
 
@@ -126,6 +134,7 @@ impl Hub {
     callbacks: Vec<LouderCallback>,
     callbacks_joined: LouderCallback,
     flags: HubFlags,
+    link: LouderPosition,
     additional_data: HomogeneousObject,
   ) -> Hub {
     Hub {
@@ -143,6 +152,8 @@ impl Hub {
       callbacks,
       callbacks_joined,
       flags,
+      link,
+      dominated: false,
       additional_data,
     }
   }
@@ -247,6 +258,26 @@ impl Hub {
 
   pub fn is_auto(&self) -> bool {
     self.flags.contains(HubFlags::AUTO)
+  }
+
+  pub fn is_link(&self) -> bool {
+    self.flags.contains(HubFlags::LINK)
+  }
+
+  pub fn link(&self) -> LouderPosition {
+    self.link
+  }
+
+  pub fn set_link(&mut self, link: LouderPosition) {
+    self.link = link;
+  }
+
+  pub fn is_dominated(&self) -> bool {
+    self.dominated
+  }
+
+  pub fn set_dominated(&mut self, dominated: bool) {
+    self.dominated = dominated;
   }
 
   /// Speakers this hub is restricted to.

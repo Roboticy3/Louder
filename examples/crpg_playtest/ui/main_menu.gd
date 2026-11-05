@@ -1,4 +1,4 @@
-class_name MainMenu extends Control
+class_name MainMenu extends CanvasLayer
 
 signal host_requested(port: int, dedicated: bool)
 signal join_requested(address: String, port: int)

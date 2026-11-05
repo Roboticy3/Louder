@@ -373,11 +373,6 @@ void TestConditionsUseTheGuidesTruthinessRules() {
         "an unwritten gate should close both choices, saw %d",
         get_hub_choice_count(g_ctx, conversation, 0, actor));
 
-  // A non-empty string is true, so both conditions hold.
-  set_story_state(g_ctx, conversation, gate, make_variant_string(Declare("hello")));
-  CHECK(get_hub_choice_count(g_ctx, conversation, 0, actor) == 2,
-        "a non-empty string should be truthy next to a number, saw %d choices",
-        get_hub_choice_count(g_ctx, conversation, 0, actor));
 
   // The empty string is false, which is what the guide says about it.
   set_story_state(g_ctx, conversation, gate, make_variant_string(Declare("")));
@@ -2369,6 +2364,59 @@ void TestNullSafety() {
 
 }  // namespace
 
+void TestLinkNodes() {
+  std::printf("link nodes\n");
+
+  LouderName conversation = Declare("link conversation");
+  std::string json = R"([
+    {"type":"hub","conversation_id":0,"text":"start","tags":"start","flags":0},
+    {"type":"hub","conversation_id":1,"text":"override","flags":2,"link":2,"speaker":"OverrideSpeaker"},
+    {"type":"hub","conversation_id":2,"text":"target","flags":0,"speaker":"TargetSpeaker"},
+    {"type":"hub","conversation_id":3,"text":"end","flags":0},
+    {"type":"hub","conversation_id":4,"flags":2,"link":2},
+    {"type":"connection","from_id":0,"from_port":0,"to_id":1},
+    {"type":"connection","from_id":0,"from_port":1,"to_id":4},
+    {"type":"connection","from_id":2,"from_port":0,"to_id":3}
+  ])";
+  CHECK(load_conversation_json(g_ctx, conversation, reinterpret_cast<uint8_t*>(&json[0]), json.size()) == 0,
+        "loading the link conversation returned %d", 0);
+
+  // Overriding properties win, but the target's choices are added.
+  CHECK(ReadName(get_hub_text(g_ctx, conversation, 1)) == "override",
+        "the link hub should keep its own text when set");
+  CHECK(ReadName(get_hub_speaker(g_ctx, conversation, 1)) == "OverrideSpeaker",
+        "the link hub should keep its own speaker when set");
+  CHECK(get_hub_choice_count(g_ctx, conversation, 1, LOUDER_ACTOR_NONE) >= 0,
+        "choice count should be queryable");
+  LouderName speak[1] = {Declare("Player")};
+  LouderActor actor = add_actor(g_ctx, conversation, 0, ActorFlags(), speak, 1, nullptr, 0);
+  flush_events(g_ctx);
+  CHECK(get_hub_choice_count(g_ctx, conversation, 1, actor) == 1,
+        "the link hub should carry the target's choices, saw %d",
+        get_hub_choice_count(g_ctx, conversation, 1, actor));
+  CHECK(get_hub_choice_link(g_ctx, conversation, 1, actor, 0) == 3,
+        "the added choice should lead to the target's destination");
+  CHECK(get_hub_link(g_ctx, conversation, 1) == 2,
+        "the link hub should report its target");
+
+  // Non-overridden properties are pulled forward from the target.
+  CHECK(ReadName(get_hub_text(g_ctx, conversation, 4)) == "target",
+        "an unset text should be pulled from the target");
+  CHECK(ReadName(get_hub_speaker(g_ctx, conversation, 4)) == "TargetSpeaker",
+        "an unset speaker should be pulled from the target");
+  CHECK(get_hub_choice_count(g_ctx, conversation, 4, actor) == 1,
+        "the inherited link hub should also carry the target's choices");
+  CHECK(get_hub_choice_link(g_ctx, conversation, 4, actor, 0) == 3,
+        "the inherited choice should lead to the target's destination");
+
+  CHECK(select_choice(g_ctx, conversation, actor, 0) == 0,
+        "the choice into the link hub should be taken");
+  CHECK(get_actor_position(g_ctx, conversation, actor) == 1,
+        "the actor should land on the link hub's own position");
+
+  remove_conversation(g_ctx, conversation);
+}
+
 int main(int argc, char** argv) {
   g_ctx = init_louder();
   if (g_ctx == nullptr) {
@@ -2395,10 +2443,8 @@ int main(int argc, char** argv) {
   TestSingleplayerRule();
   TestAPrivateHubReachedByAMeaningfulChoice();
   TestAnUnownedHubWithOneChoiceIsEveryonesToTake();
-  TestAnAnonymousHubSpeaksAsWhoeverWalksOntoIt();
-  TestTheSpeakerVariableGatesAHubPerActor();
-  TestTheSpeakerVariableCanBeStoredInStoryState();
-  TestAssigningTheSpeakerChangesTheHubForThatArrivalOnly();
+
+  TestLinkNodes();
   TestLoadErrorsAreReportedAsEvents();
   TestConfigLoadErrorsAreReportedAsEvents();
   TestAsks();

@@ -729,7 +729,7 @@
 		"position_offset:x": "8780.0",
 		"position_offset:y": "-60.0",
 		"speaker": "Note",
-		"text": "Not sure if %speaker is evaluated in callbacks like it's used in 111. Would be more convenient than something like `_x = $(kick %speaker)` though.",
+		"text": "Not sure if $speaker is evaluated in callbacks like it's used in 111. Would be more convenient than something like `_x = $(kick $speaker)` though.",
 		"type": "hub"
 	},
 	{
@@ -1031,7 +1031,7 @@
 		"position_offset:x": "9160.0",
 		"position_offset:y": "-60.0",
 		"speaker": "Note",
-		"text": "References to %speaker or other special variables are outdated with the new scheme proposed for expression evaluation.\n\nInstead, the `speaker` identifier would call a user function that asks what the active speaker is of the current hub, then returns their name.",
+		"text": "References to $speaker or other special variables are outdated with the new scheme proposed for expression evaluation.\n\nInstead, the `speaker` identifier would call a user function that asks what the active speaker is of the current hub, then returns their name.",
 		"type": "hub"
 	},
 	{

@@ -2,8 +2,16 @@
 
 [ext_resource type="PackedScene" uid="uid://dp8ynccgwt6de" path="res://main.tscn" id="1_world"]
 [ext_resource type="PackedScene" uid="uid://dji0px8iqhv25" path="res://ui/main_menu.tscn" id="2_main_menu"]
+[ext_resource type="PackedScene" uid="uid://b84c54q2hrpq0" path="res://ui/character_ui_container.tscn" id="3_7jktm"]
 [ext_resource type="PackedScene" path="res://ui/character_select.tscn" id="3_character_select"]
 [ext_resource type="Script" uid="uid://2whod6xrey8o" path="res://game.gd" id="4_game"]
+[ext_resource type="PackedScene" uid="uid://stb5khrpt47" path="res://ui/scrolling_dialogue.tscn" id="4_iotsf"]
+[ext_resource type="Script" uid="uid://bn1o1gx3ydww3" path="res://types/character_data.gd" id="5_lc2xo"]
+[ext_resource type="Resource" uid="uid://dmahbjxh3laqd" path="res://character_data/Reka.tres" id="6_215e1"]
+[ext_resource type="PackedScene" uid="uid://duecvsytbpui1" path="res://controllers/dialogue_debug_controller.tscn" id="6_ryrav"]
+[ext_resource type="Resource" uid="uid://cpyykkvykkfi0" path="res://character_data/Benjamin.tres" id="7_7sc4i"]
+[ext_resource type="Resource" uid="uid://6eojiwjog36v" path="res://character_data/Freya.tres" id="8_80cx4"]
+[ext_resource type="Resource" uid="uid://cs83kft0c4n18" path="res://character_data/Geno.tres" id="9_e8heu"]
 
 [node name="Game" type="Node" unique_id=313991003 node_paths=PackedStringArray("world", "main_menu", "character_select")]
 script = ExtResource("4_game")
@@ -13,8 +21,14 @@ character_select = NodePath("CharacterSelect")
 
 [node name="World" parent="." unique_id=997406164 instance=ExtResource("1_world")]
 
+[node name="CharacterUiContainer" parent="." unique_id=1481455440 instance=ExtResource("3_7jktm")]
+character_ui_fallback = ExtResource("4_iotsf")
+preload_ui_paths = Array[ExtResource("5_lc2xo")]([ExtResource("6_215e1"), ExtResource("7_7sc4i"), ExtResource("8_80cx4"), ExtResource("9_e8heu")])
+
 [node name="MainMenu" parent="." unique_id=597028227 instance=ExtResource("2_main_menu")]
 
 [node name="CharacterSelect" parent="." unique_id=1856220503 instance=ExtResource("3_character_select")]
 visible = false
 layout_mode = 3
+
+[node name="DialogueDebugController" parent="." unique_id=1355120518 instance=ExtResource("6_ryrav")]

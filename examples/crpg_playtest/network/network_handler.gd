@@ -4,6 +4,7 @@ signal lobby_changed
 signal connection_failed
 signal server_disconnected
 signal selection_rejected(result: int)
+signal selection_accepted(character: StringName)
 
 const SERVER_ID := 1
 const NO_PEER := 0
@@ -110,12 +111,10 @@ func _handle_selection(peer_id: int, character_id: StringName) -> void:
 		result = _allocator.select(peer_id, character_id)
 
 	if result == CharacterAllocator.Result.SELECTED:
+		
 		return
 
-	if peer_id == get_local_peer_id():
-		_selection_rejected(int(result))
-	else:
-		_selection_rejected.rpc_id(peer_id, int(result))
+	_selection_rejected.rpc_id(peer_id, int(result))
 
 func _broadcast() -> void:
 	_apply_allocations(_allocator.to_state())
@@ -130,6 +129,10 @@ func _apply_allocations(allocations: Dictionary) -> void:
 @rpc("authority", "call_remote", "reliable")
 func _selection_rejected(result: int) -> void:
 	selection_rejected.emit(result)
+
+@rpc("authority", "call_remote", "reliable")
+func _selection_accepted(character: StringName) -> void:
+	selection_accepted.emit(character)
 
 func _on_peer_connected(_peer_id: int) -> void:
 	if is_host():

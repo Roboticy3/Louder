@@ -38,6 +38,9 @@ signal actor_removed(conversation: int, actor: int)
 signal motion(conversation: int, actor: int, target: int, background: int, speaker: String, kind: int)
 signal event_received(event: Dictionary)
 signal callback_raised(callback: String)
+signal interrupt_raised(rule: String, identifier: String, conversation: int, actor: int, hub: int)
+signal ask_raised(rule: String, ask: String, conversation: int, actor: int, hub: int)
+signal identifier_to_resolve(rule: String, identifier: String, conversation: int, actor: int, hub: int)
 
 const SERVER_ID := 1
 
@@ -412,6 +415,25 @@ func _drain() -> void:
 			_:
 				pass
 
+	# The engine interrupts evaluation to ask the host for an identifier's value.
+	# Resolve every outstanding ask with the placeholder "0" and tell listeners
+	# which rule raised it and where it came from.
+	while true:
+		var pending_ask := context.get_ask(0)
+		if pending_ask == null:
+			break
+		var ask_rule := pending_ask.get_rule_name()
+		var ask_identifier := resolve_name(pending_ask.get_ask())
+		var ask_conversation := pending_ask.get_conversation()
+		var ask_actor := pending_ask.get_actor()
+		var ask_hub := pending_ask.get_motion().get_target_position()
+		if not context.answer_ask(0, 0):
+			break
+		interrupt_raised.emit(ask_rule, ask_identifier, ask_conversation, ask_actor, ask_hub)
+		ask_raised.emit(ask_rule, ask_identifier, ask_conversation, ask_actor, ask_hub)
+		identifier_to_resolve.emit(ask_rule, ask_identifier, ask_conversation, ask_actor, ask_hub)
+		_interrupt.rpc(ask_rule, ask_identifier, ask_conversation, ask_actor, ask_hub)
+
 
 @rpc("authority", "call_remote", "reliable")
 func _started(conversation: int, document_path: String, source: NodePath, source_character:String) -> void:
@@ -447,6 +469,13 @@ func _actor_removed(conversation: int, actor: int) -> void:
 @rpc("authority", "call_remote", "reliable")
 func _callback(callback: int) -> void:
 	callback_raised.emit(resolve_name(callback))
+
+
+@rpc("authority", "call_remote", "reliable")
+func _interrupt(rule: String, identifier: String, conversation: int, actor: int, hub: int) -> void:
+	interrupt_raised.emit(rule, identifier, conversation, actor, hub)
+	ask_raised.emit(rule, identifier, conversation, actor, hub)
+	identifier_to_resolve.emit(rule, identifier, conversation, actor, hub)
 
 
 @rpc("authority", "call_remote", "reliable")

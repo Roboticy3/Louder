@@ -1,4 +1,4 @@
-class_name CharacterSelect extends Control
+class_name CharacterSelect extends CanvasLayer
 
 signal character_requested(character_id: StringName)
 signal leave_requested
