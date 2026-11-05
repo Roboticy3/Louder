@@ -2,8 +2,10 @@
 
 [ext_resource type="PackedScene" uid="uid://dp8ynccgwt6de" path="res://main.tscn" id="1_world"]
 [ext_resource type="PackedScene" uid="uid://dji0px8iqhv25" path="res://ui/main_menu.tscn" id="2_main_menu"]
+[ext_resource type="PackedScene" uid="uid://b84c54q2hrpq0" path="res://ui/character_ui_container.tscn" id="3_7jktm"]
 [ext_resource type="PackedScene" path="res://ui/character_select.tscn" id="3_character_select"]
 [ext_resource type="Script" uid="uid://2whod6xrey8o" path="res://game.gd" id="4_game"]
+[ext_resource type="PackedScene" uid="uid://duecvsytbpui1" path="res://controllers/dialogue_debug_controller.tscn" id="6_ryrav"]
 
 [node name="Game" type="Node" unique_id=313991003 node_paths=PackedStringArray("world", "main_menu", "character_select")]
 script = ExtResource("4_game")
@@ -13,8 +15,12 @@ character_select = NodePath("CharacterSelect")
 
 [node name="World" parent="." unique_id=997406164 instance=ExtResource("1_world")]
 
+[node name="CharacterUiContainer" parent="." unique_id=1481455440 instance=ExtResource("3_7jktm")]
+
 [node name="MainMenu" parent="." unique_id=597028227 instance=ExtResource("2_main_menu")]
 
 [node name="CharacterSelect" parent="." unique_id=1856220503 instance=ExtResource("3_character_select")]
 visible = false
 layout_mode = 3
+
+[node name="DialogueDebugController" parent="." unique_id=1355120518 instance=ExtResource("6_ryrav")]

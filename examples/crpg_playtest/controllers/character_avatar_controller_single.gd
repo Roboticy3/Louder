@@ -15,7 +15,7 @@ class_name CharacterAvatarControllerSingle extends Node
 			locate_character()
 
 @export var camera_rig:CameraRigSimple 
-@export var scrolling_dialogue:ScrollingDialogue
+@export var scrolling_dialogue_group := &"scrolling_dialogue"
 
 @export_flags_3d_physics var raycast_collision_flags := 0b11111111_11111111_11111111_11111101
 
@@ -111,5 +111,5 @@ func _on_avatar_request_dialogue(avatar:CharacterAvatar, other:InteractableObjec
 	var source_cdata := Network.get_character_of()
 	if source_cdata and avatar == controlled_avatar and other.conversation_path != "":
 		in_conversation = true
-		scrolling_dialogue.start_conversation(other.conversation_path)
+		get_tree().call_group(scrolling_dialogue_group, &"start_conversation", other.conversation_path)
 		

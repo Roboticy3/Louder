@@ -314,9 +314,9 @@ Every property of a hub x, or voice v has a default value defined in the (schema
 
 ### Domination Rule
 For two hubs x, y, x * y is a hub in the position of y, however, every property
-for which x has a non-default value replaces the same property of y.
+for which x has a non-default value replaces the same property of y, and every choice of y is added to x.
 
-For example, if tag(x) | PRIVATE, and recipients(x), tag(x * y) | PRIVATE and recipients(x * y) = recipients(x)
+For example, if tag(x) | PRIVATE, and recipients(x), tag(x * y) | PRIVATE and recipients(x) \subset recipients(x * y)
 
 ### Link Rule
 If tag(x) | LINK, x = x * y.

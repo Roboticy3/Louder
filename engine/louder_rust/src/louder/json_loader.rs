@@ -201,8 +201,150 @@ pub fn load_conversation(
     }
   }
 
+  // Link hubs are replaced by their domination over the hub they point at. This
+  // is done after connections have been resolved, so the linked hub's choices
+  // are already in place.
+  let positions: Vec<LouderPosition> = loaded.hubs().keys().copied().collect();
+  let mut changed = true;
+  while changed {
+    changed = false;
+    for &position in &positions {
+      let unresolved = loaded
+        .hub(position)
+        .map(|hub| hub.is_link() && !hub.is_dominated())
+        .unwrap_or(false);
+      if !unresolved {
+        continue;
+      }
+
+      let target_unresolved = {
+        let target = loaded.hub(position).map(|hub| hub.link()).unwrap_or(BLANK_POSITION);
+        if target == BLANK_POSITION || target == position {
+          false
+        } else {
+          loaded
+            .hub(target)
+            .map(|hub| hub.is_link() && !hub.is_dominated())
+            .unwrap_or(false)
+        }
+      };
+      if target_unresolved {
+        continue;
+      }
+
+      let x = match loaded.hub(position).cloned() {
+        Some(hub) => hub,
+        None => continue,
+      };
+      let target = x.link();
+      if target == BLANK_POSITION || target == position {
+        continue;
+      }
+      let y = match loaded.hub(target).cloned() {
+        Some(hub) => hub,
+        None => continue,
+      };
+
+      let merged = dominate(x, y);
+      if loaded.add_hub(merged) {
+        changed = true;
+      }
+    }
+  }
+
   context.add_conversation(loaded);
   LOUDER_LOAD_OK
+}
+
+fn dominate(x: Hub, y: Hub) -> Hub {
+  use super::hub::HubFlags;
+
+  let position = x.position();
+  let speaker = if x.speaker() != super::name::LOUDER_NAME_NONE {
+    x.speaker()
+  } else {
+    y.speaker()
+  };
+  let tags = if !x.tags().is_empty() {
+    x.tags().to_vec()
+  } else {
+    y.tags().to_vec()
+  };
+  let recipients = if !x.recipients().is_empty() {
+    x.recipients().to_vec()
+  } else {
+    y.recipients().to_vec()
+  };
+  let channel = if x.channel() != super::name::LOUDER_NAME_NONE {
+    x.channel()
+  } else {
+    y.channel()
+  };
+  let priority = if x.priority() != 0 {
+    x.priority()
+  } else {
+    y.priority()
+  };
+  let text = if !x.text().is_empty() {
+    x.text().to_string()
+  } else {
+    y.text().to_string()
+  };
+  let text_name = if !x.text().is_empty() {
+    x.text_name()
+  } else {
+    y.text_name()
+  };
+
+  let mut choices = x.choices().to_vec();
+  choices.extend(y.choices().iter().cloned());
+
+  let (expressions, expressions_joined) = if !x.expressions().is_empty() {
+    (x.expressions().to_vec(), x.expressions_joined())
+  } else {
+    (y.expressions().to_vec(), y.expressions_joined())
+  };
+  let (callbacks, callbacks_joined) = if !x.callbacks().is_empty() {
+    (x.callbacks().to_vec(), x.callbacks_joined())
+  } else {
+    (y.callbacks().to_vec(), y.callbacks_joined())
+  };
+
+  let flags = if x.flags().bits() != 0 {
+    x.flags()
+  } else {
+    y.flags()
+  };
+  let additional_data = if !x.additional_data().is_empty() {
+    x.additional_data().clone()
+  } else {
+    y.additional_data().clone()
+  };
+
+  let link = x.link();
+
+  let mut hub = Hub::new(
+    position,
+    speaker,
+    text,
+    text_name,
+    tags,
+    recipients,
+    channel,
+    priority,
+    expressions,
+    expressions_joined,
+    callbacks,
+    callbacks_joined,
+    flags,
+    link,
+    additional_data,
+  );
+  for choice in choices {
+    hub.push_choice(choice);
+  }
+  hub.set_dominated(true);
+  hub
 }
 
 /// Load the speaker config from a JSON document.
@@ -324,6 +466,11 @@ fn read_hub(context: &mut LouderContext, object: &JsonMap<String, Value>) -> Hub
 
   let flags = HubFlags::from_bits_truncate(int_field(object, "flags"));
   let priority = int_field(object, "priority");
+  let link = if object.contains_key("link") {
+    int_field(object, "link")
+  } else {
+    BLANK_POSITION
+  };
   let additional = read_additional(context, object, HUB_KEYS);
 
   Hub::new(
@@ -340,6 +487,7 @@ fn read_hub(context: &mut LouderContext, object: &JsonMap<String, Value>) -> Hub
     callbacks,
     callbacks_joined,
     flags,
+    link,
     additional,
   )
 }

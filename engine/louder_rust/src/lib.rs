@@ -962,6 +962,21 @@ unsafe {
 }
 }
 
+/// Get the hub a link node points at, or -1 when it is not a link node.
+#[unsafe(no_mangle)]
+pub extern "C" fn get_hub_link(ctx: *const LouderContext, conversation: LouderName, position: LouderPosition) -> LouderPosition {
+if ctx.is_null() {
+  return -1;
+}
+
+unsafe {
+  match (*ctx).hub(conversation, position) {
+    Some(hub) => hub.link(),
+    None => -1,
+  }
+}
+}
+
 /// Get a hub's additional data under `key`.
 ///
 /// Returns a zero variant if the hub does not exist or has nothing stored

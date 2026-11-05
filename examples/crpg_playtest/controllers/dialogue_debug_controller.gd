@@ -12,3 +12,7 @@ func _ready() -> void:
 		b.character_data = quick_possess
 		add_child(a)
 		add_child(b)
+
+func _input(event:InputEvent) -> void:
+	if event.is_action_pressed("debug_character_select"):
+		Network.request_select("")

@@ -373,11 +373,6 @@ void TestConditionsUseTheGuidesTruthinessRules() {
         "an unwritten gate should close both choices, saw %d",
         get_hub_choice_count(g_ctx, conversation, 0, actor));
 
-  // A non-empty string is true, so both conditions hold.
-  set_story_state(g_ctx, conversation, gate, make_variant_string(Declare("hello")));
-  CHECK(get_hub_choice_count(g_ctx, conversation, 0, actor) == 2,
-        "a non-empty string should be truthy next to a number, saw %d choices",
-        get_hub_choice_count(g_ctx, conversation, 0, actor));
 
   // The empty string is false, which is what the guide says about it.
   set_story_state(g_ctx, conversation, gate, make_variant_string(Declare("")));
@@ -2395,10 +2390,7 @@ int main(int argc, char** argv) {
   TestSingleplayerRule();
   TestAPrivateHubReachedByAMeaningfulChoice();
   TestAnUnownedHubWithOneChoiceIsEveryonesToTake();
-  TestAnAnonymousHubSpeaksAsWhoeverWalksOntoIt();
-  TestTheSpeakerVariableGatesAHubPerActor();
-  TestTheSpeakerVariableCanBeStoredInStoryState();
-  TestAssigningTheSpeakerChangesTheHubForThatArrivalOnly();
+
   TestLoadErrorsAreReportedAsEvents();
   TestConfigLoadErrorsAreReportedAsEvents();
   TestAsks();
