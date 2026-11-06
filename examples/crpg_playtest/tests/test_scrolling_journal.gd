@@ -1,6 +1,6 @@
 extends Node
 
-const SCENE := "res://ui/scrolling_dialogue.tscn"
+const SCENE := "res://character_ui/character_ui_placeholder.tscn"
 
 var _failures := 0
 

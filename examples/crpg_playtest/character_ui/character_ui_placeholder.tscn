@@ -1,0 +1,73 @@
+[gd_scene format=3 uid="uid://mk7dl66lwekc"]
+
+[ext_resource type="PackedScene" uid="uid://stb5khrpt47" path="res://ui/scrolling_dialogue.tscn" id="1_xa02f"]
+[ext_resource type="PackedScene" uid="uid://7na63ko5io3d" path="res://ui/journal_overlay.tscn" id="2_q5hg5"]
+[ext_resource type="Script" uid="uid://4hdph51t2klw" path="res://ui/menu_bar_controller.gd" id="3_menu_bar_controller"]
+
+[node name="CharacterUiPlaceholder" type="Control" unique_id=909541851]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_menu_bar_controller")
+
+[node name="ScrollingDialogue" parent="." unique_id=527292302 instance=ExtResource("1_xa02f")]
+layout_mode = 1
+
+[node name="ColorRect" type="ColorRect" parent="ScrollingDialogue" unique_id=2075193960]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MenuBarContainer" type="Control" parent="." unique_id=1775203426]
+layout_mode = 1
+anchor_left = 0.671
+anchor_top = 0.957
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1.164978
+offset_top = -12.135986
+grow_horizontal = 0
+grow_vertical = 0
+rotation = -0.032735135
+pivot_offset = Vector2(377.84296, 40)
+
+[node name="ColorRect2" type="ColorRect" parent="MenuBarContainer" unique_id=193635599]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MenuBar" type="HBoxContainer" parent="MenuBarContainer" unique_id=1188073950]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 0
+
+[node name="JournalButton" type="Button" parent="MenuBarContainer/MenuBar" unique_id=1314423370]
+layout_mode = 2
+toggle_mode = true
+text = "Journal"
+
+[node name="JournalOverlay" parent="." unique_id=1562258622 instance=ExtResource("2_q5hg5")]
+visible = true
+layout_mode = 1
+script = null
+
+[node name="Background" type="ColorRect" parent="JournalOverlay" unique_id=1793345170]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2

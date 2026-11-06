@@ -111,10 +111,16 @@ func _handle_selection(peer_id: int, character_id: StringName) -> void:
 		result = _allocator.select(peer_id, character_id)
 
 	if result == CharacterAllocator.Result.SELECTED:
-		
+		if peer_id == multiplayer.get_unique_id():
+			_selection_accepted(character_id)
+		else:
+			_selection_accepted.rpc_id(peer_id, character_id)
 		return
 
-	_selection_rejected.rpc_id(peer_id, int(result))
+	if peer_id == multiplayer.get_unique_id():
+		_selection_rejected(result)
+	else:
+		_selection_rejected.rpc_id(peer_id, result)
 
 func _broadcast() -> void:
 	_apply_allocations(_allocator.to_state())

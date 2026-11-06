@@ -62,10 +62,11 @@ func _ready() -> void:
 	# conversation it never requested.
 	var bystander_dialogue := await _make_dialogue(scene, client_character.name)
 	var idle_dialogue := scene.instantiate() as ScrollingDialogue
+	idle_dialogue.player_speaker = host_character.name
 	add_child(idle_dialogue)
 	await get_tree().process_frame
 	_check(idle_dialogue.player_speaker == StringName(host_character.name),
-		"setup: the idle dialogue still carries the scene default speaker (got %s)" % idle_dialogue.player_speaker)
+		"setup: the idle dialogue carries the host's speaker (got %s)" % idle_dialogue.player_speaker)
 
 	LouderContextGlobal.start_conversation_rpc(DOCUMENT, bystander_dialogue.get_path(), host_character.name)
 	await _settle()

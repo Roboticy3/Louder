@@ -47,4 +47,5 @@ func set_slot(to:Node):
 	if is_instance_valid(slot):
 		slot.queue_free()
 	slot = to
-	add_child(slot)
+	if is_instance_valid(slot):
+		add_child(slot)

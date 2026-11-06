@@ -3,9 +3,9 @@
 [ext_resource type="PackedScene" uid="uid://dp8ynccgwt6de" path="res://main.tscn" id="1_world"]
 [ext_resource type="PackedScene" uid="uid://dji0px8iqhv25" path="res://ui/main_menu.tscn" id="2_main_menu"]
 [ext_resource type="PackedScene" uid="uid://b84c54q2hrpq0" path="res://ui/character_ui_container.tscn" id="3_7jktm"]
-[ext_resource type="PackedScene" path="res://ui/character_select.tscn" id="3_character_select"]
+[ext_resource type="PackedScene" uid="uid://bk8r3cwdm7kut" path="res://ui/character_select.tscn" id="3_character_select"]
 [ext_resource type="Script" uid="uid://2whod6xrey8o" path="res://game.gd" id="4_game"]
-[ext_resource type="PackedScene" uid="uid://stb5khrpt47" path="res://ui/scrolling_dialogue.tscn" id="4_iotsf"]
+[ext_resource type="PackedScene" uid="uid://mk7dl66lwekc" path="res://character_ui/character_ui_placeholder.tscn" id="4_iotsf"]
 [ext_resource type="Script" uid="uid://bn1o1gx3ydww3" path="res://types/character_data.gd" id="5_lc2xo"]
 [ext_resource type="Resource" uid="uid://dmahbjxh3laqd" path="res://character_data/Reka.tres" id="6_215e1"]
 [ext_resource type="PackedScene" uid="uid://duecvsytbpui1" path="res://controllers/dialogue_debug_controller.tscn" id="6_ryrav"]
@@ -29,6 +29,5 @@ preload_ui_paths = Array[ExtResource("5_lc2xo")]([ExtResource("6_215e1"), ExtRes
 
 [node name="CharacterSelect" parent="." unique_id=1856220503 instance=ExtResource("3_character_select")]
 visible = false
-layout_mode = 3
 
 [node name="DialogueDebugController" parent="." unique_id=1355120518 instance=ExtResource("6_ryrav")]

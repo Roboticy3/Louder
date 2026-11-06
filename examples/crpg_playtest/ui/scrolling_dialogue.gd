@@ -17,29 +17,7 @@ class_name ScrollingDialogue extends Control
 ## character from the lobby is used.
 @export var player_speaker := &""
 
-## Bar of buttons below the dialogue that opens submenus (journal, etc.).
-@export var menu_bar: Control
-## Opens the journal submenu.
-@export var journal_button: Button
-## Fullscreen overlay that hosts the journal.
-@export var journal_overlay: Control
-@export var journal_scroll: ScrollContainer
-@export var journal_container: VBoxContainer
-@export var journal_log: ConversationLog
-
-## Aliases for the same nodes, for callers/tests using other names.
-var menu: Control:
-	get:
-		return menu_bar
-var submenu_bar: Control:
-	get:
-		return menu_bar
-var journal_panel: Control:
-	get:
-		return journal_overlay
-var journal_view: Control:
-	get:
-		return journal_overlay
+signal player_actor_changed(actor: int)
 
 var conversation := -1
 var player_actor := -1
@@ -58,37 +36,6 @@ func _ready() -> void:
 	LouderContextGlobal.actor_added.connect(_on_actor_added)
 	LouderContextGlobal.actor_removed.connect(_on_actor_removed)
 	LouderContextGlobal.event_received.connect(_on_event)
-	
-	if menu_bar == null:
-		menu_bar = get_node_or_null("MenuBar") as Control
-	if journal_button == null:
-		journal_button = get_node_or_null("MenuBar/JournalButton") as Button
-		if journal_button == null:
-			journal_button = get_node_or_null("JournalButton") as Button
-	if journal_overlay == null:
-		journal_overlay = get_node_or_null("JournalOverlay") as Control
-		if journal_overlay == null:
-			journal_overlay = get_node_or_null("Journal") as Control
-	if journal_scroll == null and journal_overlay != null:
-		journal_scroll = journal_overlay.get_node_or_null("ScrollContainer") as ScrollContainer
-	if journal_container == null and journal_scroll != null:
-		journal_container = journal_scroll.get_node_or_null("VBoxContainer") as VBoxContainer
-	if journal_log == null:
-		if journal_container != null:
-			journal_log = journal_container.get_node_or_null("ConversationLog") as ConversationLog
-		if journal_log == null and journal_overlay != null:
-			journal_log = journal_overlay.get_node_or_null("ConversationLog") as ConversationLog
-			if journal_log == null:
-				journal_log = journal_overlay.get_node_or_null("ScrollContainer/VBoxContainer/ConversationLog") as ConversationLog
-	
-	if journal_button != null and not journal_button.pressed.is_connected(_on_journal_pressed):
-		journal_button.pressed.connect(_on_journal_pressed)
-	if journal_overlay != null:
-		journal_overlay.visible = false
-		var close_button := journal_overlay.get_node_or_null("CloseButton") as Button
-		if close_button != null and not close_button.pressed.is_connected(_on_submenu_close_requested):
-			close_button.pressed.connect(_on_submenu_close_requested)
-		register_submenu("journal", journal_overlay)
 	
 	visible = false
 
@@ -131,8 +78,7 @@ func _on_conversation_started(c: int, source: NodePath, source_character: String
 	visible = player_actor != -1
 	_last_hub_position = -1
 	_last_hub_conversation = c
-	if journal_log != null:
-		journal_log.player_actor = player_actor
+	player_actor_changed.emit(player_actor)
 
 
 func _on_actor_added(c: int, a: int, speak_as: Array) -> void:
@@ -151,8 +97,7 @@ func _on_actor_added(c: int, a: int, speak_as: Array) -> void:
 
 	player_actor = a
 	visible = true
-	if journal_log != null:
-		journal_log.player_actor = player_actor
+	player_actor_changed.emit(player_actor)
 
 
 func _speaks_as(speak_as: Array, speaker: StringName) -> bool:
@@ -286,65 +231,6 @@ func _on_callback_raised(callback: String) -> void:
 
 func _on_conversation_finished() -> void:
 	print("Dialogue conversation finished.")
-
-## Submenu registry, for future submenus beyond the journal.
-var _submenus: Dictionary = {}
-var _active_submenu := ""
-
-func register_submenu(name: String, node: Control) -> void:
-	_submenus[name] = node
-	if node != null:
-		node.visible = false
-
-func open_submenu(name: String) -> void:
-	close_submenu()
-	var node: Control = _submenus.get(name)
-	if node == null:
-		match name:
-			"journal", "Journal":
-				node = journal_overlay
-	if node != null:
-		node.visible = true
-		_active_submenu = name
-
-func close_submenu() -> void:
-	if _active_submenu != "":
-		var node: Control = _submenus.get(_active_submenu)
-		if node == null and (_active_submenu == "journal" or _active_submenu == "Journal"):
-			node = journal_overlay
-		if node != null:
-			node.visible = false
-	_active_submenu = ""
-	if journal_overlay != null:
-		journal_overlay.visible = false
-
-func toggle_submenu(name: String) -> void:
-	if _active_submenu == name:
-		close_submenu()
-	else:
-		open_submenu(name)
-
-func open_journal() -> void:
-	open_submenu("journal")
-
-func close_journal() -> void:
-	close_submenu()
-
-func toggle_journal() -> void:
-	toggle_submenu("journal")
-
-func is_journal_open() -> bool:
-	return journal_overlay != null and journal_overlay.visible
-
-var journal_open: bool:
-	get:
-		return is_journal_open()
-
-func _on_journal_pressed() -> void:
-	toggle_journal()
-
-func _on_submenu_close_requested() -> void:
-	close_submenu()
 
 func _process(delta: float) -> void:
 	if scrolling_to_bottom:

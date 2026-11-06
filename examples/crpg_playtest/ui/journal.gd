@@ -1,0 +1,1 @@
+extends "res://ui/journal_overlay.gd"

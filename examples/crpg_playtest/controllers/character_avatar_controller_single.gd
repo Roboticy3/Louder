@@ -46,7 +46,7 @@ var controlled_avatar: CharacterAvatar :
 			
 			overlay = new_overlay
 
-@export var overlay_slot:CanvasLayer
+@export var overlay_slot:Control
 
 func locate_character() -> void:
 	if !is_inside_tree():
@@ -72,12 +72,20 @@ func _ready() -> void:
 	add_child(locate_timer)
 	
 	locate_character()
+	
+	overlay_slot.gui_input.connect(_on_overlay_input)
+
+var wants_move := false
+func _on_overlay_input(event: InputEvent) -> void:
+	if event.is_action_pressed("c_click_move"):
+		wants_move = true
 
 var camera_ray_out := false
 var in_conversation := false
 func _physics_process(_delta: float) -> void:
 	var result:Dictionary
-	if !in_conversation and controlled_avatar and Input.is_action_just_pressed("c_click_move"):
+	if !in_conversation and controlled_avatar and wants_move:
+		wants_move = false
 		var mouse_pos := camera_rig.camera.get_viewport().get_mouse_position()
 		var ray_o := camera_rig.camera.project_ray_origin(mouse_pos)
 		var ray_n := camera_rig.camera.project_ray_normal(mouse_pos)

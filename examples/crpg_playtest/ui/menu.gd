@@ -1,0 +1,1 @@
+extends "res://ui/menu_bar_controller.gd"
