@@ -45,6 +45,16 @@ godot_api! {
       engine::load_config(&mut context.bind_mut().inner, &document.to_string())
     }
 
+    /// Load a conversation from a document in the readable text format.
+    #[func]
+    pub fn load_conversation_text(
+      mut context: Gd<LouderContext>,
+      conversation: engine::LouderName,
+      document: GString,
+    ) -> i32 {
+      engine::text_loader::load_conversation(&mut context.bind_mut().inner, conversation, &document.to_string())
+    }
+
     /// What a load error code means, for a host that would rather read a name
     /// than a number.
     #[func]

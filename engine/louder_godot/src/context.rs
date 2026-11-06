@@ -1056,6 +1056,12 @@ godot_api! {
       engine::load_config(&mut self.inner, &document.to_string())
     }
 
+    /// Load a conversation from a document in the readable text format.
+    #[func]
+    pub fn load_conversation_text(&mut self, conversation: engine::LouderName, document: GString) -> i32 {
+      engine::text_loader::load_conversation(&mut self.inner, conversation, &document.to_string())
+    }
+
     // -- rules -----------------------------------------------------------
 
     /// The dialogue rules currently in effect, as bits.

@@ -23,6 +23,7 @@ pub mod ffi;
 pub mod hub;
 pub mod json;
 pub mod json_loader;
+pub mod text_loader;
 pub mod name;
 pub mod object;
 pub mod query;

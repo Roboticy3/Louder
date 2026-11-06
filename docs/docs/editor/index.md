@@ -10,6 +10,9 @@ choices. When you save, the entire graph is exported as a single file
 that can be shared with collaborators or used with the [engine](/engine/)
 to run dialogue in your game.
 
+Conversations can also be edited in raw json according to the [schema](./schema.md),
+or edited in a readable text format defined in [text](./text.md)
+
 ## Shortcuts
 !TODO! Most keybinds do not work while editing text. This should be fixed somehow. [28](https://github.com/Roboticy3/Louder/issues/28)
 

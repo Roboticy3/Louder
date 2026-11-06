@@ -111,6 +111,7 @@ godot_api! {
           callbacks.iter_shared().map(|name| name as engine::LouderCallback).collect(),
           callbacks_joined,
           engine::HubFlags::from_bits_truncate(flags),
+          -1,
           additional.bind().inner.clone(),
         ),
       })

@@ -82,6 +82,7 @@ pub(crate) mod engine {
     load_config,
     load_conversation,
   };
+  pub use louder_rust::louder::text_loader;
   pub use louder_rust::louder::name::{
     LOUDER_NAME_NONE,
     LouderContextResult,

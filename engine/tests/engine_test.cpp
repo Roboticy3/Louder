@@ -2417,6 +2417,81 @@ void TestLinkNodes() {
   remove_conversation(g_ctx, conversation);
 }
 
+void TestReadableFormat() {
+  std::printf("readable format\n");
+
+  const char* text = R"(A
+Hello
+tags: start
+
+B
+World
+tags: main
+
+end
+tags: finish
+callbacks: exit
+
+first
+> start
+
+link hub
+link: finish
+)";
+  LouderName conversation = Declare("readable conversation");
+  std::vector<uint8_t> buffer(text, text + std::strlen(text));
+  LoadError error = load_conversation_text(g_ctx, conversation, buffer.data(), buffer.size());
+  CHECK(error == 0, "loading a readable conversation returned %d", error);
+
+  CHECK(ReadName(get_hub_text(g_ctx, conversation, 0)) == "Hello", "hub 0 text should read back");
+  CHECK(ReadName(get_hub_speaker(g_ctx, conversation, 0)) == "A", "hub 0 should be spoken by A");
+
+  LouderName start_tag = Lookup("start");
+  CHECK(start_tag != LOUDER_NAME_NONE, "tags should be lowercased and interned");
+  CHECK(next_hub_from_tags(g_ctx, conversation, &start_tag, 1, 0, -1) == 0,
+        "the tagged hub should be found");
+
+  // hub 3 offers a choice to every hub tagged "start" (just hub 0)
+  LouderName speak[1] = {Declare("Player")};
+  LouderActor actor = add_actor(g_ctx, conversation, 3, ActorFlags(), speak, 1, nullptr, 0);
+  flush_events(g_ctx);
+  CHECK(get_hub_choice_count(g_ctx, conversation, 3, actor) == 1,
+        "a choice line should become a choice, saw %d", get_hub_choice_count(g_ctx, conversation, 3, actor));
+  CHECK(get_hub_choice_link(g_ctx, conversation, 3, actor, 0) == 0,
+        "the choice should lead to the tagged hub");
+
+  // hub 4 is a link hub pointing at the first hub tagged "finish"
+  CHECK(get_hub_link(g_ctx, conversation, 4) == 2, "the link hub should resolve its tag, saw %d",
+        get_hub_link(g_ctx, conversation, 4));
+
+  // default choice: hub 2 has no choices and no following? Actually hub 1 follows hub 0? check dead end count not needed.
+
+  remove_conversation(g_ctx, conversation);
+
+  // Unresolved tags are reported as load errors rather than dropped silently.
+  const char* bad_text = R"(first
+> missing
+
+second
+link: missing
+)";
+  LouderName bad_conversation = Declare("readable bad conversation");
+  std::vector<uint8_t> bad_buffer(bad_text, bad_text + std::strlen(bad_text));
+  LoadError bad_error = load_conversation_text(g_ctx, bad_conversation, bad_buffer.data(), bad_buffer.size());
+  CHECK(bad_error == 0, "a readable document with bad tags should still load, got %d", bad_error);
+
+  std::vector<LoadFailure> bad_failures = DrainLoadErrors();
+  CHECK(bad_failures.size() == 2, "two unresolved tags should be reported, saw %zu", bad_failures.size());
+  if (bad_failures.size() == 2) {
+    CHECK(bad_failures[0].position == 1, "the bad link should be blamed on hub 1, got %d",
+          bad_failures[0].position);
+    CHECK(bad_failures[1].position == 0, "the bad choice should be blamed on hub 0, got %d",
+          bad_failures[1].position);
+  }
+
+  remove_conversation(g_ctx, bad_conversation);
+}
+
 int main(int argc, char** argv) {
   g_ctx = init_louder();
   if (g_ctx == nullptr) {
@@ -2445,6 +2520,7 @@ int main(int argc, char** argv) {
   TestAnUnownedHubWithOneChoiceIsEveryonesToTake();
 
   TestLinkNodes();
+  TestReadableFormat();
   TestLoadErrorsAreReportedAsEvents();
   TestConfigLoadErrorsAreReportedAsEvents();
   TestAsks();

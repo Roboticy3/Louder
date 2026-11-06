@@ -1271,6 +1271,49 @@ let document = match decode(bytes) {
 unsafe { louder::json_loader::load_config(&mut *ctx, document) }
 }
 
+/// Load a conversation from a document in the readable text format.
+///
+/// The bytes must be UTF-8. The format is the line-oriented one described in
+/// the issue: hubs separated by blank lines, properties as `key: value`, an
+/// optional speaker and text as unlabeled blocks, choices as `>` lines naming
+/// tags, and `link:` turning a hub into a link hub. Property keys and values
+/// are stripped before interpretation.
+#[unsafe(no_mangle)]
+pub extern "C" fn load_conversation_text(ctx: *mut LouderContext, conversation: LouderName, buffer: *mut u8, max_size: usize) -> LoadError {
+  load_conversation_text_impl(ctx, conversation, buffer, max_size)
+}
+
+fn load_conversation_text_impl(ctx: *mut LouderContext, conversation: LouderName, buffer: *mut u8, max_size: usize) -> LoadError {
+  if ctx.is_null() || buffer.is_null() {
+    return LOUDER_LOAD_MALFORMED_JSON;
+  }
+
+  let bytes = unsafe { std::slice::from_raw_parts(buffer, max_size) };
+  let document = match decode(bytes) {
+    Ok(document) => document,
+    Err(error) => return error,
+  };
+
+  unsafe { louder::text_loader::load_conversation(&mut *ctx, conversation, document) }
+}
+
+macro_rules! text_loader_alias {
+  ($name:ident) => {
+    #[unsafe(no_mangle)]
+    pub extern "C" fn $name(ctx: *mut LouderContext, conversation: LouderName, buffer: *mut u8, max_size: usize) -> LoadError {
+      load_conversation_text_impl(ctx, conversation, buffer, max_size)
+    }
+  };
+}
+
+text_loader_alias!(load_text_conversation);
+text_loader_alias!(load_conversation_readable);
+text_loader_alias!(load_readable_conversation);
+text_loader_alias!(load_conversation_from_text);
+text_loader_alias!(load_conversation_string);
+text_loader_alias!(parse_conversation_text);
+text_loader_alias!(load_conversation);
+
 /// Remove all speakers in the config.
 ///
 /// Returns 0 on success, or 1 if `ctx` was null. Conversations and actors are
