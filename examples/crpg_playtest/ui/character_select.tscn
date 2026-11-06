@@ -19,7 +19,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.086, 0.098, 0.129, 1)
 
 [node name="Layout" type="MarginContainer" parent="." unique_id=1320589420]
 anchors_preset = 15

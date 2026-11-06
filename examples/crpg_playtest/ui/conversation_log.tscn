@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://convlog000001"]
 
-[ext_resource type="Script" path="res://ui/conversation_log.gd" id="1_convlog"]
+[ext_resource type="Script" uid="uid://c6y3osfn7ppk8" path="res://ui/conversation_log.gd" id="1_convlog"]
 
 [node name="ConversationLog" type="MarginContainer" unique_id=1000000001 node_paths=PackedStringArray("container")]
 anchors_preset = 15
@@ -10,11 +10,6 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_convlog")
 container = NodePath("VBoxContainer")
-
-[node name="Background" type="ColorRect" parent="." unique_id=1000000002]
-layout_mode = 2
-mouse_filter = 2
-color = Color(0.086, 0.098, 0.129, 0.92)
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1000000003]
 layout_mode = 2

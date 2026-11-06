@@ -18,7 +18,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.086, 0.098, 0.129, 1)
 
 [node name="Center" type="CenterContainer" parent="." unique_id=357916404]
 anchors_preset = 15

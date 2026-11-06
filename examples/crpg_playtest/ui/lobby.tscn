@@ -1,9 +1,6 @@
 [gd_scene format=3 uid="uid://byim04ttmt4t5"]
 
-[ext_resource type="Script" path="res://ui/lobby.gd" id="1_lobby"]
-
 [node name="Lobby" type="CanvasLayer" unique_id=424866700]
-script = ExtResource("1_lobby")
 
 [node name="Root" type="Control" parent="." unique_id=1708782640]
 layout_mode = 3
@@ -21,7 +18,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.086, 0.098, 0.129, 1)
 
 [node name="Center" type="CenterContainer" parent="Root" unique_id=968158386]
 layout_mode = 0

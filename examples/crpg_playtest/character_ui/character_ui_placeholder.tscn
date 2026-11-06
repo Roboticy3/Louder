@@ -11,13 +11,16 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 1
 script = ExtResource("3_menu_bar_controller")
 
 [node name="ScrollingDialogue" parent="." unique_id=527292302 instance=ExtResource("1_xa02f")]
 layout_mode = 1
 
 [node name="ColorRect" type="ColorRect" parent="ScrollingDialogue" unique_id=2075193960]
+show_behind_parent = true
 layout_mode = 1
+mouse_filter = 2
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -36,9 +39,12 @@ grow_horizontal = 0
 grow_vertical = 0
 rotation = -0.032735135
 pivot_offset = Vector2(377.84296, 40)
+mouse_filter = 1
 
 [node name="ColorRect2" type="ColorRect" parent="MenuBarContainer" unique_id=193635599]
+show_behind_parent = true
 layout_mode = 1
+mouse_filter = 2
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -53,6 +59,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 0
+mouse_filter = 1
 
 [node name="JournalButton" type="Button" parent="MenuBarContainer/MenuBar" unique_id=1314423370]
 layout_mode = 2
@@ -65,7 +72,9 @@ layout_mode = 1
 script = null
 
 [node name="Background" type="ColorRect" parent="JournalOverlay" unique_id=1793345170]
+show_behind_parent = true
 layout_mode = 1
+mouse_filter = 2
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0

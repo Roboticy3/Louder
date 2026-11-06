@@ -20,6 +20,7 @@ class_name CharacterAvatarControllerSingle extends Node
 @export_flags_3d_physics var raycast_collision_flags := 0b11111111_11111111_11111111_11111101
 
 var locate_timer:Timer
+var wants_move := false
 signal controlled_avatar_changed(to: CharacterAvatar)
 var controlled_avatar: CharacterAvatar :
 	set(new_controlled_avatar):
@@ -73,10 +74,15 @@ func _ready() -> void:
 	
 	locate_character()
 	
+	# Keep the legacy overlay hook for compatibility, but movement is driven by
+	# unhandled input so transparent UI does not have to forward events.
 	overlay_slot.gui_input.connect(_on_overlay_input)
 
-var wants_move := false
 func _on_overlay_input(event: InputEvent) -> void:
+	if event.is_action_pressed("c_click_move"):
+		wants_move = true
+
+func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("c_click_move"):
 		wants_move = true
 

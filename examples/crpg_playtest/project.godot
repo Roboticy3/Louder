@@ -26,6 +26,10 @@ LouderContextGlobal="*uid://u3c1q5irnk04"
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 
+[gui]
+
+theme/custom="uid://nkeu4yh0oxj1"
+
 [input]
 
 c_click_move={

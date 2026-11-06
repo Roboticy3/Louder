@@ -3,14 +3,25 @@ class_name MenuBarController extends Control
 ## General controller for a menu bar and its submenus (journal, etc.).
 
 @export var menu_bar: Control
-@export var submenu_bar: Control
 @export var journal_button: Button
 @export var journal_overlay: Control
-@export var journal_panel: Control
-@export var journal_view: Control
 @export var journal_scroll: ScrollContainer
 @export var journal_container: VBoxContainer
 @export var journal_log: ConversationLog
+
+## Aliases kept for callers/tests using other names.
+var submenu_bar: Control:
+	get:
+		return menu_bar
+var journal_panel: Control:
+	get:
+		return journal_overlay
+var journal_view: Control:
+	get:
+		return journal_overlay
+var menu: Control:
+	get:
+		return menu_bar
 
 ## Optional link to the dialogue whose actor drives the journal.
 @export var scrolling_dialogue: ScrollingDialogue
@@ -66,9 +77,16 @@ func _ready() -> void:
 
 	if journal_overlay != null:
 		journal_overlay.visible = false
+		# Keep decorative backgrounds from swallowing clicks.
+		for child in journal_overlay.get_children():
+			if child is ColorRect:
+				(child as Control).mouse_filter = Control.MOUSE_FILTER_IGNORE
 		var close_button := _find_close_button(journal_overlay)
-		if close_button != null and not close_button.pressed.is_connected(_on_submenu_close_requested):
-			close_button.pressed.connect(_on_submenu_close_requested)
+		if close_button != null:
+			close_button.z_index = 10
+			close_button.mouse_filter = Control.MOUSE_FILTER_STOP
+			if not close_button.pressed.is_connected(_on_submenu_close_requested):
+				close_button.pressed.connect(_on_submenu_close_requested)
 		register_submenu("journal", journal_overlay)
 		if journal_overlay.has_signal("close_requested"):
 			if not journal_overlay.close_requested.is_connected(_on_overlay_close_requested):
