@@ -22,3 +22,6 @@ docs/docs/rustdoc/**
 
 # Staged engine binaries, assembled by build_engine.sh for the publish job
 /site/
+
+# Scripts reliant on my local env
+*update_readable_conversations.py
