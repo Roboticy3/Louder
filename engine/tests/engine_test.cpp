@@ -1579,7 +1579,7 @@ void TestLoadErrorsAreReportedAsEvents() {
     // go and look at it in the editor.
     CHECK(failures[1].position == 1, "an unknown record should report its own position, got %d",
           failures[1].position);
-    CHECK(failures[1].error == LOUDER_LOAD_NOT_AN_OBJECT, "and should report the same error, got %d",
+    CHECK(failures[1].error == LOUDER_LOAD_UNKNOWN_RECORD_TYPE, "and should report the unknown type, got %d",
           failures[1].error);
 
     // A connection to a hub that is not there is blamed on the hub it leaves,
@@ -1587,7 +1587,7 @@ void TestLoadErrorsAreReportedAsEvents() {
     CHECK(failures[2].position == 0,
           "a connection to a missing hub should be blamed on its source, got %d",
           failures[2].position);
-    CHECK(failures[2].error == LOUDER_LOAD_NOT_AN_OBJECT, "and should report the same error, got %d",
+    CHECK(failures[2].error == LOUDER_LOAD_MISSING_HUB, "and should report the missing hub, got %d",
           failures[2].error);
   }
 
@@ -2492,6 +2492,40 @@ link: missing
   remove_conversation(g_ctx, bad_conversation);
 }
 
+void TestReadableHubCase() {
+  std::printf("readable hub case\n");
+
+  const char* text = R"(tags: e
+speaker
+text
+> a
+> b
+> c
+> d
+
+tags: a
+a
+
+tags: b
+b
+
+tags: c
+c
+
+tags: d
+d
+)";
+  LouderName conversation = Declare("readable hub case");
+  std::vector<uint8_t> buffer(text, text + std::strlen(text));
+  LoadError error = load_conversation_text(g_ctx, conversation, buffer.data(), buffer.size());
+  CHECK(error == 0, "loading the hub case returned %d", error);
+
+  std::vector<LoadFailure> failures = DrainLoadErrors();
+  CHECK(failures.size() == 0, "the hub case should report no load errors, saw %zu", failures.size());
+
+  remove_conversation(g_ctx, conversation);
+}
+
 int main(int argc, char** argv) {
   g_ctx = init_louder();
   if (g_ctx == nullptr) {
@@ -2521,6 +2555,7 @@ int main(int argc, char** argv) {
 
   TestLinkNodes();
   TestReadableFormat();
+  TestReadableHubCase();
   TestLoadErrorsAreReportedAsEvents();
   TestConfigLoadErrorsAreReportedAsEvents();
   TestAsks();

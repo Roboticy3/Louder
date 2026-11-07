@@ -190,7 +190,7 @@ fn parse_to_json(context: &mut LouderContext, conversation: super::name::LouderN
     if let Some(raw) = &draft.tags_raw {
       for tag in super::name::split_inline(raw) {
         tag_positions
-          .entry(tag.to_string())
+          .entry(transform(tag))
           .or_default()
           .push(draft.position);
       }
@@ -211,7 +211,7 @@ fn parse_to_json(context: &mut LouderContext, conversation: super::name::LouderN
         let flags = draft.flags.get_or_insert(0);
         *flags |= 2;
       } else {
-        report(context, conversation, draft.position, json_loader::LOUDER_LOAD_NOT_AN_OBJECT);
+        report(context, conversation, draft.position, json_loader::LOUDER_LOAD_UNRESOLVED_TAG);
       }
     }
   }
@@ -232,7 +232,7 @@ fn parse_to_json(context: &mut LouderContext, conversation: super::name::LouderN
               .push(*target);
           }
         } else {
-          report(context, conversation, draft.position, json_loader::LOUDER_LOAD_NOT_AN_OBJECT);
+          report(context, conversation, draft.position, json_loader::LOUDER_LOAD_UNRESOLVED_TAG);
         }
       }
     } else if !draft.has_choices_property {
@@ -356,4 +356,18 @@ fn parse_to_json(context: &mut LouderContext, conversation: super::name::LouderN
 
   let serialized = serde_json::to_string(&records).map_err(|_| ())?;
   Ok(serialized)
+}
+
+#[cfg(test)]
+mod tmp_repro {
+  use super::*;
+  #[test]
+  fn repro() {
+    let mut ctx = LouderContext::new();
+    let conv = 0;
+    let doc = "tags: a\r\na\r\n\r\ntags: e\r\nspeaker\r\ntext\r\n> a\r\n";
+    let err = load_conversation(&mut ctx, conv, doc);
+    println!("ERR: {}", err);
+    println!("EVENTS: {}", ctx.event_count());
+  }
 }

@@ -87,11 +87,18 @@ func _add_label(event: Dictionary, conversation: int = -1) -> void:
 
 	var lines := []
 	for key in current.keys():
-		if not previous.has(key) or str(previous[key]) != str(current[key]):
+		var is_load_failure_key: bool = key.begins_with("load_failure.")
+		var is_load_error_code_key: bool = key == "load_failure.error" or key.ends_with(".error")
+		# Load errors are reported through the trace one record at a time, and
+		# the godot error log prints their position and code for every record.
+		# The log only prints changed fields by default, so a run of records
+		# that fail with the same position or code would otherwise drop them;
+		# force every load-failure field through.
+		if is_load_failure_key or not previous.has(key) or str(previous[key]) != str(current[key]):
 			var value = current[key]
 			if _is_hub_position_key(key):
 				value = _format_hub_position(conversation, int(value))
-			elif key == "load_failure.error" or key.ends_with(".error"):
+			elif is_load_error_code_key:
 				value = LouderLoader.error_name(int(value))
 			lines.append("%s: %s" % [key, value])
 

@@ -8,6 +8,7 @@
 
 % what about a tutorial that starts with walking? Then, this conversation starts when reka accepts a bubble. That bubble then does tutorial-magic to open a door, allowing her to continue. That way, her tutorial is about movement, rather than dialogue.
 
+tags:start
 Bones
 There! Out there! They went that way!
 

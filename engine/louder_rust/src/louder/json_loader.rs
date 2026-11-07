@@ -24,6 +24,16 @@ pub const LOUDER_LOAD_NOT_A_LIST: LoadError = 2;
 pub const LOUDER_LOAD_NOT_AN_OBJECT: LoadError = 3;
 /// The conversation name was already occupied by a loaded conversation.
 pub const LOUDER_LOAD_ALREADY_LOADED: LoadError = 4;
+/// A record had a type the loader does not know.
+pub const LOUDER_LOAD_UNKNOWN_RECORD_TYPE: LoadError = 5;
+/// A connection record was malformed.
+pub const LOUDER_LOAD_BAD_CONNECTION: LoadError = 6;
+/// A connection referred to a hub the document never defined.
+pub const LOUDER_LOAD_MISSING_HUB: LoadError = 7;
+/// Two hubs claimed the same position.
+pub const LOUDER_LOAD_DUPLICATE_POSITION: LoadError = 8;
+/// A tag referenced by a link or choice did not resolve to any hub.
+pub const LOUDER_LOAD_UNRESOLVED_TAG: LoadError = 9;
 
 /// Read `bytes` as the text of a document in UTF-8.
 pub fn decode(bytes: &[u8]) -> Result<&str, LoadError> {
@@ -162,16 +172,16 @@ pub fn load_conversation(
         let hub = read_hub(context, object);
         if loaded.add_hub(hub) {
           // Two hubs claimed the same position; the later one won.
-          report(context, conversation, LOUDER_LOAD_NOT_AN_OBJECT, position);
+          report(context, conversation, LOUDER_LOAD_DUPLICATE_POSITION, position);
         }
       }
       Some("connection") => match read_connection(object) {
         Some((from, port, to)) => connections.entry(from).or_default().push((port, to)),
-        None => report(context, conversation, LOUDER_LOAD_NOT_AN_OBJECT, position_of(object)),
+        None => report(context, conversation, LOUDER_LOAD_BAD_CONNECTION, position_of(object)),
       },
       // The camera record only remembers where the editor was scrolled to.
       Some("camera") => {}
-      _ => report(context, conversation, LOUDER_LOAD_NOT_AN_OBJECT, position_of(object)),
+      _ => report(context, conversation, LOUDER_LOAD_UNKNOWN_RECORD_TYPE, position_of(object)),
     }
   }
 
@@ -188,7 +198,7 @@ pub fn load_conversation(
         Some(hub) => hub.text().to_string(),
         None => {
           // The choice points at a position that does not exist.
-          report(context, conversation, LOUDER_LOAD_NOT_AN_OBJECT, from);
+          report(context, conversation, LOUDER_LOAD_MISSING_HUB, from);
           continue;
         }
       };

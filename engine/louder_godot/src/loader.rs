@@ -65,6 +65,11 @@ godot_api! {
         engine::LOUDER_LOAD_NOT_A_LIST => "NOT_A_LIST",
         engine::LOUDER_LOAD_NOT_AN_OBJECT => "NOT_AN_OBJECT",
         engine::LOUDER_LOAD_ALREADY_LOADED => "ALREADY_LOADED",
+        engine::LOUDER_LOAD_UNKNOWN_RECORD_TYPE => "UNKNOWN_RECORD_TYPE",
+        engine::LOUDER_LOAD_BAD_CONNECTION => "BAD_CONNECTION",
+        engine::LOUDER_LOAD_MISSING_HUB => "MISSING_HUB",
+        engine::LOUDER_LOAD_DUPLICATE_POSITION => "DUPLICATE_POSITION",
+        engine::LOUDER_LOAD_UNRESOLVED_TAG => "UNRESOLVED_TAG",
         _ => "UNKNOWN",
       })
     }

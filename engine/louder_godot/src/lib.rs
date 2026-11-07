@@ -75,10 +75,15 @@ pub(crate) mod engine {
   pub use louder_rust::louder::json;
   pub use louder_rust::louder::json_loader::{
     LOUDER_LOAD_ALREADY_LOADED,
+    LOUDER_LOAD_BAD_CONNECTION,
+    LOUDER_LOAD_DUPLICATE_POSITION,
     LOUDER_LOAD_MALFORMED_JSON,
+    LOUDER_LOAD_MISSING_HUB,
     LOUDER_LOAD_NOT_A_LIST,
     LOUDER_LOAD_NOT_AN_OBJECT,
     LOUDER_LOAD_OK,
+    LOUDER_LOAD_UNKNOWN_RECORD_TYPE,
+    LOUDER_LOAD_UNRESOLVED_TAG,
     load_config,
     load_conversation,
   };

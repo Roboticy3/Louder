@@ -1,6 +1,7 @@
 % using this file will require features #23, #89, #90, #91
 % but I think its worth the investment since it pretty much removes the need for a dedicated editor.
 
+tags:start
 Heart
 Another day, another ring of wood on the old arteries!
 
@@ -115,13 +116,13 @@ You sound delusional.
 
 tags: 2_delusion
 Future
-Oh, I'm lusional, big guy. Check the name. Whether you like it or not, I'll tell you what's about to happen. You can prepare, or die. But preventing The Future is typically does not work. 
+Check the name, soldier. Whether you like it or not, I'll tell you what's about to happen. You can prepare, or die. But preventing The Future is typically does not work. 
 > 2_prove_it
 > 2_explain
 > 2_doubt
 > 2_continue
 
-tags: prove_it
+tags: 2_prove_it
 Benjamin
 Prove it.
 
@@ -205,6 +206,44 @@ Dice checks will cause a red flash when they fail. This check failed. But failur
 link: 2_delusion
 Future
 What else would you like to know about The Future?
+
+tags: 2_explain
+Benjamin
+Check the name? What are you?
+
+Heart
+A voice in your horrible head.
+
+Future
+I am your Future. I tell you what's going to happen.
+
+Heart
+Bless him, sometimes, he's even right.
+
+link: 2_delusion
+Future
+Unfortunately, I'm always right. So listen to me.
+
+expressions: score(doubt_determinism, 1)
+tags: 2_doubt
+Benjamin
+That doesn't make any sense. I think life is inherently random.
+
+Stars
+Predictions within margins of error. Amounts of beliefs that events will or will not proceed. Mastery over it all.. It makes my mouth water and my eyes shine!
+
+Memory
+Knowing a thing or two about the past would also help. 
+
+Future
+That's too bad for your puny logic and philosophy. Because it's simply magic. I just know. 
+
+Stars
+Predictions based on starlight look like magic, also. You're a very magical man.
+
+link: 2_delusion
+Future
+My magic is better.
 
 tags: 2_continue
 expressions: pop_tutorial
