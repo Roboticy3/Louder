@@ -91,8 +91,8 @@ func _refresh_world() -> void:
 	world.set_players(_get_players())
 	world.play_as(Network.get_local_character())
 
-func _get_players() -> Dictionary:
-	var players: Dictionary = {}
+func _get_players() -> Dictionary[int, CharacterData]:
+	var players: Dictionary[int, CharacterData] = {}
 	for peer_id in Network.get_roster():
 		var character := Network.get_character_of(peer_id)
 		if character:

@@ -80,3 +80,27 @@ stream, so the string literal arrives carrying its own quotes and the method end
 up registered under `"add_actor"`, which the script editor shows in quotes and
 only `call` can reach. `test_names.gd` fails on exactly that, so run it after any
 change to the adapter.
+
+# Code style
+
+## Referencing nodes
+Nodes should be referenced using the syntax `@export var node:Node`, replacing 
+`node` and `Node` as appropriate with the right name and type. 
+Only one variable should be used to reference a node. If these constraints are hard
+to meet, that's a clue that raw node references are not a smart way to approach the
+problem.
+
+## Other member variables
+`get` and `set` should be avoided unless there is specific functionality on get and set to achieve.
+
+One variable, one purpose. One variable should not do two things, and two variables should not
+do one.
+
+## No duplicate functions
+One function, one purpose. One function should not do two things, and two functions should not
+do one.
+
+## Typed Containers
+Use typed containers where possible. `Array[T]` instead of `Array` and
+`Dictionary[K, V]` instead of `Dictionary`. Especially for exported variables,
+this is cleaner.

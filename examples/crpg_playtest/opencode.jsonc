@@ -1,0 +1,32 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permissions": [
+    // Rules to block admin actions and data
+    {
+      "action": "*", "resource": "logs/*", "effect": "deny"
+    },
+    {
+      "action": "git *", "resource": "*", "effect": "deny"
+    },
+    {
+      "action": "git diff *", "resource": "*", "effect": "allow"
+    },
+    {
+      "action": "read", "resource": "engine/bindings/*", "effect": "deny"
+    },
+
+    // Rules to block game assets: dialogue, models, textures.
+    {
+      "action": "*", "resource": "*conversations_readable*", "effect": "deny"
+    },
+    {
+      "action": "*", "resource": "*.blend", "effect": "deny"
+    },
+    {
+      "action": "*", "resource": "*.png", "effect": "deny"
+    },
+    {
+      "action": "*", "resource": "*.import", "effect": "deny"
+    }
+  ]
+}

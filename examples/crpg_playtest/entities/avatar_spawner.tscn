@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://avatar_spawner_scene"]
+
+[ext_resource type="Script" uid="uid://lopxovsw23gp" path="res://entities/avatar_spawner.gd" id="1_spawner"]
+
+[node name="AvatarSpawner" type="Marker3D" unique_id=1000001]
+script = ExtResource("1_spawner")
