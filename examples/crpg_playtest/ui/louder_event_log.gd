@@ -55,7 +55,7 @@ func _process(_delta: float) -> void:
 		_next_trace_index += 1
 		if event == null:
 			continue
-		_add_label(event.to_dictionary_resolved(LouderContextGlobal.context))
+		_add_label(event.to_dictionary_resolved(LouderContextGlobal.context), event.get_conversation())
 
 	while container.get_child_count() > max_logs:
 		var oldest := container.get_child(0)
@@ -79,7 +79,7 @@ func _flatten(event: Dictionary, prefix: String = "") -> Dictionary:
 	return out
 
 
-func _add_label(event: Dictionary) -> void:
+func _add_label(event: Dictionary, conversation: int = -1) -> void:
 	var current := _flatten(event)
 	var previous := {}
 	if not _previous_event.is_empty():
@@ -88,7 +88,12 @@ func _add_label(event: Dictionary) -> void:
 	var lines := []
 	for key in current.keys():
 		if not previous.has(key) or str(previous[key]) != str(current[key]):
-			lines.append("%s: %s" % [key, current[key]])
+			var value = current[key]
+			if _is_hub_position_key(key):
+				value = _format_hub_position(conversation, int(value))
+			elif key == "load_failure.error" or key.ends_with(".error"):
+				value = LouderLoader.error_name(int(value))
+			lines.append("%s: %s" % [key, value])
 
 	if lines.is_empty():
 		lines.append("(no changes)")
@@ -100,6 +105,30 @@ func _add_label(event: Dictionary) -> void:
 	container.add_child(label)
 
 	_previous_event = event.duplicate(true)
+
+
+func _is_hub_position_key(key: String) -> bool:
+	return key == "position" or key.ends_with(".position") or key.ends_with("_position")
+
+
+func _truncate_hub_text(text: String) -> String:
+	var words := text.replace("\n", " ").replace("\t", " ").split(" ", false)
+	if words.size() <= 5:
+		return text.strip_edges()
+	var snippet := " ".join(words.slice(0, 5))
+	return snippet + "..."
+
+
+func _format_hub_position(conversation: int, position: int) -> String:
+	if position < 0:
+		return str(position)
+	var text := ""
+	if conversation >= 0:
+		text = LouderContextGlobal.get_line_text(conversation, position)
+	var snippet := _truncate_hub_text(text)
+	if snippet == "":
+		return str(position)
+	return "%d %s" % [position, snippet]
 
 
 func _clear_labels() -> void:
