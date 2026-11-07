@@ -104,3 +104,6 @@ do one.
 Use typed containers where possible. `Array[T]` instead of `Array` and
 `Dictionary[K, V]` instead of `Dictionary`. Especially for exported variables,
 this is cleaner.
+
+## Groups
+Groups should always be exported variables. 

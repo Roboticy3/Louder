@@ -19,6 +19,7 @@ func _ready() -> void:
 	character_select.close_requested.connect(_on_close_requested)
 
 	Network.lobby_changed.connect(_on_lobby_changed)
+	Network.selection_accepted.connect(_on_selection_accepted)
 	Network.selection_rejected.connect(_on_selection_rejected)
 	Network.connection_failed.connect(_on_connection_failed)
 	Network.server_disconnected.connect(_on_server_disconnected)
@@ -58,6 +59,9 @@ func _on_close_requested() -> void:
 func _on_lobby_changed() -> void:
 	if Network.is_in_lobby():
 		_refresh_lobby()
+
+func _on_selection_accepted(_character: StringName) -> void:
+	_refresh_world()
 
 func _on_selection_rejected(result: int) -> void:
 	character_select.set_status(str(REJECTION_MESSAGES.get(result, "That character could not be selected.")))

@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://avatar_spawner_scene"]
+[gd_scene format=3 uid="uid://rxtclojm8fq4"]
 
 [ext_resource type="Script" uid="uid://lopxovsw23gp" path="res://entities/avatar_spawner.gd" id="1_spawner"]
 

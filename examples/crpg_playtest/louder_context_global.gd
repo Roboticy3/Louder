@@ -585,7 +585,13 @@ func _load_conversation(conversation: int, document_path: String) -> bool:
 		push_error("Failed to open conversation %s." % document_path)
 		return false
 
-	var failure: int = context.load_conversation(conversation, file.get_as_text())
+	var text := file.get_as_text()
+	var failure: int
+	var extension := document_path.get_extension().to_lower()
+	if extension == "json" or text.strip_edges().begins_with("[") or text.strip_edges().begins_with("{"):
+		failure = context.load_conversation(conversation, text)
+	else:
+		failure = context.load_conversation_text(conversation, text)
 	if failure != LOAD_OK and failure != LOAD_ALREADY_LOADED:
 		push_error("Failed to load conversation %s: %s" % [document_path, LouderLoader.error_name(failure)])
 		return false

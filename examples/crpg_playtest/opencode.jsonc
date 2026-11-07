@@ -1,6 +1,15 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "permissions": [
+
+    // Containment
+    {
+      "action": "edit", "resource": "opencode.jsonc", "effect": "deny"
+    },
+    {
+      "action": "*", "resource":"*..*", "effect": "deny"
+    },
+
     // Rules to block admin actions and data
     {
       "action": "*", "resource": "logs/*", "effect": "deny"
@@ -27,6 +36,10 @@
     },
     {
       "action": "*", "resource": "*.import", "effect": "deny"
+    },
+
+    {
+      "action": "*", "resource": ".godot/*", "effect": "ask"
     }
   ]
 }

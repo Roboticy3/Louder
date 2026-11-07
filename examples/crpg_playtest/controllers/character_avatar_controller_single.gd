@@ -65,6 +65,7 @@ func locate_character() -> void:
 
 func _ready() -> void:
 	add_to_group(group)
+	add_to_group(&"dialogue_state")
 	
 	locate_timer = Timer.new()
 	locate_timer.one_shot = false
@@ -87,10 +88,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		wants_move = true
 
 var camera_ray_out := false
-var in_conversation := false
+var in_dialogue := false
 func _physics_process(_delta: float) -> void:
 	var result:Dictionary
-	if !in_conversation and controlled_avatar and wants_move:
+	if !in_dialogue and controlled_avatar and wants_move:
 		wants_move = false
 		var mouse_pos := camera_rig.camera.get_viewport().get_mouse_position()
 		var ray_o := camera_rig.camera.project_ray_origin(mouse_pos)
@@ -124,6 +125,6 @@ func _physics_process(_delta: float) -> void:
 func _on_avatar_request_dialogue(avatar:CharacterAvatar, other:InteractableObject):
 	var source_cdata := Network.get_character_of()
 	if source_cdata and avatar == controlled_avatar and other.conversation_path != "":
-		in_conversation = true
+		in_dialogue = true
 		get_tree().call_group(scrolling_dialogue_group, &"start_conversation", other.conversation_path)
 		

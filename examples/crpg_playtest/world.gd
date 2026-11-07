@@ -39,6 +39,8 @@ func _spawn(peer_id: int, character: CharacterData, index: int) -> CharacterAvat
 	if spawner != null:
 		avatar_root.add_child(avatar)
 		avatar.global_position = spawner.global_position
+		if spawner.has_method("start_intro_conversation"):
+			spawner.start_intro_conversation()
 	else:
 		push_warning("No avatar spawner found for character '%s'; reverting to default spawn logic." % character.name)
 		avatar.position = spawn_origin + _spawn_offset(index)

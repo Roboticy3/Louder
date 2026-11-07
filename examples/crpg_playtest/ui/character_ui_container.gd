@@ -1,5 +1,7 @@
 extends CanvasLayer
 
+## Loads uis differently for each character from the path format below
+
 var slot:Node = null
 
 @export var character_ui_fallback:PackedScene
@@ -32,13 +34,13 @@ func ui_from_character_name(character_name:StringName) -> Node:
 		character_name = character_name.to_lower()
 	
 	var path := character_ui_path_format % [character_name]
-	var packed = load(path)
+	var packed = load(path) if FileAccess.file_exists(path) else null
 	if !(packed is PackedScene):
-		push_error("Could not find dynamic character ui from path ", path, " for character ", character_name)
+		push_warning("Could not find dynamic character ui from path ", path, " for character ", character_name)
 		return character_ui_fallback.instantiate()
 	
 	if !packed.can_instantiate():
-		push_error("Could not instantiate dynamic character ui from path ", path, " for character ", character_name)
+		push_warning("Could not instantiate dynamic character ui from path ", path, " for character ", character_name)
 		return character_ui_fallback.instantiate()
 	
 	return packed.instantiate()

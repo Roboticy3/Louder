@@ -1,0 +1,1 @@
+Conversations written in the second format I designed. Intended to be copied into the "readable_conversations" folder in the louder demo.

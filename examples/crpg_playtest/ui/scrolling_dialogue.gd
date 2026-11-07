@@ -39,6 +39,11 @@ func _ready() -> void:
 	
 	visible = false
 
+	if get_tree().has_meta("pending_intro_conversation"):
+		var pending := str(get_tree().get_meta("pending_intro_conversation"))
+		if pending != "":
+			call_deferred("start_conversation", pending)
+
 
 ## Ask the server to start `document_path` for this dialogue's speaker.
 ##
